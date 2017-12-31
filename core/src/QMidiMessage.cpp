@@ -1,11 +1,10 @@
 #include "QMidiMessage.hpp"
 
-#include <vector>
-
 #include <QTextStream>
-#include <QMetaEnum>
+#include <QDateTime>
 
 #include <cassert>
+#include <iomanip>
 
 class QMidiMessageData : public QSharedData
 {
@@ -22,7 +21,7 @@ class QMidiMessageData : public QSharedData
      */
     static Type detectMessageType(Bytes const& bytes)
     {
-        unsigned char typePart = bytes[0u] & 0xF0;
+        unsigned char const typePart = bytes[0u] & 0xF0;
         Type result = Type::Undefined;
 
         switch (typePart)
@@ -140,10 +139,8 @@ QString QMidiMessage::toString() const
 {
     QString buffer;
     QTextStream stream(&buffer);
-    auto const metaEnum = QMetaEnum::fromType<Type>();
 
     stream.setIntegerBase(16);
-    stream << metaEnum.valueToKey(data->m_type) << " ";
     for (auto i = 0u; i < data->m_bytes.size(); ++i)
     {
         if (i > 0u)
@@ -163,9 +160,10 @@ QMidiMessage::TimePoint QMidiMessage::timestamp() const
 
 QString QMidiMessage::timePointToString(QMidiMessage::TimePoint const timestamp)
 {
-    std::time_t time = Clock::to_time_t(timestamp);
+    std::time_t const time = Clock::to_time_t(timestamp);
+    QDateTime const dt = QDateTime::fromTime_t(time);
 
-    return QString(std::ctime(&time));
+    return dt.toString("hh:mm:ss");
 }
 
 void QMidiMessage::getControlChange(unsigned char& control, unsigned char& value) const

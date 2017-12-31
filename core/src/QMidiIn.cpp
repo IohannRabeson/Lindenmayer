@@ -86,7 +86,8 @@ private:
     std::unique_ptr<RtMidiIn> m_midiIn;
 };
 
-QMidiIn::QMidiIn() :
+QMidiIn::QMidiIn(QObject* parent) :
+    QObject(parent),
     d_ptr(new QMidiInPrivate(this))
 {
 }
@@ -99,6 +100,8 @@ QMidiIn::~QMidiIn()
 bool QMidiIn::openPort(int portIndex) noexcept
 {
     Q_D(QMidiIn);
+
+    closePort();
 
     Q_ASSERT( portIndex > -1 && portIndex < d->portCount() );
 

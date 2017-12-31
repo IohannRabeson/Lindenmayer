@@ -14,7 +14,7 @@ class QMidiIn : public QObject
     Q_DECLARE_PRIVATE(QMidiIn)
     Q_OBJECT
 public:
-    QMidiIn();
+    explicit QMidiIn(QObject* parent = nullptr);
     ~QMidiIn();
 
     bool openPort(int portIndex) noexcept;

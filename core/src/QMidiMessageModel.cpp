@@ -8,6 +8,17 @@ QMap<int, QString> const QMidiMessageModel::s_header =
             {QMidiMessageModel::Columns::Data, "Data"}
         };
 
+QMap<QMidiMessage::Type, QString> const QMidiMessageModel::s_messageTypes =
+        {
+                {QMidiMessage::Type::NoteOn, "Note On"},
+                {QMidiMessage::Type::NoteOff, "Note Off"},
+                {QMidiMessage::Type::ControlChange, "Control change"},
+                {QMidiMessage::Type::ProgramChange, "Program change"},
+                {QMidiMessage::Type::SystemExclusive, "Sysex"},
+                {QMidiMessage::Type::Undefined, "Undefined"},
+
+        };
+
 QMidiMessageModel::QMidiMessageModel(QObject *parent)
     : QAbstractTableModel(parent)
 {
@@ -33,54 +44,51 @@ int QMidiMessageModel::columnCount(const QModelIndex &parent) const
     return parent.isValid() ? 0 : Columns::ColumnCount;
 }
 
-namespace
+QString QMidiMessageModel::getText(int const column, QMidiMessage const& message)
 {
-    static inline QVariant getText(int const column, QMidiMessage const& message)
+    static auto const metaEnum = QMetaEnum::fromType<QMidiMessage::Type>();
+    QString result;
+
+    switch (column)
     {
-        static auto const metaEnum = QMetaEnum::fromType<QMidiMessage::Type>();
-        QVariant result;
-
-        switch (column)
-        {
-            case QMidiMessageModel::Columns::Type:
-                result = metaEnum.valueToKey(message.type());
-                break;
-            case QMidiMessageModel::Columns::Timestamp:
-                result = QMidiMessage::timePointToString(message.timestamp());
-                break;
-            case QMidiMessageModel::Columns::Data:
-                switch (message.type())
+        case QMidiMessageModel::Columns::Type:
+            result = s_messageTypes.value(message.type());
+            break;
+        case QMidiMessageModel::Columns::Timestamp:
+            result = QMidiMessage::timePointToString(message.timestamp());
+            break;
+        case QMidiMessageModel::Columns::Data:
+            switch (message.type())
+            {
+                case QMidiMessage::Type::ControlChange:
                 {
-                    case QMidiMessage::Type::ControlChange:
-                    {
-                        unsigned char control = 0u;
-                        unsigned char value = 0u;
+                    unsigned char control = 0u;
+                    unsigned char value = 0u;
 
-                        message.getControlChange(control, value);
-                        result = QString("CC%0: %1").arg(control).arg(value);
-                    }
-                        break;
-                    case QMidiMessage::Type::ProgramChange:
-                    {
-                        unsigned char program = 0u;
-
-                        message.getProgramChange(program);
-                        result = QString("Program change: %0").arg(program + 1u);
-                    }
-                        break;
-                    case QMidiMessage::Type::SystemExclusive:
-                        result = message.toString();
-                        break;
-                    default:
-                        result = QString("%0 bytes").arg(message.byteCount());
-                        break;
+                    message.getControlChange(control, value);
+                    result = QString("CC%0: %1").arg(control).arg(value);
                 }
-                break;
-            default:
-                break;
-        }
-        return result;
+                    break;
+                case QMidiMessage::Type::ProgramChange:
+                {
+                    unsigned char program = 0u;
+
+                    message.getProgramChange(program);
+                    result = QString("Program change: %0").arg(program + 1u);
+                }
+                    break;
+                case QMidiMessage::Type::SystemExclusive:
+                    result = message.toString();
+                    break;
+                default:
+                    result = QString("%0 bytes").arg(message.byteCount());
+                    break;
+            }
+            break;
+        default:
+            break;
     }
+    return result;
 }
 
 QVariant QMidiMessageModel::data(const QModelIndex &index, int role) const

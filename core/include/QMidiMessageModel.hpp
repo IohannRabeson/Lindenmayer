@@ -7,7 +7,9 @@
 class QMidiMessageModel : public QAbstractTableModel
 {
     Q_OBJECT
+
     static QMap<int, QString> const s_header;
+    static QMap<QMidiMessage::Type, QString> const s_messageTypes;
 public:
     explicit QMidiMessageModel(QObject *parent = nullptr);
 
@@ -27,6 +29,8 @@ public:
 public slots:
     int append(QMidiMessage const& message);
     void clear();
+private:
+    static QString getText(int const column, QMidiMessage const& message);
 private:
     QVector<QMidiMessage> m_messages;
 };

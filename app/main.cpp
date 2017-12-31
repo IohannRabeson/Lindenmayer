@@ -1,13 +1,16 @@
 //
 // Created by Io on 30/12/2017.
 //
+// TODO:
+// - port selector
+// - bytes viewer
+// - schemes integration
+//
 
 #include <QApplication>
 #include <QTableView>
-#include <QtDebug>
 
-#include <QMidiIn.hpp>
-#include <QMidiMessageModel.hpp>
+#include "MidiInputWidget.hpp"
 
 static void setupApplication()
 {
@@ -18,19 +21,9 @@ static void setupApplication()
 int main(int argc, char** argv)
 {
     QApplication app(argc, argv);
-    QTableView widget;
-    QMidiIn midiIn;
-    QMidiMessageModel model;
+    MidiInputWidget widget;
 
     setupApplication();
-
-    QObject::connect(&midiIn, &QMidiIn::messageReceived, &model, &QMidiMessageModel::append);
-    QObject::connect(&midiIn, &QMidiIn::error, [](QString const& error)
-    {
-        qWarning() << error;
-    });
-    widget.setModel(&model);
-    midiIn.openPort(0);
     widget.show();
     return app.exec();
 }
