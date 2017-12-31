@@ -8,7 +8,7 @@ add_library(QMidi
             src/QMidiMessageModel.cpp
             src/QAbstractMidiScheme.cpp
             include/QAbstractMidiScheme.hpp
-        )
+        src/QDefaultMidiScheme.cpp include/QDefaultMidiScheme.hpp)
 
 target_link_libraries(QMidi PRIVATE rtmidi Qt5::Core Qt5::Widgets)
 

@@ -1,4 +1,6 @@
 #include "QMidiMessageModel.hpp"
+#include "QDefaultMidiScheme.hpp"
+
 #include <QMetaEnum>
 
 QMap<int, QString> const QMidiMessageModel::s_header =
@@ -21,7 +23,9 @@ QMap<QMidiMessage::Type, QString> const QMidiMessageModel::s_messageTypes =
 
 QMidiMessageModel::QMidiMessageModel(QObject *parent)
     : QAbstractTableModel(parent)
+    , m_scheme(nullptr)
 {
+    resetScheme(new QDefaultMidiScheme);
 }
 
 int QMidiMessageModel::append(const QMidiMessage &message)
@@ -44,7 +48,7 @@ int QMidiMessageModel::columnCount(const QModelIndex &parent) const
     return parent.isValid() ? 0 : Columns::ColumnCount;
 }
 
-QString QMidiMessageModel::getText(int const column, QMidiMessage const& message)
+QString QMidiMessageModel::getText(int const column, QMidiMessage const& message) const
 {
     static auto const metaEnum = QMetaEnum::fromType<QMidiMessage::Type>();
     QString result;
@@ -66,7 +70,12 @@ QString QMidiMessageModel::getText(int const column, QMidiMessage const& message
                     unsigned char value = 0u;
 
                     message.getControlChange(control, value);
-                    result = QString("CC%0: %1").arg(control).arg(value);
+
+                    QString const formatedControlName = m_scheme->controlChangeName(control);
+                    QString const formatedValue = m_scheme->formatControlValue(control, value);
+                    QString const format = m_scheme->formatControlChangeDataText();
+
+                    result = format.arg(formatedControlName).arg(formatedValue);
                 }
                     break;
                 case QMidiMessage::Type::ProgramChange:
@@ -135,4 +144,14 @@ QVariant QMidiMessageModel::headerData(int section, Qt::Orientation orientation,
 QMidiMessage QMidiMessageModel::getMessage(int const row) const
 {
     return m_messages.value(row);
+}
+
+void QMidiMessageModel::resetScheme(QAbstractMidiScheme* scheme)
+{
+    if (m_scheme.get() != scheme)
+    {
+        beginResetModel();
+        m_scheme.reset(scheme);
+        endResetModel();
+    }
 }

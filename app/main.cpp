@@ -4,7 +4,13 @@
 // TODO:
 // - port selector
 // - bytes viewer
-// - schemes integration
+// - bytes line viewer
+// - message details viewer
+// - message filters
+//   - message filters list view
+//   - filter function
+//   - model to store filters states
+// - DONE: schemes integration
 //
 
 #include <QApplication>

@@ -10,12 +10,12 @@
  * \brief Define device specifics things
  *
  * They are one midi scheme by specific device.
- *
  */
 // TODO: virtual method returning dump request format and dump data format
-
+// TODO: Add graphics property such as device rectangle, background texture, buttons positions, etc...
 class QAbstractMidiScheme
 {
+public:
     using ChecksumFunction = unsigned char (*)(QMidiMessage::Bytes const&, std::size_t const, std::size_t const);
 
     virtual ~QAbstractMidiScheme() = default;
@@ -45,8 +45,9 @@ class QAbstractMidiScheme
      * \param control Control identifier
      * \param value Value to format
      */
-    virtual QString formatControlValue(unsigned char const control, unsigned char const value) = 0;
+    virtual QString formatControlValue(unsigned char const control, unsigned char const value) const = 0;
 
+    virtual QString formatControlChangeDataText() const = 0;
     /*!
      * \brief Helper to checking checksum integrity of a message.
      * \param scheme
