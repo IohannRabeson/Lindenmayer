@@ -16,9 +16,8 @@
 //
 
 #include <QApplication>
-#include <QTableView>
 
-#include "MidiInputWidget.hpp"
+#include "MainWindow.hpp"
 
 static void setupApplication()
 {
@@ -31,7 +30,7 @@ static void setupApplication()
 int main(int argc, char** argv)
 {
     QApplication app(argc, argv);
-    MidiInputWidget widget;
+    MainWindow widget;
 
     setupApplication();
     widget.show();

@@ -1,5 +1,5 @@
 #include "QMidiMessageModel.hpp"
-#include "QDefaultMidiScheme.hpp"
+#include "QDefaultDeviceScheme.hpp"
 
 #include <QMap>
 #include <QVector>
@@ -14,7 +14,7 @@ public:
     QString getText(int const column, QMidiMessage const& message) const;
 
     QVector<QMidiMessage> m_messages;
-    std::unique_ptr<QAbstractMidiScheme> m_scheme;
+    std::unique_ptr<QAbstractDeviceScheme> m_scheme;
 };
 
 QMap<int, QString> const QMidiMessageModelPrivate::s_header =
@@ -38,7 +38,7 @@ QMidiMessageModel::QMidiMessageModel(QObject *parent)
     : QAbstractTableModel(parent)
     , d_ptr(new QMidiMessageModelPrivate)
 {
-    setScheme(new QDefaultMidiScheme);
+    setScheme(new QDefaultDeviceScheme);
 }
 
 QMidiMessageModel::~QMidiMessageModel() = default;
@@ -84,26 +84,22 @@ QString QMidiMessageModelPrivate::getText(int const column, QMidiMessage const& 
             switch (message.type())
             {
                 case QMidiMessage::Type::ControlChange:
-                {
-                    unsigned char control = 0u;
-                    unsigned char value = 0u;
+                    {
+                        unsigned char control = 0u;
+                        unsigned char value = 0u;
 
-                    message.getControlChange(control, value);
+                        message.getControlChange(control, value);
 
-                    QString const formatedControlName = m_scheme->formatControlChangeName(control);
-                    QString const formatedValue = m_scheme->formatControlChangeValue(control, value);
-                    QString const format = m_scheme->formatControlChangeDataText();
-
-                    result = format.arg(formatedControlName).arg(formatedValue);
-                }
+                        result = m_scheme->formatControlChangeData(control, value);
+                    }
                     break;
                 case QMidiMessage::Type::ProgramChange:
-                {
-                    unsigned char program = 0u;
+                    {
+                        unsigned char program = 0u;
 
-                    message.getProgramChange(program);
-                    result = QString("Program change: %0").arg(program + 1u);
-                }
+                        message.getProgramChange(program);
+                        result = QString("Program change: %0").arg(program + 1u);
+                    }
                     break;
                 case QMidiMessage::Type::SystemExclusive:
                     result = message.toString();
@@ -171,7 +167,7 @@ QMidiMessage QMidiMessageModel::getMessage(int const row) const
     return d->m_messages.value(row);
 }
 
-void QMidiMessageModel::setScheme(QAbstractMidiScheme* scheme)
+void QMidiMessageModel::setScheme(QAbstractDeviceScheme* scheme)
 {
     Q_D(QMidiMessageModel);
 
@@ -183,7 +179,7 @@ void QMidiMessageModel::setScheme(QAbstractMidiScheme* scheme)
     }
 }
 
-QAbstractMidiScheme* QMidiMessageModel::getScheme() const
+QAbstractDeviceScheme* QMidiMessageModel::getScheme() const
 {
     Q_D(const QMidiMessageModel);
 

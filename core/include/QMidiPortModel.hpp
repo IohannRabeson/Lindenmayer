@@ -2,8 +2,8 @@
 // Created by Io on 31/12/2017.
 //
 
-#ifndef SYSEXMONITOR_QMIDIPORTMODEL_HPP
-#define SYSEXMONITOR_QMIDIPORTMODEL_HPP
+#ifndef MIDIMONITOR_QMIDIPORTMODEL_HPP
+#define MIDIMONITOR_QMIDIPORTMODEL_HPP
 #include <QAbstractListModel>
 
 class QMidiIn;
@@ -47,4 +47,4 @@ private:
     Ports m_ports;
 };
 
-#endif //SYSEXMONITOR_QMIDIPORTMODEL_HPP
+#endif //MIDIMONITOR_QMIDIPORTMODEL_HPP

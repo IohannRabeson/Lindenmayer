@@ -2,8 +2,8 @@
 // Created by Io on 31/12/2017.
 //
 
-#ifndef SYSEXMONITOR_MIDIMESSAGELISTVIEW_HPP
-#define SYSEXMONITOR_MIDIMESSAGELISTVIEW_HPP
+#ifndef MIDIMONITOR_MIDIMESSAGELISTVIEW_HPP
+#define MIDIMONITOR_MIDIMESSAGELISTVIEW_HPP
 #include <QTableView>
 
 class QMidiMessageModel;
@@ -12,6 +12,10 @@ class MidiMessageListView : public QTableView
 {
 public:
     explicit MidiMessageListView(QMidiMessageModel* model, QWidget* parent = nullptr);
+
+    void setAutoScrollToBottomEnabled(bool const enabled);
+private:
+    bool m_autoScroll;
 };
 
-#endif //SYSEXMONITOR_MIDIMESSAGELISTVIEW_HPP
+#endif //MIDIMONITOR_MIDIMESSAGELISTVIEW_HPP

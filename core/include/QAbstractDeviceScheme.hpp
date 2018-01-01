@@ -2,8 +2,8 @@
 // Created by Io on 31/12/2017.
 //
 
-#ifndef SYSEXMONITOR_QABSTRACTMIDISCHEME_HPP
-#define SYSEXMONITOR_QABSTRACTMIDISCHEME_HPP
+#ifndef MIDIMONITOR_QABSTRACTDEVICESCHEME_HPP
+#define MIDIMONITOR_QABSTRACTDEVICESCHEME_HPP
 #include <QMidiMessage.hpp>
 
 /*!
@@ -13,12 +13,12 @@
  */
 // TODO: virtual method returning dump request format and dump data format
 // TODO: Add graphics property such as device rectangle, background texture, buttons positions, etc...
-class QAbstractMidiScheme
+class QAbstractDeviceScheme
 {
 public:
     using ChecksumFunction = unsigned char (*)(QMidiMessage::Bytes const&, std::size_t const, std::size_t const);
 
-    virtual ~QAbstractMidiScheme() = default;
+    virtual ~QAbstractDeviceScheme() = default;
 
     /*!
      * \brief Get the scheme manufacturer name
@@ -37,8 +37,18 @@ public:
      * \param count
      * \return
      */
-    virtual unsigned char computeChecksum(QMidiMessage const& message) const;
+    unsigned char computeChecksum(QMidiMessage const& message) const;
 
+    /*!
+     * \brief Helper to checking checksum integrity of a message.
+     * \param message
+     * \return
+     */
+    bool verifyChecksum(QMidiMessage const& message) const;
+
+
+    QString formatControlChangeData(unsigned char const control, unsigned char const value) const;
+private:
     /*!
      * \brief Return name for a control
      * \param control Control identifier
@@ -58,14 +68,7 @@ public:
      */
     virtual QString formatControlChangeDataText() const = 0;
 
-    /*!
-     * \brief Helper to checking checksum integrity of a message.
-     * \param message
-     * \return
-     */
-    bool verifyChecksum(QMidiMessage const& message) const;
-private:
     virtual ChecksumFunction checksumFunction() const = 0;
 };
 
-#endif //SYSEXMONITOR_QABSTRACTMIDISCHEME_HPP
+#endif //MIDIMONITOR_QABSTRACTDEVICESCHEME_HPP

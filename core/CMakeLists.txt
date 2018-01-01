@@ -6,9 +6,9 @@ add_library(QMidi
             src/QMidiMessage.cpp
             include/QMidiMessageModel.hpp
             src/QMidiMessageModel.cpp
-            src/QAbstractMidiScheme.cpp
-            include/QAbstractMidiScheme.hpp
-        src/QDefaultMidiScheme.cpp include/QDefaultMidiScheme.hpp src/QMidiPortModel.cpp include/QMidiPortModel.hpp)
+        src/QAbstractDeviceScheme.cpp
+        include/QAbstractDeviceScheme.hpp
+        src/QDefaultDeviceScheme.cpp include/QDefaultDeviceScheme.hpp src/QMidiPortModel.cpp include/QMidiPortModel.hpp src/QDeviceSchemeFactory.cpp include/QDeviceSchemeFactory.hpp)
 
 target_link_libraries(QMidi PRIVATE rtmidi Qt5::Core Qt5::Widgets)
 

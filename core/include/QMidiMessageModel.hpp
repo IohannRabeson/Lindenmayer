@@ -5,7 +5,7 @@
 
 #include <QMidiMessage.hpp>
 
-#include "QAbstractMidiScheme.hpp"
+#include "QAbstractDeviceScheme.hpp"
 
 class QMidiMessageModelPrivate;
 
@@ -25,8 +25,8 @@ public:
         ColumnCount
     };
 
-    void setScheme(QAbstractMidiScheme* scheme);
-    QAbstractMidiScheme* getScheme() const;
+    void setScheme(QAbstractDeviceScheme* scheme);
+    QAbstractDeviceScheme* getScheme() const;
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;

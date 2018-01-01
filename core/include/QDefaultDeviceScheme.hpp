@@ -2,12 +2,12 @@
 // Created by Io on 31/12/2017.
 //
 
-#ifndef SYSEXMONITOR_QDEFAULTMIDISCHEME_HPP
-#define SYSEXMONITOR_QDEFAULTMIDISCHEME_HPP
+#ifndef MIDIMONITOR_QDEFAULTDEVICESCHEME_HPP
+#define MIDIMONITOR_QDEFAULTDEVICESCHEME_HPP
 
-#include <QAbstractMidiScheme.hpp>
+#include <QAbstractDeviceScheme.hpp>
 
-class QDefaultMidiScheme : public QAbstractMidiScheme
+class QDefaultDeviceScheme : public QAbstractDeviceScheme
 {
 public:
     QString schemeManufacturer() const override;
@@ -18,4 +18,4 @@ public:
     ChecksumFunction checksumFunction() const override;
 };
 
-#endif //SYSEXMONITOR_QDEFAULTMIDISCHEME_HPP
+#endif //MIDIMONITOR_QDEFAULTDEVICESCHEME_HPP

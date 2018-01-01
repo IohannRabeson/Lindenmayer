@@ -10,6 +10,7 @@
 
 MidiMessageListView::MidiMessageListView(QMidiMessageModel* model, QWidget* parent)
 : QTableView(parent)
+, m_autoScroll(true)
 {
     static constexpr int const ItemHeight = 18;
 
@@ -19,4 +20,17 @@ MidiMessageListView::MidiMessageListView(QMidiMessageModel* model, QWidget* pare
     verticalHeader()->setSectionResizeMode(QHeaderView::ResizeMode::Fixed);
     verticalHeader()->setMaximumSectionSize(ItemHeight);
     verticalHeader()->setDefaultSectionSize(ItemHeight);
+
+    connect(model, &QMidiMessageModel::rowsInserted, [this]()
+    {
+        if (m_autoScroll)
+        {
+            scrollToBottom();
+        }
+    });
+}
+
+void MidiMessageListView::setAutoScrollToBottomEnabled(bool const enabled)
+{
+    m_autoScroll = enabled;
 }
