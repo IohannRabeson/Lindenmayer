@@ -8,7 +8,11 @@
 
 class QMidiMessage;
 class QMidiMessageModel;
-class MessageListView;
+class QMidiPortModel;
+
+class MidiMessageListView;
+
+class QComboBox;
 
 class MidiWidget : public QWidget
 {
@@ -17,8 +21,11 @@ class MidiWidget : public QWidget
 public:
     explicit MidiWidget(QWidget* parent = nullptr);
 
+    void setPortModel(QMidiPortModel* midiPortModel);
     void setAutoScroll(bool const autoscroll);
     bool isAutoScrollEnabled() const;
+private:
+    virtual void onMidiPortChanged(int const portIndex) = 0;
 public slots:
     void append(QMidiMessage const& message);
     void clear();
@@ -27,7 +34,8 @@ signals:
     void messageDoubleClicked(QMidiMessage const& message);
 private:
     QMidiMessageModel* const m_model;
-    MessageListView* const m_messageList;
+    QComboBox* const m_portSelector;
+    MidiMessageListView* const m_messageList;
     bool m_autoScroll = true;
 };
 

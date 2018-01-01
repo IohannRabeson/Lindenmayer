@@ -3,20 +3,25 @@
 //
 
 #include "MidiWidget.hpp"
-#include "MessageListView.hpp"
+#include "MidiMessageListView.hpp"
 
 #include <QMidiMessageModel.hpp>
+#include <QMidiPortModel.hpp>
 
 #include <QVBoxLayout>
+#include <QComboBox>
 
 MidiWidget::MidiWidget(QWidget* parent)
 : m_model(new QMidiMessageModel(this))
-, m_messageList(new MessageListView(m_model, this))
+, m_portSelector(new QComboBox(this))
+, m_messageList(new MidiMessageListView(m_model, this))
 , m_autoScroll(true)
 {
     QVBoxLayout* layout = new QVBoxLayout(this);
 
     layout->setMargin(3);
+    layout->setSpacing(3);
+    layout->addWidget(m_portSelector);
     layout->addWidget(m_messageList);
 
     m_messageList->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -45,6 +50,8 @@ MidiWidget::MidiWidget(QWidget* parent)
             emit messageDoubleClicked(m_model->getMessage(index.row()));
         }
     });
+
+    connect(m_portSelector, qOverload<int>(&QComboBox::currentIndexChanged), this, &MidiWidget::onMidiPortChanged);
 }
 
 void MidiWidget::setAutoScroll(bool const autoscroll)
@@ -65,4 +72,9 @@ void MidiWidget::append(QMidiMessage const& message)
 void MidiWidget::clear()
 {
     m_model->clear();
+}
+
+void MidiWidget::setPortModel(QMidiPortModel* midiPortModel)
+{
+    m_portSelector->setModel(midiPortModel);
 }

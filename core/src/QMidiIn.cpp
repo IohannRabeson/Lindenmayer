@@ -7,6 +7,8 @@
 
 #include <RtMidi.h>
 
+#include <QtDebug>
+
 class QMidiInPrivate
 {
     Q_DECLARE_PUBLIC(QMidiIn);
@@ -46,26 +48,30 @@ public:
 
         Q_Q(QMidiIn);
 
-        bool opened = false;
-
         try
         {
+            qDebug() << "Open MIDI port" << portIndex;
             m_midiIn->openPort(portIndex);
-            opened = true;
+            m_portOpened = portIndex;
         }
         catch (RtMidiError const& e)
         {
             emit q->error(QString::fromStdString(e.getMessage()));
-            opened = false;
+            m_portOpened = -1;
         }
-        return opened;
+        return m_portOpened != -1;
     }
 
     inline void closePort() noexcept
     {
         Q_ASSERT( m_midiIn );
 
-        m_midiIn->closePort();
+        if (m_portOpened != -1)
+        {
+            qDebug() << "Close MIDI port" << m_portOpened;
+            m_midiIn->closePort();
+            m_portOpened = -1;
+        }
     }
 
     inline int portCount() const noexcept
@@ -73,6 +79,13 @@ public:
         Q_ASSERT( m_midiIn );
 
         return m_midiIn->getPortCount();
+    }
+
+    inline QString portName(int const index) const
+    {
+        Q_ASSERT( index > -1 && index < portCount() );
+
+        return QString::fromStdString(m_midiIn->getPortName(index));
     }
 private:
     void broadcastMessage(QMidiMessage const& message)
@@ -84,6 +97,7 @@ private:
 private:
     QMidiIn* const q_ptr;
     std::unique_ptr<RtMidiIn> m_midiIn;
+    int m_portOpened = -1;
 };
 
 QMidiIn::QMidiIn(QObject* parent) :
@@ -97,7 +111,7 @@ QMidiIn::~QMidiIn()
     closePort();
 }
 
-bool QMidiIn::openPort(int portIndex) noexcept
+bool QMidiIn::openPort(int const portIndex) noexcept
 {
     Q_D(QMidiIn);
 
@@ -113,4 +127,25 @@ void QMidiIn::closePort() noexcept
     Q_D(QMidiIn);
 
     d->closePort();
+}
+
+int QMidiIn::portCount() const noexcept
+{
+    Q_D(const QMidiIn);
+
+    return d->portCount();
+}
+
+int QMidiIn::portOpened() const noexcept
+{
+    Q_D(const QMidiIn);
+
+    return d->m_portOpened;
+}
+
+QString QMidiIn::portName(int const index) const noexcept
+{
+    Q_D(const QMidiIn);
+
+    return d->portName(index);
 }

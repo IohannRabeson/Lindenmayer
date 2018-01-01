@@ -2,17 +2,20 @@
 #define QMIDIMESSAGEMODEL_HPP
 
 #include <QAbstractTableModel>
+
 #include <QMidiMessage.hpp>
+
 #include "QAbstractMidiScheme.hpp"
+
+class QMidiMessageModelPrivate;
 
 class QMidiMessageModel : public QAbstractTableModel
 {
     Q_OBJECT
-
-    static QMap<int, QString> const s_header;
-    static QMap<QMidiMessage::Type, QString> const s_messageTypes;
+    Q_DECLARE_PRIVATE(QMidiMessageModel)
 public:
     explicit QMidiMessageModel(QObject *parent = nullptr);
+    ~QMidiMessageModel();
 
     enum Columns
     {
@@ -22,7 +25,9 @@ public:
         ColumnCount
     };
 
-    void resetScheme(QAbstractMidiScheme* scheme);
+    void setScheme(QAbstractMidiScheme* scheme);
+    QAbstractMidiScheme* getScheme() const;
+
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
@@ -32,10 +37,7 @@ public slots:
     int append(QMidiMessage const& message);
     void clear();
 private:
-    QString getText(int const column, QMidiMessage const& message) const;
-private:
-    QVector<QMidiMessage> m_messages;
-    std::unique_ptr<QAbstractMidiScheme> m_scheme;
+    QScopedPointer<QMidiMessageModelPrivate> d_ptr;
 };
 
 #endif // QMIDIMESSAGEMODEL_HPP

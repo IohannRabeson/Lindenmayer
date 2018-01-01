@@ -17,8 +17,11 @@ public:
     explicit QMidiIn(QObject* parent = nullptr);
     ~QMidiIn();
 
-    bool openPort(int portIndex) noexcept;
+    bool openPort(int const portIndex) noexcept;
     void closePort() noexcept;
+    int portCount() const noexcept;
+    int portOpened() const noexcept;
+    QString portName(int const index) const noexcept;
 signals:
     void messageReceived(QMidiMessage const& message);
     void error(QString const& error);

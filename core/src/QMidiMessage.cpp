@@ -70,7 +70,7 @@ public:
 
     unsigned char getChecksum() const
     {
-        assert( m_bytes.size() > 2u );
+        assert( m_bytes.size() > 1u );
 
         return m_bytes[m_bytes.size() - 2u];
     }

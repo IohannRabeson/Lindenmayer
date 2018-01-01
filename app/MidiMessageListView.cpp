@@ -2,13 +2,13 @@
 // Created by Io on 31/12/2017.
 //
 
-#include "MessageListView.hpp"
+#include "MidiMessageListView.hpp"
 
 #include <QMidiMessageModel.hpp>
 
 #include <QHeaderView>
 
-MessageListView::MessageListView(QMidiMessageModel* model, QWidget* parent)
+MidiMessageListView::MidiMessageListView(QMidiMessageModel* model, QWidget* parent)
 : QTableView(parent)
 {
     static constexpr int const ItemHeight = 18;

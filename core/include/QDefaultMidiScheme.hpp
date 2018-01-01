@@ -10,10 +10,11 @@
 class QDefaultMidiScheme : public QAbstractMidiScheme
 {
 public:
+    QString schemeManufacturer() const override;
     QString schemeName() const override;
-    QString controlChangeName(unsigned char const control) const override;
-    QString formatControlValue(unsigned char const control, unsigned char const value) const override;
-    QString formatControlChangeDataText() const override;;
+    QString formatControlChangeName(unsigned char const control) const override;
+    QString formatControlChangeValue(unsigned char const control, unsigned char const value) const override;
+    QString formatControlChangeDataText() const override;
     ChecksumFunction checksumFunction() const override;
 };
 

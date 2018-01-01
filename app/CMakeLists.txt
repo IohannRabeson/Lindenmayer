@@ -1,7 +1,7 @@
 add_executable(MidiMonitor SysexMonitor.qrc
                main.cpp
-               MessageListView.cpp
-               MessageListView.hpp
+        MidiMessageListView.cpp
+        MidiMessageListView.hpp
                MidiInputWidget.cpp
                MidiInputWidget.hpp MidiWidget.cpp MidiWidget.hpp)
 

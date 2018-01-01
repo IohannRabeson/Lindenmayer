@@ -3,18 +3,24 @@
 //
 
 #include "QDefaultMidiScheme.hpp"
+#include <QObject>
+
+QString QDefaultMidiScheme::schemeManufacturer() const
+{
+    return "Dead Devs Society";
+}
 
 QString QDefaultMidiScheme::schemeName() const
 {
-    return "Default";
+    return QObject::tr("Default");
 }
 
-QString QDefaultMidiScheme::controlChangeName(unsigned char const control) const
+QString QDefaultMidiScheme::formatControlChangeName(unsigned char const control) const
 {
     return QString::number(control);
 }
 
-QString QDefaultMidiScheme::formatControlValue(unsigned char const, unsigned char const value) const
+QString QDefaultMidiScheme::formatControlChangeValue(unsigned char const, unsigned char const value) const
 {
     return QString::number(value);
 }
@@ -29,5 +35,5 @@ QAbstractMidiScheme::ChecksumFunction QDefaultMidiScheme::checksumFunction() con
 
 QString QDefaultMidiScheme::formatControlChangeDataText() const
 {
-    return "[CC] %0: %1";
+    return QObject::tr("[CC] %0: %1");
 }

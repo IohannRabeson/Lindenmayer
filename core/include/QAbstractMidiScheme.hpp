@@ -21,6 +21,11 @@ public:
     virtual ~QAbstractMidiScheme() = default;
 
     /*!
+     * \brief Get the scheme manufacturer name
+     */
+    virtual QString schemeManufacturer() const = 0;
+
+    /*!
      * \brief Get the scheme name
      */
     virtual QString schemeName() const = 0;
@@ -38,19 +43,23 @@ public:
      * \brief Return name for a control
      * \param control Control identifier
      */
-    virtual QString controlChangeName(unsigned char const control) const = 0;
+    virtual QString formatControlChangeName(unsigned char const control) const = 0;
 
     /*!
      * \brief Return displayable value for a control
      * \param control Control identifier
      * \param value Value to format
      */
-    virtual QString formatControlValue(unsigned char const control, unsigned char const value) const = 0;
+    virtual QString formatControlChangeValue(unsigned char const control, unsigned char const value) const = 0;
 
+    /*!
+     * \brief Return the format to display control change value
+     * \return A string with placeholders %0 for control name and %1 for value.
+     */
     virtual QString formatControlChangeDataText() const = 0;
+
     /*!
      * \brief Helper to checking checksum integrity of a message.
-     * \param scheme
      * \param message
      * \return
      */

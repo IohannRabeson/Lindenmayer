@@ -1,16 +1,30 @@
 #include "QMidiMessageModel.hpp"
 #include "QDefaultMidiScheme.hpp"
 
+#include <QMap>
+#include <QVector>
 #include <QMetaEnum>
 
-QMap<int, QString> const QMidiMessageModel::s_header =
+class QMidiMessageModelPrivate
+{
+public:
+    static QMap<int, QString> const s_header;
+    static QMap<QMidiMessage::Type, QString> const s_messageTypes;
+
+    QString getText(int const column, QMidiMessage const& message) const;
+
+    QVector<QMidiMessage> m_messages;
+    std::unique_ptr<QAbstractMidiScheme> m_scheme;
+};
+
+QMap<int, QString> const QMidiMessageModelPrivate::s_header =
         {
             {QMidiMessageModel::Columns::Type, "Type"},
             {QMidiMessageModel::Columns::Timestamp, "Timestamp"},
             {QMidiMessageModel::Columns::Data, "Data"}
         };
 
-QMap<QMidiMessage::Type, QString> const QMidiMessageModel::s_messageTypes =
+QMap<QMidiMessage::Type, QString> const QMidiMessageModelPrivate::s_messageTypes =
         {
                 {QMidiMessage::Type::NoteOn, "Note On"},
                 {QMidiMessage::Type::NoteOff, "Note Off"},
@@ -18,29 +32,34 @@ QMap<QMidiMessage::Type, QString> const QMidiMessageModel::s_messageTypes =
                 {QMidiMessage::Type::ProgramChange, "Program change"},
                 {QMidiMessage::Type::SystemExclusive, "Sysex"},
                 {QMidiMessage::Type::Undefined, "Undefined"},
-
         };
 
 QMidiMessageModel::QMidiMessageModel(QObject *parent)
     : QAbstractTableModel(parent)
-    , m_scheme(nullptr)
+    , d_ptr(new QMidiMessageModelPrivate)
 {
-    resetScheme(new QDefaultMidiScheme);
+    setScheme(new QDefaultMidiScheme);
 }
+
+QMidiMessageModel::~QMidiMessageModel() = default;
 
 int QMidiMessageModel::append(const QMidiMessage &message)
 {
-    auto const newRowIndex = m_messages.size();
+    Q_D(QMidiMessageModel);
+
+    auto const newRowIndex = d->m_messages.size();
 
     beginInsertRows(QModelIndex(), newRowIndex, newRowIndex);
-    m_messages.append(message);
+    d->m_messages.append(message);
     endInsertRows();
     return newRowIndex;
 }
 
 int QMidiMessageModel::rowCount(const QModelIndex &parent) const
 {
-    return parent.isValid() ? 0 : m_messages.size();
+    Q_D(const QMidiMessageModel);
+
+    return parent.isValid() ? 0 : d->m_messages.size();
 }
 
 int QMidiMessageModel::columnCount(const QModelIndex &parent) const
@@ -48,7 +67,7 @@ int QMidiMessageModel::columnCount(const QModelIndex &parent) const
     return parent.isValid() ? 0 : Columns::ColumnCount;
 }
 
-QString QMidiMessageModel::getText(int const column, QMidiMessage const& message) const
+QString QMidiMessageModelPrivate::getText(int const column, QMidiMessage const& message) const
 {
     static auto const metaEnum = QMetaEnum::fromType<QMidiMessage::Type>();
     QString result;
@@ -71,8 +90,8 @@ QString QMidiMessageModel::getText(int const column, QMidiMessage const& message
 
                     message.getControlChange(control, value);
 
-                    QString const formatedControlName = m_scheme->controlChangeName(control);
-                    QString const formatedValue = m_scheme->formatControlValue(control, value);
+                    QString const formatedControlName = m_scheme->formatControlChangeName(control);
+                    QString const formatedValue = m_scheme->formatControlChangeValue(control, value);
                     QString const format = m_scheme->formatControlChangeDataText();
 
                     result = format.arg(formatedControlName).arg(formatedValue);
@@ -102,6 +121,8 @@ QString QMidiMessageModel::getText(int const column, QMidiMessage const& message
 
 QVariant QMidiMessageModel::data(const QModelIndex &index, int role) const
 {
+    Q_D(const QMidiMessageModel);
+
     QVariant result;
 
     if (index.isValid())
@@ -110,7 +131,7 @@ QVariant QMidiMessageModel::data(const QModelIndex &index, int role) const
         {
         case Qt::DisplayRole:
         case Qt::EditRole:
-            result = getText(index.column(), m_messages[index.row()]);
+            result = d->getText(index.column(), d->m_messages[index.row()]);
             break;
         default:
             break;
@@ -121,8 +142,10 @@ QVariant QMidiMessageModel::data(const QModelIndex &index, int role) const
 
 void QMidiMessageModel::clear()
 {
+    Q_D(QMidiMessageModel);
+
     beginResetModel();
-    m_messages.clear();
+    d->m_messages.clear();
     endResetModel();
 }
 
@@ -132,7 +155,7 @@ QVariant QMidiMessageModel::headerData(int section, Qt::Orientation orientation,
 
     if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
     {
-        result = s_header.value(section);
+        result = QMidiMessageModelPrivate::s_header.value(section);
     }
     else
     {
@@ -143,15 +166,26 @@ QVariant QMidiMessageModel::headerData(int section, Qt::Orientation orientation,
 
 QMidiMessage QMidiMessageModel::getMessage(int const row) const
 {
-    return m_messages.value(row);
+    Q_D(const QMidiMessageModel);
+
+    return d->m_messages.value(row);
 }
 
-void QMidiMessageModel::resetScheme(QAbstractMidiScheme* scheme)
+void QMidiMessageModel::setScheme(QAbstractMidiScheme* scheme)
 {
-    if (m_scheme.get() != scheme)
+    Q_D(QMidiMessageModel);
+
+    if (d->m_scheme.get() != scheme)
     {
         beginResetModel();
-        m_scheme.reset(scheme);
+        d->m_scheme.reset(scheme);
         endResetModel();
     }
+}
+
+QAbstractMidiScheme* QMidiMessageModel::getScheme() const
+{
+    Q_D(const QMidiMessageModel);
+
+    return d->m_scheme.get();
 }

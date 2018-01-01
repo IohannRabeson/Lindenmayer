@@ -17,6 +17,7 @@ class QMidiMessageData;
  * Sysex specifications
  *  - AXE-FX 2 - https://wiki.fractalaudio.com/axefx2/index.php?title=MIDI_SysEx#MIDI_SysEx:_System_Exclusive_messages
  *  - Pulse2 - https://waldorfmusic.com/downloads/pulse2_downloads/p2-sysex-V1.14.21.03.2014.txt
+ *  - Blofeld - https://waldorfmusic.com/downloads/Blofeld%20Downloads/Tools/blofeld_sysex_v1_04.zip
  */
 class QMidiMessage
 {
