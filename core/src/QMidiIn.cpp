@@ -20,9 +20,13 @@ class QMidiInPrivate
             return;
         }
         QMidiInPrivate* const midiIn = static_cast<QMidiInPrivate*>(userData);
-        QMidiMessage sysexMessage(*bytes);
 
-        midiIn->broadcastMessage(sysexMessage);
+        if (midiIn->m_enabled)
+        {
+            QMidiMessage midiMessage(*bytes, midiIn->m_portOpened);
+
+            midiIn->broadcastMessage(midiMessage);
+        }
     }
 public:
     inline QMidiInPrivate(QMidiIn* q)
@@ -50,7 +54,7 @@ public:
 
         try
         {
-            qDebug() << "[QMidiIn] Open MIDI port" << portIndex;
+            qDebug() << "[QMidiIn]" << portIndex << "Open MIDI port" << portIndex;
             m_midiIn->openPort(portIndex);
             m_portOpened = portIndex;
         }
@@ -68,7 +72,7 @@ public:
 
         if (m_portOpened != -1)
         {
-            qDebug() << "[QMidiIn] Close MIDI port" << m_portOpened;
+            qDebug() << "[QMidiIn]" << m_portOpened << "Close MIDI port" << m_portOpened;
             m_midiIn->closePort();
             m_portOpened = -1;
         }
@@ -98,6 +102,7 @@ private:
     QMidiIn* const q_ptr;
     std::unique_ptr<RtMidiIn> m_midiIn;
     int m_portOpened = -1;
+    bool m_enabled = true;
 };
 
 QMidiIn::QMidiIn(QObject* parent) :
@@ -148,4 +153,12 @@ QString QMidiIn::portName(int const index) const noexcept
     Q_D(const QMidiIn);
 
     return d->portName(index);
+}
+
+void QMidiIn::setEnabled(bool const enabled)
+{
+    Q_D(QMidiIn);
+
+    d->m_enabled = enabled;
+    qDebug() << "[QMidiIn]" << d->m_portOpened << "enabled:" << d->m_enabled;
 }

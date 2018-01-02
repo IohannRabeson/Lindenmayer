@@ -15,6 +15,7 @@ class QMidiIn;
  */
 class QMidiPortModel : public QAbstractListModel
 {
+    Q_OBJECT
 public:
     enum Roles
     {
@@ -26,17 +27,25 @@ public:
     explicit QMidiPortModel(QObject* parent);
 
     void rescan(QMidiIn* midiIn);
-    void setUsed(int const row, bool used);
-    int rowCount(QModelIndex const& parent) const override;
+    void setChecked(int const row, bool checked);
+
+    int rowCount(QModelIndex const& parent = QModelIndex()) const override;
     int defaultPort() const;
+    QString name(int const row) const;
+
     QVariant data(const QModelIndex& index, int role) const override;
+
+    bool setData(const QModelIndex& index, const QVariant& value, int role) override;
+
     Qt::ItemFlags flags(QModelIndex const& index) const override;
+signals:
+    void checkedChanged(int const row, bool const checked);
 private:
     struct MidiPort
     {
         QString name;
         int index = -1;
-        bool used = false;
+        bool checked = true;
     };
 
     using Ports = QVector<MidiPort>;

@@ -54,17 +54,19 @@ class QMidiMessageData : public QSharedData
 public:
     QMidiMessageData() = default;
 
-    QMidiMessageData(Bytes const& bytes, TimePoint const timestamp)
+    QMidiMessageData(Bytes const& bytes, int const port, TimePoint const timestamp)
         : m_bytes(bytes)
         , m_timestamp(timestamp)
         , m_type(detectMessageType(bytes))
+        , m_port(port)
     {
     }
 
-    QMidiMessageData(Bytes&& bytes, TimePoint const timestamp)
+    QMidiMessageData(Bytes&& bytes, int const port, TimePoint const timestamp)
         : m_bytes(std::move(bytes))
         , m_timestamp(timestamp)
         , m_type(detectMessageType(bytes))
+        , m_port(port)
     {
     }
 
@@ -78,6 +80,7 @@ public:
     Bytes m_bytes;
     TimePoint m_timestamp;
     Type m_type;
+    int m_port;
 };
 
 QMidiMessage::QMidiMessage()
@@ -85,13 +88,13 @@ QMidiMessage::QMidiMessage()
 {
 }
 
-QMidiMessage::QMidiMessage(Bytes const& bytes, TimePoint const timestamp)
-: data(new QMidiMessageData(bytes, timestamp))
+QMidiMessage::QMidiMessage(Bytes const& bytes, int const port, TimePoint const timestamp)
+: data(new QMidiMessageData(bytes, port, timestamp))
 {
 }
 
-QMidiMessage::QMidiMessage(Bytes&& bytes, TimePoint const timestamp)
-: data(new QMidiMessageData(std::move(bytes), timestamp))
+QMidiMessage::QMidiMessage(Bytes&& bytes, int const port, TimePoint const timestamp)
+: data(new QMidiMessageData(std::move(bytes), port, timestamp))
 {
 }
 
@@ -207,4 +210,9 @@ void QMidiMessage::getSysex(unsigned char& manufacturer,
 unsigned char QMidiMessage::getChecksum() const
 {
     return data->getChecksum();
+}
+
+int QMidiMessage::port() const
+{
+    return data->m_port;
 }

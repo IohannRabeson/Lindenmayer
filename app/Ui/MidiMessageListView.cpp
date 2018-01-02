@@ -3,10 +3,9 @@
 //
 
 #include "MidiMessageListView.hpp"
+#include "CommonUi.hpp"
 
 #include <QMidiMessageModel.hpp>
-
-#include <QHeaderView>
 
 MidiMessageListView::MidiMessageListView(QMidiMessageModel* model, QWidget* parent)
 : QTableView(parent)
@@ -16,12 +15,7 @@ MidiMessageListView::MidiMessageListView(QMidiMessageModel* model, QWidget* pare
 
     setGridStyle(Qt::NoPen);
     setModel(model);
-    horizontalHeader()->setStretchLastSection(true);
-    verticalHeader()->setVisible(false);
-    verticalHeader()->setSectionResizeMode(QHeaderView::ResizeMode::Fixed);
-    verticalHeader()->setMaximumSectionSize(ItemHeight);
-    verticalHeader()->setDefaultSectionSize(ItemHeight);
-    setSelectionBehavior(QTableView::SelectionBehavior::SelectRows);
+    CommonUi::standardTableView(this);
 
     connect(model, &QMidiMessageModel::rowsInserted, [this]()
     {

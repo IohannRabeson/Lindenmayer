@@ -1,0 +1,8 @@
+<h1>Changelog</h1>
+<h2>Current WIP</h2>
+<ul>
+ <li>Multiple MIDI input ports</li>
+ <li>Added column "Port" in MIDI messages view</li>
+ <li>Added an about dialog</li>
+ <li>Added an application icon on OSX</li>
+</ul>

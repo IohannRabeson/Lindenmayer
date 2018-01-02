@@ -11,7 +11,7 @@ public:
     static QMap<int, QString> const s_header;
     static QMap<QMidiMessage::Type, QString> const s_messageTypes;
 
-    QString getText(int const column, QMidiMessage const& message) const;
+    QVariant getValue(int const column, QMidiMessage const& message) const;
 
     QVector<QMidiMessage> m_messages;
     std::unique_ptr<QAbstractDeviceScheme> m_scheme;
@@ -21,7 +21,8 @@ QMap<int, QString> const QMidiMessageModelPrivate::s_header =
         {
             {QMidiMessageModel::Columns::Type, "Type"},
             {QMidiMessageModel::Columns::Timestamp, "Timestamp"},
-            {QMidiMessageModel::Columns::Data, "Data"}
+            {QMidiMessageModel::Columns::Data, "Data"},
+            {QMidiMessageModel::Columns::Port, "Port"}
         };
 
 QMap<QMidiMessage::Type, QString> const QMidiMessageModelPrivate::s_messageTypes =
@@ -67,10 +68,10 @@ int QMidiMessageModel::columnCount(const QModelIndex &parent) const
     return parent.isValid() ? 0 : Columns::ColumnCount;
 }
 
-QString QMidiMessageModelPrivate::getText(int const column, QMidiMessage const& message) const
+QVariant QMidiMessageModelPrivate::getValue(int const column, QMidiMessage const& message) const
 {
     static auto const metaEnum = QMetaEnum::fromType<QMidiMessage::Type>();
-    QString result;
+    QVariant result;
 
     switch (column)
     {
@@ -79,6 +80,9 @@ QString QMidiMessageModelPrivate::getText(int const column, QMidiMessage const& 
             break;
         case QMidiMessageModel::Columns::Timestamp:
             result = QMidiMessage::timePointToString(message.timestamp());
+            break;
+        case QMidiMessageModel::Columns::Port:
+            result = QVariant::fromValue(message.port());
             break;
         case QMidiMessageModel::Columns::Data:
             switch (message.type())
@@ -127,7 +131,7 @@ QVariant QMidiMessageModel::data(const QModelIndex &index, int role) const
         {
         case Qt::DisplayRole:
         case Qt::EditRole:
-            result = d->getText(index.column(), d->m_messages[index.row()]);
+            result = d->getValue(index.column(), d->m_messages[index.row()]);
             break;
         default:
             break;

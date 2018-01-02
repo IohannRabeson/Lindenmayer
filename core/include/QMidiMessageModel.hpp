@@ -19,8 +19,9 @@ public:
 
     enum Columns
     {
-        Timestamp = 0,
-        Type,
+        Type = 0,
+        Port,
+        Timestamp,
         Data,
         ColumnCount
     };

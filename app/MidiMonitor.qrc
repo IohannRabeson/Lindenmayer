@@ -1,4 +1,9 @@
 <RCC>
-    <qresource prefix="/">
+    <qresource prefix="/Images">
+        <file>Resources/Midi.png</file>
+    </qresource>
+    <qresource prefix="/Texts">
+        <file>Resources/Credits.txt</file>
+        <file>Resources/About.txt</file>
     </qresource>
 </RCC>

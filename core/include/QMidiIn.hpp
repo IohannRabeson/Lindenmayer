@@ -25,6 +25,8 @@ public:
 signals:
     void messageReceived(QMidiMessage const& message);
     void error(QString const& error);
+public slots:
+    void setEnabled(bool const enabled);
 private:
     QScopedPointer<QMidiInPrivate> d_ptr;
 };

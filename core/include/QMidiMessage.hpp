@@ -43,8 +43,8 @@ public:
     Q_ENUM(Type);
 
     QMidiMessage();
-    explicit QMidiMessage(Bytes const& bytes, TimePoint const timestamp = now());
-    explicit QMidiMessage(Bytes&& bytes, TimePoint const timestamp = now());
+    explicit QMidiMessage(Bytes const& bytes, int port = -1, TimePoint const timestamp = now());
+    explicit QMidiMessage(Bytes&& bytes, int port = -1, TimePoint const timestamp = now());
     QMidiMessage(const QMidiMessage &);
     QMidiMessage &operator=(const QMidiMessage &);
     ~QMidiMessage();
@@ -54,6 +54,7 @@ public:
     int byteCount() const;
     Bytes const& bytes() const;
     TimePoint timestamp() const;
+    int port() const;
     QString toString() const;
 
     void getControlChange(unsigned char& control, unsigned char& value) const;

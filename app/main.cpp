@@ -5,7 +5,7 @@
 // - DONE: port selector
 // - DONE: schemes integration
 // - DONE: Scheme selector
-// - ability to listen multiple ports at the same time
+// - DONE: ability to listen multiple ports at the same time
 // - bytes viewer
 // - bytes line viewer
 // - message details viewer
@@ -18,7 +18,7 @@
 
 #include <QApplication>
 
-#include "MainWindow.hpp"
+#include "Ui/MainWindow.hpp"
 
 static void setupApplication()
 {
@@ -31,9 +31,11 @@ static void setupApplication()
 int main(int argc, char** argv)
 {
     QApplication app(argc, argv);
-    MainWindow widget;
 
     setupApplication();
+
+    MainWindow widget;
+
     widget.show();
     return app.exec();
 }

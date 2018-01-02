@@ -30,7 +30,7 @@ QVariant QMidiPortModel::data(QModelIndex const& index, int role) const
                 result = m_ports[index.row()].index;
                 break;
             case Roles::Checked:
-                result = m_ports[index.row()].used ? Qt::Checked : Qt::Unchecked;
+                result = m_ports[index.row()].checked ? Qt::Checked : Qt::Unchecked;
                 break;
             default:
                 break;
@@ -82,25 +82,18 @@ void QMidiPortModel::rescan(QMidiIn* midiIn)
 
 Qt::ItemFlags QMidiPortModel::flags(QModelIndex const& index) const
 {
-    Qt::ItemFlags result = Qt::NoItemFlags;
-
-    result = QAbstractListModel::flags(index);
-    if (!m_ports[index.row()].used)
-    {
-        result |= Qt::ItemIsSelectable;
-        result |= Qt::ItemIsEnabled;
-    }
-    return result;
+    return index.isValid() ? Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsUserCheckable : Qt::NoItemFlags;
 }
 
-void QMidiPortModel::setUsed(int const row, bool used)
+void QMidiPortModel::setChecked(int const row, bool checked)
 {
     auto const currentIndex = index(row, 0);
 
-    if (m_ports[row].used != used)
+    if (m_ports[row].checked != checked)
     {
-        m_ports[row].used = used;
+        m_ports[row].checked = checked;
         emit dataChanged(currentIndex, currentIndex);
+        emit checkedChanged(row, checked);
     }
 }
 
@@ -111,6 +104,40 @@ int QMidiPortModel::defaultPort() const
     if (m_defaultPortIndex == -1 && !m_ports.isEmpty())
     {
         result = 0;
+    }
+    return result;
+}
+
+QString QMidiPortModel::name(int const row) const
+{
+    return m_ports.value(row).name;
+}
+
+bool QMidiPortModel::setData(const QModelIndex& index, const QVariant& value, int role)
+{
+    bool result = false;
+
+    if (index.isValid() && index.column() == 0)
+    {
+        auto const& port = m_ports[index.row()];
+
+        switch (role)
+        {
+            case Qt::CheckStateRole:
+            {
+                auto const checked = value.value<Qt::CheckState>() == Qt::Checked;
+
+                if (checked != port.checked)
+                {
+                    m_ports[index.row()].checked = checked;
+                    result = true;
+                    emit dataChanged(index, index, QVector<int>{Qt::CheckStateRole});
+                    emit checkedChanged(index.row(), checked);
+                }
+            }
+            default:
+                break;
+        }
     }
     return result;
 }
