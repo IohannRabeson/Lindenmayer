@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/Waldorf/Pulse2">
+        <file>Waldorf/Pulse2/TextDatabase.json</file>
+    </qresource>
+</RCC>

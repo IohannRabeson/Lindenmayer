@@ -31,6 +31,11 @@ public:
     virtual QString schemeName() const = 0;
 
     /*!
+     * \brief Get the scheme version
+     */
+    virtual QString schemeVersion() const = 0;
+
+    /*!
      * \brief Compute checksum of \e bytes
      * \param bytes Data used to compute the checksum. Not all bytes are used. Only from byte 6 to end - 2 (-2 because
      * the last byte should be always F7, it is used to mark the end. The byte before store the checksum.
@@ -46,28 +51,33 @@ public:
      */
     bool verifyChecksum(QMidiMessage const& message) const;
 
-
-    QString formatControlChangeData(unsigned char const control, unsigned char const value) const;
-private:
+    /*!
+     * \brief Format text displayed by column "Data"
+     * \param control Control change number
+     * \param value Control change value
+     * \return Text with the control name and the new control value.
+     *
+     * By default the pattern "%0: %1" is used where %0 is the control text returned by translateControlChangeName
+     * and %1 is the text returned translateControlChangeValue.
+     */
+    virtual QString formatControlChangeData(unsigned char const control, unsigned char const value) const;
+protected:
     /*!
      * \brief Return name for a control
      * \param control Control identifier
      */
-    virtual QString formatControlChangeName(unsigned char const control) const = 0;
+    virtual QString translateControlChangeName(unsigned char const control) const = 0;
 
     /*!
      * \brief Return displayable value for a control
      * \param control Control identifier
      * \param value Value to format
      */
-    virtual QString formatControlChangeValue(unsigned char const control, unsigned char const value) const = 0;
+    virtual QString translateControlChangeValue(unsigned char const control, unsigned char const value) const = 0;
 
     /*!
-     * \brief Return the format to display control change value
-     * \return A string with placeholders %0 for control name and %1 for value.
+     * \brief Return the checksum function.
      */
-    virtual QString formatControlChangeDataText() const = 0;
-
     virtual ChecksumFunction checksumFunction() const = 0;
 };
 

@@ -2,6 +2,7 @@ Pulse 2 sysex implementation
 Extracted form Pulse2 software 1.14
 21/03/2014 Waldorf Music GmbH
 Copyright 1995 - 2013
+Annotated by irabeson - 01/01/2018
 
 If you find any documentation bug herein, please e-mail us @ bugs@waldorfmusic.de
 
@@ -359,7 +360,7 @@ Value 		 Name 			 Description
   8 : 		 PARA-8   		 Paraphonic 8 voices
   9 : 		 PARA-4   		 Paraphonic 4 voices
 
-Osc 2 Waves :
+Osc 2 Waves : (CC38)
 Value 		 Name 			 Description
 ----------------------------------------------------
   0 : 		 PWM      		 Pulse Width waveform
@@ -368,7 +369,7 @@ Value 		 Name 			 Description
   3 : 		 X3-PWM   		 PWM synchronised on osc 3
   4 : 		 X1-PWM   		 PWM synchronised on osc 1
 
-Osc 3 Waves :
+Osc 3 Waves : (CC44)
 Value 		 Name 			 Description
 ----------------------------------------------------
   0 : 		 SQR      		 Square waveform
@@ -377,7 +378,7 @@ Value 		 Name 			 Description
   3 : 		 EXT      		 External input
   4 : 		 FB       		 Feedback signal
 
-Osc 3 Sources :
+Osc 3 Sources : (CC72?? routing?)
 Value 		 Name 			 Description
 ----------------------------------------------------
   0 : 		 MIX      		 Oscillator mixer
@@ -385,7 +386,7 @@ Value 		 Name 			 Description
   2 : 		 VCF      		 Filter cutoff
   3 : 		 DRIVE    		 Drive level
 
-LFO periods :
+LFO periods : (CC24 and CC26, LFO speed, only if LFO shape is synced)
 Value 		 Name 			 Description
 ----------------------------------------------------
   0 : 		 32       		 32 bars
@@ -399,7 +400,7 @@ Value 		 Name 			 Description
   8 : 		 3        		 3 bars
   9 : 		 2        		 2 bars
 
-LFO Waves :
+LFO Waves : (CC25 and CC27)
 Value 		 Name 			 Description
 ----------------------------------------------------
   0 : 		 SINE     		 Sine wave
@@ -407,8 +408,9 @@ Value 		 Name 			 Description
   2 : 		 SAW      		 Sawtooth wave
   3 : 		 SQR      		 Square wave
   4 : 		 S&H      		 Sample & hold wave
+  5 - 9: same shape but synced
 
-Glide modes :
+Glide modes : CC62
 Value 		 Name 			 Description
 ----------------------------------------------------
   0 : 		 OFF      		 Glide disabled
@@ -417,14 +419,14 @@ Value 		 Name 			 Description
   3 : 		 FNON     		 Fingered on press
   4 : 		 FOFF     		 Fingered on release
 
-Looping modes :
+Looping modes : CC74 and CC75)
 Value 		 Name 			 Description
 ----------------------------------------------------
   0 : 		 OFF      		 No looping
   1 : 		 A-D      		 Attack - decay looping
   2 : 		 D-D      		 Decay looping
 
-Trigger modes :
+Trigger modes : (CC29 and CC31)
 Value 		 Name 			 Description
 ----------------------------------------------------
   0 : 		 SNG1     		 Single trigger
@@ -433,14 +435,14 @@ Value 		 Name 			 Description
   3 : 		 RET2     		 Trigger every time without reset
   4 : 		 RET3     		 Trigger on press
 
-Arp state :
+Arp state (CC79 Arp active):
 Value 		 Name 			 Description
 ----------------------------------------------------
   0 : 		 OFF      		 Arpegiator disabled
   1 : 		 ON       		 Arpegiator on
   2 : 		 HOLD     		 Arpegiator hold mode
 
-Arp modes :
+Arp modes (CC83 Arp mode):
 Value 		 Name 			 Description
 ----------------------------------------------------
   0 : 		 UP       		 Up time ordered
@@ -451,7 +453,7 @@ Value 		 Name 			 Description
   5 : 		 #DWN     		 Down pitch ordered
   6 : 		 #ALT     		 Up / down pitch ordered
 
-Filter types :
+Filter types (CC49 Vcf type):
 Value 		 Name 			 Description
 ----------------------------------------------------
   0 : 		 LP24     		 Low pass 24dB/octave filter
@@ -459,7 +461,7 @@ Value 		 Name 			 Description
   2 : 		 BP12     		 Band pass 12dB/octave filter
   3 : 		 HP12     		 High pass 12dB/octave filter
 
-Drive types :
+Drive types (CC76 Vca drive):
 Value 		 Name 			 Description
 ----------------------------------------------------
   0 : 		 NONE     		 Clean sound
@@ -467,7 +469,7 @@ Value 		 Name 			 Description
   2 : 		 FUZZ     		 Fuzz alike distortion
   3 : 		 FX       		 Effects board output
 
-Modulation sources :
+Modulation sources : (CC108, 111, 114, 117, 90, 93, 96, 99)
 Value 		 Name 			 Description
 ----------------------------------------------------
   0 : 		 OFF      		 No source assigned
@@ -496,7 +498,7 @@ Value 		 Name 			 Description
  23 : 		 K-HIGHEST 		 Highest note pressed
  24 : 		 K-LOWEST 		 Lowest note pressed
 
-Modulation destinations :
+Modulation destinations (TARGET) (CC110, 113, 116, 119, 92, 95, 98, 101):
 Value 		 Name 			 Description
 ----------------------------------------------------
   0 : 		 PITCH    		 Global oscillator pitch

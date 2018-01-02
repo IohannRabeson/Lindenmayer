@@ -14,12 +14,14 @@ MidiMessageListView::MidiMessageListView(QMidiMessageModel* model, QWidget* pare
 {
     static constexpr int const ItemHeight = 18;
 
+    setGridStyle(Qt::NoPen);
     setModel(model);
     horizontalHeader()->setStretchLastSection(true);
     verticalHeader()->setVisible(false);
     verticalHeader()->setSectionResizeMode(QHeaderView::ResizeMode::Fixed);
     verticalHeader()->setMaximumSectionSize(ItemHeight);
     verticalHeader()->setDefaultSectionSize(ItemHeight);
+    setSelectionBehavior(QTableView::SelectionBehavior::SelectRows);
 
     connect(model, &QMidiMessageModel::rowsInserted, [this]()
     {

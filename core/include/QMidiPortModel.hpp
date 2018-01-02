@@ -19,7 +19,8 @@ public:
     enum Roles
     {
         Name = Qt::DisplayRole,
-        Index = Qt::UserRole
+        Index = Qt::UserRole,
+        Checked = Qt::CheckStateRole
     };
 
     explicit QMidiPortModel(QObject* parent);
@@ -27,6 +28,7 @@ public:
     void rescan(QMidiIn* midiIn);
     void setUsed(int const row, bool used);
     int rowCount(QModelIndex const& parent) const override;
+    int defaultPort() const;
     QVariant data(const QModelIndex& index, int role) const override;
     Qt::ItemFlags flags(QModelIndex const& index) const override;
 private:
@@ -41,10 +43,11 @@ private:
     using Loader = std::function<Ports()>;
 
     void reset(Loader&& loader);
-    void append(QString const& name, int const index);
+    void append(QString const& name, int const index, bool defaultPort = false);
     void clear();
 private:
     Ports m_ports;
+    int m_defaultPortIndex = -1;
 };
 
 #endif //MIDIMONITOR_QMIDIPORTMODEL_HPP

@@ -50,7 +50,7 @@ public:
 
         try
         {
-            qDebug() << "Open MIDI port" << portIndex;
+            qDebug() << "[QMidiIn] Open MIDI port" << portIndex;
             m_midiIn->openPort(portIndex);
             m_portOpened = portIndex;
         }
@@ -68,7 +68,7 @@ public:
 
         if (m_portOpened != -1)
         {
-            qDebug() << "Close MIDI port" << m_portOpened;
+            qDebug() << "[QMidiIn] Close MIDI port" << m_portOpened;
             m_midiIn->closePort();
             m_portOpened = -1;
         }

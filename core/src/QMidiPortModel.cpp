@@ -29,6 +29,9 @@ QVariant QMidiPortModel::data(QModelIndex const& index, int role) const
             case Roles::Index:
                 result = m_ports[index.row()].index;
                 break;
+            case Roles::Checked:
+                result = m_ports[index.row()].used ? Qt::Checked : Qt::Unchecked;
+                break;
             default:
                 break;
         }
@@ -36,13 +39,17 @@ QVariant QMidiPortModel::data(QModelIndex const& index, int role) const
     return result;
 }
 
-void QMidiPortModel::append(QString const& name, int const index)
+void QMidiPortModel::append(QString const& name, int const index, bool const defaultPort)
 {
     auto const newRow = m_ports.size();
 
     beginInsertRows(QModelIndex(), newRow, newRow);
     m_ports.append(MidiPort{name, index});
     endInsertRows();
+    if (defaultPort)
+    {
+        m_defaultPortIndex = newRow;
+    }
 }
 
 void QMidiPortModel::clear()
@@ -95,4 +102,15 @@ void QMidiPortModel::setUsed(int const row, bool used)
         m_ports[row].used = used;
         emit dataChanged(currentIndex, currentIndex);
     }
+}
+
+int QMidiPortModel::defaultPort() const
+{
+    int result = m_defaultPortIndex;
+
+    if (m_defaultPortIndex == -1 && !m_ports.isEmpty())
+    {
+        result = 0;
+    }
+    return result;
 }

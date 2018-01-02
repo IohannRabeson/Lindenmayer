@@ -28,7 +28,7 @@ QAbstractDeviceScheme* QDeviceSchemeFactory::create(int const key) const
     {
         result = m_schemes[key].creator();
 
-        qDebug() << "Create scheme" << key << result->schemeName() << result->schemeManufacturer();
+        qDebug() << "[QDeviceSchemeFactory] Create scheme" << key << result->schemeName() << result->schemeManufacturer();
     }
     return result;
 }
@@ -63,4 +63,9 @@ QAbstractDeviceScheme* QDeviceSchemeFactory::createDefault() const
 QAbstractDeviceScheme* QDeviceSchemeFactory::create(QModelIndex const& key) const
 {
     return key.isValid() ? create(key.row()) : nullptr;
+}
+
+QModelIndex QDeviceSchemeFactory::defaultScheme() const
+{
+    return index(m_defaultKey);
 }

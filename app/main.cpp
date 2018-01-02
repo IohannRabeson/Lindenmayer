@@ -4,6 +4,7 @@
 // TODO:
 // - DONE: port selector
 // - DONE: schemes integration
+// - DONE: Scheme selector
 // - ability to listen multiple ports at the same time
 // - bytes viewer
 // - bytes line viewer
@@ -12,8 +13,8 @@
 //   - message filters list view
 //   - filter function
 //   - model to store filters states
-// - Scheme selector
-//
+// - A data transit LED
+// - Scheme name should be displayed in a status bar
 
 #include <QApplication>
 

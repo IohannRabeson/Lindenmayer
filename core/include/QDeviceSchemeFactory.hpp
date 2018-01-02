@@ -40,6 +40,8 @@ public:
     QAbstractDeviceScheme* create(int const key) const;
     QAbstractDeviceScheme* create(QModelIndex const& key) const;
 
+    QModelIndex defaultScheme() const;
+
     int rowCount(QModelIndex const& parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 private:

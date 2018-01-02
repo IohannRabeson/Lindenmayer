@@ -3,6 +3,7 @@
 //
 
 #include "QAbstractDeviceScheme.hpp"
+#include <QObject>
 
 /*!
  * \brief
@@ -27,9 +28,9 @@ unsigned char QAbstractDeviceScheme::computeChecksum(QMidiMessage const& message
 
 QString QAbstractDeviceScheme::formatControlChangeData(unsigned char const control, unsigned char const value) const
 {
-    QString const formatedControlName = formatControlChangeName(control);
-    QString const formatedValue = formatControlChangeValue(control, value);
-    QString const format = formatControlChangeDataText();
+    QString const formatedControlName = translateControlChangeName(control);
+    QString const formatedValue = translateControlChangeValue(control, value);
+    QString const format = QObject::tr("%0: %1");
 
     return format.arg(formatedControlName).arg(formatedValue);
 }

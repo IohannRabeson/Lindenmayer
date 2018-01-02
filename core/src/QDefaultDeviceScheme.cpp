@@ -3,6 +3,8 @@
 //
 
 #include "QDefaultDeviceScheme.hpp"
+#include "QMidiChecksums.hpp"
+
 #include <QObject>
 
 QString QDefaultDeviceScheme::schemeManufacturer() const
@@ -15,25 +17,22 @@ QString QDefaultDeviceScheme::schemeName() const
     return QObject::tr("Default");
 }
 
-QString QDefaultDeviceScheme::formatControlChangeName(unsigned char const control) const
+QString QDefaultDeviceScheme::translateControlChangeName(unsigned char const control) const
 {
-    return QString::number(control);
+    return QString("[CC%0]").arg(control);
 }
 
-QString QDefaultDeviceScheme::formatControlChangeValue(unsigned char const, unsigned char const value) const
+QString QDefaultDeviceScheme::translateControlChangeValue(unsigned char const, unsigned char const value) const
 {
     return QString::number(value);
 }
 
 QAbstractDeviceScheme::ChecksumFunction QDefaultDeviceScheme::checksumFunction() const
 {
-    return [](QMidiMessage::Bytes const& bytes, std::size_t const start, std::size_t const size) -> unsigned char
-    {
-        return std::accumulate(bytes.begin() + start, bytes.begin() + size + start, 0u);
-    };
+    return &QMidiChecksums::standardChecksum;
 }
 
-QString QDefaultDeviceScheme::formatControlChangeDataText() const
+QString QDefaultDeviceScheme::schemeVersion() const
 {
-    return QObject::tr("[CC] %0: %1");
+    return "0.0.0";
 }
