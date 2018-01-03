@@ -21,16 +21,17 @@ QMap<int, QString> const QMidiMessageModelPrivate::s_header =
         {
             {QMidiMessageModel::Columns::Type, "Type"},
             {QMidiMessageModel::Columns::Timestamp, "Timestamp"},
+            {QMidiMessageModel::Columns::Channel, "Channel"},
             {QMidiMessageModel::Columns::Data, "Data"},
-            {QMidiMessageModel::Columns::Port, "Port"}
+            {QMidiMessageModel::Columns::Input, "Input"}
         };
 
 QMap<QMidiMessage::Type, QString> const QMidiMessageModelPrivate::s_messageTypes =
         {
                 {QMidiMessage::Type::NoteOn, "Note On"},
                 {QMidiMessage::Type::NoteOff, "Note Off"},
-                {QMidiMessage::Type::ControlChange, "Control change"},
-                {QMidiMessage::Type::ProgramChange, "Program change"},
+                {QMidiMessage::Type::ControlChange, "CC"},
+                {QMidiMessage::Type::ProgramChange, "PC"},
                 {QMidiMessage::Type::SystemExclusive, "Sysex"},
                 {QMidiMessage::Type::Undefined, "Undefined"},
         };
@@ -81,8 +82,14 @@ QVariant QMidiMessageModelPrivate::getValue(int const column, QMidiMessage const
         case QMidiMessageModel::Columns::Timestamp:
             result = QMidiMessage::timePointToString(message.timestamp());
             break;
-        case QMidiMessageModel::Columns::Port:
+        case QMidiMessageModel::Columns::Input:
             result = QVariant::fromValue(message.port());
+            break;
+        case QMidiMessageModel::Columns::Channel:
+            if (message.haveChannel())
+            {
+                result = QString::number(message.getChannel());
+            }
             break;
         case QMidiMessageModel::Columns::Data:
             switch (message.type())

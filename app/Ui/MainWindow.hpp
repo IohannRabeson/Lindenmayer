@@ -9,7 +9,7 @@
 
 class QDeviceSchemeFactory;
 class QMidiMessageModel;
-class QMidiPortModel;
+class QMidiDeviceModel;
 class QMidiMessage;
 class QMidiIn;
 class QAbstractDeviceScheme;
@@ -45,7 +45,7 @@ private:
 private:
     QVector<QMidiIn*> m_midiIns;
     QDeviceSchemeFactory* const m_deviceSchemeFactory;
-    QMidiPortModel* const m_inputPortModel;
+    QMidiDeviceModel* const m_inputPortModel;
     QMidiMessageModel* const m_messageModel;
     QItemSelectionModel* const m_messageSelection;
     MidiMessageListView* const m_messageView;

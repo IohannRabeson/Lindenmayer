@@ -13,8 +13,10 @@ public:
     QString schemeManufacturer() const override;
     QString schemeName() const override;
     QString schemeVersion() const override;
+
     QString translateControlChangeName(unsigned char const control) const override;
     QString translateControlChangeValue(unsigned char const control, unsigned char const value) const override;
+
     ChecksumFunction checksumFunction() const override;
 };
 

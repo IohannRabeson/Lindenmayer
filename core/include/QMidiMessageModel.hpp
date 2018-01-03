@@ -20,8 +20,9 @@ public:
     enum Columns
     {
         Type = 0,
-        Port,
+        Input,
         Timestamp,
+        Channel,
         Data,
         ColumnCount
     };

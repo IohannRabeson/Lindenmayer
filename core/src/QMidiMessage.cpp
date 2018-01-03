@@ -81,6 +81,7 @@ public:
     TimePoint m_timestamp;
     Type m_type;
     int m_port;
+    unsigned char m_channel;
 };
 
 QMidiMessage::QMidiMessage()
@@ -207,6 +208,13 @@ void QMidiMessage::getSysex(unsigned char& manufacturer,
     sysexData.assign(bytes.begin() + 6, bytes.end() - 2);
 }
 
+unsigned char QMidiMessage::getChannel() const
+{
+    assert (haveChannel());
+
+    return (data->m_bytes[0] & 0xF) + 1u;
+}
+
 unsigned char QMidiMessage::getChecksum() const
 {
     return data->getChecksum();
@@ -215,4 +223,9 @@ unsigned char QMidiMessage::getChecksum() const
 int QMidiMessage::port() const
 {
     return data->m_port;
+}
+
+bool QMidiMessage::haveChannel() const
+{
+    return data->m_bytes.size() > 0 && data->m_bytes[0] >= 0x80 && data->m_bytes[0] <= 0xEF;
 }

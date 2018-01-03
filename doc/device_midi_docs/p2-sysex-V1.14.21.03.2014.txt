@@ -37,7 +37,7 @@ Index   Label   Value             Description
 0       EXC     F0h               Marks start of SysEx
 1       IDW     3Eh               Waldorf Music ID
 2       IDE     16h               Pulse 2 ID
-3       DEV                       Device ID
+3       DEV                       Input ID
 4		CNT		00h				  Sound dump request
 5       BNK						  Sound bank   | 40h (all sounds) | 7Fh (edit / play buffer)
 6       SND						  Sound number | 00h (all sounds or edit buffer)
@@ -53,7 +53,7 @@ Index   Label   Value             Description
 0       EXC     F0h               Marks start of SysEx
 1       IDW     3Eh               Waldorf Music ID
 2       IDE     16h               Pulse 2 ID
-3       DEV                       Device ID
+3       DEV                       Input ID
 4		CNT		10h				  Sound dump
 5       BNK						  Sound bank   | 7Fh (edit / play buffer)
 6       SND						  Sound number | 00h (edit buffer)
@@ -73,7 +73,7 @@ Index   Label   Value             Description
 0       EXC     F0h               Marks start of SysEx
 1       IDW     3Eh               Waldorf Music ID
 2       IDE     16h               Pulse 2 ID
-3       DEV                       Device ID
+3       DEV                       Input ID
 4		CNT		04h				  Global dump request
 7       EOX     F7h               End of Exclusive
 ---------------------------------------------------------------------------
@@ -87,7 +87,7 @@ Index   Label   Value             Description
 0       EXC     F0h               Marks start of SysEx
 1       IDW     3Eh               Waldorf Music ID
 2       IDE     16h               Pulse 2 ID
-3       DEV                       Device ID
+3       DEV                       Input ID
 4		CNT		14h				  Globals dump
 5-n		DAT[]					  Globals data (see global parameter table)
 n+1		XS						  Sysex checksum (7 bit bytesum from IDW to the end of DAT[])
@@ -105,7 +105,7 @@ Index   Label   Value             Description
 0       EXC     F0h               Marks Start of SysEx
 1       IDW     3Eh               Waldorf Music ID
 2       IDE     16h               Pulse 2 ID
-3       DEV                       Device ID
+3       DEV                       Input ID
 4       IDM     20h               Sound parameter change
 5       PRM     see table         Parameter index
 6       VAL     see table         Parameter value
@@ -260,7 +260,7 @@ Index   Label   Value             Description
 0       EXC     F0h               Marks Start of SysEx
 1       IDW     3Eh               Waldorf Music ID
 2       IDE     16h               Pulse 2 ID
-3       DEV                       Device ID
+3       DEV                       Input ID
 4       IDM     24h               Global parameter change
 5       PRM     see table         Parameter index
 6       VAL     see table         Parameter value
@@ -306,7 +306,7 @@ Index   Label   Value            Description
 --------------------------------------------------------------------------
 0       EXC     F0h              Marks Start of SysEx
 1       IDU     7Eh              Universal / non realtime sysex
-2       IDE     dev              Device ID (00h - 7Eh | 7Fh disregard ID)
+2       IDE     dev              Input ID (00h - 7Eh | 7Fh disregard ID)
 3       SI1     06h              General information
 4       SI2     01h              Identity request
 5       EOX     F7h              End of Exclusive
@@ -320,7 +320,7 @@ Index   Label   Value            Description
 --------------------------------------------------------------------------
 0       EXC     F0h              Marks Start of SysEx
 1       IDU     7Eh              Universal / non realtime sysex
-2       IDE     dev              Device ID (00h - 7Eh | 7Fh disregard ID)
+2       IDE     dev              Input ID (00h - 7Eh | 7Fh disregard ID)
 3       SI1     06h              General information
 4       SI2     02h              Identity reply
 5       IDW     3Eh              Waldorf Music ID

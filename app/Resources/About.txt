@@ -5,4 +5,6 @@
  <li>Added column "Port" in MIDI messages view</li>
  <li>Added an about dialog</li>
  <li>Added an application icon on OSX</li>
+ <li>New column for MIDI channel</li>
+ <li>Changed "Control Change" to "CC" and "Program Change" to PC for readability</li>
 </ul>

@@ -22,7 +22,7 @@
 
 #include <QDeviceSchemeFactory.hpp>
 #include <QMidiIn.hpp>
-#include <QMidiPortModel.hpp>
+#include <QMidiDeviceModel.hpp>
 #include <QMidiMessageModel.hpp>
 
 #include <QStyledItemDelegate>
@@ -32,7 +32,7 @@ namespace
     class MidiPortDelegate : public QStyledItemDelegate
     {
     public:
-        explicit MidiPortDelegate(QMidiPortModel const* const portModel, QObject* parent = nullptr)
+        explicit MidiPortDelegate(QMidiDeviceModel const* const portModel, QObject* parent = nullptr)
         : QStyledItemDelegate(parent)
         , m_portModel(portModel)
         {
@@ -51,7 +51,7 @@ namespace
             return result;
         }
     private:
-        QMidiPortModel const* const m_portModel;
+        QMidiDeviceModel const* const m_portModel;
     };
 
     class ComboBox : public QComboBox
@@ -94,7 +94,7 @@ namespace
 MainWindow::MainWindow(QWidget* parent)
 : QMainWindow(parent)
 , m_deviceSchemeFactory(new QDeviceSchemeFactory(this))
-, m_inputPortModel(new QMidiPortModel(this))
+, m_inputPortModel(new QMidiDeviceModel(this))
 , m_messageModel(new QMidiMessageModel(this))
 , m_messageSelection(new QItemSelectionModel(m_messageModel, this))
 , m_messageView(new MidiMessageListView(m_messageModel, this))
@@ -134,7 +134,7 @@ void MainWindow::setupSystem()
     // Setup midi ports
     m_inputPortModel->rescan(defaultMidiIn);
 
-    connect(m_inputPortModel, &QMidiPortModel::checkedChanged, this, &MainWindow::onPortEnabled);
+    connect(m_inputPortModel, &QMidiDeviceModel::checkedChanged, this, &MainWindow::onPortEnabled);
 
     m_midiIns.append(defaultMidiIn);
     for (int i = 0; i < m_inputPortModel->rowCount() - 1; ++i)
@@ -177,7 +177,7 @@ void MainWindow::setupUi()
     // Setup message view
     m_messageView->setModel(m_messageModel);
     m_messageView->setSelectionModel(m_messageSelection);
-    m_messageView->setItemDelegateForColumn(QMidiMessageModel::Columns::Port, new MidiPortDelegate(m_inputPortModel, this));
+    m_messageView->setItemDelegateForColumn(QMidiMessageModel::Columns::Input, new MidiPortDelegate(m_inputPortModel, this));
     setCentralWidget(m_messageView);
 
     // Setup MIDI input port view

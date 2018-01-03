@@ -15,7 +15,7 @@ where
 h         : Hex
 IDW       : Waldorf Music MIDI ID = 3Eh
 IDE       : Equipment ID = 13h for Blofeld
-DEV       : Device number, 00h to 7Eh, 7Fh = broadcast
+DEV       : Input number, 00h to 7Eh, 7Fh = broadcast
 IDM       : Message ID
 BB        : Location High Byte, can be Program Bank,
             Parameter Bank, Edit Buffer etc.
@@ -117,7 +117,7 @@ Index   Label   Value           Description
 0       EXC     F0h             Marks Start of SysEx
 1       IDW     3Eh             Waldorf Music ID
 2       IDE     13h             Blofeld ID
-3       DEV                     Device ID               
+3       DEV                     Input ID
 4       IDM     00h             here SNDR (Sound request)
 5       BB      see above       Location
 6       NN      see above       Location
@@ -160,7 +160,7 @@ Index   Label   Value           Description
 0       EXC     F0h             Marks Start of SysEx
 1       IDW     3Eh             Waldorf Music ID
 2       IDE     13h             Blofeld ID
-3       DEV                     Device ID               
+3       DEV                     Input ID
 4       IDM     10h             here SNDD (Sound Dump)
 5       BB      see above       Location
 6       NN      see above       Location
@@ -215,7 +215,7 @@ Index   Label   Value           Description
 0       EXC     F0h             Marks Start of SysEx
 1       IDW     3Eh             Waldorf Music ID
 2       IDE     13h             Blofeld ID
-3       DEV                     Device ID               
+3       DEV                     Input ID
 4       IDM     20h             here SNDP (Sound Parameter change)
 5       LL      see above       Location
 6       HH      see above       Parameter index high byte
@@ -243,7 +243,7 @@ Index   Label   Value           Description
 0       EXC     F0h             Marks Start of SysEx
 1       IDW     3Eh             Waldorf Music ID
 2       IDE     13h             Blofeld ID
-3       DEV                     Device ID               
+3       DEV                     Input ID
 4       IDM     04h             here GLBR (Global Parameter request)
 8       EOX     F7h             End of SysEx
 -----------------------------------------------------------
@@ -266,7 +266,7 @@ Index   Label   Value           Description
 0       EXC     F0h             Marks Start of SysEx
 1       IDW     3Eh             Waldorf Music ID
 2       IDE     13h             Blofeld ID
-3       DEV                     Device ID               
+3       DEV                     Input ID
 4       IDM     14h             here GLBD (Global Parameter Dump)
 5-59    GDATA   see 3.6         Global Parameter Data
 37      CHK     GDATA&7Fh       Checksum
@@ -711,7 +711,7 @@ Index   Range   Value                   Parameter
 34      reserved
 35      0..1    off,on                  Auto Edit
 36      0..16   omni..16                MIDI Channel
-37      0..126  0 (00h)..126 (7Eh)      Device ID
+37      0..126  0 (00h)..126 (7Eh)      Input ID
 38      1..127  0.1s..15.5s             Popup Time
 39      0..127  0..127                  Contrast
 40      54..74  430..450                Master Tune
@@ -1453,24 +1453,24 @@ Index     Range   Value                   Parameter
 *****************************************************************************
 
 
-6. Device Inquiry
+6. Input Inquiry
 *****************************************************************************
 
-The Blofeld responds to the Universal Device Inquiry message
+The Blofeld responds to the Universal Input Inquiry message
 F0, 7E, <channel>, 06, 01, F7 if <channel> is set to 7F or if
-<channel> matches the specific Device ID. The Blofeld will
+<channel> matches the specific Input ID. The Blofeld will
 respond with the following:
 
         F0,7E,                          Universal Sysex Header
-		<channel>,                      Device ID
-		06,02                           Device Inquiry Dump
+		<channel>,                      Input ID
+		06,02                           Input Inquiry Dump
         3E,                             Waldorf Music Manufacturer ID
-        13,00,                          Device family code : Blofeld
-        XX,YY,                          Device family member code, see below
+        13,00,                          Input family code : Blofeld
+        XX,YY,                          Input family member code, see below
         VV,VV,VV,VV,                    Software revision, ASCII, e.g. "1.04"
         F7                              EOX
 
-Device family member codes (XX,YY):
+Input family member codes (XX,YY):
 
         00,00                           Blofeld Desktop
 

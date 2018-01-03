@@ -13,7 +13,7 @@ class QMidiIn;
  *
  * // TODO: void rescan(QMidiOut* midiOut);
  */
-class QMidiPortModel : public QAbstractListModel
+class QMidiDeviceModel : public QAbstractListModel
 {
     Q_OBJECT
 public:
@@ -24,7 +24,7 @@ public:
         Checked = Qt::CheckStateRole
     };
 
-    explicit QMidiPortModel(QObject* parent);
+    explicit QMidiDeviceModel(QObject* parent);
 
     void rescan(QMidiIn* midiIn);
     void setChecked(int const row, bool checked);

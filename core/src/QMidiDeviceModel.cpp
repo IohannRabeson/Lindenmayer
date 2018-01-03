@@ -2,20 +2,20 @@
 // Created by Io on 31/12/2017.
 //
 
-#include "QMidiPortModel.hpp"
+#include "QMidiDeviceModel.hpp"
 #include "QMidiIn.hpp"
 
-QMidiPortModel::QMidiPortModel(QObject* parent)
+QMidiDeviceModel::QMidiDeviceModel(QObject* parent)
 : QAbstractListModel(parent)
 {
 }
 
-int QMidiPortModel::rowCount(QModelIndex const& parent) const
+int QMidiDeviceModel::rowCount(QModelIndex const& parent) const
 {
     return parent.isValid() ? 0 : m_ports.size();
 }
 
-QVariant QMidiPortModel::data(QModelIndex const& index, int role) const
+QVariant QMidiDeviceModel::data(QModelIndex const& index, int role) const
 {
     QVariant result;
 
@@ -39,7 +39,7 @@ QVariant QMidiPortModel::data(QModelIndex const& index, int role) const
     return result;
 }
 
-void QMidiPortModel::append(QString const& name, int const index, bool const defaultPort)
+void QMidiDeviceModel::append(QString const& name, int const index, bool const defaultPort)
 {
     auto const newRow = m_ports.size();
 
@@ -52,40 +52,40 @@ void QMidiPortModel::append(QString const& name, int const index, bool const def
     }
 }
 
-void QMidiPortModel::clear()
+void QMidiDeviceModel::clear()
 {
     beginResetModel();
     m_ports.clear();
     endResetModel();
 }
 
-void QMidiPortModel::reset(Loader&& loader)
+void QMidiDeviceModel::reset(Loader&& loader)
 {
     beginResetModel();
     m_ports = loader();
     endResetModel();
 }
 
-void QMidiPortModel::rescan(QMidiIn* midiIn)
+void QMidiDeviceModel::rescan(QMidiIn* midiIn)
 {
     reset([midiIn]() -> Ports
-          {
-              Ports ports;
+    {
+        Ports ports;
 
-              for (auto i = 0; i < midiIn->portCount(); ++i)
-              {
-                  ports.append(MidiPort{midiIn->portName(i), i});
-              }
-              return ports;
-          });
+        for (auto i = 0; i < midiIn->portCount(); ++i)
+        {
+            ports.append(MidiPort{midiIn->portName(i), i});
+        }
+        return ports;
+    });
 }
 
-Qt::ItemFlags QMidiPortModel::flags(QModelIndex const& index) const
+Qt::ItemFlags QMidiDeviceModel::flags(QModelIndex const& index) const
 {
     return index.isValid() ? Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsUserCheckable : Qt::NoItemFlags;
 }
 
-void QMidiPortModel::setChecked(int const row, bool checked)
+void QMidiDeviceModel::setChecked(int const row, bool checked)
 {
     auto const currentIndex = index(row, 0);
 
@@ -97,7 +97,7 @@ void QMidiPortModel::setChecked(int const row, bool checked)
     }
 }
 
-int QMidiPortModel::defaultPort() const
+int QMidiDeviceModel::defaultPort() const
 {
     int result = m_defaultPortIndex;
 
@@ -108,12 +108,12 @@ int QMidiPortModel::defaultPort() const
     return result;
 }
 
-QString QMidiPortModel::name(int const row) const
+QString QMidiDeviceModel::name(int const row) const
 {
     return m_ports.value(row).name;
 }
 
-bool QMidiPortModel::setData(const QModelIndex& index, const QVariant& value, int role)
+bool QMidiDeviceModel::setData(const QModelIndex& index, const QVariant& value, int role)
 {
     bool result = false;
 

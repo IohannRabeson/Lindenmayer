@@ -88,7 +88,7 @@
 +---------+------------------------------------------------+
 |   F0    | Exclusive Status                               |
 |   7E    | Non Realtime Message                           |
-|   0g    | MIDI Global Channel  ( Device ID )             |
+|   0g    | MIDI Global Channel  ( Input ID )             |
 |   06    | General Information                            |
 |   02    | Identity Reply                                 |
 |   42    | KORG ID              ( Manufacturers ID )      |
@@ -132,9 +132,9 @@
 +---------+------------------------------------------------+
 |   F0    | Exclusive Status                               |
 |   42    | KORG ID              ( Manufacturers ID )      |
-|   50    | Search Device                                  |
+|   50    | Search Input                                  |
 |   01    | Reply                                          |
-|   fg    | gggg:MIDI Global Channel  ( Device ID )        |
+|   fg    | gggg:MIDI Global Channel  ( Input ID )        |
 |(00fgggg)| f   :MIDI FILTER "SystemEx" parameter DIS      |
 |   dd    | Echo Back ID                                   |
 |   2c    | minilogue ID         ( Family ID   (LSB))      |
@@ -251,7 +251,7 @@
 +---------+------------------------------------------------+
 |   F0    | Exclusive Status                               |
 |   7E    | Non Realtime Message                           |
-|   nn    | MIDI Channel (Device ID)                       |
+|   nn    | MIDI Channel (Input ID)                       |
 |   06    | General Information                            |
 |   01    | Identity Request                               |
 |   F7    | END OF EXCLUSIVE                               |
@@ -283,7 +283,7 @@
 +---------+------------------------------------------------+
 |   F0    | Exclusive Status                               |
 |   42    | KORG ID              ( Manufacturers ID )      |
-|   50    | Search Device                                  |
+|   50    | Search Input                                  |
 |   00    | Request                                        |
 |   dd    | Echo Back ID                                   |
 |   F7    | END OF EXCLUSIVE                               |

@@ -62,7 +62,10 @@ public:
     void getSysex(unsigned char& manufacturer, unsigned char& unitNumber,
                   unsigned char& model, unsigned char& request,
                   std::array<unsigned char, 3u>& addresses, Bytes& sysexData) const;
+    unsigned char getChannel() const;
     unsigned char getChecksum() const;
+
+    bool haveChannel() const;
 private:
     QSharedDataPointer<QMidiMessageData> data;
 };
