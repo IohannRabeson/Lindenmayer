@@ -22,7 +22,11 @@ set(UI_SOURCES
     Ui/AboutMidiMonitorDialog.hpp
     Ui/AboutMidiMonitorDialog.cpp
     Ui/AboutMidiMonitorDialog.ui
-)
+    Ui/Delegates/MidiDelegates.cpp
+    Ui/Delegates/MidiDelegates.hpp
+    Ui/Format.hpp
+    Ui/Format.cpp
+        )
 
 set(PLUGINS_SOURCES
     Plugins/Plugins.qrc

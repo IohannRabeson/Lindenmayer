@@ -12,6 +12,13 @@ class QMidiMessageData : public QSharedData
     using Bytes = QMidiMessage::Bytes;
     using Type = QMidiMessage::Type;
 
+    static QDateTime fromStdTimePoint(QMidiMessage::TimePoint const timePoint)
+    {
+        std::time_t const time = QMidiMessage::Clock::to_time_t(timePoint);
+
+        return QDateTime::fromTime_t(time);
+    }
+
     /*!
      * \brief Return the detected type
      * \param bytes Datas used to infers the message type
@@ -56,7 +63,7 @@ public:
 
     QMidiMessageData(Bytes const& bytes, int const port, TimePoint const timestamp)
         : m_bytes(bytes)
-        , m_timestamp(timestamp)
+        , m_timestamp(fromStdTimePoint(timestamp))
         , m_type(detectMessageType(bytes))
         , m_port(port)
     {
@@ -64,7 +71,7 @@ public:
 
     QMidiMessageData(Bytes&& bytes, int const port, TimePoint const timestamp)
         : m_bytes(std::move(bytes))
-        , m_timestamp(timestamp)
+        , m_timestamp(fromStdTimePoint(timestamp))
         , m_type(detectMessageType(bytes))
         , m_port(port)
     {
@@ -78,7 +85,7 @@ public:
     }
 
     Bytes m_bytes;
-    TimePoint m_timestamp;
+    QDateTime m_timestamp;
     Type m_type;
     int m_port;
     unsigned char m_channel;
@@ -139,80 +146,29 @@ typename QMidiMessage::Bytes const& QMidiMessage::bytes() const
     return data->m_bytes;
 }
 
-QString QMidiMessage::toString() const
+int QMidiMessage::port() const
 {
-    QString buffer;
-    QTextStream stream(&buffer);
-
-    stream.setIntegerBase(16);
-    for (auto i = 0u; i < data->m_bytes.size(); ++i)
-    {
-        if (i > 0u)
-        {
-            stream << " ";
-        }
-        stream << QString::number(data->m_bytes[i], 16);
-    }
-    stream.flush();
-    return buffer;
+    return data->m_port;
 }
 
-QMidiMessage::TimePoint QMidiMessage::timestamp() const
+unsigned char QMidiMessage::getControlChangeNumber() const
 {
-    return data->m_timestamp;
+    return byteAt(1u) & 0x7F;;
 }
 
-QString QMidiMessage::timePointToString(QMidiMessage::TimePoint const timestamp)
+unsigned char QMidiMessage::getControlChangeValue() const
 {
-    std::time_t const time = Clock::to_time_t(timestamp);
-    QDateTime const dt = QDateTime::fromTime_t(time);
-
-    return dt.toString("hh:mm:ss");
+    return byteAt(2u) & 0x7F;;
 }
 
-void QMidiMessage::getControlChange(unsigned char& control, unsigned char& value) const
+unsigned char QMidiMessage::getProgramChange() const
 {
-    assert (type() == Type::ControlChange);
-
-    control = byteAt(1u) & 0x7F;
-    value = byteAt(2u) & 0x7F;
-}
-
-void QMidiMessage::getProgramChange(unsigned char& program) const
-{
-    assert (type() == Type::ProgramChange);
-
-    program = byteAt(1u) & 0x7F;
-}
-
-void QMidiMessage::getSysex(unsigned char& manufacturer,
-                            unsigned char& unitNumber,
-                            unsigned char& model,
-                            unsigned char& request,
-                            std::array<unsigned char, 3u>& addresses,
-                            Bytes& sysexData) const
-{
-    assert (type() == Type::SystemExclusive);
-    assert (data->m_bytes.size() > 9u);
-    assert (data->m_bytes.front() == 0xF0);
-
-    auto const& bytes = data->m_bytes;
-
-    manufacturer = bytes[1u];
-    unitNumber = bytes[2u];
-    model = bytes[3u];
-    request = bytes[4u];
-    addresses[0u] = bytes[5u];
-    addresses[1u] = bytes[6u];
-    addresses[2u] = bytes[7u];
-    sysexData.assign(bytes.begin() + 6, bytes.end() - 2);
+    return byteAt(1u) & 0x7F;
 }
 
 unsigned char QMidiMessage::getChannel() const
 {
-    assert (haveChannel());
-
-    return (data->m_bytes[0] & 0xF) + 1u;
+    return data->m_bytes.size() > 0 ? (data->m_bytes[0] & 0xF) + 1u : 0u;
 }
 
 unsigned char QMidiMessage::getChecksum() const
@@ -220,12 +176,17 @@ unsigned char QMidiMessage::getChecksum() const
     return data->getChecksum();
 }
 
-int QMidiMessage::port() const
+unsigned char QMidiMessage::getNote() const
 {
-    return data->m_port;
+    return data->m_bytes[1u];
 }
 
-bool QMidiMessage::haveChannel() const
+unsigned char QMidiMessage::getVelocity() const
 {
-    return data->m_bytes.size() > 0 && data->m_bytes[0] >= 0x80 && data->m_bytes[0] <= 0xEF;
+    return data->m_bytes[2u];
+}
+
+QDateTime const& QMidiMessage::timestamp() const
+{
+    return data->m_timestamp;
 }

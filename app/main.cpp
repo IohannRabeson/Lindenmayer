@@ -15,6 +15,7 @@
 //   - model to store filters states
 // - A data transit LED
 // - Scheme name should be displayed in a status bar
+// -
 
 #include <QApplication>
 

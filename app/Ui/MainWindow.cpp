@@ -12,6 +12,8 @@
 
 #include "Plugins/Waldorf/Pulse2/Pulse2Scheme.hpp"
 
+#include "Delegates/MidiDelegates.hpp"
+
 #include <QComboBox>
 #include <QToolBar>
 #include <QMenuBar>
@@ -24,36 +26,14 @@
 #include <QMidiIn.hpp>
 #include <QMidiDeviceModel.hpp>
 #include <QMidiMessageModel.hpp>
+#include <QMidiManufacturerModel.hpp>
+#include <Ui/Format.hpp>
 
 #include <QStyledItemDelegate>
+#include <QMetaEnum>
 
 namespace
 {
-    class MidiPortDelegate : public QStyledItemDelegate
-    {
-    public:
-        explicit MidiPortDelegate(QMidiDeviceModel const* const portModel, QObject* parent = nullptr)
-        : QStyledItemDelegate(parent)
-        , m_portModel(portModel)
-        {
-        }
-
-        QString displayText(const QVariant& value, const QLocale&) const override
-        {
-            QString result;
-            bool isOk = true;
-            auto const portIndex = value.toInt(&isOk);
-
-            if (isOk && portIndex > -1)
-            {
-                result = m_portModel->name(portIndex);
-            }
-            return result;
-        }
-    private:
-        QMidiDeviceModel const* const m_portModel;
-    };
-
     class ComboBox : public QComboBox
     {
     protected:
@@ -101,10 +81,11 @@ MainWindow::MainWindow(QWidget* parent)
 , m_dockWidgets(new DockWidgetManager(this))
 , m_toolbars(new ToolBarManager(this))
 , m_schemeSelector(new ComboBox(tr("Scheme"), this))
+, m_manufacturerModel(new QMidiManufacturerModel(this))
 
-, m_actionClearAll(new QAction(tr("Clear all"), this))
 , m_actionQuit(new QAction(tr("Quit"), this))
-, m_aboutApplication(new QAction(tr("About...")))
+, m_actionClearAll(new QAction(tr("Clear all"), this))
+, m_actionAbout(new QAction(tr("About...")))
 , m_actionSwitchAutoScrollToBottom(new QAction(tr("Auto scrolling")))
 {
     setupSystem();
@@ -126,29 +107,50 @@ MainWindow::~MainWindow()
 
 void MainWindow::setupSystem()
 {
-    auto* defaultMidiIn = new QMidiIn(this);
-
     // Setup scheme factory
     m_deviceSchemeFactory->add<Pulse2Scheme>("Pulse 2");
 
-    // Setup midi ports
-    m_inputPortModel->rescan(defaultMidiIn);
+    resetMidiInputs();
 
     connect(m_inputPortModel, &QMidiDeviceModel::checkedChanged, this, &MainWindow::onPortEnabled);
 
-    m_midiIns.append(defaultMidiIn);
+    m_manufacturerModel->load(QMidiManufacturerModel::LoadFromCSV(":/Texts/Resources/MIDI_Manufacturers.csv"));
+}
+
+void MainWindow::resetMidiInputs()
+{
+    qDeleteAll(m_midiIns);
+    m_midiIns.clear();
+
+    // Instanciate the first MIDI port, then scans available ports.
+    // Wierd but seem to be mandatory.
+    // TODO: looking for an alternative to RtMidi?
+    m_midiIns.append(new QMidiIn(this));
+    m_inputPortModel->rescan(m_midiIns.front());
+
+    // Instanciate midi other inputs
     for (int i = 0; i < m_inputPortModel->rowCount() - 1; ++i)
     {
         auto* midiIn = new QMidiIn(this);
 
         m_midiIns.append(midiIn);
     }
-    for (int i = 0; i < m_midiIns.size(); ++i)
-    {
-        auto* const midiIn = m_midiIns[i];
-        connect(midiIn, &QMidiIn::messageReceived, m_messageModel, &QMidiMessageModel::append);
 
-        midiIn->openPort(i);
+    if (m_midiIns.isEmpty())
+    {
+        qWarning() << "[MidiMonitor]: No midi inputs";
+    }
+    else
+    {
+        // Open midi inputs
+        for (int i = 0; i < m_midiIns.size(); ++i)
+        {
+            auto* const midiIn = m_midiIns[i];
+
+            connect(midiIn, &QMidiIn::messageReceived, m_messageModel, &QMidiMessageModel::append);
+
+            midiIn->openPort(i);
+        }
     }
 }
 
@@ -160,7 +162,7 @@ void MainWindow::setupActions()
 
     connect(m_actionClearAll, &QAction::triggered, m_messageModel, &QMidiMessageModel::clear);
     connect(m_actionQuit, &QAction::triggered, this, &QMainWindow::close);
-    connect(m_aboutApplication, &QAction::triggered, this, &MainWindow::showAbout);
+    connect(m_actionAbout, &QAction::triggered, this, &MainWindow::showAbout);
     connect(m_actionSwitchAutoScrollToBottom, &QAction::triggered, m_messageView, &MidiMessageListView::setAutoScrollToBottomEnabled);
 }
 
@@ -177,7 +179,12 @@ void MainWindow::setupUi()
     // Setup message view
     m_messageView->setModel(m_messageModel);
     m_messageView->setSelectionModel(m_messageSelection);
+    m_messageView->setItemDelegateForColumn(QMidiMessageModel::Columns::Type, new MidiMessageTypeDelegate(this));
     m_messageView->setItemDelegateForColumn(QMidiMessageModel::Columns::Input, new MidiPortDelegate(m_inputPortModel, this));
+    m_messageView->setItemDelegateForColumn(QMidiMessageModel::Columns::Channel, new MidiChannelDelegate(this));
+    m_messageView->setItemDelegateForColumn(QMidiMessageModel::Columns::Timestamp, new MidiTimeDelegate(this));
+    m_messageView->setItemDelegateForColumn(QMidiMessageModel::Columns::Value, new MidiValueDelegate(m_messageModel, m_manufacturerModel, this));
+    m_messageView->setItemDelegateForColumn(QMidiMessageModel::Columns::Data, new MidiDataDelegate(m_messageModel, this));
     setCentralWidget(m_messageView);
 
     // Setup MIDI input port view
@@ -203,19 +210,21 @@ void MainWindow::setupMenus()
 {
     QMenuBar* const bar = menuBar();
     QMenu* const fileMenu = bar->addMenu(tr("File"));
+    QMenu* const editMenu = bar->addMenu(tr("Edit"));
     QMenu* const view = bar->addMenu(tr("View"));
     QMenu* const windowMenu = bar->addMenu(tr("Window"));
     QMenu* const helpMenu = bar->addMenu(tr("?"));
 
-    fileMenu->addAction(m_actionClearAll);
     fileMenu->addAction(m_actionQuit);
+
+    editMenu->addAction(m_actionClearAll);
 
     view->addAction(m_actionSwitchAutoScrollToBottom);
 
     windowMenu->addMenu(m_dockWidgets->controlMenu());
     windowMenu->addMenu(m_toolbars->controlMenu());
 
-    helpMenu->addAction(m_aboutApplication);
+    helpMenu->addAction(m_actionAbout);
 }
 
 void MainWindow::appendMessage(QMidiMessage const& message)

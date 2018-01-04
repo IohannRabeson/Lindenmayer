@@ -23,6 +23,7 @@ public:
         Input,
         Timestamp,
         Channel,
+        Value,
         Data,
         ColumnCount
     };

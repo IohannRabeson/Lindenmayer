@@ -12,6 +12,8 @@ class QMidiMessageModel;
 class QMidiDeviceModel;
 class QMidiMessage;
 class QMidiIn;
+class QMidiManufacturerModel;
+
 class QAbstractDeviceScheme;
 
 class MidiMessageListView;
@@ -36,7 +38,15 @@ public:
     void setScheme(QModelIndex const& index);
     void closeAllPorts();
 private:
+    void setupUi();
+    void setupActions();
+    void setupSystem();
+    void setupMenus();
+    void setupToolbars();
+
     void onPortEnabled(int const portId, bool const enabled);
+
+    void resetMidiInputs();
 
     void saveSettings() const;
     void loadSettings();
@@ -52,21 +62,16 @@ private:
     DockWidgetManager* const m_dockWidgets;
     ToolBarManager* const m_toolbars;
     QComboBox* const m_schemeSelector;
-
+    QMidiManufacturerModel* const m_manufacturerModel;
     QModelIndex m_currentSchemeIndex;
 
     // File actions
-    QAction* const m_actionClearAll;
     QAction* const m_actionQuit;
-    QAction* const m_aboutApplication;
+    QAction* const m_actionAbout;
+    // Edit actions
+    QAction* const m_actionClearAll;
     // View actions
     QAction* const m_actionSwitchAutoScrollToBottom;
-
-    void setupUi();
-    void setupActions();
-    void setupSystem();
-    void setupMenus();
-    void setupToolbars();
 };
 
 #endif //MIDIMONITOR_MAINWINDOW_HPP

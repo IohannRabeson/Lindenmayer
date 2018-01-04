@@ -7,4 +7,6 @@
  <li>Added an application icon on OSX</li>
  <li>New column for MIDI channel</li>
  <li>Changed "Control Change" to "CC" and "Program Change" to PC for readability</li>
+ <li>Added ability to parse and match manufacturer code</li>
+ <li>Added new column "Value" which displays interpreted datas, "Data" columns displays raw bytes</li>
 </ul>

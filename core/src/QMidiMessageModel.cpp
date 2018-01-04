@@ -22,6 +22,7 @@ QMap<int, QString> const QMidiMessageModelPrivate::s_header =
             {QMidiMessageModel::Columns::Type, "Type"},
             {QMidiMessageModel::Columns::Timestamp, "Timestamp"},
             {QMidiMessageModel::Columns::Channel, "Channel"},
+            {QMidiMessageModel::Columns::Value, "Value"},
             {QMidiMessageModel::Columns::Data, "Data"},
             {QMidiMessageModel::Columns::Input, "Input"}
         };
@@ -77,48 +78,20 @@ QVariant QMidiMessageModelPrivate::getValue(int const column, QMidiMessage const
     switch (column)
     {
         case QMidiMessageModel::Columns::Type:
-            result = s_messageTypes.value(message.type());
+            result = qVariantFromValue(message.type());
             break;
         case QMidiMessageModel::Columns::Timestamp:
-            result = QMidiMessage::timePointToString(message.timestamp());
+            result = qVariantFromValue(message.timestamp());
             break;
         case QMidiMessageModel::Columns::Input:
-            result = QVariant::fromValue(message.port());
+            result = qVariantFromValue(message.port());
             break;
         case QMidiMessageModel::Columns::Channel:
-            if (message.haveChannel())
-            {
-                result = QString::number(message.getChannel());
-            }
+            result = qVariantFromValue(message.getChannel());
             break;
+        case QMidiMessageModel::Columns::Value:
         case QMidiMessageModel::Columns::Data:
-            switch (message.type())
-            {
-                case QMidiMessage::Type::ControlChange:
-                    {
-                        unsigned char control = 0u;
-                        unsigned char value = 0u;
-
-                        message.getControlChange(control, value);
-
-                        result = m_scheme->formatControlChangeData(control, value);
-                    }
-                    break;
-                case QMidiMessage::Type::ProgramChange:
-                    {
-                        unsigned char program = 0u;
-
-                        message.getProgramChange(program);
-                        result = QString("Program change: %0").arg(program + 1u);
-                    }
-                    break;
-                case QMidiMessage::Type::SystemExclusive:
-                    result = message.toString();
-                    break;
-                default:
-                    result = QString("%0 bytes").arg(message.byteCount());
-                    break;
-            }
+            result = qVariantFromValue(message.bytes());
             break;
         default:
             break;

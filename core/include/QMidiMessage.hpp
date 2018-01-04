@@ -3,6 +3,7 @@
 
 #include <QSharedDataPointer>
 #include <QMetaType>
+#include <QDateTime>
 #include <chrono>
 #include <limits>
 #include <array>
@@ -23,12 +24,11 @@ class QMidiMessage
 {
     Q_GADGET
 
-    using Clock = std::chrono::system_clock;
 public:
     using Bytes = std::vector<unsigned char>;
+    using Clock = std::chrono::system_clock;
     using TimePoint = Clock::time_point;
     static TimePoint now() { return Clock::now(); }
-    static QString timePointToString(TimePoint const timestamp);
 
     enum Type
     {
@@ -53,15 +53,14 @@ public:
     unsigned char byteAt(int pos) const;
     int byteCount() const;
     Bytes const& bytes() const;
-    TimePoint timestamp() const;
+    QDateTime const& timestamp() const;
     int port() const;
-    QString toString() const;
 
-    void getControlChange(unsigned char& control, unsigned char& value) const;
-    void getProgramChange(unsigned char& program) const;
-    void getSysex(unsigned char& manufacturer, unsigned char& unitNumber,
-                  unsigned char& model, unsigned char& request,
-                  std::array<unsigned char, 3u>& addresses, Bytes& sysexData) const;
+    unsigned char getNote() const;
+    unsigned char getVelocity() const;
+    unsigned char getControlChangeNumber() const;
+    unsigned char getControlChangeValue() const;
+    unsigned char getProgramChange() const;
     unsigned char getChannel() const;
     unsigned char getChecksum() const;
 
@@ -70,6 +69,7 @@ private:
     QSharedDataPointer<QMidiMessageData> data;
 };
 
+Q_DECLARE_METATYPE(QMidiMessage::Bytes);
 Q_DECLARE_METATYPE(QMidiMessage);
 
 #endif // QSYSEXMESSAGE_HPP
