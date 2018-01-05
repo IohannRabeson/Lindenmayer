@@ -88,7 +88,6 @@ public:
     QDateTime m_timestamp;
     Type m_type;
     int m_port;
-    unsigned char m_channel;
 };
 
 QMidiMessage::QMidiMessage()

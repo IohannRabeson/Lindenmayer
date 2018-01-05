@@ -63,8 +63,6 @@ public:
     unsigned char getProgramChange() const;
     unsigned char getChannel() const;
     unsigned char getChecksum() const;
-
-    bool haveChannel() const;
 private:
     QSharedDataPointer<QMidiMessageData> data;
 };

@@ -9,6 +9,7 @@
 #include "Ui/DeviceSchemeWidget.hpp"
 #include "Ui/CommonUi.hpp"
 #include "Ui/AboutMidiMonitorDialog.hpp"
+#include "Ui/SettingsUtils.hpp"
 
 #include "Plugins/Waldorf/Pulse2/Pulse2Scheme.hpp"
 
@@ -19,17 +20,16 @@
 #include <QMenuBar>
 #include <QLineEdit>
 #include <QStylePainter>
-#include <QSettings>
+#include <QMessageBox>
+#include <QTableView>
+#include <QHeaderView>
 #include <QtDebug>
 
 #include <QDeviceSchemeFactory.hpp>
 #include <QMidiIn.hpp>
-#include <QMidiDeviceModel.hpp>
 #include <QMidiMessageModel.hpp>
-#include <QMidiManufacturerModel.hpp>
-#include <Ui/Format.hpp>
+#include <QMidiManager.hpp>
 
-#include <QStyledItemDelegate>
 #include <QMetaEnum>
 
 namespace
@@ -73,16 +73,17 @@ namespace
 
 MainWindow::MainWindow(QWidget* parent)
 : QMainWindow(parent)
+, m_midiManager(new QMidiManager(this))
 , m_deviceSchemeFactory(new QDeviceSchemeFactory(this))
-, m_inputPortModel(new QMidiDeviceModel(this))
+, m_inputPortModel(m_midiManager->getInputDeviceModel())
 , m_messageModel(new QMidiMessageModel(this))
 , m_messageSelection(new QItemSelectionModel(m_messageModel, this))
 , m_messageView(new MidiMessageListView(m_messageModel, this))
 , m_dockWidgets(new DockWidgetManager(this))
 , m_toolbars(new ToolBarManager(this))
-, m_schemeSelector(new ComboBox(tr("Scheme"), this))
 , m_manufacturerModel(new QMidiManufacturerModel(this))
 
+, m_actionRescanMidiPorts(new QAction(tr("Rescan midi ports"), this))
 , m_actionQuit(new QAction(tr("Quit"), this))
 , m_actionClearAll(new QAction(tr("Clear all"), this))
 , m_actionAbout(new QAction(tr("About...")))
@@ -94,9 +95,6 @@ MainWindow::MainWindow(QWidget* parent)
     setupMenus();
     setupUi();
     loadSettings();
-
-    // Default setup
-    setScheme(m_deviceSchemeFactory->defaultScheme());
 }
 
 MainWindow::~MainWindow()
@@ -109,49 +107,28 @@ void MainWindow::setupSystem()
 {
     // Setup scheme factory
     m_deviceSchemeFactory->add<Pulse2Scheme>("Pulse 2");
-
-    resetMidiInputs();
-
-    connect(m_inputPortModel, &QMidiDeviceModel::checkedChanged, this, &MainWindow::onPortEnabled);
-
+    m_midiManager->resetMidiInPorts();
+    connect(m_inputPortModel, &QMidiDeviceModel::checkedChanged, this, &MainWindow::onInputPortEnabled);
+    connect(m_midiManager, &QMidiManager::messageReceived, m_messageModel, &QMidiMessageModel::append);
     m_manufacturerModel->load(QMidiManufacturerModel::LoadFromCSV(":/Texts/Resources/MIDI_Manufacturers.csv"));
 }
 
 void MainWindow::resetMidiInputs()
 {
-    qDeleteAll(m_midiIns);
-    m_midiIns.clear();
+    auto const* const midiInModel = m_midiManager->getInputDeviceModel();
 
-    // Instanciate the first MIDI port, then scans available ports.
-    // Wierd but seem to be mandatory.
-    // TODO: looking for an alternative to RtMidi?
-    m_midiIns.append(new QMidiIn(this));
-    m_inputPortModel->rescan(m_midiIns.front());
-
-    // Instanciate midi other inputs
-    for (int i = 0; i < m_inputPortModel->rowCount() - 1; ++i)
+    if (midiInModel->rowCount() > 0)
     {
-        auto* midiIn = new QMidiIn(this);
-
-        m_midiIns.append(midiIn);
-    }
-
-    if (m_midiIns.isEmpty())
-    {
-        qWarning() << "[MidiMonitor]: No midi inputs";
-    }
-    else
-    {
-        // Open midi inputs
-        for (int i = 0; i < m_midiIns.size(); ++i)
+        if (QMessageBox::warning(this, tr("Clear messages"),
+                                 tr("Messages will be deleted.\nAre you sure you want to do that?"),
+                                 QMessageBox::StandardButton::Yes,
+                                 QMessageBox::StandardButton::No) == QMessageBox::StandardButton::No)
         {
-            auto* const midiIn = m_midiIns[i];
-
-            connect(midiIn, &QMidiIn::messageReceived, m_messageModel, &QMidiMessageModel::append);
-
-            midiIn->openPort(i);
+            // Abort action.
+            return;
         }
     }
+    m_midiManager->resetMidiInPorts();
 }
 
 void MainWindow::setupActions()
@@ -162,20 +139,13 @@ void MainWindow::setupActions()
 
     connect(m_actionClearAll, &QAction::triggered, m_messageModel, &QMidiMessageModel::clear);
     connect(m_actionQuit, &QAction::triggered, this, &QMainWindow::close);
+    connect(m_actionRescanMidiPorts, &QAction::triggered, this, &MainWindow::resetMidiInputs);
     connect(m_actionAbout, &QAction::triggered, this, &MainWindow::showAbout);
     connect(m_actionSwitchAutoScrollToBottom, &QAction::triggered, m_messageView, &MidiMessageListView::setAutoScrollToBottomEnabled);
 }
 
 void MainWindow::setupUi()
 {
-    // Setup scheme selector
-    m_schemeSelector->setModel(m_deviceSchemeFactory);
-
-    connect(m_schemeSelector, qOverload<int>(&QComboBox::currentIndexChanged), [this](int const row)
-    {
-        setScheme(m_deviceSchemeFactory->index(row));
-    });
-
     // Setup message view
     m_messageView->setModel(m_messageModel);
     m_messageView->setSelectionModel(m_messageSelection);
@@ -202,8 +172,6 @@ void MainWindow::setupUi()
 void MainWindow::setupToolbars()
 {
     QToolBar* const mainToolbar = m_toolbars->addToolBar(tr("Main"));
-
-    mainToolbar->addWidget(m_schemeSelector);
 }
 
 void MainWindow::setupMenus()
@@ -215,9 +183,11 @@ void MainWindow::setupMenus()
     QMenu* const windowMenu = bar->addMenu(tr("Window"));
     QMenu* const helpMenu = bar->addMenu(tr("?"));
 
+    fileMenu->addAction(m_actionRescanMidiPorts);
     fileMenu->addAction(m_actionQuit);
 
     editMenu->addAction(m_actionClearAll);
+
 
     view->addAction(m_actionSwitchAutoScrollToBottom);
 
@@ -227,44 +197,14 @@ void MainWindow::setupMenus()
     helpMenu->addAction(m_actionAbout);
 }
 
-void MainWindow::appendMessage(QMidiMessage const& message)
-{
-    m_messageModel->append(message);
-}
-
-void MainWindow::clearMessages()
-{
-    m_messageModel->clear();
-}
-
-void MainWindow::setScheme(QModelIndex const& index)
-{
-    if (index.isValid() && (!m_currentSchemeIndex.isValid() || index != m_currentSchemeIndex))
-    {
-        m_currentSchemeIndex = index;
-        m_messageModel->setScheme(m_deviceSchemeFactory->create(index));
-        m_schemeSelector->setCurrentIndex(index.row());
-    }
-}
-
 void MainWindow::closeAllPorts()
 {
-    for (auto* midiIn : m_midiIns)
-    {
-        midiIn->closePort();
-    }
+    m_midiManager->closeAll();
 }
 
-void MainWindow::onPortEnabled(int const portId, bool const enabled)
+void MainWindow::onInputPortEnabled(int const portId, bool const enabled)
 {
-    for (auto* midiIn : m_midiIns)
-    {
-        if (midiIn->portOpened() == portId)
-        {
-            midiIn->setEnabled(enabled);
-            return;
-        }
-    }
+    m_midiManager->setInputPortEnabled(portId, enabled);
 }
 
 void MainWindow::saveSettings() const
@@ -275,6 +215,14 @@ void MainWindow::saveSettings() const
     settings.beginGroup("main_window");
     settings.setValue("geometry", saveGeometry());
     settings.setValue("state", saveState());
+    settings.endGroup();
+
+    settings.beginGroup("message_view");
+    settings.setValue("geometry", m_messageView->saveGeometry());
+    settings.beginGroup("header_view");
+    settings.setValue("geometry", m_messageView->header()->saveGeometry());
+    settings.setValue("state", m_messageView->header()->saveState());
+    settings.endGroup();
     settings.endGroup();
 }
 
@@ -290,8 +238,8 @@ void MainWindow::loadSettings()
     }
     else
     {
-        restoreGeometry(settings.value("geometry").value<QByteArray>());
-        restoreState(settings.value("state").value<QByteArray>());
+        restoreGeometry(restoreFrom<QByteArray>(settings, "geometry"));
+        restoreState(restoreFrom<QByteArray>(settings, "state"));
     }
     settings.endGroup();
 }

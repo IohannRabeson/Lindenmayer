@@ -6,12 +6,13 @@
 #define MIDIMONITOR_COMMONUI_HPP
 
 class QTableView;
+class QTreeView;
 
 class CommonUi
 {
 public:
-    static void standardTableView(QTableView* const view, bool const showTopHearder = true);
+    static void standardTableView(QTableView* const view, bool const showTopHeader = true);
+    static void standardTreeView(QTreeView* const view, bool const showTopHeader = true);
 };
-
 
 #endif //MIDIMONITOR_COMMONUI_HPP

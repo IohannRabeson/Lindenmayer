@@ -104,6 +104,16 @@ static QVector<unsigned char> parseCode(QString const& line, int& pos)
     return results;
 }
 
+static QString parseName(QString const& line, int& pos)
+{
+    auto temp = line.mid(pos);
+
+    if (temp.startsWith('\"') && temp.endsWith('\"'))
+    {
+        temp = temp.mid(1, temp.size() - 2);
+    }
+    return temp;
+}
 QMidiManufacturerModel::LoadFromCSV::LoadFromCSV(QString const& csvFilePath)
 : m_csvFilePath(csvFilePath)
 {
@@ -125,7 +135,7 @@ QVector<QMidiManufacturerModel::Element> QMidiManufacturerModel::LoadFromCSV::op
         {
             int pos = 0;
             auto const code = parseCode(line, pos);
-            auto const name = line.mid(pos);
+            auto const name = parseName(line, pos);
 
             results.append(Element{name, code});
         }

@@ -13,6 +13,7 @@ class QMidiDeviceModel;
 class QMidiMessage;
 class QMidiIn;
 class QMidiManufacturerModel;
+class QMidiManager;
 
 class QAbstractDeviceScheme;
 
@@ -33,9 +34,8 @@ public:
     explicit MainWindow(QWidget* parent = nullptr);
     ~MainWindow();
 public:
-    void appendMessage(QMidiMessage const& message);
-    void clearMessages();
-    void setScheme(QModelIndex const& index);
+//    void appendMessage(QMidiMessage const& message);
+//    void clearMessages();
     void closeAllPorts();
 private:
     void setupUi();
@@ -44,7 +44,7 @@ private:
     void setupMenus();
     void setupToolbars();
 
-    void onPortEnabled(int const portId, bool const enabled);
+    void onInputPortEnabled(int const portId, bool const enabled);
 
     void resetMidiInputs();
 
@@ -53,7 +53,7 @@ private:
 
     void showAbout();
 private:
-    QVector<QMidiIn*> m_midiIns;
+    QMidiManager* const m_midiManager;
     QDeviceSchemeFactory* const m_deviceSchemeFactory;
     QMidiDeviceModel* const m_inputPortModel;
     QMidiMessageModel* const m_messageModel;
@@ -61,11 +61,10 @@ private:
     MidiMessageListView* const m_messageView;
     DockWidgetManager* const m_dockWidgets;
     ToolBarManager* const m_toolbars;
-    QComboBox* const m_schemeSelector;
     QMidiManufacturerModel* const m_manufacturerModel;
-    QModelIndex m_currentSchemeIndex;
 
     // File actions
+    QAction* const m_actionRescanMidiPorts;
     QAction* const m_actionQuit;
     QAction* const m_actionAbout;
     // Edit actions

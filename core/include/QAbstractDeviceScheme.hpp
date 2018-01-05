@@ -52,7 +52,7 @@ public:
     bool verifyChecksum(QMidiMessage const& message) const;
 
     /*!
-     * \brief Format text displayed by column "Data"
+     * \brief Format text displayed by column "Value"
      * \param control Control change number
      * \param value Control change value
      * \return Text with the control name and the new control value.

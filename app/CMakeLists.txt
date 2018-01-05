@@ -26,7 +26,7 @@ set(UI_SOURCES
     Ui/Delegates/MidiDelegates.hpp
     Ui/Format.hpp
     Ui/Format.cpp
-        )
+        Ui/SettingsUtils.hpp)
 
 set(PLUGINS_SOURCES
     Plugins/Plugins.qrc
@@ -34,7 +34,7 @@ set(PLUGINS_SOURCES
     Plugins/Waldorf/Pulse2/Pulse2Scheme.hpp
     Plugins/Commons/TextDatabase.cpp
     Plugins/Commons/TextDatabase.hpp
-    )
+)
 
 add_executable(MidiMonitor
     MACOSX_BUNDLE ${THE_APPLICATION_ICON}

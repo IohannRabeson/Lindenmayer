@@ -62,8 +62,6 @@
 3DH,Digigram
 3EH,Waldorf Electronics GmbH
 3FH,Quasimidi
-40H to 5FH,[Assigned by AMEI for Japanese Manufacturers]
-60H to 7FH,[Reserved for Other Uses]
 00H 00H 01H,Time/Warner Interactive
 00H 00H 02H,Advanced Gravis Comp. Tech Ltd.
 00H 00H 03H,Media Vision

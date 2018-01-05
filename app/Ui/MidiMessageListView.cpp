@@ -6,16 +6,17 @@
 #include "CommonUi.hpp"
 
 #include <QMidiMessageModel.hpp>
+#include <QHeaderView>
+
+#include "Ui/SettingsUtils.hpp"
 
 MidiMessageListView::MidiMessageListView(QMidiMessageModel* model, QWidget* parent)
-: QTableView(parent)
+: QTreeView(parent)
 , m_autoScroll(true)
 {
-    static constexpr int const ItemHeight = 18;
-
-    setGridStyle(Qt::NoPen);
+    setUniformRowHeights(true);
     setModel(model);
-    CommonUi::standardTableView(this);
+    CommonUi::standardTreeView(this);
 
     connect(model, &QMidiMessageModel::rowsInserted, [this]()
     {
@@ -29,4 +30,15 @@ MidiMessageListView::MidiMessageListView(QMidiMessageModel* model, QWidget* pare
 void MidiMessageListView::setAutoScrollToBottomEnabled(bool const enabled)
 {
     m_autoScroll = enabled;
+}
+
+void MidiMessageListView::loadSettings(QSettings& settings)
+{
+    settings.beginGroup("message_view");
+    restoreGeometry(restoreFrom<QByteArray>(settings, "geometry"));
+    settings.beginGroup("header_view");
+    header()->restoreGeometry(restoreFrom<QByteArray>(settings, "geometry"));
+    header()->restoreState(restoreFrom<QByteArray>(settings, "state"));
+    settings.endGroup();
+    settings.endGroup();
 }
