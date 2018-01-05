@@ -37,7 +37,7 @@ QVariant QMidiManufacturerModel::data(const QModelIndex& index, int role) const
     return result;
 }
 
-void QMidiManufacturerModel::load(std::function<QVector<QMidiManufacturerModel::Element>()>&& loader)
+void QMidiManufacturerModel::load(Loader&& loader)
 {
     beginResetModel();
     m_elements = loader();
@@ -55,12 +55,13 @@ int QMidiManufacturerModel::findCode(QMidiMessage const& message) const
         auto const& code = element.code;
         int j = 0;
         int bytePosition = 1;
-        bool found = false;
+        bool found = true;
 
         while (j < code.size() && bytePosition < bytes.size())
         {
             if (code[j] != bytes[bytePosition])
             {
+                found = false;
                 break;
             }
             else
@@ -69,7 +70,7 @@ int QMidiManufacturerModel::findCode(QMidiMessage const& message) const
                 ++bytePosition;
             }
         }
-        if (j == code.size())
+        if (found && j == code.size())
         {
             return i;
         }

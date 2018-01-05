@@ -24,6 +24,8 @@ public:
         QVector<unsigned char> code;
     };
 
+    using Loader = std::function<QVector<QMidiManufacturerModel::Element>()>;
+
     struct LoadFromCSV
     {
         explicit LoadFromCSV(QString const& csvFilePath);
@@ -33,12 +35,9 @@ public:
         QString const m_csvFilePath;
     };
 
-    static QVector<Element> loadFromCSV(QString const& csvFilePath);
-
     using QAbstractListModel::QAbstractListModel;
 
-
-    void load(std::function<QVector<Element>()>&& loader);
+    void load(Loader&& loader);
     int rowCount(QModelIndex const& parent) const override;
     QVariant data(const QModelIndex& index, int role) const override;
     int findCode(QMidiMessage const& message) const;

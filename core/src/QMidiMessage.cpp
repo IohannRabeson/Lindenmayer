@@ -69,14 +69,6 @@ public:
     {
     }
 
-    QMidiMessageData(Bytes&& bytes, int const port, TimePoint const timestamp)
-        : m_bytes(std::move(bytes))
-        , m_timestamp(fromStdTimePoint(timestamp))
-        , m_type(detectMessageType(bytes))
-        , m_port(port)
-    {
-    }
-
     unsigned char getChecksum() const
     {
         assert( m_bytes.size() > 1u );
@@ -97,11 +89,6 @@ QMidiMessage::QMidiMessage()
 
 QMidiMessage::QMidiMessage(Bytes const& bytes, int const port, TimePoint const timestamp)
 : data(new QMidiMessageData(bytes, port, timestamp))
-{
-}
-
-QMidiMessage::QMidiMessage(Bytes&& bytes, int const port, TimePoint const timestamp)
-: data(new QMidiMessageData(std::move(bytes), port, timestamp))
 {
 }
 

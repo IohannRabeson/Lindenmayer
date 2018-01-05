@@ -44,7 +44,6 @@ public:
 
     QMidiMessage();
     explicit QMidiMessage(Bytes const& bytes, int port = -1, TimePoint const timestamp = now());
-    explicit QMidiMessage(Bytes&& bytes, int port = -1, TimePoint const timestamp = now());
     QMidiMessage(const QMidiMessage &);
     QMidiMessage &operator=(const QMidiMessage &);
     ~QMidiMessage();

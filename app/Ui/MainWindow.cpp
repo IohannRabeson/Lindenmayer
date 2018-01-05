@@ -188,7 +188,6 @@ void MainWindow::setupMenus()
 
     editMenu->addAction(m_actionClearAll);
 
-
     view->addAction(m_actionSwitchAutoScrollToBottom);
 
     windowMenu->addMenu(m_dockWidgets->controlMenu());
