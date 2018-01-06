@@ -1,7 +1,7 @@
 set(THE_APPLICATION_DISPLAY_NAME "MIDI monitor")
 set(THE_APPLICATION_ORGANIZATION "Dead Devs Society")
 set(THE_APPLICATION_COPYRIGHT "Copyright 2018 - ${THE_APPLICATION_ORGANIZATION}")
-set(THE_APPLICATION_BRIEF "Advanced MIDI monitor")
+set(THE_APPLICATION_BRIEF "Humble MIDI monitor")
 set(THE_APPLICATION_VERSION "0.0.0")
 set(THE_APPLICATION_GUI_IDENTIFIER "com.dead.devs.society.midimonitor")
 set(THE_APPLICATION_ICON ${CMAKE_SOURCE_DIR}/configurations/macos/Application.icns)

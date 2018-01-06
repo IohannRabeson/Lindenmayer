@@ -9,18 +9,154 @@
 #include <QMidiMessage.hpp>
 #include <QtDebug>
 
+#include <set>
+
+namespace
+{
+    class RadixTree
+    {
+        struct Node
+        {
+            Node* getOrCreate(unsigned char const key, bool& created)
+            {
+                for (auto* next : nexts)
+                {
+                    if (next->key == key)
+                    {
+                        created = false;
+                        return next;
+                    }
+                }
+
+                auto* newNode = new Node;
+
+                newNode->key = key;
+                nexts.push_back(newNode);
+                created = true;
+                return newNode;
+            }
+
+            Node* get(unsigned char const key)
+            {
+                for (auto* next : nexts)
+                {
+                    if (next->key == key)
+                    {
+                        return next;
+                    }
+                }
+                return nullptr;
+            }
+
+            std::vector<Node*> nexts;
+            int index = -1;
+            unsigned char key = 0u;
+        };
+
+    public:
+        RadixTree()
+        {
+            m_nodes.insert(m_root);
+        }
+
+        ~RadixTree()
+        {
+            auto it = m_nodes.begin();
+
+            while (it != m_nodes.end())
+            {
+                delete *it;
+                it = m_nodes.erase(it);
+            }
+        }
+
+        bool add(int const elementIndex, QVector<unsigned char> const& code)
+        {
+            Node* current = m_root;
+            int codePosition = 0;
+            bool created = false;
+
+            while (current && codePosition < code.size())
+            {
+                bool createdTemp = false;
+
+                Node* nextNode = current->getOrCreate(code[codePosition], createdTemp);
+
+                if (createdTemp)
+                {
+                    m_nodes.insert(nextNode);
+                    created = true;
+                }
+                current = nextNode;
+                ++codePosition;
+            }
+
+            // duplicate!
+            Q_ASSERT (current->index == -1);
+
+            current->index = elementIndex;
+            return created;
+        }
+
+        int getElementIndex(QVector<unsigned char> const& code) const
+        {
+            Node* current = m_root;
+            Node* next = nullptr;
+            int codePosition = 0;
+
+            while (current && codePosition < code.size())
+            {
+                bool createdTemp = false;
+
+                next = current->get(code[codePosition]);
+
+                if (next == nullptr)
+                {
+                    break;
+                }
+                current = next;
+                ++codePosition;
+            }
+            return current && (codePosition == 1 || codePosition == 3) ? current->index : -1;
+        }
+
+    private:
+        std::set<Node*> m_nodes;
+        Node* m_root = new Node;
+    };
+}
+
+class QMidiManufacturerModelPrivate
+{
+public:
+    QVector<QMidiManufacturerModel::Element> m_elements;
+    RadixTree m_radixTree;
+};
+
+QMidiManufacturerModel::QMidiManufacturerModel(QObject* parent)
+: QAbstractListModel(parent)
+, d_ptr(new QMidiManufacturerModelPrivate)
+{
+}
+
+QMidiManufacturerModel::~QMidiManufacturerModel() = default;
+
 int QMidiManufacturerModel::rowCount(QModelIndex const& parent) const
 {
-    return parent.isValid() ? 0 : m_elements.size();
+    Q_D(const QMidiManufacturerModel);
+
+    return parent.isValid() ? 0 : d->m_elements.size();
 }
 
 QVariant QMidiManufacturerModel::data(const QModelIndex& index, int role) const
 {
+    Q_D(const QMidiManufacturerModel);
+
     QVariant result;
 
     if (index.isValid())
     {
-        auto const& element = m_elements[index.row()];
+        auto const& element = d->m_elements[index.row()];
 
         switch (role)
         {
@@ -39,58 +175,54 @@ QVariant QMidiManufacturerModel::data(const QModelIndex& index, int role) const
 
 void QMidiManufacturerModel::load(Loader&& loader)
 {
+    Q_D(QMidiManufacturerModel);
+
     beginResetModel();
 
     auto const elements = loader();
 
     for (auto const& element : elements)
     {
-        if (std::find_if(m_elements.begin(), m_elements.end(), [element](Element const& current)
+        if (std::find_if(d->m_elements.begin(), d->m_elements.end(), [element](Element const& current)
                          {
                              // Notice it's not a && but a ||.
+                             // Equality is computed here using names or codes.
                              return current.name == element.name || current.code == element.code;
-                         }) == m_elements.end())
+                         }) == d->m_elements.end())
         {
-            m_elements.push_back(element);
+            auto const index = d->m_elements.size();
+
+            d->m_elements.push_back(element);
+            d->m_radixTree.add(index, element.code);
         }
     }
     endResetModel();
-    qDebug() << "[QMidiManufacturerModel]" << m_elements.size() << "manufacturers loaded";
+    qDebug() << "[QMidiManufacturerModel]" << d->m_elements.size() << "manufacturers loaded";
 }
 
 int QMidiManufacturerModel::findCode(QMidiMessage const& message) const
 {
+    Q_D(const QMidiManufacturerModel);
+
     auto const& bytes = message.bytes();
 
-    for (auto i = 0; i < m_elements.size(); ++i)
-    {
-        auto const& element = m_elements[i];
-        auto const& code = element.code;
-        int j = 0;
-        int bytePosition = 1;
-        bool found = true;
+    QVector<unsigned char> code;
 
-        while (bytePosition < bytes.size())
-        {
-            if (j < code.size() && code[j] != bytes[bytePosition])
-            {
-                found = false;
-                break;
-            }
-            ++j;
-            ++bytePosition;
-        }
-        if (found && j == code.size())
-        {
-            return i;
-        }
+    code.reserve(bytes.size() - 1);
+
+    for (auto i = 1; i < bytes.size(); ++i)
+    {
+        code.append(bytes[i]);
     }
-    return -1;
+
+    return d->m_radixTree.getElementIndex(code);
 }
 
 QString QMidiManufacturerModel::getName(int const row) const
 {
-    return row == -1 ? QString() : m_elements[row].name;
+    Q_D(const QMidiManufacturerModel);
+
+    return row == -1 ? QString() : d->m_elements[row].name;
 }
 
 static QVector<unsigned char> parseCode(QString const& line, int& pos)

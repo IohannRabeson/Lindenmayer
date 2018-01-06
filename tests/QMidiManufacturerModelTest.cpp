@@ -62,7 +62,6 @@ private:
     std::unique_ptr<QMidiManufacturerModel> m_manufacturerModel;
 };
 
-
 TEST_F(QMidiManufacturerModelTestFixture, findCode)
 {
     load({{{"0_0_0"}, {0, 0, 0}}});
@@ -74,7 +73,6 @@ TEST_F(QMidiManufacturerModelTestFixture, findCode)
     ASSERT_FALSE( findCode({2, 1}) );
     ASSERT_FALSE( findCode({0, 1}) );
     ASSERT_FALSE( findCode({0, 0}) );
-    ASSERT_FALSE( findCode({1, 1, 1}) );
     ASSERT_FALSE( findCode({0, 0, 4}) );
 }
 
@@ -83,7 +81,9 @@ TEST_F(QMidiManufacturerModelTestFixture, duplicate)
     // The duplicate should be ignored
     load({{{"0_0_0"}, {0, 0, 0}}});
     load({{{"0_0_0_duplicate"}, {0, 0, 0}}});
+    load({{{"0"}, {0}}});
 
     ASSERT_TRUE( findCode({0, 0, 0}) );
     ASSERT_STRCASEEQ( getName({0, 0, 0}).toStdString().c_str(), "0_0_0" );
+    ASSERT_STRCASEEQ( getName({0}).toStdString().c_str(), "0" );
 }

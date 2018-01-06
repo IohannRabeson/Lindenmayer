@@ -7,10 +7,12 @@
 #include <QAbstractListModel>
 #include <functional>
 
+class QMidiManufacturerModelPrivate;
 class QMidiMessage;
 
 class QMidiManufacturerModel : public QAbstractListModel
 {
+    Q_DECLARE_PRIVATE(QMidiManufacturerModel)
 public:
     enum Roles : int
     {
@@ -35,7 +37,8 @@ public:
         QString const m_csvFilePath;
     };
 
-    using QAbstractListModel::QAbstractListModel;
+    explicit QMidiManufacturerModel(QObject* parent = nullptr);
+    ~QMidiManufacturerModel();
 
     void load(Loader&& loader);
     int rowCount(QModelIndex const& parent) const override;
@@ -43,8 +46,7 @@ public:
     int findCode(QMidiMessage const& message) const;
     QString getName(int const row) const;
 private:
-    QVector<Element> m_elements;
+    QScopedPointer<QMidiManufacturerModelPrivate> d_ptr;
 };
-
 
 #endif //MIDIMONITOR_MIDIMANUFACTURERMODEL_HPP
