@@ -19,6 +19,7 @@ public:
     QMidiManager(QObject* parent = nullptr);
 
     void resetPorts();
+    void sendMessage(QMidiMessage const& message);
 
     QMidiDeviceModel* getInputDeviceModel() const;
     QMidiDeviceModel* getOutputDeviceModel() const;
@@ -28,6 +29,7 @@ public:
     void closeAll();
 signals:
     void messageReceived(QMidiMessage const& message);
+    void messageSent(QMidiMessage const& message);
 private:
     void resetMidiInPorts();
     void resetMidiOutPorts();

@@ -7,6 +7,13 @@
 #include <QTableView>
 #include <QTreeView>
 #include <QHeaderView>
+#include <QLayout>
+
+void CommonUi::standardLayout(QLayout* const layout)
+{
+    layout->setSpacing(3);
+    layout->setMargin(6);
+}
 
 void CommonUi::standardTableView(QTableView* const view, bool const showTopHeader)
 {
@@ -24,8 +31,7 @@ void CommonUi::standardTableView(QTableView* const view, bool const showTopHeade
 
 void CommonUi::standardTreeView(QTreeView* const view, bool const showTopHeader)
 {
-    static constexpr int const ItemHeight = 18;
-
+    view->setUniformRowHeights(true);
     view->header()->setStretchLastSection(true);
     view->header()->setVisible(showTopHeader);
     view->setSelectionBehavior(QTableView::SelectionBehavior::SelectRows);

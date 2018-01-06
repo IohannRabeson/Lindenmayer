@@ -42,8 +42,11 @@ public:
 
     Q_ENUM(Type);
 
+    static QMidiMessage makeNote(unsigned char note, unsigned char velocity, unsigned char channel, bool onOff);
+
     QMidiMessage();
     explicit QMidiMessage(Bytes const& bytes, int port = -1, TimePoint const timestamp = now());
+    explicit QMidiMessage(Type type, int port = -1, TimePoint const timestamp = now());
     QMidiMessage(const QMidiMessage &);
     QMidiMessage &operator=(const QMidiMessage &);
     ~QMidiMessage();
@@ -61,6 +64,7 @@ public:
     unsigned char getControlChangeValue() const;
     unsigned char getProgramChange() const;
     unsigned char getChannel() const;
+
     unsigned char getChecksum() const;
 private:
     QSharedDataPointer<QMidiMessageData> data;

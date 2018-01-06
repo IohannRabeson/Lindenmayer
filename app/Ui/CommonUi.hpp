@@ -7,10 +7,12 @@
 
 class QTableView;
 class QTreeView;
+class QLayout;
 
 class CommonUi
 {
 public:
+    static void standardLayout(QLayout* const layout);
     static void standardTableView(QTableView* const view, bool const showTopHeader = true);
     static void standardTreeView(QTreeView* const view, bool const showTopHeader = true);
 };

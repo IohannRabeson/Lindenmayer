@@ -7,16 +7,16 @@ set(THE_APPLICATION_GUI_IDENTIFIER "com.dead.devs.society.midimonitor")
 set(THE_APPLICATION_ICON ${CMAKE_SOURCE_DIR}/configurations/macos/Application.icns)
 
 set(UI_SOURCES
-    Ui/MidiMessageListView.cpp
-    Ui/MidiMessageListView.hpp
+        Ui/Widgets/MidiMessageListView.cpp
+        Ui/Widgets/MidiMessageListView.hpp
     Ui/MainWindow.cpp
     Ui/MainWindow.hpp
     Ui/DockWidgetManager.hpp
     Ui/DockWidgetManager.cpp
     Ui/ToolBarManager.hpp
     Ui/ToolBarManager.cpp
-    Ui/DeviceSchemeWidget.cpp
-    Ui/DeviceSchemeWidget.hpp
+        Ui/Widgets/DeviceSchemeWidget.cpp
+        Ui/Widgets/DeviceSchemeWidget.hpp
     Ui/CommonUi.cpp
     Ui/CommonUi.hpp
     Ui/AboutMidiMonitorDialog.hpp
@@ -24,9 +24,7 @@ set(UI_SOURCES
     Ui/AboutMidiMonitorDialog.ui
     Ui/Delegates/MidiDelegates.cpp
     Ui/Delegates/MidiDelegates.hpp
-    Ui/Format.hpp
-    Ui/Format.cpp
-        Ui/SettingsUtils.hpp)
+        Ui/SettingsUtils.hpp Ui/Widgets/MidiNoteTriggerWidget.cpp Ui/Widgets/MidiNoteTriggerWidget.hpp)
 
 set(PLUGINS_SOURCES
     Plugins/Plugins.qrc

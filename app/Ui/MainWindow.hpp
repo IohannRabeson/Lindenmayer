@@ -18,6 +18,8 @@ class QMidiManager;
 class QAbstractDeviceScheme;
 
 class MidiMessageListView;
+class MidiNoteTriggerWidget;
+
 class DockWidgetManager;
 class DeviceSchemeWidget;
 class ToolBarManager;
@@ -59,6 +61,7 @@ private:
     DockWidgetManager* const m_dockWidgets;
     ToolBarManager* const m_toolbars;
     QMidiManufacturerModel* const m_manufacturerModel;
+    MidiNoteTriggerWidget* const m_noteWidget;
 
     // File actions
     QAction* const m_actionRescanMidiPorts;

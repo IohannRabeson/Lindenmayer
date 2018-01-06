@@ -3,7 +3,7 @@
 //
 
 #include "MidiMessageListView.hpp"
-#include "CommonUi.hpp"
+#include "Ui/CommonUi.hpp"
 
 #include <QMidiMessageModel.hpp>
 #include <QHeaderView>
@@ -39,6 +39,17 @@ void MidiMessageListView::loadSettings(QSettings& settings)
     settings.beginGroup("header_view");
     header()->restoreGeometry(restoreFrom<QByteArray>(settings, "geometry"));
     header()->restoreState(restoreFrom<QByteArray>(settings, "state"));
+    settings.endGroup();
+    settings.endGroup();
+}
+
+void MidiMessageListView::saveSettings(QSettings& settings) const
+{
+    settings.beginGroup("message_view");
+    settings.setValue("geometry", saveGeometry());
+    settings.beginGroup("header_view");
+    settings.setValue("geometry", header()->saveGeometry());
+    settings.setValue("state", header()->saveState());
     settings.endGroup();
     settings.endGroup();
 }

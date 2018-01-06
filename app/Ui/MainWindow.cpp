@@ -3,10 +3,10 @@
 //
 
 #include "MainWindow.hpp"
-#include "Ui/MidiMessageListView.hpp"
+#include "Ui/Widgets/MidiMessageListView.hpp"
 #include "Ui/DockWidgetManager.hpp"
 #include "Ui/ToolBarManager.hpp"
-#include "Ui/DeviceSchemeWidget.hpp"
+#include "Ui/Widgets/DeviceSchemeWidget.hpp"
 #include "Ui/CommonUi.hpp"
 #include "Ui/AboutMidiMonitorDialog.hpp"
 #include "Ui/SettingsUtils.hpp"
@@ -14,6 +14,8 @@
 #include "Plugins/Waldorf/Pulse2/Pulse2Scheme.hpp"
 
 #include "Delegates/MidiDelegates.hpp"
+
+#include "Ui/Widgets/MidiNoteTriggerWidget.hpp"
 
 #include <QComboBox>
 #include <QToolBar>
@@ -83,6 +85,7 @@ MainWindow::MainWindow(QWidget* parent)
 , m_dockWidgets(new DockWidgetManager(this))
 , m_toolbars(new ToolBarManager(this))
 , m_manufacturerModel(new QMidiManufacturerModel(this))
+, m_noteWidget(new MidiNoteTriggerWidget(this))
 
 , m_actionRescanMidiPorts(new QAction(tr("Rescan midi ports"), this))
 , m_actionQuit(new QAction(tr("Quit"), this))
@@ -112,6 +115,8 @@ void MainWindow::setupSystem()
     connect(m_inputPortModel, &QMidiDeviceModel::checkedChanged, this, &MainWindow::onInputPortEnabled);
     connect(m_outputPortModel, &QMidiDeviceModel::checkedChanged, this, &MainWindow::onOutputPortEnabled);
     connect(m_midiManager, &QMidiManager::messageReceived, m_messageModel, &QMidiMessageModel::append);
+    connect(m_midiManager, &QMidiManager::messageSent, m_messageModel, &QMidiMessageModel::append);
+    connect(m_noteWidget, &MidiNoteTriggerWidget::sendMessage, m_midiManager, &QMidiManager::sendMessage);
     m_manufacturerModel->load(QMidiManufacturerModel::LoadFromCSV(":/Texts/Resources/MIDI_Manufacturers.csv"));
 }
 
@@ -180,6 +185,9 @@ void MainWindow::setupUi()
     midiOutputPortView->setModel(m_midiManager->getOutputDeviceModel());
     m_dockWidgets->addDockWidget(midiOutputPortView, tr("MIDI Outputs"));
 
+    // Setup note widget
+    m_dockWidgets->addDockWidget(m_noteWidget, tr("MIDI Note Trigger"));
+
     // Setup window
     setAnimated(true);
     setUnifiedTitleAndToolBarOnMac(false);
@@ -232,13 +240,8 @@ void MainWindow::saveSettings() const
     settings.setValue("state", saveState());
     settings.endGroup();
 
-    settings.beginGroup("message_view");
-    settings.setValue("geometry", m_messageView->saveGeometry());
-    settings.beginGroup("header_view");
-    settings.setValue("geometry", m_messageView->header()->saveGeometry());
-    settings.setValue("state", m_messageView->header()->saveState());
-    settings.endGroup();
-    settings.endGroup();
+    m_messageView->saveSettings(settings);
+    m_noteWidget->saveSettings(settings);
 }
 
 void MainWindow::loadSettings()
@@ -257,6 +260,9 @@ void MainWindow::loadSettings()
         restoreState(restoreFrom<QByteArray>(settings, "state"));
     }
     settings.endGroup();
+
+    m_messageView->loadSettings(settings);
+    m_noteWidget->loadSettings(settings);
 }
 
 void MainWindow::showAbout()

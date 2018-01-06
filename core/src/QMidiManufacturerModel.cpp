@@ -3,7 +3,7 @@
 //
 
 #include "QMidiManufacturerModel.hpp"
-#include "../../app/Ui/Format.hpp"
+#include "Format.hpp"
 
 #include <QFile>
 #include <QMidiMessage.hpp>

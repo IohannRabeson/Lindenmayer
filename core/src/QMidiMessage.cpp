@@ -28,6 +28,8 @@ class QMidiMessageData : public QSharedData
      */
     static Type detectMessageType(Bytes const& bytes)
     {
+        Q_ASSERT( (bytes[0u] & 0x80) == 0x80 ); // Is status byte?
+
         unsigned char const typePart = bytes[0u] & 0xF0;
         Type result = Type::Undefined;
 
@@ -67,6 +69,8 @@ public:
         , m_type(detectMessageType(bytes))
         , m_port(port)
     {
+        Q_ASSERT( bytes.size() > 1u );
+        Q_ASSERT( (bytes.front() & 0x80) == 0x80 ); // Is the first byte is a status byte
     }
 
     unsigned char getChecksum() const
@@ -154,7 +158,11 @@ unsigned char QMidiMessage::getProgramChange() const
 
 unsigned char QMidiMessage::getChannel() const
 {
-    return data->m_bytes.size() > 0 ? (data->m_bytes[0] & 0xF) + 1u : 0u;
+    Q_ASSERT( (byteAt(0u) & 0x80) == 0x80 ); // Is status byte?
+
+    auto const channel = data->m_bytes[0] & 0xF;
+
+    return channel > -1 ? channel + 1u : 0u;
 }
 
 unsigned char QMidiMessage::getChecksum() const
@@ -176,3 +184,4 @@ QDateTime const& QMidiMessage::timestamp() const
 {
     return data->m_timestamp;
 }
+

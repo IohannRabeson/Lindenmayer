@@ -37,7 +37,8 @@ public:
     {
         return formatBytes(std::begin(container), std::end(container));
     }
-};
 
+    static QString formatMidiNote(unsigned char const note);
+};
 
 #endif //MIDIMONITOR_FORMAT_HPP

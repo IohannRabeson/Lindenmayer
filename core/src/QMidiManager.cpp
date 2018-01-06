@@ -141,3 +141,12 @@ void QMidiManager::resetPorts()
     resetMidiInPorts();
     resetMidiOutPorts();
 }
+
+void QMidiManager::sendMessage(QMidiMessage const& message)
+{
+    for (auto* midiOut : m_midiOuts)
+    {
+        midiOut->sendMessage(message);
+    }
+    emit messageSent(message);
+}

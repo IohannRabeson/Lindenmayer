@@ -3,7 +3,7 @@
 //
 
 #include "MidiDelegates.hpp"
-#include <Ui/Format.hpp>
+#include <Format.hpp>
 
 #include <QMetaEnum>
 #include <QMidiMessageModel.hpp>
@@ -67,10 +67,10 @@ void MidiValueDelegate::initStyleOption(QStyleOptionViewItem *option, const QMod
     switch (message.type())
     {
     case QMidiMessage::Type::NoteOn:
-        text = QString("%0 Velocity: %1").arg(message.getNote()).arg(message.getVelocity());
+        text = QString("%0 (%1)").arg(message.getNote()).arg(message.getVelocity());
         break;
     case QMidiMessage::Type::NoteOff:
-        text = QString("%0 Velocity: %1").arg(message.getNote()).arg(message.getVelocity());
+        text = QString("%0 (%1)").arg(message.getNote()).arg(message.getVelocity());
         break;
     case QMidiMessage::Type::ControlChange:
         text = QString("CC%0: %1").arg(message.getControlChangeNumber()).arg(message.getControlChangeValue());

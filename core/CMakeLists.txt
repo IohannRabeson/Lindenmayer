@@ -17,7 +17,15 @@ add_library(QMidi
             include/QMidiChecksums.cpp
             include/QMidiChecksums.hpp
             src/QMidiManufacturerModel.cpp
-            include/QMidiManufacturerModel.hpp src/QMidiManager.cpp include/QMidiManager.hpp src/QMidiOut.cpp include/QMidiOut.hpp)
+            include/QMidiManufacturerModel.hpp
+            src/QMidiManager.cpp
+            include/QMidiManager.hpp
+            src/QMidiOut.cpp
+            include/QMidiOut.hpp
+            src/QMidiNoteModel.cpp
+            include/QMidiNoteModel.hpp
+            include/Format.hpp
+            src/Format.cpp src/QMidiMessageBuilder.cpp include/QMidiMessageBuilder.hpp)
 
 target_link_libraries(QMidi PRIVATE rtmidi Qt5::Core Qt5::Widgets)
 

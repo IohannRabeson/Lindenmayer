@@ -21,8 +21,8 @@
 //      - control change
 //      - program change
 //      - sysex
-
-// - Commands for context menu in Midi Inputs dock widget:
+// - Save/load settings of inputs / outputs ports enabled value
+// - Commands for context menu in Midi Inputs dock widget and Midi Output dock widget:
 //      - enable only (double click)
 //      - enable all / disable all (depending of the selection state of the item under the cursor)
 // - data details with QML:

@@ -75,8 +75,11 @@ public:
     {
         Q_Q(QMidiOut);
 
-        m_midiOut->sendMessage(&message.bytes());
-        emit q->messageSended(message);
+        if (m_enabled)
+        {
+            m_midiOut->sendMessage(&message.bytes());
+            emit q->messageSended(message);
+        }
     }
 private:
     QMidiOut* const q_ptr;
