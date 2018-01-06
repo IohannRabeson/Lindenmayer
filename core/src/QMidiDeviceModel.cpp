@@ -4,6 +4,7 @@
 
 #include "QMidiDeviceModel.hpp"
 #include "QMidiIn.hpp"
+#include "QMidiOut.hpp"
 
 QMidiDeviceModel::QMidiDeviceModel(QObject* parent)
 : QAbstractListModel(parent)
@@ -78,6 +79,20 @@ void QMidiDeviceModel::rescan(QMidiIn* midiIn)
         }
         return ports;
     });
+}
+
+void QMidiDeviceModel::rescan(QMidiOut* midiOut)
+{
+    reset([midiOut]() -> Ports
+          {
+              Ports ports;
+
+              for (auto i = 0; i < midiOut->portCount(); ++i)
+              {
+                  ports.append(MidiPort{midiOut->portName(i), i});
+              }
+              return ports;
+          });
 }
 
 Qt::ItemFlags QMidiDeviceModel::flags(QModelIndex const& index) const

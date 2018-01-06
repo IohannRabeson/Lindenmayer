@@ -54,12 +54,13 @@ public:
 
         try
         {
-            qDebug() << "[QMidiIn]" << portIndex << "Open MIDI port" << portIndex;
             m_midiIn->openPort(portIndex);
             m_portOpened = portIndex;
+            qDebug() << "[QMidiIn]" << portIndex << "Open MIDI port" << portIndex;
         }
         catch (RtMidiError const& e)
         {
+            qWarning() << "[QMidiIn] Error:" << QString::fromStdString(e.getMessage());
             emit q->error(QString::fromStdString(e.getMessage()));
             m_portOpened = -1;
         }

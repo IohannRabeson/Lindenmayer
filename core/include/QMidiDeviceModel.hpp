@@ -7,6 +7,7 @@
 #include <QAbstractListModel>
 
 class QMidiIn;
+class QMidiOut;
 
 /*!
  * \brief Model of midi ports
@@ -27,6 +28,7 @@ public:
     explicit QMidiDeviceModel(QObject* parent);
 
     void rescan(QMidiIn* midiIn);
+    void rescan(QMidiOut* midiOut);
     void setChecked(int const row, bool checked);
 
     int rowCount(QModelIndex const& parent = QModelIndex()) const override;

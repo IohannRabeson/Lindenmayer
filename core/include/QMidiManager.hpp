@@ -9,6 +9,7 @@
 
 class QMidiDeviceModel;
 class QMidiIn;
+class QMidiOut;
 class QMidiMessage;
 
 class QMidiManager : public QObject
@@ -17,17 +18,26 @@ class QMidiManager : public QObject
 public:
     QMidiManager(QObject* parent = nullptr);
 
+    void resetPorts();
+
     QMidiDeviceModel* getInputDeviceModel() const;
+    QMidiDeviceModel* getOutputDeviceModel() const;
 
     void setInputPortEnabled(int const portId, bool const enabled);
-    void resetMidiInPorts();
+    void setOutputPortEnabled(int const portId, bool const enabled);
     void closeAll();
 signals:
     void messageReceived(QMidiMessage const& message);
 private:
+    void resetMidiInPorts();
+    void resetMidiOutPorts();
+    void closeOutputPorts();
+    void closeInputPorts();
+private:
     QMidiDeviceModel* const m_inputDeviceModel;
+    QMidiDeviceModel* const m_outputDeviceModel;
     QVector<QMidiIn*> m_midiIns;
+    QVector<QMidiOut*> m_midiOuts;
 };
-
 
 #endif //MIDIMONITOR_QMIDIMANAGER_HPP

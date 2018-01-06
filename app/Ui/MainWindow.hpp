@@ -33,10 +33,6 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget* parent = nullptr);
     ~MainWindow();
-public:
-//    void appendMessage(QMidiMessage const& message);
-//    void clearMessages();
-    void closeAllPorts();
 private:
     void setupUi();
     void setupActions();
@@ -45,7 +41,7 @@ private:
     void setupToolbars();
 
     void onInputPortEnabled(int const portId, bool const enabled);
-
+    void onOutputPortEnabled(int const portId, bool const enabled);
     void resetMidiInputs();
 
     void saveSettings() const;
@@ -56,6 +52,7 @@ private:
     QMidiManager* const m_midiManager;
     QDeviceSchemeFactory* const m_deviceSchemeFactory;
     QMidiDeviceModel* const m_inputPortModel;
+    QMidiDeviceModel* const m_outputPortModel;
     QMidiMessageModel* const m_messageModel;
     QItemSelectionModel* const m_messageSelection;
     MidiMessageListView* const m_messageView;

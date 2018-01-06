@@ -6,6 +6,9 @@
 // - DONE: schemes integration
 // - DONE: Scheme selector
 // - DONE: ability to listen multiple ports at the same time
+// - icon tray!
+// - use dockwidget and toolbar manager to build a layout system
+// - virtual keyboard (QML???)
 // - input message filters
 //   - message filters list view
 //   - filter function

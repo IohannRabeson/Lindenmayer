@@ -76,6 +76,7 @@ MainWindow::MainWindow(QWidget* parent)
 , m_midiManager(new QMidiManager(this))
 , m_deviceSchemeFactory(new QDeviceSchemeFactory(this))
 , m_inputPortModel(m_midiManager->getInputDeviceModel())
+, m_outputPortModel(m_midiManager->getOutputDeviceModel())
 , m_messageModel(new QMidiMessageModel(this))
 , m_messageSelection(new QItemSelectionModel(m_messageModel, this))
 , m_messageView(new MidiMessageListView(m_messageModel, this))
@@ -99,16 +100,17 @@ MainWindow::MainWindow(QWidget* parent)
 
 MainWindow::~MainWindow()
 {
-    closeAllPorts();
     saveSettings();
+    m_midiManager->closeAll();
 }
 
 void MainWindow::setupSystem()
 {
     // Setup scheme factory
     m_deviceSchemeFactory->add<Pulse2Scheme>("Pulse 2");
-    m_midiManager->resetMidiInPorts();
+    m_midiManager->resetPorts();
     connect(m_inputPortModel, &QMidiDeviceModel::checkedChanged, this, &MainWindow::onInputPortEnabled);
+    connect(m_outputPortModel, &QMidiDeviceModel::checkedChanged, this, &MainWindow::onOutputPortEnabled);
     connect(m_midiManager, &QMidiManager::messageReceived, m_messageModel, &QMidiMessageModel::append);
     m_manufacturerModel->load(QMidiManufacturerModel::LoadFromCSV(":/Texts/Resources/MIDI_Manufacturers.csv"));
 }
@@ -135,7 +137,7 @@ void MainWindow::resetMidiInputs()
         }
     }
     m_messageModel->clear();
-    m_midiManager->resetMidiInPorts();
+    m_midiManager->resetPorts();
 }
 
 void MainWindow::setupActions()
@@ -171,6 +173,13 @@ void MainWindow::setupUi()
     midiInputPortView->setModel(m_inputPortModel);
     m_dockWidgets->addDockWidget(midiInputPortView, tr("MIDI Inputs"));
 
+    // Setup MIDI output port view
+    QTableView* midiOutputPortView = new QTableView(this);
+
+    CommonUi::standardTableView(midiOutputPortView, false);
+    midiOutputPortView->setModel(m_midiManager->getOutputDeviceModel());
+    m_dockWidgets->addDockWidget(midiOutputPortView, tr("MIDI Outputs"));
+
     // Setup window
     setAnimated(true);
     setUnifiedTitleAndToolBarOnMac(false);
@@ -203,14 +212,14 @@ void MainWindow::setupMenus()
     helpMenu->addAction(m_actionAbout);
 }
 
-void MainWindow::closeAllPorts()
-{
-    m_midiManager->closeAll();
-}
-
 void MainWindow::onInputPortEnabled(int const portId, bool const enabled)
 {
     m_midiManager->setInputPortEnabled(portId, enabled);
+}
+
+void MainWindow::onOutputPortEnabled(int const portId, bool const enabled)
+{
+    m_midiManager->setOutputPortEnabled(portId, enabled);
 }
 
 void MainWindow::saveSettings() const
@@ -256,3 +265,4 @@ void MainWindow::showAbout()
 
     dialog.exec();
 }
+
