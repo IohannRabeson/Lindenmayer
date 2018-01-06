@@ -63,18 +63,19 @@ private:
 };
 
 
-TEST_F(QMidiManufacturerModelTestFixture, general_tests)
+TEST_F(QMidiManufacturerModelTestFixture, findCode)
 {
     load({{{"0_0_0"}, {0, 0, 0}}});
-    load({{{"0"}, {0}}});
     load({{{"0_0_1"}, {0, 0, 1}}});
     load({{{"1"}, {1}}});
 
     ASSERT_TRUE( findCode({0, 0, 1}) );
     ASSERT_TRUE( findCode({1}) );
-    ASSERT_TRUE( findCode({1}) );
-    ASSERT_FALSE( findCode({1, 0, 0}) );
-    ASSERT_FALSE( findCode({0, 1, 0}) );
+    ASSERT_FALSE( findCode({2, 1}) );
+    ASSERT_FALSE( findCode({0, 1}) );
+    ASSERT_FALSE( findCode({0, 0}) );
+    ASSERT_FALSE( findCode({1, 1, 1}) );
+    ASSERT_FALSE( findCode({0, 0, 4}) );
 }
 
 TEST_F(QMidiManufacturerModelTestFixture, duplicate)

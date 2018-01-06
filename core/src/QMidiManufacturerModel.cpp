@@ -40,7 +40,20 @@ QVariant QMidiManufacturerModel::data(const QModelIndex& index, int role) const
 void QMidiManufacturerModel::load(Loader&& loader)
 {
     beginResetModel();
-    m_elements = loader();
+
+    auto const elements = loader();
+
+    for (auto const& element : elements)
+    {
+        if (std::find_if(m_elements.begin(), m_elements.end(), [element](Element const& current)
+                         {
+                             // Notice it's not a && but a ||.
+                             return current.name == element.name || current.code == element.code;
+                         }) == m_elements.end())
+        {
+            m_elements.push_back(element);
+        }
+    }
     endResetModel();
     qDebug() << "[QMidiManufacturerModel]" << m_elements.size() << "manufacturers loaded";
 }
@@ -57,18 +70,15 @@ int QMidiManufacturerModel::findCode(QMidiMessage const& message) const
         int bytePosition = 1;
         bool found = true;
 
-        while (j < code.size() && bytePosition < bytes.size())
+        while (bytePosition < bytes.size())
         {
-            if (code[j] != bytes[bytePosition])
+            if (j < code.size() && code[j] != bytes[bytePosition])
             {
                 found = false;
                 break;
             }
-            else
-            {
-                ++j;
-                ++bytePosition;
-            }
+            ++j;
+            ++bytePosition;
         }
         if (found && j == code.size())
         {
@@ -115,6 +125,7 @@ static QString parseName(QString const& line, int& pos)
     }
     return temp;
 }
+
 QMidiManufacturerModel::LoadFromCSV::LoadFromCSV(QString const& csvFilePath)
 : m_csvFilePath(csvFilePath)
 {
