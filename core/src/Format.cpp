@@ -25,5 +25,5 @@ QString Format::formatMidiNote(unsigned char const note)
         QObject::tr("B"),
     };
 
-    return NoteTexts.value(note % 12) % QString::number(note / 12);
+    return NoteTexts.value(note % 12) % "-" % QString::number(note / 12);
 }

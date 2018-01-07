@@ -28,6 +28,8 @@
 // - data details with QML:
 // Display raw byte as hexadecimal with text highlighting and tooltips for very explicative
 // and detailed informations.
+// - Message recorder / player to be able to record messages then replays them.
+
 #include <QApplication>
 
 #include "Ui/MainWindow.hpp"

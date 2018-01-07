@@ -12,7 +12,6 @@ class QMidiOut;
 /*!
  * \brief Model of midi ports
  *
- * // TODO: void rescan(QMidiOut* midiOut);
  */
 class QMidiDeviceModel : public QAbstractListModel
 {
