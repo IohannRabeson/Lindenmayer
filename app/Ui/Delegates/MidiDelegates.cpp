@@ -52,9 +52,9 @@ QString MidiTimeDelegate::displayText(const QVariant &value, const QLocale &loca
 }
 
 MidiValueDelegate::MidiValueDelegate(const QMidiMessageModel * const model, const QMidiManufacturerModel * const manufacturerModel, QObject *parent)
-    : QStyledItemDelegate(parent)
-    , m_model(model)
-    , m_manufacturerModel(manufacturerModel)
+: QStyledItemDelegate(parent)
+, m_model(model)
+, m_manufacturerModel(manufacturerModel)
 {
 }
 

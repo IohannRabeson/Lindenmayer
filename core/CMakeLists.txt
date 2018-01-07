@@ -6,14 +6,14 @@ add_library(QMidi
             src/QMidiMessage.cpp
             include/QMidiMessageModel.hpp
             src/QMidiMessageModel.cpp
-            src/QAbstractDeviceScheme.cpp
-            include/QAbstractDeviceScheme.hpp
-            src/QDefaultDeviceScheme.cpp
-            include/QDefaultDeviceScheme.hpp
+        src/QAbstractMidiTranslator.cpp
+        include/QAbstractMidiTranslator.hpp
+        src/QDefaultMidiTranslator.cpp
+        include/QDefaultMidiTranslator.hpp
             src/QMidiDeviceModel.cpp
             include/QMidiDeviceModel.hpp
-            src/QDeviceSchemeFactory.cpp
-            include/QDeviceSchemeFactory.hpp
+        src/QMidiTranslatorFactory.cpp
+        include/QMidiTranslatorFactory.hpp
             include/QMidiChecksums.cpp
             include/QMidiChecksums.hpp
             src/QMidiManufacturerModel.cpp

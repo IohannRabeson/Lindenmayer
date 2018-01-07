@@ -1,5 +1,5 @@
 #include "QMidiMessageModel.hpp"
-#include "QDefaultDeviceScheme.hpp"
+#include "QDefaultMidiTranslator.hpp"
 
 #include <QMap>
 #include <QVector>
@@ -14,7 +14,6 @@ public:
     QVariant getValue(int const column, QMidiMessage const& message) const;
 
     QVector<QMidiMessage> m_messages;
-    std::unique_ptr<QAbstractDeviceScheme> m_scheme;
 };
 
 QMap<int, QString> const QMidiMessageModelPrivate::s_header =
@@ -41,7 +40,6 @@ QMidiMessageModel::QMidiMessageModel(QObject *parent)
     : QAbstractTableModel(parent)
     , d_ptr(new QMidiMessageModelPrivate)
 {
-    setScheme(new QDefaultDeviceScheme);
 }
 
 QMidiMessageModel::~QMidiMessageModel() = default;
@@ -149,25 +147,6 @@ QMidiMessage QMidiMessageModel::getMessage(int const row) const
     Q_D(const QMidiMessageModel);
 
     return d->m_messages.value(row);
-}
-
-void QMidiMessageModel::setScheme(QAbstractDeviceScheme* scheme)
-{
-    Q_D(QMidiMessageModel);
-
-    if (d->m_scheme.get() != scheme)
-    {
-        beginResetModel();
-        d->m_scheme.reset(scheme);
-        endResetModel();
-    }
-}
-
-QAbstractDeviceScheme* QMidiMessageModel::getScheme() const
-{
-    Q_D(const QMidiMessageModel);
-
-    return d->m_scheme.get();
 }
 
 void QMidiMessageModel::remapInputPorts(QMap<int, int>& portRemappings)

@@ -11,7 +11,7 @@
 #include "Ui/AboutMidiMonitorDialog.hpp"
 #include "Ui/SettingsUtils.hpp"
 
-#include "Plugins/Waldorf/Pulse2/Pulse2Scheme.hpp"
+#include "Plugins/Waldorf/Pulse2/Pulse2Translator.hpp"
 
 #include "Delegates/MidiDelegates.hpp"
 
@@ -27,7 +27,7 @@
 #include <QHeaderView>
 #include <QtDebug>
 
-#include <QDeviceSchemeFactory.hpp>
+#include <QMidiTranslatorFactory.hpp>
 #include <QMidiIn.hpp>
 #include <QMidiMessageModel.hpp>
 #include <QMidiManager.hpp>
@@ -76,7 +76,7 @@ namespace
 MainWindow::MainWindow(QWidget* parent)
 : QMainWindow(parent)
 , m_midiManager(new QMidiManager(this))
-, m_deviceSchemeFactory(new QDeviceSchemeFactory(this))
+, m_deviceSchemeFactory(new QMidiTranslatorFactory(this))
 , m_inputPortModel(m_midiManager->getInputDeviceModel())
 , m_outputPortModel(m_midiManager->getOutputDeviceModel())
 , m_messageModel(new QMidiMessageModel(this))
@@ -87,7 +87,7 @@ MainWindow::MainWindow(QWidget* parent)
 , m_manufacturerModel(new QMidiManufacturerModel(this))
 , m_noteWidget(new MidiNoteTriggerWidget(this))
 
-, m_actionRescanMidiPorts(new QAction(tr("Rescan midi ports"), this))
+, m_actionRescanMidiPorts(new QAction(tr("Rescan"), this))
 , m_actionQuit(new QAction(tr("Quit"), this))
 , m_actionClearAll(new QAction(tr("Clear all"), this))
 , m_actionAbout(new QAction(tr("About...")))
@@ -110,7 +110,7 @@ MainWindow::~MainWindow()
 void MainWindow::setupSystem()
 {
     // Setup scheme factory
-    m_deviceSchemeFactory->add<Pulse2Scheme>("Pulse 2");
+    m_deviceSchemeFactory->add<Pulse2Translator>("Pulse 2");
     m_midiManager->resetPorts();
     connect(m_inputPortModel, &QMidiDeviceModel::checkedChanged, this, &MainWindow::onInputPortEnabled);
     connect(m_outputPortModel, &QMidiDeviceModel::checkedChanged, this, &MainWindow::onOutputPortEnabled);
@@ -195,6 +195,10 @@ void MainWindow::setupUi()
 void MainWindow::setupToolbars()
 {
     QToolBar* const mainToolbar = m_toolbars->addToolBar(tr("Main"));
+
+    mainToolbar->setIconSize(QSize(16, 16));
+    mainToolbar->addAction(m_actionRescanMidiPorts);
+    mainToolbar->addAction(m_actionClearAll);
 }
 
 void MainWindow::setupMenus()

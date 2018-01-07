@@ -2,8 +2,8 @@
 // Created by Io on 31/12/2017.
 //
 
-#ifndef MIDIMONITOR_QABSTRACTDEVICESCHEME_HPP
-#define MIDIMONITOR_QABSTRACTDEVICESCHEME_HPP
+#ifndef MIDIMONITOR_QABSTRACTMIDITRANSLATOR_HPP
+#define MIDIMONITOR_QABSTRACTMIDITRANSLATOR_HPP
 #include <QMidiMessage.hpp>
 
 /*!
@@ -13,27 +13,27 @@
  */
 // TODO: virtual method returning dump request format and dump data format
 // TODO: Add graphics property such as device rectangle, background texture, buttons positions, etc...
-class QAbstractDeviceScheme
+class QAbstractMidiTranslator
 {
 public:
     using ChecksumFunction = unsigned char (*)(QMidiMessage::Bytes const&, std::size_t const, std::size_t const);
 
-    virtual ~QAbstractDeviceScheme() = default;
+    virtual ~QAbstractMidiTranslator() = default;
 
     /*!
      * \brief Get the scheme manufacturer name
      */
-    virtual QString schemeManufacturer() const = 0;
+    virtual QString getTranslatorManufacturer() const = 0;
 
     /*!
      * \brief Get the scheme name
      */
-    virtual QString schemeName() const = 0;
+    virtual QString getTranslatorName() const = 0;
 
     /*!
      * \brief Get the scheme version
      */
-    virtual QString schemeVersion() const = 0;
+    virtual QString getTranslatorVersion() const = 0;
 
     /*!
      * \brief Compute checksum of \e bytes
@@ -81,4 +81,4 @@ protected:
     virtual ChecksumFunction checksumFunction() const = 0;
 };
 
-#endif //MIDIMONITOR_QABSTRACTDEVICESCHEME_HPP
+#endif //MIDIMONITOR_QABSTRACTMIDITRANSLATOR_HPP

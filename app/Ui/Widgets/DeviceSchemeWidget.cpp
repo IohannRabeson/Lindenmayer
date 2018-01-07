@@ -3,12 +3,12 @@
 //
 
 #include "DeviceSchemeWidget.hpp"
-#include <QDeviceSchemeFactory.hpp>
+#include <QMidiTranslatorFactory.hpp>
 
 #include <QListView>
 #include <QVBoxLayout>
 
-DeviceSchemeWidget::DeviceSchemeWidget(QDeviceSchemeFactory* schemeFactory, QWidget* parent)
+DeviceSchemeWidget::DeviceSchemeWidget(QMidiTranslatorFactory* schemeFactory, QWidget* parent)
 : QWidget(parent)
 , m_schemeFactory(schemeFactory)
 , m_schemeView(new QListView(this))

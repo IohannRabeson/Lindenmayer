@@ -55,6 +55,42 @@ public:
     QString displayText(QVariant const& value, QLocale const& locale) const override;
 };
 
+#include <QMap>
+#include <QScopedPointer>
+#include <QAbstractMidiTranslator.hpp>
+#include <QDefaultMidiTranslator.hpp>
+
+class MidiTranslatorSelector
+{
+public:
+    using TranslatorPointer = std::unique_ptr<QAbstractMidiTranslator>;
+
+    MidiTranslatorSelector()
+    : m_defaultTranslator(new QDefaultMidiTranslator)
+    {
+    }
+
+    ~MidiTranslatorSelector()
+    {
+        m_translators.clear();
+    }
+
+    void addTranslator(int const portIndex, TranslatorPointer&& translator)
+    {
+        m_translators.emplace(portIndex, std::move(translator));
+    }
+
+    QAbstractMidiTranslator& get(QMidiMessage const& message) const
+    {
+        auto const it = m_translators.find(message.port());
+
+        return it != m_translators.end() ? *(it->second) : *m_defaultTranslator;
+    }
+private:
+    std::map<int, TranslatorPointer> m_translators;
+    TranslatorPointer m_defaultTranslator;
+};
+
 class MidiValueDelegate : public QStyledItemDelegate
 {
     QMidiMessageModel const* const m_model;
@@ -63,6 +99,8 @@ public:
     MidiValueDelegate(QMidiMessageModel const* const model, QMidiManufacturerModel const* const manufacturerModel, QObject* parent);
 
     void initStyleOption(QStyleOptionViewItem *option, const QModelIndex &index) const override;
+private:
+    MidiTranslatorSelector m_translatorSelector;
 };
 
 class MidiDataDelegate : public QStyledItemDelegate

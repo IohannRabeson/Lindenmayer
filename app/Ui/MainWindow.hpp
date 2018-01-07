@@ -7,7 +7,7 @@
 #include <QMainWindow>
 #include <QModelIndex>
 
-class QDeviceSchemeFactory;
+class QMidiTranslatorFactory;
 class QMidiMessageModel;
 class QMidiDeviceModel;
 class QMidiMessage;
@@ -15,7 +15,7 @@ class QMidiIn;
 class QMidiManufacturerModel;
 class QMidiManager;
 
-class QAbstractDeviceScheme;
+class QAbstractMidiTranslator;
 
 class MidiMessageListView;
 class MidiNoteTriggerWidget;
@@ -52,7 +52,7 @@ private:
     void showAbout();
 private:
     QMidiManager* const m_midiManager;
-    QDeviceSchemeFactory* const m_deviceSchemeFactory;
+    QMidiTranslatorFactory* const m_deviceSchemeFactory;
     QMidiDeviceModel* const m_inputPortModel;
     QMidiDeviceModel* const m_outputPortModel;
     QMidiMessageModel* const m_messageModel;

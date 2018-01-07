@@ -4,17 +4,18 @@
 
 #ifndef MIDIMONITOR_PULSE2SCHEME_HPP
 #define MIDIMONITOR_PULSE2SCHEME_HPP
-#include <QDefaultDeviceScheme.hpp>
+#include <QDefaultMidiTranslator.hpp>
 #include "Plugins/Commons/TextDatabase.hpp"
 
-class Pulse2Scheme : public QDefaultDeviceScheme
+class Pulse2Translator : public QDefaultMidiTranslator
 {
 public:
-    Pulse2Scheme();
+    Pulse2Translator();
 
-    QString schemeManufacturer() const override;
-    QString schemeName() const override;
-    QString schemeVersion() const override;
+    QString getTranslatorManufacturer() const override;
+    QString getTranslatorName() const override;
+    QString getTranslatorVersion() const override;
+
     QString translateControlChangeName(unsigned char const control) const override;
     QString translateControlChangeValue(unsigned char const control, unsigned char const value) const override;
 private:
