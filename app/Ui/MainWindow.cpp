@@ -24,7 +24,9 @@
 #include <QStylePainter>
 #include <QMessageBox>
 #include <QTableView>
-#include <QHeaderView>
+#include <QSystemTrayIcon>
+#include <QEvent>
+
 #include <QtDebug>
 
 #include <QMidiTranslatorFactory.hpp>
@@ -36,6 +38,14 @@
 
 namespace
 {
+    QAction* createSeparator(QObject* parent)
+    {
+        QAction* action = new QAction(parent);
+
+        action->setSeparator(true);
+        return action;
+    }
+
     class ComboBox : public QComboBox
     {
     protected:
@@ -86,19 +96,23 @@ MainWindow::MainWindow(QWidget* parent)
 , m_toolbars(new ToolBarManager(this))
 , m_manufacturerModel(new QMidiManufacturerModel(this))
 , m_noteWidget(new MidiNoteTriggerWidget(this))
+, m_trayIcon(new QSystemTrayIcon(this))
 
 , m_actionRescanMidiPorts(new QAction(tr("Rescan"), this))
 , m_actionQuit(new QAction(tr("Quit"), this))
 , m_actionClearAll(new QAction(tr("Clear all"), this))
 , m_actionAbout(new QAction(tr("About...")))
 , m_actionSwitchAutoScrollToBottom(new QAction(tr("Auto scrolling")))
+, m_actionRestoreWindow(new QAction(tr("Show")))
 {
     setupSystem();
     setupActions();
     setupToolbars();
     setupMenus();
     setupUi();
+    setupTrayIcon();
     loadSettings();
+    updateActions();
 }
 
 MainWindow::~MainWindow()
@@ -201,6 +215,28 @@ void MainWindow::setupToolbars()
     mainToolbar->addAction(m_actionClearAll);
 }
 
+void MainWindow::setupTrayIcon()
+{
+    QMenu* const contextMenu = new QMenu(this);
+
+    contextMenu->addAction(m_actionRestoreWindow);
+    contextMenu->addAction(createSeparator(this));
+    contextMenu->addAction(m_actionAbout);
+    contextMenu->addAction(m_actionQuit);
+
+    connect(m_actionRestoreWindow, &QAction::triggered, [this]()
+    {
+        if (isMinimized())
+        {
+            showNormal();
+        }
+    });
+
+    m_trayIcon->setIcon(QIcon(":/Images/Resources/Midi.png"));
+    m_trayIcon->setContextMenu(contextMenu);
+    m_trayIcon->setVisible(true);
+}
+
 void MainWindow::setupMenus()
 {
     QMenuBar* const bar = menuBar();
@@ -270,8 +306,27 @@ void MainWindow::loadSettings()
 
 void MainWindow::showAbout()
 {
+    if (isMinimized())
+    {
+        showNormal();
+    }
     AboutMidiMonitorDialog dialog(this);
 
     dialog.exec();
 }
 
+void MainWindow::updateActions()
+{
+    auto const isWindowMinimized = isMinimized();
+
+    m_actionRestoreWindow->setEnabled(isWindowMinimized);
+}
+
+void MainWindow::changeEvent(QEvent* event)
+{
+    if (event->type() == QEvent::WindowStateChange)
+    {
+        updateActions();
+    }
+    QWidget::changeEvent(event);
+}

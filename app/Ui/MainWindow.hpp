@@ -15,8 +15,6 @@ class QMidiIn;
 class QMidiManufacturerModel;
 class QMidiManager;
 
-class QAbstractMidiTranslator;
-
 class MidiMessageListView;
 class MidiNoteTriggerWidget;
 
@@ -28,6 +26,7 @@ class QAction;
 class QComboBox;
 class QWidget;
 class QItemSelectionModel;
+class QSystemTrayIcon;
 
 class MainWindow : public QMainWindow
 {
@@ -41,6 +40,9 @@ private:
     void setupSystem();
     void setupMenus();
     void setupToolbars();
+    void setupTrayIcon();
+
+    void updateActions();
 
     void onInputPortEnabled(int const portId, bool const enabled);
     void onOutputPortEnabled(int const portId, bool const enabled);
@@ -50,6 +52,9 @@ private:
     void loadSettings();
 
     void showAbout();
+protected:
+    void changeEvent(QEvent* event) override;
+
 private:
     QMidiManager* const m_midiManager;
     QMidiTranslatorFactory* const m_deviceSchemeFactory;
@@ -62,6 +67,7 @@ private:
     ToolBarManager* const m_toolbars;
     QMidiManufacturerModel* const m_manufacturerModel;
     MidiNoteTriggerWidget* const m_noteWidget;
+    QSystemTrayIcon* const m_trayIcon;
 
     // File actions
     QAction* const m_actionRescanMidiPorts;
@@ -71,6 +77,8 @@ private:
     QAction* const m_actionClearAll;
     // View actions
     QAction* const m_actionSwitchAutoScrollToBottom;
+    // Tray icon actions
+    QAction* const m_actionRestoreWindow;
 };
 
 #endif //MIDIMONITOR_MAINWINDOW_HPP

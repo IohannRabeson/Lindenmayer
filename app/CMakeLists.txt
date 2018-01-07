@@ -2,7 +2,7 @@ set(THE_APPLICATION_DISPLAY_NAME "MIDI monitor")
 set(THE_APPLICATION_ORGANIZATION "Dead Devs Society")
 set(THE_APPLICATION_COPYRIGHT "Copyright 2018 - ${THE_APPLICATION_ORGANIZATION}")
 set(THE_APPLICATION_BRIEF "Humble MIDI monitor")
-set(THE_APPLICATION_VERSION "0.0.0")
+set(THE_APPLICATION_VERSION "${APPLICATION_VERSION}")
 set(THE_APPLICATION_GUI_IDENTIFIER "com.dead.devs.society.midimonitor")
 set(THE_APPLICATION_ICON ${CMAKE_SOURCE_DIR}/configurations/macos/Application.icns)
 
@@ -45,6 +45,7 @@ add_executable(MidiMonitor
 set_target_properties(MidiMonitor PROPERTIES OUTPUT_NAME ${THE_APPLICATION_DISPLAY_NAME})
 target_include_directories(MidiMonitor PRIVATE "${CMAKE_SOURCE_DIR}/app")
 target_link_libraries(MidiMonitor PRIVATE QMidi rtmidi Qt5::Core Qt5::Widgets)
+target_compile_definitions(MidiMonitor PRIVATE APPLICATION_VERSION="${APPLICATION_VERSION}")
 
 if (APPLE)
     message(STATUS "MacOSX specifics...")

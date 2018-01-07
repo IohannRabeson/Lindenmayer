@@ -6,7 +6,7 @@
 // - DONE: schemes integration
 // - DONE: TranslatorCreatorItem selector
 // - DONE: ability to listen multiple ports at the same time
-// - icon tray!
+// - DONE: icon tray!
 // - use dockwidget and toolbar manager to build a layout system
 // - virtual keyboard (QML???)
 // - input message filters
@@ -38,7 +38,7 @@ static void setupApplication()
 {
     QApplication::setApplicationDisplayName("Midi Monitor");
     QApplication::setApplicationName("MidiMonitor");
-    QApplication::setApplicationVersion("dev");
+    QApplication::setApplicationVersion(APPLICATION_VERSION);
     QApplication::setOrganizationName("Dead devs society");
 }
 
