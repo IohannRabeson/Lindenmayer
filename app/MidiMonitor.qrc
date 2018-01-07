@@ -4,7 +4,7 @@
     </qresource>
     <qresource prefix="/Texts">
         <file>Resources/Credits.txt</file>
-        <file>Resources/About.txt</file>
+        <file>Resources/About.html</file>
         <file>Resources/MIDI_Manufacturers.csv</file>
     </qresource>
 </RCC>

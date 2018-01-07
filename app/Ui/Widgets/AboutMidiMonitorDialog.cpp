@@ -29,7 +29,8 @@ AboutMidiMonitorDialog::AboutMidiMonitorDialog(QWidget *parent) :
     ui->applicationNameLabel->setText(QApplication::applicationDisplayName());
     ui->applicationVersionLabel->setText(QApplication::applicationVersion());
     ui->creditPlainTextEdit->setPlainText(loadTextFile(":/Texts/Resources/Credits.txt"));
-    ui->aboutTextEdit->setHtml(loadTextFile(":/Texts/Resources/About.txt"));
+    ui->aboutTextEdit->setHtml(loadTextFile(":/Texts/Resources/About.html"));
+    setWindowTitle(tr("About %0").arg(QApplication::applicationDisplayName()));
 }
 
 AboutMidiMonitorDialog::~AboutMidiMonitorDialog()

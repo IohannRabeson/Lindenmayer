@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>445</width>
-    <height>373</height>
+    <height>495</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -37,7 +37,7 @@
         <string/>
        </property>
        <property name="pixmap">
-        <pixmap resource="../MidiMonitor.qrc">:/Images/Resources/Midi.png</pixmap>
+        <pixmap resource="../../MidiMonitor.qrc">:/Images/Resources/Midi.png</pixmap>
        </property>
        <property name="scaledContents">
         <bool>true</bool>
@@ -130,9 +130,9 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="creditTab">
+     <widget class="QWidget" name="licencesTab">
       <attribute name="title">
-       <string>Credits</string>
+       <string>Licences</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <property name="spacing">
@@ -152,8 +152,17 @@
        </property>
        <item>
         <widget class="QPlainTextEdit" name="creditPlainTextEdit">
+         <property name="documentTitle">
+          <string>Licences</string>
+         </property>
+         <property name="lineWrapMode">
+          <enum>QPlainTextEdit::NoWrap</enum>
+         </property>
          <property name="readOnly">
           <bool>true</bool>
+         </property>
+         <property name="tabStopWidth">
+          <number>40</number>
          </property>
         </widget>
        </item>
@@ -174,7 +183,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="../MidiMonitor.qrc"/>
+  <include location="../../MidiMonitor.qrc"/>
  </resources>
  <connections>
   <connection>

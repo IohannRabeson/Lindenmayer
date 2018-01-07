@@ -36,10 +36,10 @@
 
 static void setupApplication()
 {
-    QApplication::setApplicationDisplayName("Midi Monitor");
-    QApplication::setApplicationName("MidiMonitor");
+    QApplication::setApplicationDisplayName(APPLICATION_DISPLAY_NAME);
+    QApplication::setApplicationName(APPLICATION_NAME);
     QApplication::setApplicationVersion(APPLICATION_VERSION);
-    QApplication::setOrganizationName("Dead devs society");
+    QApplication::setOrganizationName(APPLICATION_ORGANIZATION);
 }
 
 int main(int argc, char** argv)

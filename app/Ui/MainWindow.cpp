@@ -8,7 +8,7 @@
 #include "Ui/ToolBarManager.hpp"
 #include "Ui/Widgets/DeviceSchemeWidget.hpp"
 #include "Ui/CommonUi.hpp"
-#include "Ui/AboutMidiMonitorDialog.hpp"
+#include "Ui/Widgets/AboutMidiMonitorDialog.hpp"
 #include "Ui/SettingsUtils.hpp"
 
 #include "Plugins/Waldorf/Pulse2/Pulse2Translator.hpp"

@@ -1,35 +1,38 @@
-set(THE_APPLICATION_DISPLAY_NAME "MIDI monitor")
+set(THE_APPLICATION_DISPLAY_NAME "MIDI boy")
+set(THE_APPLICATION_NAME "MidiBoy")
 set(THE_APPLICATION_ORGANIZATION "Dead Devs Society")
 set(THE_APPLICATION_COPYRIGHT "Copyright 2018 - ${THE_APPLICATION_ORGANIZATION}")
-set(THE_APPLICATION_BRIEF "Humble MIDI monitor")
+set(THE_APPLICATION_BRIEF "MIDI IO utility")
 set(THE_APPLICATION_VERSION "${APPLICATION_VERSION}")
 set(THE_APPLICATION_GUI_IDENTIFIER "com.dead.devs.society.midimonitor")
 set(THE_APPLICATION_ICON ${CMAKE_SOURCE_DIR}/configurations/macos/Application.icns)
 
 set(UI_SOURCES
-        Ui/Widgets/MidiMessageListView.cpp
-        Ui/Widgets/MidiMessageListView.hpp
+    Ui/Widgets/MidiMessageListView.cpp
+    Ui/Widgets/MidiMessageListView.hpp
     Ui/MainWindow.cpp
     Ui/MainWindow.hpp
     Ui/DockWidgetManager.hpp
     Ui/DockWidgetManager.cpp
     Ui/ToolBarManager.hpp
     Ui/ToolBarManager.cpp
-        Ui/Widgets/DeviceSchemeWidget.cpp
-        Ui/Widgets/DeviceSchemeWidget.hpp
+    Ui/Widgets/DeviceSchemeWidget.cpp
+    Ui/Widgets/DeviceSchemeWidget.hpp
     Ui/CommonUi.cpp
     Ui/CommonUi.hpp
-    Ui/AboutMidiMonitorDialog.hpp
-    Ui/AboutMidiMonitorDialog.cpp
-    Ui/AboutMidiMonitorDialog.ui
+        Ui/Widgets/AboutMidiMonitorDialog.hpp
+        Ui/Widgets/AboutMidiMonitorDialog.cpp
+        Ui/Widgets/AboutMidiMonitorDialog.ui
     Ui/Delegates/MidiDelegates.cpp
     Ui/Delegates/MidiDelegates.hpp
-        Ui/SettingsUtils.hpp Ui/Widgets/MidiNoteTriggerWidget.cpp Ui/Widgets/MidiNoteTriggerWidget.hpp)
+    Ui/SettingsUtils.hpp
+    Ui/Widgets/MidiNoteTriggerWidget.cpp
+    Ui/Widgets/MidiNoteTriggerWidget.hpp)
 
 set(PLUGINS_SOURCES
     Plugins/Plugins.qrc
-        Plugins/Waldorf/Pulse2/Pulse2Translator.cpp
-        Plugins/Waldorf/Pulse2/Pulse2Translator.hpp
+    Plugins/Waldorf/Pulse2/Pulse2Translator.cpp
+    Plugins/Waldorf/Pulse2/Pulse2Translator.hpp
     Plugins/Commons/TextDatabase.cpp
     Plugins/Commons/TextDatabase.hpp
 )
@@ -45,7 +48,13 @@ add_executable(MidiMonitor
 set_target_properties(MidiMonitor PROPERTIES OUTPUT_NAME ${THE_APPLICATION_DISPLAY_NAME})
 target_include_directories(MidiMonitor PRIVATE "${CMAKE_SOURCE_DIR}/app")
 target_link_libraries(MidiMonitor PRIVATE QMidi rtmidi Qt5::Core Qt5::Widgets)
-target_compile_definitions(MidiMonitor PRIVATE APPLICATION_VERSION="${APPLICATION_VERSION}")
+target_compile_definitions(MidiMonitor PRIVATE
+    APPLICATION_VERSION="${APPLICATION_VERSION}"
+    APPLICATION_ORGANIZATION="${THE_APPLICATION_ORGANIZATION}"
+    APPLICATION_DISPLAY_NAME="${THE_APPLICATION_DISPLAY_NAME}"
+    APPLICATION_NAME="${THE_APPLICATION_NAME}"
+    APPLICATION_COPYRIGHT="${THE_APPLICATION_COPYRIGHT}"
+)
 
 if (APPLE)
     message(STATUS "MacOSX specifics...")
