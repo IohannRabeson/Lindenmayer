@@ -12,11 +12,15 @@
 #include <QComboBox>
 #include <QLineEdit>
 #include <QEvent>
-#include <QtDebug>
 #include <QSettings>
 
 #include <QMidiMessageBuilder.hpp>
 #include <QMidiNoteModel.hpp>
+
+/*!
+ * \class MidiNoteTriggerWidget
+ * \brief Widget allowing to trigger note on/off MIDI messages
+ */
 
 MidiNoteTriggerWidget::MidiNoteTriggerWidget(QWidget* parent)
 : QWidget(parent)
@@ -102,11 +106,9 @@ void MidiNoteTriggerWidget::loadSettings(QSettings& settings)
 void MidiNoteTriggerWidget::onPressed()
 {
     emit sendMessage(QMidiMessageBuilder::note(note(), velocity(), channel(), true));
-    qDebug() << "[MidiNoteTriggerWidget] Note on";
 }
 
 void MidiNoteTriggerWidget::onReleased()
 {
     emit sendMessage(QMidiMessageBuilder::note(note(), 0, channel(), false));
-    qDebug() << "[MidiNoteTriggerWidget] Note off";
 }

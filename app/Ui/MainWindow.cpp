@@ -124,16 +124,10 @@ void MainWindow::resetMidiInputs()
 {
     auto const* const midiInModel = m_midiManager->getInputDeviceModel();
 
-    /*
-     * Actually messages are deleted because each message store an index on the input port from the message comes.
-     * When inputs ports are rescanned, indexes become invalid.
-     * TODO: Another solution is to just set the input port index to -1 for each message.
-     * Even better I can update indexes when possible and set to -1 removed indexes.
-     */
     if (midiInModel->rowCount() > 0)
     {
         if (QMessageBox::warning(this, tr("Clear messages"),
-                                 tr("Messages will be deleted.\nAre you sure you want to do that?"),
+                                 tr("Messages can lost their input port information.\nAre you sure you want to do that?"),
                                  QMessageBox::StandardButton::Yes,
                                  QMessageBox::StandardButton::No) == QMessageBox::StandardButton::No)
         {
@@ -141,8 +135,13 @@ void MainWindow::resetMidiInputs()
             return;
         }
     }
-    m_messageModel->clear();
-    m_midiManager->resetPorts();
+
+    // The message with input port information will have their indexes
+    // updated when possible and set to -1 removed indexes.
+    QMap<int, int> inputPortRemappings;
+
+    m_midiManager->resetPorts(inputPortRemappings);
+    m_messageModel->remapInputPorts(inputPortRemappings);
 }
 
 void MainWindow::setupActions()

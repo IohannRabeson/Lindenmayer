@@ -185,3 +185,11 @@ QDateTime const& QMidiMessage::timestamp() const
     return data->m_timestamp;
 }
 
+void QMidiMessage::remapPort(QMap<int, int> const& remappings)
+{
+    if (data->m_port != -1)
+    {
+        data->m_port = remappings.value(data->m_port, -1);
+    }
+}
+

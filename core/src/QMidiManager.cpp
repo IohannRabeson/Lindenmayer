@@ -26,9 +26,34 @@ QMidiDeviceModel* QMidiManager::getOutputDeviceModel() const
     return m_outputDeviceModel;
 }
 
-void QMidiManager::resetMidiInPorts()
+
+void QMidiManager::resetPorts()
 {
+    QMap<int, int> inputRemappings;
+
+    resetPorts(inputRemappings);
+}
+
+void QMidiManager::resetPorts(QMap<int, int>& inputRemappings)
+{
+    resetMidiInPorts(inputRemappings);
+    resetMidiOutPorts();
+}
+
+void QMidiManager::resetMidiInPorts(QMap<int, int>& inputRemappings)
+{
+    // Store for each port a pair name/index.
+    // We use the name after ports reset to try to found previous inputs port
+    // and replaces the old indexes by the new ones.
+    QMap<QString, int> oldPortNameIndexes;
+
+    for (int i = 0; i < m_inputDeviceModel->rowCount(); ++i)
+    {
+        oldPortNameIndexes.insert(m_inputDeviceModel->name(i), i);
+    }
+
     closeInputPorts();
+
     // Instanciate the first MIDI port, then scans available ports.
     // Wierd but seem to be mandatory.
     // TODO: looking for an alternative to RtMidi?
@@ -57,6 +82,46 @@ void QMidiManager::resetMidiInPorts()
             connect(midiIn, &QMidiIn::messageReceived, this, &QMidiManager::messageReceived);
 
             midiIn->openPort(i);
+        }
+    }
+
+    // Replace the old inputs ports indexes by the new ones if possible.
+    for (int i = 0; i < m_inputDeviceModel->rowCount(); ++i)
+    {
+        auto const name = m_inputDeviceModel->name(i);
+        auto const oldIndex = oldPortNameIndexes.value(name);
+
+        inputRemappings.insert(oldIndex, i);
+    }
+}
+
+void QMidiManager::resetMidiOutPorts()
+{
+    closeOutputPorts();
+
+    m_midiOuts.append(new QMidiOut(this));
+    m_outputDeviceModel->rescan(m_midiOuts.front());
+
+    // Instanciate midi other inputs
+    for (int i = 0; i < m_outputDeviceModel->rowCount() - 1; ++i)
+    {
+        auto* const midiOut = new QMidiOut(this);
+
+        m_midiOuts.append(midiOut);
+    }
+
+    if (m_midiOuts.isEmpty())
+    {
+        qWarning() << "[MidiMonitor]: No midi inputs";
+    }
+    else
+    {
+        // Open midi inputs
+        for (int i = 0; i < m_midiOuts.size(); ++i)
+        {
+            auto* const midiOut = m_midiOuts[i];
+
+            midiOut->openPort(i);
         }
     }
 }
@@ -91,39 +156,6 @@ void QMidiManager::setOutputPortEnabled(int const portId, bool const enabled)
     }
 }
 
-void QMidiManager::resetMidiOutPorts()
-{
-    closeOutputPorts();
-
-    m_midiOuts.append(new QMidiOut(this));
-    m_outputDeviceModel->rescan(m_midiOuts.front());
-
-    // Instanciate midi other inputs
-    for (int i = 0; i < m_outputDeviceModel->rowCount() - 1; ++i)
-    {
-        auto* const midiOut = new QMidiOut(this);
-
-        m_midiOuts.append(midiOut);
-    }
-
-    if (m_midiOuts.isEmpty())
-    {
-        qWarning() << "[MidiMonitor]: No midi inputs";
-    }
-    else
-    {
-        // Open midi inputs
-        for (int i = 0; i < m_midiOuts.size(); ++i)
-        {
-            auto* const midiOut = m_midiOuts[i];
-
-//            QObject::connect(midiOut, &QMidiOut::messageReceived, this, &QMidiManager::messageReceived);
-
-            midiOut->openPort(i);
-        }
-    }
-}
-
 void QMidiManager::closeOutputPorts()
 {
     qDeleteAll(m_midiOuts);
@@ -134,12 +166,6 @@ void QMidiManager::closeInputPorts()
 {
     qDeleteAll(m_midiIns);
     m_midiIns.clear();
-}
-
-void QMidiManager::resetPorts()
-{
-    resetMidiInPorts();
-    resetMidiOutPorts();
 }
 
 void QMidiManager::sendMessage(QMidiMessage const& message)

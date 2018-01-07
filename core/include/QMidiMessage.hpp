@@ -66,6 +66,8 @@ public:
     unsigned char getChannel() const;
 
     unsigned char getChecksum() const;
+
+    void remapPort(QMap<int, int> const& remappings);
 private:
     QSharedDataPointer<QMidiMessageData> data;
 };
