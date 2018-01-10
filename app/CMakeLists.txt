@@ -27,7 +27,7 @@ set(UI_SOURCES
     Ui/Delegates/MidiDelegates.hpp
     Ui/SettingsUtils.hpp
     Ui/Widgets/MidiNoteTriggerWidget.cpp
-    Ui/Widgets/MidiNoteTriggerWidget.hpp)
+    Ui/Widgets/MidiNoteTriggerWidget.hpp Ui/Widgets/MidiKeyboardWidget.cpp Ui/Widgets/MidiKeyboardWidget.hpp)
 
 set(PLUGINS_SOURCES
     Plugins/Plugins.qrc
@@ -35,7 +35,7 @@ set(PLUGINS_SOURCES
     Plugins/Waldorf/Pulse2/Pulse2Translator.hpp
     Plugins/Commons/TextDatabase.cpp
     Plugins/Commons/TextDatabase.hpp
-)
+        Ui/Widgets/MidiKeyboardWidget.cpp Ui/Widgets/MidiKeyboardWidget.hpp)
 
 add_executable(MidiMonitor
     MACOSX_BUNDLE ${THE_APPLICATION_ICON}
@@ -56,8 +56,11 @@ target_compile_definitions(MidiMonitor PRIVATE
     APPLICATION_COPYRIGHT="${THE_APPLICATION_COPYRIGHT}"
 )
 
+if (RETAIL_MODE)
+    target_compile_definitions(MidiMonitor PRIVATE APPLICATION_RETAIL)
+endif()
+
 if (APPLE)
-    message(STATUS "MacOSX specifics...")
     set(MACOSX_BUNDLE_EXECUTABLE_NAME ${OUTPUT_NAME})
     set_source_files_properties(${THE_APPLICATION_ICON} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
 

@@ -17,6 +17,7 @@ class QMidiManager;
 
 class MidiMessageListView;
 class MidiNoteTriggerWidget;
+class MidiKeyboardWidget;
 
 class DockWidgetManager;
 class DeviceSchemeWidget;
@@ -56,6 +57,7 @@ protected:
     void changeEvent(QEvent* event) override;
 
 private:
+    QSystemTrayIcon* const m_trayIcon;
     QMidiManager* const m_midiManager;
     QMidiTranslatorFactory* const m_deviceSchemeFactory;
     QMidiDeviceModel* const m_inputPortModel;
@@ -67,7 +69,7 @@ private:
     ToolBarManager* const m_toolbars;
     QMidiManufacturerModel* const m_manufacturerModel;
     MidiNoteTriggerWidget* const m_noteWidget;
-    QSystemTrayIcon* const m_trayIcon;
+    MidiKeyboardWidget* const m_keyboardWidget;
 
     // File actions
     QAction* const m_actionRescanMidiPorts;

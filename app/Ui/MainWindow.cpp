@@ -16,6 +16,7 @@
 #include "Delegates/MidiDelegates.hpp"
 
 #include "Ui/Widgets/MidiNoteTriggerWidget.hpp"
+#include "Ui/Widgets/MidiKeyboardWidget.hpp"
 
 #include <QComboBox>
 #include <QToolBar>
@@ -85,6 +86,7 @@ namespace
 
 MainWindow::MainWindow(QWidget* parent)
 : QMainWindow(parent)
+, m_trayIcon(new QSystemTrayIcon(this))
 , m_midiManager(new QMidiManager(this))
 , m_deviceSchemeFactory(new QMidiTranslatorFactory(this))
 , m_inputPortModel(m_midiManager->getInputDeviceModel())
@@ -96,7 +98,7 @@ MainWindow::MainWindow(QWidget* parent)
 , m_toolbars(new ToolBarManager(this))
 , m_manufacturerModel(new QMidiManufacturerModel(this))
 , m_noteWidget(new MidiNoteTriggerWidget(this))
-, m_trayIcon(new QSystemTrayIcon(this))
+, m_keyboardWidget(new MidiKeyboardWidget(this))
 
 , m_actionRescanMidiPorts(new QAction(tr("Rescan"), this))
 , m_actionQuit(new QAction(tr("Quit"), this))
@@ -130,7 +132,6 @@ void MainWindow::setupSystem()
     connect(m_outputPortModel, &QMidiDeviceModel::checkedChanged, this, &MainWindow::onOutputPortEnabled);
     connect(m_midiManager, &QMidiManager::messageReceived, m_messageModel, &QMidiMessageModel::append);
     connect(m_midiManager, &QMidiManager::messageSent, m_messageModel, &QMidiMessageModel::append);
-    connect(m_noteWidget, &MidiNoteTriggerWidget::sendMessage, m_midiManager, &QMidiManager::sendMessage);
     m_manufacturerModel->load(QMidiManufacturerModel::LoadFromCSV(":/Texts/Resources/MIDI_Manufacturers.csv"));
 }
 
@@ -200,6 +201,11 @@ void MainWindow::setupUi()
 
     // Setup note widget
     m_dockWidgets->addDockWidget(m_noteWidget, tr("MIDI Note Trigger"));
+    connect(m_noteWidget, &MidiNoteTriggerWidget::sendMessage, m_midiManager, &QMidiManager::sendMessage);
+
+    // Setup keyboard widget
+    m_dockWidgets->addDockWidget(m_keyboardWidget, tr("MIDI keyboard"));
+    connect(m_keyboardWidget, &MidiKeyboardWidget::sendMessage, m_midiManager, &QMidiManager::sendMessage);
 
     // Setup window
     setAnimated(true);
@@ -281,6 +287,7 @@ void MainWindow::saveSettings() const
 
     m_messageView->saveSettings(settings);
     m_noteWidget->saveSettings(settings);
+    m_keyboardWidget->saveSettings(settings);
 }
 
 void MainWindow::loadSettings()
@@ -302,6 +309,7 @@ void MainWindow::loadSettings()
 
     m_messageView->loadSettings(settings);
     m_noteWidget->loadSettings(settings);
+    m_keyboardWidget->loadSettings(settings);
 }
 
 void MainWindow::showAbout()

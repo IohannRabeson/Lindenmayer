@@ -27,3 +27,8 @@ QString Format::formatMidiNote(unsigned char const note)
 
     return NoteTexts.value(note % 12) % "-" % QString::number(note / 12);
 }
+
+QString Format::formatMidiNote(unsigned char octave, unsigned char const note)
+{
+    return formatMidiNote(octave * 12u + note);
+}

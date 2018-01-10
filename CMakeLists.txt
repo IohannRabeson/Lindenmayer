@@ -12,7 +12,13 @@ if (NOT APPLICATION_VERSION)
     endif()
 endif()
 
-message("Build version: ${APPLICATION_VERSION}")
+set(BUILD_INFOS "-- Build version: ${APPLICATION_VERSION}")
+
+if (RETAIL_MODE)
+    set(BUILD_INFOS "${BUILD_INFOS} (retail)")
+endif()
+
+message(${BUILD_INFOS})
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_AUTOMOC ON)

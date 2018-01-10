@@ -38,6 +38,7 @@ public:
         return formatBytes(std::begin(container), std::end(container));
     }
 
+    static QString formatMidiNote(unsigned char octave, unsigned char const note);
     static QString formatMidiNote(unsigned char const note);
 };
 

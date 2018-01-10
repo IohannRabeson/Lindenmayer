@@ -12,6 +12,7 @@ QMidiMessage QMidiMessageBuilder::note(unsigned char const note, unsigned char c
 
     unsigned char const statusByte = (onOrOff ? 0x90u : 0x80u) | channel;
     unsigned char const noteByte = note & 0x7Fu;
+    unsigned char const velocityByte = onOrOff ? velocity : 0u;
 
-    return QMidiMessage(QMidiMessage::Bytes{statusByte, noteByte, velocity});
+    return QMidiMessage(QMidiMessage::Bytes{statusByte, noteByte, velocityByte});
 }
