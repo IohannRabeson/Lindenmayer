@@ -28,6 +28,9 @@ public:
 
     using Loader = std::function<QVector<QMidiManufacturerModel::Element>()>;
 
+    /*!
+     * \brief Load manufacturer infos from a CSV file.
+     */
     struct LoadFromCSV
     {
         explicit LoadFromCSV(QString const& csvFilePath);

@@ -103,6 +103,10 @@ namespace
             Node* current = m_root;
             Node* next = nullptr;
             int codePosition = 0;
+            // MIDI standard:
+            // If the first byte == 0x0 then the code size should be 3 bytes.
+            // Otherwise if the first byte is lesser than 0x7D (125) the manufacturer code have only 1 byte.
+            auto const expectedSize = code.front() == 0 ? 3 : 1;
 
             while (current && codePosition < code.size())
             {
@@ -117,7 +121,7 @@ namespace
                 current = next;
                 ++codePosition;
             }
-            return current && (codePosition == 1 || codePosition == 3) ? current->index : -1;
+            return current && (codePosition == expectedSize) ? current->index : -1;
         }
 
     private:
@@ -263,6 +267,31 @@ QMidiManufacturerModel::LoadFromCSV::LoadFromCSV(QString const& csvFilePath)
 {
 }
 
+namespace
+{
+    bool checkManufacturerCode(QString const& name, QVector<unsigned char> const& code, unsigned int const lineIndex)
+    {
+        if (code.isEmpty())
+        {
+            qWarning() << "Null manufacturer code (" << name << ")" << QString("line %0").arg(lineIndex);
+            return false;
+        }
+        if (code.size() == 1 && !(code.front() > 0u && code.front() < 125u))
+        {
+            qWarning() << "Invalid manufacturer code (" << name << ")" << QString("line %0").arg(lineIndex)
+                       << Format::formatBytes(code);
+            return false;
+        }
+        if (code.size() == 3 && !(code.front() == 0u))
+        {
+            qWarning() << "Invalid manufacturer code (" << name << ")" << QString("line %0").arg(lineIndex)
+                       << Format::formatBytes(code);
+            return false;
+        }
+        return true;
+    }
+}
+
 QVector<QMidiManufacturerModel::Element> QMidiManufacturerModel::LoadFromCSV::operator()() const
 {
     QVector<QMidiManufacturerModel::Element> results;
@@ -274,12 +303,15 @@ QVector<QMidiManufacturerModel::Element> QMidiManufacturerModel::LoadFromCSV::op
         QVector<unsigned char> code;
         QTextStream stream(&file);
         QString line;
+        auto lineIndex = 1u;
 
         while (stream.readLineInto(&line))
         {
             int pos = 0;
             auto const code = parseCode(line, pos);
             auto const name = parseName(line, pos);
+
+            Q_ASSERT( checkManufacturerCode(name, code, lineIndex) );
 
             results.append(Element{name, code});
         }
