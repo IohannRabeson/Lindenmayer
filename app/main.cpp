@@ -7,8 +7,7 @@
 // - DONE: TranslatorCreatorItem selector
 // - DONE: ability to listen multiple ports at the same time
 // - DONE: icon tray!
-// - Enable / disable chord in virtual keyboard!
-// - virtual keyboard (QML???)
+// - DONE virtual keyboard
 
 // - use dockwidget and toolbar manager to build a layout system
 
