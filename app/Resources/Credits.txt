@@ -1411,5 +1411,9 @@ necessary.  Here is a sample; alter the names:
 That's all there is to it!
 
 ------------------------------------------------------------------------------------------------------------------------
-Icons:
- - "MIDI" by Jonathan Higley from the Noun Project
+All icons come from the Noun Project and are under Creative Commons licence.
+
+ - "MIDI" by Jonathan Higley from the Noun Project - Creative Commons
+ - "Refresh" by ImageCatalog from the Noun Project - Creative Commons
+ - "ScrollDown" by Souvik Bhattacharjee from the Noun Project - Creative Commons
+ - "Clear" by Souvik Bhattacharjee from the Noun Project - Creative Commons

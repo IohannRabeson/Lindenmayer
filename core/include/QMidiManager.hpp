@@ -39,6 +39,7 @@ private:
 private:
     QMidiDeviceModel* const m_inputDeviceModel;
     QMidiDeviceModel* const m_outputDeviceModel;
+    // TODO: use unique_ptr and std::vector instead of QVector and raw pointers.
     QVector<QMidiIn*> m_midiIns;
     QVector<QMidiOut*> m_midiOuts;
 };

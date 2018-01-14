@@ -1,6 +1,9 @@
 <RCC>
     <qresource prefix="/Images">
         <file>Resources/Midi.png</file>
+        <file>Resources/Refresh.png</file>
+        <file>Resources/Clear.png</file>
+        <file>Resources/ScrollDown.png</file>
     </qresource>
     <qresource prefix="/Texts">
         <file>Resources/Credits.txt</file>

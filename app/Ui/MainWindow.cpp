@@ -68,7 +68,6 @@ namespace
             // draw the icon and text
             painter.drawControl(QStyle::CE_ComboBoxLabel, option);
         }
-
     public:
         using QComboBox::QComboBox;
 
@@ -78,7 +77,6 @@ namespace
             setSizeAdjustPolicy(QComboBox::AdjustToContents);
             setMinimumContentsLength(m_label.size() + 10);
         }
-
     private:
         QString m_label;
     };
@@ -100,14 +98,14 @@ MainWindow::MainWindow(QWidget* parent)
 , m_noteWidget(new MidiNoteTriggerWidget(this))
 , m_keyboardWidget(new MidiKeyboardWidget(this))
 
-, m_actionRescanMidiPorts(new QAction(tr("Rescan"), this))
+, m_actionRescanMidiPorts(new QAction(QIcon(":/Images/Resources/Refresh.png"), tr("Rescan MIDI ports"), this))
 , m_actionQuit(new QAction(tr("Quit"), this))
-, m_actionClearAll(new QAction(tr("Clear all"), this))
-, m_actionAbout(new QAction(tr("About...")))
-, m_actionSwitchAutoScrollToBottom(new QAction(tr("Auto scrolling")))
-, m_actionRestoreWindow(new QAction(tr("Show")))
+, m_actionClearAll(new QAction(QIcon(":/Images/Resources/Clear.png"), tr("Clear all"), this))
+, m_actionAbout(new QAction(tr("About..."), this))
+, m_actionSwitchAutoScrollToBottom(new QAction(QIcon(":/Images/Resources/ScrollDown.png"), tr("Auto scrolling"), this))
+, m_actionRestoreWindow(new QAction(tr("Show"), this))
 {
-    setupSystem();
+    setupMIDI();
     setupActions();
     setupToolbars();
     setupMenus();
@@ -123,10 +121,8 @@ MainWindow::~MainWindow()
     m_midiManager->closeAll();
 }
 
-void MainWindow::setupSystem()
+void MainWindow::setupMIDI()
 {
-    // Setup scheme factory
-    m_deviceSchemeFactory->add<Pulse2Translator>("Pulse 2");
     m_midiManager->resetPorts();
     connect(m_inputPortModel, &QMidiDeviceModel::checkedChanged, this, &MainWindow::onInputPortEnabled);
     connect(m_outputPortModel, &QMidiDeviceModel::checkedChanged, this, &MainWindow::onOutputPortEnabled);

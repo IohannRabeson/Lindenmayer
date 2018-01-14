@@ -47,6 +47,7 @@ private:
         QString name;
         int index = -1;
         bool checked = true;
+        bool enabled = true;
     };
 
     using Ports = QVector<MidiPort>;

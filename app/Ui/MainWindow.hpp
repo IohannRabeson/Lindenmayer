@@ -38,7 +38,7 @@ public:
 private:
     void setupUi();
     void setupActions();
-    void setupSystem();
+    void setupMIDI();
     void setupMenus();
     void setupToolbars();
     void setupTrayIcon();

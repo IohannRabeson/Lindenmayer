@@ -67,7 +67,7 @@ void QMidiDeviceModel::reset(Loader&& loader)
     endResetModel();
 }
 
-void QMidiDeviceModel::rescan(QMidiIn* midiIn)
+void QMidiDeviceModel::rescan(QMidiIn* const midiIn)
 {
     reset([midiIn]() -> Ports
     {
@@ -97,7 +97,17 @@ void QMidiDeviceModel::rescan(QMidiOut* midiOut)
 
 Qt::ItemFlags QMidiDeviceModel::flags(QModelIndex const& index) const
 {
-    return index.isValid() ? Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsUserCheckable : Qt::NoItemFlags;
+    Qt::ItemFlags result = Qt::NoItemFlags;
+
+    if (index.isValid())
+    {
+        result = Qt::ItemIsSelectable | Qt::ItemIsUserCheckable;
+        if (m_ports[index.row()].enabled)
+        {
+            result |= Qt::ItemIsEnabled;
+        }
+    }
+    return result;
 }
 
 void QMidiDeviceModel::setChecked(int const row, bool checked)
