@@ -43,8 +43,6 @@ public:
 
     Q_ENUM(Type);
 
-    static QMidiMessage makeNote(unsigned char note, unsigned char velocity, unsigned char channel, bool onOff);
-
     QMidiMessage();
     explicit QMidiMessage(Bytes const& bytes, int port = -1, TimePoint const timestamp = now());
     explicit QMidiMessage(Type type, int port = -1, TimePoint const timestamp = now());

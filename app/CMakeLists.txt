@@ -10,8 +10,8 @@ set(THE_APPLICATION_ICON ${CMAKE_SOURCE_DIR}/configurations/macos/Application.ic
 set(UI_SOURCES
     Ui/Widgets/MidiMessageListView.cpp
     Ui/Widgets/MidiMessageListView.hpp
-    Ui/MainWindow.cpp
-    Ui/MainWindow.hpp
+        MainWindow.cpp
+        MainWindow.hpp
     Ui/DockWidgetManager.hpp
     Ui/DockWidgetManager.cpp
     Ui/ToolBarManager.hpp

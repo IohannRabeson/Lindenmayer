@@ -13,7 +13,7 @@
 
 #include "Plugins/Waldorf/Pulse2/Pulse2Translator.hpp"
 
-#include "Delegates/MidiDelegates.hpp"
+#include "Ui/Delegates/MidiDelegates.hpp"
 
 #include "Ui/Widgets/MidiNoteTriggerWidget.hpp"
 #include "Ui/Widgets/MidiKeyboardWidget.hpp"
@@ -27,12 +27,14 @@
 #include <QTableView>
 #include <QSystemTrayIcon>
 #include <QEvent>
+#include <QHeaderView>
 
 #include <QtDebug>
 
 #include <QMidiTranslatorFactory.hpp>
 #include <QMidiIn.hpp>
 #include <QMidiMessageModel.hpp>
+#include <QMidiMessageMatrixModel.hpp>
 #include <QMidiManager.hpp>
 
 #include <QMetaEnum>
@@ -200,8 +202,13 @@ void MainWindow::setupUi()
     connect(m_noteWidget, &MidiNoteTriggerWidget::sendMessage, m_midiManager, &QMidiManager::sendMessage);
 
     // Setup keyboard widget
-    m_dockWidgets->addDockWidget(m_keyboardWidget, tr("MIDI keyboard"));
+    m_dockWidgets->addDockWidget(m_keyboardWidget, tr("MIDI Keyboard"));
     connect(m_keyboardWidget, &MidiKeyboardWidget::sendMessage, m_midiManager, &QMidiManager::sendMessage);
+
+    QTableView* messageMatrixView = new QTableView(this);
+
+    messageMatrixView->setModel(m_midiManager->getMessageMatrixModel());
+    m_dockWidgets->addDockWidget(messageMatrixView, tr("MIDI Message Matrix"));
 
     // Setup window
     setAnimated(true);

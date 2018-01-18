@@ -34,7 +34,7 @@
 
 #include <QApplication>
 
-#include "Ui/MainWindow.hpp"
+#include "MainWindow.hpp"
 
 static void messageHandler(QtMsgType type, QMessageLogContext const&, QString const& msg)
 {

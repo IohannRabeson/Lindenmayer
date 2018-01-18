@@ -6,14 +6,19 @@
 #include "QMidiDeviceModel.hpp"
 #include "QMidiIn.hpp"
 #include "QMidiOut.hpp"
+#include "QMidiMessageMatrixModel.hpp"
 
 #include <QtDebug>
+#include <QSize>
 
 QMidiManager::QMidiManager(QObject* parent)
-: m_inputDeviceModel(new QMidiDeviceModel(this))
+: QObject(parent)
+, m_inputDeviceModel(new QMidiDeviceModel(this))
 , m_outputDeviceModel(new QMidiDeviceModel(this))
+, m_matrixModel(new QMidiMessageMatrixModel(this))
 {
     resetPorts();
+
 }
 
 QMidiDeviceModel* QMidiManager::getInputDeviceModel() const
@@ -26,18 +31,19 @@ QMidiDeviceModel* QMidiManager::getOutputDeviceModel() const
     return m_outputDeviceModel;
 }
 
-
 void QMidiManager::resetPorts()
 {
     QMap<int, int> inputRemappings;
 
     resetPorts(inputRemappings);
+    m_matrixModel->reset(m_midiIns.size(), m_midiOuts.size());
 }
 
 void QMidiManager::resetPorts(QMap<int, int>& inputRemappings)
 {
     resetMidiInPorts(inputRemappings);
     resetMidiOutPorts();
+    m_matrixModel->reset(m_midiIns.size(), m_midiOuts.size());
 }
 
 void QMidiManager::resetMidiInPorts(QMap<int, int>& inputRemappings)
@@ -55,7 +61,7 @@ void QMidiManager::resetMidiInPorts(QMap<int, int>& inputRemappings)
     closeInputPorts();
 
     // Instanciate the first MIDI port, then scans available ports.
-    // Wierd but seem to be mandatory.
+    // Wierd but it seems to be required by RtMidi
     // TODO: looking for an alternative to RtMidi?
     m_midiIns.append(new QMidiIn(this));
     m_inputDeviceModel->rescan(m_midiIns.front());
@@ -99,6 +105,8 @@ void QMidiManager::resetMidiOutPorts()
 {
     closeOutputPorts();
 
+    // Instanciate the first MIDI port, then scans available ports.
+    // Wierd but it seems to be required by RtMidi
     m_midiOuts.append(new QMidiOut(this));
     m_outputDeviceModel->rescan(m_midiOuts.front());
 
@@ -175,4 +183,9 @@ void QMidiManager::sendMessage(QMidiMessage const& message)
         midiOut->sendMessage(message);
     }
     emit messageSent(message);
+}
+
+QMidiMessageMatrixModel* QMidiManager::getMessageMatrixModel() const
+{
+    return m_matrixModel;
 }

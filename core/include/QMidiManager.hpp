@@ -11,6 +11,7 @@ class QMidiDeviceModel;
 class QMidiIn;
 class QMidiOut;
 class QMidiMessage;
+class QMidiMessageMatrixModel;
 
 class QMidiManager : public QObject
 {
@@ -24,6 +25,7 @@ public:
 
     QMidiDeviceModel* getInputDeviceModel() const;
     QMidiDeviceModel* getOutputDeviceModel() const;
+    QMidiMessageMatrixModel* getMessageMatrixModel() const;
 
     void setInputPortEnabled(int const portId, bool const enabled);
     void setOutputPortEnabled(int const portId, bool const enabled);
@@ -39,6 +41,8 @@ private:
 private:
     QMidiDeviceModel* const m_inputDeviceModel;
     QMidiDeviceModel* const m_outputDeviceModel;
+    QMidiMessageMatrixModel* const m_matrixModel;
+
     // TODO: use unique_ptr and std::vector instead of QVector and raw pointers.
     QVector<QMidiIn*> m_midiIns;
     QVector<QMidiOut*> m_midiOuts;
