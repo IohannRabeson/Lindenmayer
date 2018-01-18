@@ -49,6 +49,17 @@ public:
     void setHighlighted(bool const selected);
     void setMidiNote(unsigned char const note);
     unsigned char midiNote() const;
+
+    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override
+    {
+        QGraphicsRectItem::paint(painter, option, widget);
+
+        constexpr static qreal const TextPadding = 8;
+        QFontMetrics metrics(painter->font());
+
+        painter->drawText(TextPadding, boundingRect().bottom() - metrics.lineSpacing(), m_text);
+    }
+
 private:
     void updateColor()
     {
@@ -66,12 +77,13 @@ private:
         }
     }
 private:
+    QFont m_font;
     QBrush m_normalBrush;
     QBrush m_hoveredBrush;
     QBrush m_clickedBrush;
     QBrush m_selectedBrush;
+    QString m_text;
     QGraphicsRectItem* const m_rectangle;
-    QGraphicsSimpleTextItem* const m_noteText;
     unsigned char m_midiNote = std::numeric_limits<unsigned char>::max();
     bool m_hovered;
     bool m_clicked;
@@ -546,8 +558,7 @@ void MidiMessageSender::setChannel(unsigned char const value)
 
 KeyGraphicsItem::KeyGraphicsItem(QColor const& color, int const width, int const height, QFont const& font, QGraphicsItem* parent)
 : QGraphicsRectItem(parent)
-, m_rectangle(new QGraphicsRectItem)
-, m_noteText(new QGraphicsSimpleTextItem(this))
+, m_rectangle(new QGraphicsRectItem(this))
 , m_hovered(false)
 , m_clicked(false)
 {
@@ -559,17 +570,14 @@ KeyGraphicsItem::KeyGraphicsItem(QColor const& color, int const width, int const
     rect.setHeight(height);
 
     setRect(rect);
-    m_noteText->setFont(font);
-    m_noteText->setZValue(1);
-
     m_normalBrush = color;
     m_hoveredBrush = Qt::lightGray;
     m_clickedBrush = Qt::darkGray;
     m_selectedBrush = Qt::red;
-
+    m_font.setPointSize(30);
     setAcceptHoverEvents(true);
     setAcceptTouchEvents(true);
-    setHandlesChildEvents(true);
+    m_rectangle->setHandlesChildEvents(true);
 }
 
 void KeyGraphicsItem::setMidiNote(unsigned char const note)
@@ -579,10 +587,7 @@ void KeyGraphicsItem::setMidiNote(unsigned char const note)
 
     if (m_midiNote % 12u == 0u)
     {
-        constexpr static qreal const TextPadding = 8;
-
-        m_noteText->setText(Format::formatMidiNote(m_midiNote));
-        m_noteText->setPos(TextPadding, boundingRect().bottom() - m_noteText->boundingRect().height() - TextPadding);
+        m_text = Format::formatMidiNote(m_midiNote);
     }
 }
 
