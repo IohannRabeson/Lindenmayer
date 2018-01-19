@@ -19,6 +19,7 @@ class QMidiInPrivate
         {
             return;
         }
+
         QMidiInPrivate* const midiIn = static_cast<QMidiInPrivate*>(userData);
 
         if (midiIn->m_enabled)
@@ -106,9 +107,9 @@ private:
     bool m_enabled = true;
 };
 
-QMidiIn::QMidiIn(QObject* parent) :
-    QObject(parent),
-    d_ptr(new QMidiInPrivate(this))
+QMidiIn::QMidiIn(QObject* parent)
+: QAbstractMidiIn(parent)
+, d_ptr(new QMidiInPrivate(this))
 {
 }
 
@@ -156,7 +157,7 @@ QString QMidiIn::portName(int const index) const noexcept
     return d->portName(index);
 }
 
-void QMidiIn::setEnabled(bool const enabled)
+void QMidiIn::setPortEnabled(bool const enabled) noexcept
 {
     Q_D(QMidiIn);
 

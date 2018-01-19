@@ -107,11 +107,11 @@ MainWindow::MainWindow(QWidget* parent)
 , m_actionSwitchAutoScrollToBottom(new QAction(QIcon(":/Images/Resources/ScrollDown.png"), tr("Auto scrolling"), this))
 , m_actionRestoreWindow(new QAction(tr("Show"), this))
 {
+    setupUi();
     setupMIDI();
     setupActions();
     setupToolbars();
     setupMenus();
-    setupUi();
     setupTrayIcon();
     loadSettings();
     updateActions();
@@ -125,7 +125,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::setupMIDI()
 {
-    m_midiManager->resetPorts();
+    m_midiManager->rescanPorts();
     connect(m_inputPortModel, &QMidiDeviceModel::checkedChanged, this, &MainWindow::onInputPortEnabled);
     connect(m_outputPortModel, &QMidiDeviceModel::checkedChanged, this, &MainWindow::onOutputPortEnabled);
     connect(m_midiManager, &QMidiManager::messageReceived, m_messageModel, &QMidiMessageModel::append);
@@ -133,11 +133,12 @@ void MainWindow::setupMIDI()
     m_manufacturerModel->load(QMidiManufacturerModel::LoadFromCSV(":/Texts/Resources/MIDI_Manufacturers.csv"));
 }
 
-void MainWindow::resetMidiInputs()
+void MainWindow::resetMidiPorts()
 {
     auto const* const midiInModel = m_midiManager->getInputDeviceModel();
+    auto const* const midiOutModel = m_midiManager->getOutputDeviceModel();
 
-    if (midiInModel->rowCount() > 0)
+    if (midiInModel->rowCount() > 0 || midiOutModel->rowCount() > 0)
     {
         if (QMessageBox::warning(this, tr("Clear messages"),
                                  tr("Messages can lost their input port information.\nAre you sure you want to do that?"),
@@ -149,11 +150,10 @@ void MainWindow::resetMidiInputs()
         }
     }
 
-    // The message with input port information will have their indexes
-    // updated when possible and set to -1 removed indexes.
     QMap<int, int> inputPortRemappings;
+    QMap<int, int> outputPortRemappings;
 
-    m_midiManager->resetPorts(inputPortRemappings);
+    m_midiManager->rescanPorts(inputPortRemappings, outputPortRemappings);
     m_messageModel->remapInputPorts(inputPortRemappings);
 }
 
@@ -165,7 +165,7 @@ void MainWindow::setupActions()
 
     connect(m_actionClearAll, &QAction::triggered, m_messageModel, &QMidiMessageModel::clear);
     connect(m_actionQuit, &QAction::triggered, this, &QMainWindow::close);
-    connect(m_actionRescanMidiPorts, &QAction::triggered, this, &MainWindow::resetMidiInputs);
+    connect(m_actionRescanMidiPorts, &QAction::triggered, this, &MainWindow::resetMidiPorts);
     connect(m_actionAbout, &QAction::triggered, this, &MainWindow::showAbout);
     connect(m_actionSwitchAutoScrollToBottom, &QAction::triggered, m_messageView, &MidiMessageListView::setAutoScrollToBottomEnabled);
 }
@@ -205,9 +205,25 @@ void MainWindow::setupUi()
     m_dockWidgets->addDockWidget(m_keyboardWidget, tr("MIDI Keyboard"));
     connect(m_keyboardWidget, &MidiKeyboardWidget::sendMessage, m_midiManager, &QMidiManager::sendMessage);
 
+    // Setup matrix view
     QTableView* messageMatrixView = new QTableView(this);
 
     messageMatrixView->setModel(m_midiManager->getMessageMatrixModel());
+    connect(m_midiManager, &QMidiManager::portsRescaned, [messageMatrixView, this]()
+    {
+        static constexpr auto const Size = 32;
+
+        auto const& matrix = m_midiManager->getMessageMatrixModel()->matrix();
+
+        for (auto i = 0; i < matrix.width(); ++i)
+        {
+            messageMatrixView->setColumnWidth(i, Size);
+        }
+        for (auto i = 0; i < matrix.height(); ++i)
+        {
+            messageMatrixView->setRowHeight(i, Size);
+        }
+    });
     m_dockWidgets->addDockWidget(messageMatrixView, tr("MIDI Message Matrix"));
 
     // Setup window

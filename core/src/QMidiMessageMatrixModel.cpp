@@ -49,7 +49,6 @@ bool QMidiMessageMatrixModel::setData(const QModelIndex& index, const QVariant& 
                 break;
         }
     }
-
     return result;
 }
 
@@ -60,7 +59,17 @@ void QMidiMessageMatrixModel::reset(int const columns, int const rows)
     endResetModel();
 }
 
+void QMidiMessageMatrixModel::clear()
+{
+    reset(0, 0);
+}
+
 Qt::ItemFlags QMidiMessageMatrixModel::flags(const QModelIndex& index) const
 {
     return QAbstractTableModel::flags(index) | Qt::ItemIsEditable | Qt::ItemIsUserCheckable;
+}
+
+QMidiMessageMatrix const& QMidiMessageMatrixModel::matrix() const
+{
+    return m_matrix;
 }

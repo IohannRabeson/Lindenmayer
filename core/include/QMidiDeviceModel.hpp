@@ -42,10 +42,18 @@ public:
 signals:
     void checkedChanged(int const row, bool const checked);
 private:
+    enum class MidiPortType
+    {
+        Null,
+        Physical,
+        Virtual
+    };
+
     struct MidiPort
     {
         QString name;
         int index = -1;
+        MidiPortType type;
         bool checked = true;
         bool enabled = true;
     };

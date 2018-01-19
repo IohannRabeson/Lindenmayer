@@ -31,6 +31,7 @@ public:
     void resize(int const width, int const height);
     void set(int const x, int const y, bool const value);
     bool get(int const x, int const y) const;
+    void foreachInLine(int const line, std::function<void(int const, int const, bool const)> const&& f) const;
     void foreach(std::function<void(int const, int const, bool const)> const&& f) const;
     void foreach(std::function<void(int const, int const, bool&)> const&& f);
 private:

@@ -142,3 +142,18 @@ auto QMidiMessageMatrix::end() -> Iterator
 {
     return m_connections.get() + m_width * m_height;
 }
+
+void QMidiMessageMatrix::foreachInLine(int const line, std::function<void(int const, int const, bool const)> const&& f) const
+{
+    int x = 0u;
+
+    for (auto& connection : *this)
+    {
+        f(x, line, connection);
+        ++x;
+        if (x >= m_width)
+        {
+            x = 0u;
+        }
+    }
+}

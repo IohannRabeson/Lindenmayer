@@ -88,9 +88,9 @@ private:
     bool m_enabled = true;
 };
 
-QMidiOut::QMidiOut(QObject* parent) :
-        QObject(parent),
-        d_ptr(new QMidiOutPrivate(this))
+QMidiOut::QMidiOut(QObject* parent)
+: QAbstractMidiOut(parent)
+, d_ptr(new QMidiOutPrivate(this))
 {
 }
 

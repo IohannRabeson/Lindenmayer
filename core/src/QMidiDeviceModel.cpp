@@ -75,7 +75,7 @@ void QMidiDeviceModel::rescan(QMidiIn* const midiIn)
 
         for (auto i = 0; i < midiIn->portCount(); ++i)
         {
-            ports.append(MidiPort{midiIn->portName(i), i});
+            ports.append(MidiPort{midiIn->portName(i), i, MidiPortType::Physical});
         }
         return ports;
     });

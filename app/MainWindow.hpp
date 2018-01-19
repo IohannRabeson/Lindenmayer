@@ -47,7 +47,7 @@ private:
 
     void onInputPortEnabled(int const portId, bool const enabled);
     void onOutputPortEnabled(int const portId, bool const enabled);
-    void resetMidiInputs();
+    void resetMidiPorts();
 
     void saveSettings() const;
     void loadSettings();

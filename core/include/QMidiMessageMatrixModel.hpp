@@ -14,6 +14,7 @@ public:
     using QAbstractTableModel::QAbstractTableModel;
 
     void reset(int const columns, int const rows);
+    void clear();
 
     int rowCount(QModelIndex const& parent) const override;
     int columnCount(QModelIndex const& parent) const override;
@@ -21,7 +22,7 @@ public:
     bool setData(const QModelIndex& index, const QVariant& value, int role) override;
 
     Qt::ItemFlags flags(const QModelIndex& index) const override;
-
+    QMidiMessageMatrix const& matrix() const;
 private:
     QMidiMessageMatrix m_matrix;
 };
