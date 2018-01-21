@@ -9,8 +9,8 @@ TEST(QMidiMessageMatrixTest, default_ctor)
 {
     QMidiMessageMatrix mat;
 
-    EXPECT_EQ( 0u, mat.width() );
-    EXPECT_EQ( 0u, mat.height() );
+    EXPECT_EQ( 0u, mat.outputCount() );
+    EXPECT_EQ( 0u, mat.inputCount() );
     EXPECT_EQ( mat.begin(), mat.end() );
 }
 
@@ -18,8 +18,8 @@ TEST(QMidiMessageMatrixTest, init_ctor_size)
 {
     QMidiMessageMatrix mat(3u, 4u);
 
-    EXPECT_EQ( 3u, mat.width() );
-    EXPECT_EQ( 4u, mat.height() );
+    EXPECT_EQ( 3u, mat.outputCount() );
+    EXPECT_EQ( 4u, mat.inputCount() );
     EXPECT_TRUE( std::all_of(mat.begin(), mat.end(), [](bool const v) { return v == false; }) );
 }
 
@@ -56,10 +56,10 @@ TEST(QMidiMessageMatrixTest, change_width)
     mat.set(0u, 0u, true);
     mat.set(0u, 3u, true);
 
-    mat.setWidth(3u);
+    mat.setOutputCount(3u);
 
-    EXPECT_EQ( 3u, mat.width() );
-    EXPECT_EQ( 4u, mat.height() );
+    EXPECT_EQ( 3u, mat.outputCount() );
+    EXPECT_EQ( 4u, mat.inputCount() );
 
     EXPECT_TRUE( mat.get(0u, 0u) );
     EXPECT_FALSE( mat.get(0u, 1u) );
@@ -75,10 +75,10 @@ TEST(QMidiMessageMatrixTest, change_height)
     mat.set(0u, 0u, true);
     mat.set(3u, 0u, true);
 
-    mat.setHeight(3u);
+    mat.setInputCount(3u);
 
-    EXPECT_EQ( 4u, mat.width() );
-    EXPECT_EQ( 3u, mat.height() );
+    EXPECT_EQ( 4u, mat.outputCount() );
+    EXPECT_EQ( 3u, mat.inputCount() );
 
     EXPECT_TRUE( mat.get(0u, 0u) );
     EXPECT_TRUE( mat.get(3u, 0u) );

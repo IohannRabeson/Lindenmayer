@@ -26,8 +26,8 @@ set(UI_SOURCES
     Ui/Delegates/MidiDelegates.cpp
     Ui/Delegates/MidiDelegates.hpp
     Ui/SettingsUtils.hpp
-    Ui/Widgets/MidiNoteTriggerWidget.cpp
-    Ui/Widgets/MidiNoteTriggerWidget.hpp Ui/Widgets/MidiKeyboardWidget.cpp Ui/Widgets/MidiKeyboardWidget.hpp)
+        Ui/Widgets/MidiInputWidgets/MidiNoteTriggerWidget.cpp
+        Ui/Widgets/MidiInputWidgets/MidiNoteTriggerWidget.hpp Ui/Widgets/MidiInputWidgets/MidiKeyboardWidget.cpp Ui/Widgets/MidiInputWidgets/MidiKeyboardWidget.hpp)
 
 set(PLUGINS_SOURCES
     Plugins/Plugins.qrc
@@ -35,7 +35,7 @@ set(PLUGINS_SOURCES
     Plugins/Waldorf/Pulse2/Pulse2Translator.hpp
     Plugins/Commons/TextDatabase.cpp
     Plugins/Commons/TextDatabase.hpp
-        Ui/Widgets/MidiKeyboardWidget.cpp Ui/Widgets/MidiKeyboardWidget.hpp)
+        Ui/Widgets/MidiInputWidgets/MidiKeyboardWidget.cpp Ui/Widgets/MidiInputWidgets/MidiKeyboardWidget.hpp)
 
 add_executable(MidiMonitor
     MACOSX_BUNDLE ${THE_APPLICATION_ICON}

@@ -8,24 +8,24 @@
 
 namespace
 {
-    static int computeIndex(int const x, int const y, int const width)
+    static int computeIndex(int const x, int const y, int const output)
     {
-        assert( x < width );
+        assert( x < output );
 
-        return x + (y * width);
+        return x + (y * output);
     }
 }
 
 QMidiMessageMatrix::QMidiMessageMatrix()
-: m_width(0)
-, m_height(0)
+: m_outputCount(0)
+, m_inputCount(0)
 {
 }
 
-QMidiMessageMatrix::QMidiMessageMatrix(int const width, int const height)
-: m_connections(std::make_unique<bool[]>(width * height))
-, m_width(width)
-, m_height(height)
+QMidiMessageMatrix::QMidiMessageMatrix(int const output, int const input)
+: m_connections(std::make_unique<bool[]>(output * input))
+, m_outputCount(output)
+, m_inputCount(input)
 {
 }
 
@@ -36,7 +36,7 @@ auto QMidiMessageMatrix::begin() const -> ConstIterator
 
 auto QMidiMessageMatrix::end() const -> ConstIterator
 {
-    return begin() + m_width * m_height;
+    return begin() + m_outputCount * m_inputCount;
 }
 
 void QMidiMessageMatrix::foreach(std::function<void(int const x, int const y, bool const value)> const&& f) const
@@ -48,7 +48,7 @@ void QMidiMessageMatrix::foreach(std::function<void(int const x, int const y, bo
     {
         f(x, y, connection);
         ++x;
-        if (x >= m_width)
+        if (x >= m_outputCount)
         {
             ++y;
             x = 0u;
@@ -65,7 +65,7 @@ void QMidiMessageMatrix::foreach(std::function<void(int const x, int const y, bo
     {
         f(x, y, connection);
         ++x;
-        if (x >= m_width)
+        if (x >= m_outputCount)
         {
             ++y;
             x = 0u;
@@ -73,25 +73,25 @@ void QMidiMessageMatrix::foreach(std::function<void(int const x, int const y, bo
     }
 }
 
-void QMidiMessageMatrix::setWidth(int const width)
+void QMidiMessageMatrix::setOutputCount(int const output)
 {
-    if (m_width == width)
+    if (m_outputCount == output)
     {
         return;
     }
-    resize(width, m_height);
+    resize(output, m_inputCount);
 }
 
-void QMidiMessageMatrix::setHeight(int const height)
+void QMidiMessageMatrix::setInputCount(int const input)
 {
-    if (m_height == height)
+    if (m_inputCount == input)
     {
         return;
     }
-    resize(m_width, height);
+    resize(m_outputCount, input);
 }
 
-void QMidiMessageMatrix::resize(int const width, int const height)
+void QMidiMessageMatrix::resize(int const output, int const input)
 {
     std::set<std::pair<int, int>> trueValues;
 
@@ -103,32 +103,35 @@ void QMidiMessageMatrix::resize(int const width, int const height)
                 }
             });
 
-    m_connections = std::make_unique<bool[]>(width * height);
-    m_width = width;
-    m_height = height;
+    m_connections = std::make_unique<bool[]>(output * input);
+    m_outputCount = output;
+    m_inputCount = input;
 
     std::fill(begin(), end(), false);
 
     for (auto const& truePair : trueValues)
     {
-        set(truePair.first, truePair.second, true);
+        if (truePair.first < outputCount() && truePair.second < inputCount())
+        {
+            set(truePair.first, truePair.second, true);
+        }
     }
 }
 
 void QMidiMessageMatrix::set(int const x, int const y, bool const value)
 {
-    auto const i = computeIndex(x, y, m_width);
+    auto const i = computeIndex(x, y, m_outputCount);
 
-    assert( i < m_width * m_height );
+    assert( i < m_outputCount * m_inputCount );
 
     m_connections[i] = value;
 }
 
 bool QMidiMessageMatrix::get(int const x, int const y) const
 {
-    auto const i = computeIndex(x, y, m_width);
+    auto const i = computeIndex(x, y, m_outputCount);
 
-    assert( i < m_width * m_height );
+    assert( i < m_outputCount * m_inputCount );
 
     return m_connections[i];
 }
@@ -140,18 +143,26 @@ auto QMidiMessageMatrix::begin() -> Iterator
 
 auto QMidiMessageMatrix::end() -> Iterator
 {
-    return m_connections.get() + m_width * m_height;
+    return m_connections.get() + m_outputCount * m_inputCount;
 }
 
-void QMidiMessageMatrix::foreachInLine(int const line, std::function<void(int const, int const, bool const)> const&& f) const
+/*!
+ * \brief Call f for each
+ * \param inputPortIndex
+ * \param f
+ */
+void QMidiMessageMatrix::forachInput(int const inputPortIndex, std::function<void(int const, int const)> const&& f) const
 {
     int x = 0u;
 
     for (auto& connection : *this)
     {
-        f(x, line, connection);
+        if (connection)
+        {
+            f(x, inputPortIndex);
+        }
         ++x;
-        if (x >= m_width)
+        if (x >= m_outputCount)
         {
             x = 0u;
         }

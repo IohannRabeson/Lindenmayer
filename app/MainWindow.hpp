@@ -72,7 +72,6 @@ private:
     MidiKeyboardWidget* const m_keyboardWidget;
 
     // File actions
-    QAction* const m_actionRescanMidiPorts;
     QAction* const m_actionQuit;
     QAction* const m_actionAbout;
     // Edit actions

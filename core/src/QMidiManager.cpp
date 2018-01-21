@@ -14,13 +14,15 @@
 #include <QtDebug>
 #include <QSize>
 
+#include <vector>
+#include <memory>
+
 QMidiManager::QMidiManager(QObject* parent)
 : QObject(parent)
 , m_inputDeviceModel(new QMidiDeviceModel(this))
 , m_outputDeviceModel(new QMidiDeviceModel(this))
 , m_matrixModel(new QMidiMessageMatrixModel(this))
 {
-    rescanPorts();
 }
 
 QMidiDeviceModel* QMidiManager::getInputDeviceModel() const
@@ -58,8 +60,30 @@ void QMidiManager::rescanPorts(QMap<int, int>& inputRemapping, QMap<int, int>& o
 {
     resetMidiInPorts(inputRemapping);
     resetMidiOutPorts(outputRemapping);
-    m_matrixModel->reset(m_physicalMidiOuts.size(), m_physicalMidiIns.size());
+    m_matrixModel->reset(m_midiOuts.size(), m_midiIns.size());
     emit portsRescaned();
+}
+
+void QMidiManager::resetPhysicalMidiInPorts()
+{
+    // Instanciate the first MIDI port, then scans available ports.
+    // Wierd but it seems to be required by RtMidi
+
+    auto firstMidiPort = std::make_unique<QMidiIn>();
+    auto const portCount = firstMidiPort->portCount();
+
+    m_midiIns.emplace_back(std::move(firstMidiPort));
+
+    // Instanciate midi other inputs
+    for (int i = 0; i < portCount - 1; ++i)
+    {
+        m_midiIns.emplace_back(std::make_unique<QMidiIn>());
+    }
+    for (int i = 0; i < m_midiIns.size(); ++i)
+    {
+        m_midiIns[i]->openPort(i);
+    }
+    m_inputDeviceModel->reset(m_midiIns);
 }
 
 void QMidiManager::resetMidiInPorts(QMap<int, int>& inputRemappings)
@@ -77,21 +101,22 @@ void QMidiManager::resetMidiInPorts(QMap<int, int>& inputRemappings)
     closeInputPorts();
     resetPhysicalMidiInPorts();
 
-    if (m_physicalMidiIns.isEmpty())
+    if (m_midiIns.empty())
     {
         qWarning() << "[MidiMonitor]: No midi inputs";
     }
     else
     {
         // Open midi inputs
-        for (int i = 0; i < m_physicalMidiIns.size(); ++i)
+        for (int i = 0; i < m_midiIns.size(); ++i)
         {
-            auto* const midiIn = m_physicalMidiIns[i];
+            auto const& midiIn = m_midiIns[i];
 
-            connect(midiIn, &QMidiIn::messageReceived, this, &QMidiManager::messageReceived, Qt::DirectConnection);
-            connect(midiIn, &QMidiIn::messageReceived, this, &QMidiManager::sendToOutputs, Qt::DirectConnection);
-
-            midiIn->openPort(i);
+            midiIn->addMessageReceivedListener([this](QMidiMessage const& message)
+                                               {
+                                                   emit messageReceived(message);
+                                                   forwardMidiMessage(message);
+                                               });
         }
     }
 
@@ -102,24 +127,6 @@ void QMidiManager::resetMidiInPorts(QMap<int, int>& inputRemappings)
         auto const oldIndex = oldPortNameIndexes.value(name);
 
         inputRemappings.insert(oldIndex, i);
-    }
-}
-
-void QMidiManager::resetPhysicalMidiInPorts()
-{
-    // Instanciate the first MIDI port, then scans available ports.
-    // Wierd but it seems to be required by RtMidi
-    auto* const firstMidiIn = new QMidiIn(this);
-
-    m_physicalMidiIns.append(firstMidiIn);
-    m_inputDeviceModel->rescan(firstMidiIn);
-
-    // Instanciate midi other inputs
-    for (int i = 0; i < m_inputDeviceModel->rowCount() - 1; ++i)
-    {
-        auto* midiIn = new QMidiIn(this);
-
-        m_physicalMidiIns.append(midiIn);
     }
 }
 
@@ -138,19 +145,9 @@ void QMidiManager::resetMidiOutPorts(QMap<int, int>& outputRemappings)
     closeOutputPorts();
     resetPhysicalMidiOutPorts();
 
-    if (m_physicalMidiOuts.isEmpty())
+    if (m_midiOuts.isEmpty())
     {
         qWarning() << "[MidiMonitor]: No midi outputs";
-    }
-    else
-    {
-        // Open midi outputs
-        for (int i = 0; i < m_physicalMidiOuts.size(); ++i)
-        {
-            auto* const midiOut = m_physicalMidiOuts[i];
-
-            midiOut->openPort(i);
-        }
     }
 
     // Replace the old outputs ports indexes by the new ones if possible.
@@ -169,16 +166,20 @@ void QMidiManager::resetPhysicalMidiOutPorts()
     // Wierd but it seems to be required by RtMidi
     auto* const firstMidiOut = new QMidiOut(this);
 
-    m_physicalMidiOuts.append(firstMidiOut);
-    m_outputDeviceModel->rescan(firstMidiOut);
+    m_midiOuts.append(firstMidiOut);
 
     // Instanciate midi other inputs
-    for (int i = 0; i < m_outputDeviceModel->rowCount() - 1; ++i)
+    for (int i = 0; i < firstMidiOut->portCount() - 1; ++i)
     {
         auto* const midiOut = new QMidiOut(this);
 
-        m_physicalMidiOuts.append(midiOut);
+        m_midiOuts.append(midiOut);
     }
+    for (int i = 0; i < m_midiOuts.size(); ++i)
+    {
+        m_midiOuts[i]->openPort(i);
+    }
+    m_outputDeviceModel->reset(m_midiOuts);
 }
 
 void QMidiManager::closeAll()
@@ -190,7 +191,7 @@ void QMidiManager::closeAll()
 
 void QMidiManager::setInputPortEnabled(int const portId, bool const enabled)
 {
-    for (auto* midiIn : m_physicalMidiIns)
+    for (auto const& midiIn : m_midiIns)
     {
         if (midiIn->portOpened() == portId)
         {
@@ -202,7 +203,7 @@ void QMidiManager::setInputPortEnabled(int const portId, bool const enabled)
 
 void QMidiManager::setOutputPortEnabled(int const portId, bool const enabled)
 {
-    for (auto* midiOut : m_physicalMidiOuts)
+    for (auto* midiOut : m_midiOuts)
     {
         if (midiOut->portOpened() == portId)
         {
@@ -214,19 +215,18 @@ void QMidiManager::setOutputPortEnabled(int const portId, bool const enabled)
 
 void QMidiManager::closeOutputPorts()
 {
-    qDeleteAll(m_physicalMidiOuts);
-    m_physicalMidiOuts.clear();
+    qDeleteAll(m_midiOuts);
+    m_midiOuts.clear();
 }
 
 void QMidiManager::closeInputPorts()
 {
-    qDeleteAll(m_physicalMidiIns);
-    m_physicalMidiIns.clear();
+    m_midiIns.clear();
 }
 
 void QMidiManager::sendMessage(QMidiMessage const& message)
 {
-    for (auto* midiOut : m_physicalMidiOuts)
+    for (auto* midiOut : m_midiOuts)
     {
         midiOut->sendMessage(message);
     }
@@ -238,27 +238,36 @@ QMidiMessageMatrixModel* QMidiManager::getMessageMatrixModel() const
     return m_matrixModel;
 }
 
-void QMidiManager::sendToOutputs(QMidiMessage const& message)
+void QMidiManager::forwardMidiMessage(QMidiMessage const& message)
 {
     auto const& matrix = m_matrixModel->matrix();
 
-    matrix.foreachInLine(message.port(),
-                         [this, &message](auto in, auto out, auto value)
+    matrix.forachInput(message.port(),
+                         [this, &message](auto in, auto out)
                          {
-                              if (value)
-                              {
-                                  m_physicalMidiOuts.at(in)->sendMessage(message);
-                                  qDebug() << in << out;
-                              }
+                             m_midiOuts.at(in)->sendMessage(message);
                          });
 }
 
-void QMidiManager::addInputPort(QAbstractMidiIn* midiIn)
+void QMidiManager::addInputPort(std::unique_ptr<QAbstractMidiIn>&& midiIn)
 {
+    int const newPortIndex = m_midiIns.size();
 
+    if (midiIn->openPort(newPortIndex))
+    {
+        midiIn->addMessageReceivedListener([this](QMidiMessage const& message)
+                                           {
+                                               emit messageReceived(message);
+                                               forwardMidiMessage(message);
+                                           });
+        m_inputDeviceModel->append(midiIn->portName());
+        m_midiIns.emplace_back(std::move(midiIn));
+        m_matrixModel->reset(m_midiOuts.size(), m_midiIns.size());
+    }
 }
 
 void QMidiManager::addOutputPort(QAbstractMidiOut* midiOut)
 {
-
+    m_midiOuts.append(midiOut);
+    m_matrixModel->reset(m_midiOuts.size(), m_midiIns.size());
 }

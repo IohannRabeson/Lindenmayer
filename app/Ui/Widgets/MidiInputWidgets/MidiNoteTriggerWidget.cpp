@@ -24,6 +24,7 @@
 
 MidiNoteTriggerWidget::MidiNoteTriggerWidget(QWidget* parent)
 : QWidget(parent)
+, QMidiInBase(tr("Note trigger"))
 , m_trigger(new QPushButton(tr("Trigger"), this))
 , m_note(new QComboBox(this))
 , m_velocity(new QSpinBox(this))
@@ -105,10 +106,10 @@ void MidiNoteTriggerWidget::loadSettings(QSettings& settings)
 
 void MidiNoteTriggerWidget::onPressed()
 {
-    emit sendMessage(QMidiMessageBuilder::note(note(), velocity(), channel(), true));
+    messageReceived(QMidiMessageBuilder::note(note(), velocity(), channel(), portOpened(), true));
 }
 
 void MidiNoteTriggerWidget::onReleased()
 {
-    emit sendMessage(QMidiMessageBuilder::note(note(), 0, channel(), false));
+    messageReceived(QMidiMessageBuilder::note(note(), 0, channel(), portOpened(), false));
 }

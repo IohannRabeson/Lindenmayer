@@ -34,7 +34,11 @@ public:
         {
             m_midiOut->openPort(portIndex);
             m_portOpened = portIndex;
-            qDebug() << "[QMidiOut]" << portIndex << "Open MIDI port" << portIndex;
+            m_name = QString::fromStdString(m_midiOut->getPortName(portIndex));
+
+            Q_ASSERT( !m_name.isEmpty() );
+
+            qDebug() << "[QMidiOut]" << portIndex << "Open MIDI port" << m_name << "(" << portIndex << ")";
         }
         catch (RtMidiError const& e)
         {
@@ -68,7 +72,7 @@ public:
     {
         Q_ASSERT( index > -1 && index < portCount() );
 
-        return QString::fromStdString(m_midiOut->getPortName(index));
+        return m_name;
     }
 
     void sendMessage(QMidiMessage const& message)
@@ -82,6 +86,7 @@ public:
         }
     }
 private:
+    QString m_name;
     QMidiOut* const q_ptr;
     std::unique_ptr<RtMidiOut> m_midiOut;
     int m_portOpened = -1;
@@ -151,4 +156,11 @@ void QMidiOut::sendMessage(QMidiMessage const& message)
     Q_D(QMidiOut);
 
     d->sendMessage(message);
+}
+
+QString QMidiOut::portName() const noexcept
+{
+    Q_D(const QMidiOut);
+
+    return d->m_name;
 }

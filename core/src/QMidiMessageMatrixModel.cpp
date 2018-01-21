@@ -7,12 +7,12 @@
 
 int QMidiMessageMatrixModel::rowCount(QModelIndex const& parent) const
 {
-    return parent.isValid() ? 0 : m_matrix.height();
+    return parent.isValid() ? 0 : m_matrix.inputCount();
 }
 
 int QMidiMessageMatrixModel::columnCount(QModelIndex const& parent) const
 {
-    return parent.isValid() ? 0 : m_matrix.width();
+    return parent.isValid() ? 0 : m_matrix.outputCount();
 }
 
 QVariant QMidiMessageMatrixModel::data(const QModelIndex& index, int role) const

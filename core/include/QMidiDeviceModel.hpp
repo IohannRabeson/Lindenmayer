@@ -4,10 +4,13 @@
 
 #ifndef MIDIMONITOR_QMIDIPORTMODEL_HPP
 #define MIDIMONITOR_QMIDIPORTMODEL_HPP
+#include "QAbstractMidiIn.hpp"
+
 #include <QAbstractListModel>
 
-class QMidiIn;
-class QMidiOut;
+#include <memory>
+
+class QAbstractMidiOut;
 
 /*!
  * \brief Model of midi ports
@@ -24,10 +27,26 @@ public:
         Checked = Qt::CheckStateRole
     };
 
+    struct MidiPort
+    {
+        QString name;
+        int index = -1;
+        bool checked = true;
+        bool enabled = true;
+    };
+
+    using Ports = QVector<MidiPort>;
+    using Loader = std::function<Ports()>;
+
     explicit QMidiDeviceModel(QObject* parent);
 
-    void rescan(QMidiIn* midiIn);
-    void rescan(QMidiOut* midiOut);
+    void reset(Loader&& loader);
+    int append(QString const& name, bool defaultPort = false);
+    void clear();
+
+    void reset(std::vector<std::unique_ptr<QAbstractMidiIn>> const& midiIns);
+    void reset(QVector<QAbstractMidiOut*> const& midiOuts);
+
     void setChecked(int const row, bool checked);
 
     int rowCount(QModelIndex const& parent = QModelIndex()) const override;
@@ -41,29 +60,6 @@ public:
     Qt::ItemFlags flags(QModelIndex const& index) const override;
 signals:
     void checkedChanged(int const row, bool const checked);
-private:
-    enum class MidiPortType
-    {
-        Null,
-        Physical,
-        Virtual
-    };
-
-    struct MidiPort
-    {
-        QString name;
-        int index = -1;
-        MidiPortType type;
-        bool checked = true;
-        bool enabled = true;
-    };
-
-    using Ports = QVector<MidiPort>;
-    using Loader = std::function<Ports()>;
-
-    void reset(Loader&& loader);
-    void append(QString const& name, int const index, bool defaultPort = false);
-    void clear();
 private:
     Ports m_ports;
     int m_defaultPortIndex = -1;

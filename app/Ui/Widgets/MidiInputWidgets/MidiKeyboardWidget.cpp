@@ -27,7 +27,7 @@ class MidiMessageSender : public QObject
 public:
     using QObject::QObject;
 
-    void sendNoteMessage(unsigned char const note, bool const onOrOff);
+    void sendNoteMessage(unsigned char const note, unsigned char port, bool const onOrOff);
     void setVelocity(unsigned char const value);
     void setChannel(unsigned char const value);
 signals:
@@ -166,14 +166,16 @@ public:
         {
             item->setPressed(false);
             m_keyItemsPressed.remove(item);
-            m_sender->sendNoteMessage(item->midiNote(), false);
+            // TODO: use the real port index
+            m_sender->sendNoteMessage(item->midiNote(), -1, false);
         }
 
         for (auto* item : toAdd)
         {
             item->setPressed(true);
             m_keyItemsPressed.insert(item);
-            m_sender->sendNoteMessage(item->midiNote(), true);
+            // TODO: use the real port index
+            m_sender->sendNoteMessage(item->midiNote(),  -1, true);
         }
     }
 
@@ -317,7 +319,7 @@ private:
     {
         for (auto* const item : m_keyItemsPressed)
         {
-            m_sender->sendNoteMessage(item->midiNote(), false);
+            m_sender->sendNoteMessage(item->midiNote(), -1, false);
         }
         m_keyItemsPressed.clear();
     }
@@ -536,9 +538,9 @@ void MidiKeyboardWidget::setChordEnabled(bool const enabled)
     }
 }
 
-void MidiMessageSender::sendNoteMessage(unsigned char const note, bool const onOrOff)
+void MidiMessageSender::sendNoteMessage(unsigned char const note, unsigned char port, bool const onOrOff)
 {
-    emit sendMessage(QMidiMessageBuilder::note(note, m_velocity, m_channel - 1u, onOrOff));
+    emit sendMessage(QMidiMessageBuilder::note(note, m_velocity, m_channel - 1u, port, onOrOff));
 }
 
 void MidiMessageSender::setVelocity(unsigned char const value)

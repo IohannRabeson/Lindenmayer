@@ -18,7 +18,7 @@ public:
     virtual bool openPort(int const portIndex) noexcept = 0;
     virtual void closePort() noexcept = 0;
     virtual int portOpened() const noexcept = 0;
-    virtual QString portName(int const index) const noexcept = 0;
+    virtual QString portName() const noexcept = 0;
     virtual void setEnabled(bool const enabled) = 0;
     virtual void sendMessage(QMidiMessage const& message) = 0;
 signals:
@@ -37,7 +37,8 @@ public:
     bool openPort(int const portIndex) noexcept override;
     void closePort() noexcept override;
     int portOpened() const noexcept override;
-    QString portName(int const index) const noexcept override;
+    QString portName(int const index) const noexcept;
+    QString portName() const noexcept override;
     void setEnabled(bool const enabled) override;
     void sendMessage(QMidiMessage const& message) override;
 

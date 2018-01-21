@@ -23,21 +23,21 @@ public:
     Iterator begin();
     Iterator end();
 
-    int width() const { return m_width; }
-    int height() const { return m_height; }
+    int outputCount() const { return m_outputCount; }
+    int inputCount() const { return m_inputCount; }
 
-    void setWidth(int const width);
-    void setHeight(int const height);
-    void resize(int const width, int const height);
+    void setOutputCount(int const output);
+    void setInputCount(int const input);
+    void resize(int const output, int const input);
     void set(int const x, int const y, bool const value);
     bool get(int const x, int const y) const;
-    void foreachInLine(int const line, std::function<void(int const, int const, bool const)> const&& f) const;
+    void forachInput(int const inputPortIndex, std::function<void(int const, int const)> const&& f) const;
     void foreach(std::function<void(int const, int const, bool const)> const&& f) const;
     void foreach(std::function<void(int const, int const, bool&)> const&& f);
 private:
     std::unique_ptr<bool[]> m_connections;
-    int m_width;
-    int m_height;
+    int m_outputCount;
+    int m_inputCount;
 };
 
 #endif //MIDIMONITOR_QMIDIMESSAGEMATRIX_HPP

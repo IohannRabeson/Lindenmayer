@@ -21,7 +21,7 @@ public:
 
     void rescanPorts();
     void rescanPorts(QMap<int, int>& inputRemapping, QMap<int, int>& outputRemapping);
-    void addInputPort(QAbstractMidiIn* midiIn);
+    void addInputPort(std::unique_ptr<QAbstractMidiIn>&& midiIn);
     void addOutputPort(QAbstractMidiOut* midiOut);
     void sendMessage(QMidiMessage const& message);
 
@@ -43,15 +43,15 @@ private:
     void closeInputPorts();
     void resetPhysicalMidiInPorts();
     void resetPhysicalMidiOutPorts();
-    void sendToOutputs(QMidiMessage const& message);
+    void forwardMidiMessage(QMidiMessage const& message);
 private:
     QMidiDeviceModel* const m_inputDeviceModel;
     QMidiDeviceModel* const m_outputDeviceModel;
     QMidiMessageMatrixModel* const m_matrixModel;
 
     // TODO: use unique_ptr and std::vector instead of QVector and raw pointers.
-    QVector<QAbstractMidiIn*> m_physicalMidiIns;
-    QVector<QAbstractMidiOut*> m_physicalMidiOuts;
+    std::vector<std::unique_ptr<QAbstractMidiIn>> m_midiIns;
+    QVector<QAbstractMidiOut*> m_midiOuts;
 };
 
 #endif //MIDIMONITOR_QMIDIMANAGER_HPP

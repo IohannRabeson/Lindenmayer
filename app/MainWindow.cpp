@@ -15,8 +15,8 @@
 
 #include "Ui/Delegates/MidiDelegates.hpp"
 
-#include "Ui/Widgets/MidiNoteTriggerWidget.hpp"
-#include "Ui/Widgets/MidiKeyboardWidget.hpp"
+#include "Ui/Widgets/MidiInputWidgets/MidiNoteTriggerWidget.hpp"
+#include "Ui/Widgets/MidiInputWidgets/MidiKeyboardWidget.hpp"
 
 #include <QComboBox>
 #include <QToolBar>
@@ -100,7 +100,6 @@ MainWindow::MainWindow(QWidget* parent)
 , m_noteWidget(new MidiNoteTriggerWidget(this))
 , m_keyboardWidget(new MidiKeyboardWidget(this))
 
-, m_actionRescanMidiPorts(new QAction(QIcon(":/Images/Resources/Refresh.png"), tr("Rescan MIDI ports"), this))
 , m_actionQuit(new QAction(tr("Quit"), this))
 , m_actionClearAll(new QAction(QIcon(":/Images/Resources/Clear.png"), tr("Clear all"), this))
 , m_actionAbout(new QAction(tr("About..."), this))
@@ -125,7 +124,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::setupMIDI()
 {
-    m_midiManager->rescanPorts();
+    resetMidiPorts();
     connect(m_inputPortModel, &QMidiDeviceModel::checkedChanged, this, &MainWindow::onInputPortEnabled);
     connect(m_outputPortModel, &QMidiDeviceModel::checkedChanged, this, &MainWindow::onOutputPortEnabled);
     connect(m_midiManager, &QMidiManager::messageReceived, m_messageModel, &QMidiMessageModel::append);
@@ -154,6 +153,7 @@ void MainWindow::resetMidiPorts()
     QMap<int, int> outputPortRemappings;
 
     m_midiManager->rescanPorts(inputPortRemappings, outputPortRemappings);
+    m_midiManager->addInputPort(std::unique_ptr<QAbstractMidiIn>(m_noteWidget));
     m_messageModel->remapInputPorts(inputPortRemappings);
 }
 
@@ -165,7 +165,6 @@ void MainWindow::setupActions()
 
     connect(m_actionClearAll, &QAction::triggered, m_messageModel, &QMidiMessageModel::clear);
     connect(m_actionQuit, &QAction::triggered, this, &QMainWindow::close);
-    connect(m_actionRescanMidiPorts, &QAction::triggered, this, &MainWindow::resetMidiPorts);
     connect(m_actionAbout, &QAction::triggered, this, &MainWindow::showAbout);
     connect(m_actionSwitchAutoScrollToBottom, &QAction::triggered, m_messageView, &MidiMessageListView::setAutoScrollToBottomEnabled);
 }
@@ -199,7 +198,6 @@ void MainWindow::setupUi()
 
     // Setup note widget
     m_dockWidgets->addDockWidget(m_noteWidget, tr("MIDI Note Trigger"));
-    connect(m_noteWidget, &MidiNoteTriggerWidget::sendMessage, m_midiManager, &QMidiManager::sendMessage);
 
     // Setup keyboard widget
     m_dockWidgets->addDockWidget(m_keyboardWidget, tr("MIDI Keyboard"));
@@ -215,11 +213,11 @@ void MainWindow::setupUi()
 
         auto const& matrix = m_midiManager->getMessageMatrixModel()->matrix();
 
-        for (auto i = 0; i < matrix.width(); ++i)
+        for (auto i = 0; i < matrix.outputCount(); ++i)
         {
             messageMatrixView->setColumnWidth(i, Size);
         }
-        for (auto i = 0; i < matrix.height(); ++i)
+        for (auto i = 0; i < matrix.inputCount(); ++i)
         {
             messageMatrixView->setRowHeight(i, Size);
         }
@@ -236,7 +234,6 @@ void MainWindow::setupToolbars()
     QToolBar* const mainToolbar = m_toolbars->addToolBar(tr("Main"));
 
     mainToolbar->setIconSize(QSize(16, 16));
-    mainToolbar->addAction(m_actionRescanMidiPorts);
     mainToolbar->addAction(m_actionClearAll);
 }
 
@@ -271,7 +268,6 @@ void MainWindow::setupMenus()
     QMenu* const windowMenu = bar->addMenu(tr("Window"));
     QMenu* const helpMenu = bar->addMenu(tr("?"));
 
-    fileMenu->addAction(m_actionRescanMidiPorts);
     fileMenu->addAction(m_actionQuit);
 
     editMenu->addAction(m_actionClearAll);

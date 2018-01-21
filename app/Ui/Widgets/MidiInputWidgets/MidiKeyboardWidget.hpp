@@ -7,6 +7,7 @@
 #include <QWidget>
 #include <QGraphicsItem>
 #include <QMap>
+#include <QAbstractMidiIn.hpp>
 
 class QGraphicsView;
 class QGraphicsScene;
@@ -22,11 +23,11 @@ class MidiMessageSender;
 class KeyboardGraphicsScene;
 class KeyboardGraphicsView;
 
-class MidiKeyboardWidget : public QWidget
+class MidiKeyboardWidget : public QWidget, public QMidiInBase
 {
     Q_OBJECT
 public:
-    MidiKeyboardWidget(QWidget* parent = nullptr);
+    explicit MidiKeyboardWidget(QWidget* parent = nullptr);
     ~MidiKeyboardWidget();
 
     void saveSettings(QSettings& settings) const;

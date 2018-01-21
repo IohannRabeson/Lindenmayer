@@ -40,17 +40,18 @@ QVariant QMidiDeviceModel::data(QModelIndex const& index, int role) const
     return result;
 }
 
-void QMidiDeviceModel::append(QString const& name, int const index, bool const defaultPort)
+int QMidiDeviceModel::append(QString const& name, bool const defaultPort)
 {
     auto const newRow = m_ports.size();
 
     beginInsertRows(QModelIndex(), newRow, newRow);
-    m_ports.append(MidiPort{name, index});
+    m_ports.append(MidiPort{name, newRow});
     endInsertRows();
     if (defaultPort)
     {
         m_defaultPortIndex = newRow;
     }
+    return newRow;
 }
 
 void QMidiDeviceModel::clear()
@@ -67,29 +68,29 @@ void QMidiDeviceModel::reset(Loader&& loader)
     endResetModel();
 }
 
-void QMidiDeviceModel::rescan(QMidiIn* const midiIn)
+void QMidiDeviceModel::reset(std::vector<std::unique_ptr<QAbstractMidiIn>> const& midiIns)
 {
-    reset([midiIn]() -> Ports
-    {
-        Ports ports;
-
-        for (auto i = 0; i < midiIn->portCount(); ++i)
-        {
-            ports.append(MidiPort{midiIn->portName(i), i, MidiPortType::Physical});
-        }
-        return ports;
-    });
-}
-
-void QMidiDeviceModel::rescan(QMidiOut* midiOut)
-{
-    reset([midiOut]() -> Ports
+    reset([&midiIns = midiIns]() -> Ports
           {
               Ports ports;
 
-              for (auto i = 0; i < midiOut->portCount(); ++i)
+              for (auto i = 0; i < midiIns.size(); ++i)
               {
-                  ports.append(MidiPort{midiOut->portName(i), i});
+                  ports.append(MidiPort{midiIns[i]->portName(), i});
+              }
+              return ports;
+          });
+}
+
+void QMidiDeviceModel::reset(QVector<QAbstractMidiOut*> const& midiOuts)
+{
+    reset([&midiOuts = midiOuts]() -> Ports
+          {
+              Ports ports;
+
+              for (auto i = 0; i < midiOuts.size(); ++i)
+              {
+                  ports.append(MidiPort{midiOuts[i]->portName(), i});
               }
               return ports;
           });

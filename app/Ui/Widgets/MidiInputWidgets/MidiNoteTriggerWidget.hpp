@@ -5,6 +5,7 @@
 #ifndef MIDIMONITOR_MIDINOTETRIGGERWIDGET_HPP
 #define MIDIMONITOR_MIDINOTETRIGGERWIDGET_HPP
 #include <QWidget>
+#include <QAbstractMidiIn.hpp>
 
 class QMidiMessage;
 class QPushButton;
@@ -13,7 +14,7 @@ class QComboBox;
 class QSettings;
 class QMidiNoteModel;
 
-class MidiNoteTriggerWidget : public QWidget
+class MidiNoteTriggerWidget : public QWidget, public QMidiInBase
 {
     Q_OBJECT
 public:
@@ -29,8 +30,6 @@ private:
     unsigned char note() const;
     unsigned char velocity() const;
     unsigned char channel() const;
-signals:
-    void sendMessage(QMidiMessage const& message);
 private:
     QPushButton* const m_trigger;
     QComboBox* const m_note;
