@@ -46,6 +46,20 @@ void QMidiManager::rescanPorts()
     rescanPorts(inputRemappings, outputRemappings);
 }
 
+namespace
+{
+    template <class PortContainer>
+    inline QMap<int, QString> extractPortNames(PortContainer const& ports)
+    {
+        QMap<int, QString> results;
+
+        for (decltype(ports.size()) i = 0; i < ports.size(); ++i)
+        {
+            results.insert(i, ports[i]->portName());
+        }
+        return results;
+    };
+}
 // TODO: should be better if inputRemappings is returned as value instead of passed as parameter because
 // we can try to changes the values of inputs remappings passed as parameters but it changes nothing.
 //
@@ -60,7 +74,7 @@ void QMidiManager::rescanPorts(QMap<int, int>& inputRemapping, QMap<int, int>& o
 {
     resetMidiInPorts(inputRemapping);
     resetMidiOutPorts(outputRemapping);
-    m_matrixModel->reset(m_midiOuts.size(), m_midiIns.size());
+    m_matrixModel->reset(m_midiOuts.size(), m_midiIns.size(), extractPortNames(m_midiOuts), extractPortNames(m_midiIns));
     emit portsRescaned();
 }
 
@@ -263,12 +277,12 @@ void QMidiManager::addInputPort(std::unique_ptr<QAbstractMidiIn>&& midiIn)
                                            });
         m_inputDeviceModel->append(midiIn->portName());
         m_midiIns.emplace_back(std::move(midiIn));
-        m_matrixModel->reset(m_midiOuts.size(), m_midiIns.size());
+        m_matrixModel->reset(m_midiOuts.size(), m_midiIns.size(), extractPortNames(m_midiOuts), extractPortNames(m_midiIns));
     }
 }
 
 void QMidiManager::addOutputPort(QAbstractMidiOut* midiOut)
 {
     m_midiOuts.append(midiOut);
-    m_matrixModel->reset(m_midiOuts.size(), m_midiIns.size());
+    m_matrixModel->reset(m_midiOuts.size(), m_midiIns.size(), extractPortNames(m_midiOuts), extractPortNames(m_midiIns));
 }

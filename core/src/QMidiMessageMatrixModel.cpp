@@ -26,6 +26,9 @@ QVariant QMidiMessageMatrixModel::data(const QModelIndex& index, int role) const
             case Qt::CheckStateRole:
                 result = qVariantFromValue(m_matrix.get(index.column(), index.row()) ? Qt::Checked : Qt::Unchecked);
                 break;
+            case Qt::ToolTipRole:
+                result = tr("Connection from input '%0' to output '%1'").arg(m_rowNames.value(index.row())).arg(m_columnNames.value(index.column()));
+                break;
             default:
                 break;
         }
@@ -52,16 +55,18 @@ bool QMidiMessageMatrixModel::setData(const QModelIndex& index, const QVariant& 
     return result;
 }
 
-void QMidiMessageMatrixModel::reset(int const columns, int const rows)
+void QMidiMessageMatrixModel::reset(int const columns, int const rows, QMap<int, QString> const& columnNames, QMap<int, QString> const& rowNames)
 {
     beginResetModel();
     m_matrix.resize(columns, rows);
+    m_columnNames = columnNames;
+    m_rowNames = rowNames;
     endResetModel();
 }
 
 void QMidiMessageMatrixModel::clear()
 {
-    reset(0, 0);
+    reset(0, 0, {}, {});
 }
 
 Qt::ItemFlags QMidiMessageMatrixModel::flags(const QModelIndex& index) const
@@ -72,4 +77,40 @@ Qt::ItemFlags QMidiMessageMatrixModel::flags(const QModelIndex& index) const
 QMidiMessageMatrix const& QMidiMessageMatrixModel::matrix() const
 {
     return m_matrix;
+}
+
+QVariant QMidiMessageMatrixModel::headerData(int section, Qt::Orientation orientation, int role) const
+{
+    QVariant result;
+
+    if (orientation == Qt::Vertical && role == Qt::DisplayRole)
+    {
+
+        switch (role)
+        {
+            case Qt::DisplayRole:
+                result = m_rowNames.value(section);
+                break;
+            case Qt::ToolTipRole:
+                result = tr("Input '%0'").arg(m_rowNames.value(section));
+                break;
+            default:
+                break;
+        }
+    }
+    else if (orientation == Qt::Horizontal)
+    {
+        switch (role)
+        {
+            case Qt::DisplayRole:
+                result = section;
+                break;
+            case Qt::ToolTipRole:
+                result = tr("Output '%0'").arg(m_columnNames.value(section));
+                break;
+            default:
+                break;
+        }
+    }
+    return result;
 }

@@ -13,7 +13,7 @@ class QMidiMessageMatrixModel : public QAbstractTableModel
 public:
     using QAbstractTableModel::QAbstractTableModel;
 
-    void reset(int const columns, int const rows);
+    void reset(int const columns, int const rows, QMap<int, QString> const& columnNames, QMap<int, QString> const& rowNames);
     void clear();
 
     int rowCount(QModelIndex const& parent) const override;
@@ -23,8 +23,13 @@ public:
 
     Qt::ItemFlags flags(const QModelIndex& index) const override;
     QMidiMessageMatrix const& matrix() const;
+
+    QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
+
 private:
     QMidiMessageMatrix m_matrix;
+    QMap<int, QString> m_columnNames;
+    QMap<int, QString> m_rowNames;
 };
 
 #endif //MIDIMONITOR_QMIDIMESSAGEMATRIXMODEL_HPP
