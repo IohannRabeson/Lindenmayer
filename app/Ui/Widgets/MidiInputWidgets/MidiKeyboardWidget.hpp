@@ -39,8 +39,8 @@ private:
 protected:
     void showEvent(QShowEvent* e);
     void resizeEvent(QResizeEvent* e);
-signals:
-    void sendMessage(QMidiMessage const& message);
+//signals:
+//    void sendMessage(QMidiMessage const& message);
 private:
     KeyboardGraphicsScene* const m_scene;
     KeyboardGraphicsView* const m_view;

@@ -23,7 +23,14 @@ public:
     Iterator begin();
     Iterator end();
 
+    /*!
+     * \brief Outputs count or columns count
+     */
     int outputCount() const { return m_outputCount; }
+
+    /*!
+     * \brief Inputs count or rows count
+     */
     int inputCount() const { return m_inputCount; }
 
     void setOutputCount(int const output);

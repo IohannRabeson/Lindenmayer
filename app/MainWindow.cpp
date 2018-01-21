@@ -154,6 +154,7 @@ void MainWindow::resetMidiPorts()
 
     m_midiManager->rescanPorts(inputPortRemappings, outputPortRemappings);
     m_midiManager->addInputPort(std::unique_ptr<QAbstractMidiIn>(m_noteWidget));
+    m_midiManager->addInputPort(std::unique_ptr<QAbstractMidiIn>(m_keyboardWidget));
     m_messageModel->remapInputPorts(inputPortRemappings);
 }
 
@@ -201,7 +202,6 @@ void MainWindow::setupUi()
 
     // Setup keyboard widget
     m_dockWidgets->addDockWidget(m_keyboardWidget, tr("MIDI Keyboard"));
-    connect(m_keyboardWidget, &MidiKeyboardWidget::sendMessage, m_midiManager, &QMidiManager::sendMessage);
 
     // Setup matrix view
     QTableView* messageMatrixView = new QTableView(this);

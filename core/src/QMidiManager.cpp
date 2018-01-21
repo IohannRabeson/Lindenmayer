@@ -243,9 +243,10 @@ void QMidiManager::forwardMidiMessage(QMidiMessage const& message)
     auto const& matrix = m_matrixModel->matrix();
 
     matrix.forachInput(message.port(),
-                         [this, &message](auto in, auto out)
+                         [this, &message](auto out, auto in)
                          {
-                             m_midiOuts.at(in)->sendMessage(message);
+                             qDebug() << message.port() << "->" << out;
+                             m_midiOuts.at(out)->sendMessage(message);
                          });
 }
 

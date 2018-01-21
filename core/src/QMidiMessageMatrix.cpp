@@ -155,16 +155,11 @@ void QMidiMessageMatrix::forachInput(int const inputPortIndex, std::function<voi
 {
     int x = 0u;
 
-    for (auto& connection : *this)
+    for (auto x = 0; x < outputCount(); ++x)
     {
-        if (connection)
+        if (get(x, inputPortIndex))
         {
             f(x, inputPortIndex);
-        }
-        ++x;
-        if (x >= m_outputCount)
-        {
-            x = 0u;
         }
     }
 }

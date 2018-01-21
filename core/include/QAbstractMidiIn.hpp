@@ -28,6 +28,7 @@ public:
     void addMessageReceivedListener(MessageReceivedCallback&& listener);
 protected:
     void error(QString const& error);
+public:
     virtual void messageReceived(QMidiMessage const& message);
 private:
     std::vector<ErrorListener> m_errorListeners;
@@ -46,7 +47,7 @@ public:
     int portOpened() const noexcept override;
     QString portName() const noexcept override;
     void setPortEnabled(bool const enabled) noexcept override;
-protected:
+
     void messageReceived(QMidiMessage const& message) override;
     bool isPortEnabled() const noexcept;
 private:
