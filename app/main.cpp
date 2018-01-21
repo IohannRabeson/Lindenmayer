@@ -1,6 +1,7 @@
 //
 // Created by Io on 30/12/2017.
 //
+
 // TODO:
 // - DONE: port selector
 // - DONE: schemes integration
@@ -34,7 +35,7 @@
 
 #include <QApplication>
 
-#include "Ui/MainWindow.hpp"
+#include "MainWindow.hpp"
 
 static void messageHandler(QtMsgType type, QMessageLogContext const&, QString const& msg)
 {

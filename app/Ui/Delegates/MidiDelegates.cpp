@@ -3,10 +3,12 @@
 //
 
 #include "MidiDelegates.hpp"
+
 #include <Format.hpp>
+#include <QMidiMessageModel.hpp>
 
 #include <QMetaEnum>
-#include <QMidiMessageModel.hpp>
+#include <QPainter>
 
 MidiMessageTypeDelegate::MidiMessageTypeDelegate(QObject *parent)
     : QStyledItemDelegate(parent)

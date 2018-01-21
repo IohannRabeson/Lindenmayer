@@ -19,6 +19,7 @@ class QMidiInPrivate
         {
             return;
         }
+
         QMidiInPrivate* const midiIn = static_cast<QMidiInPrivate*>(userData);
 
         if (midiIn->m_enabled)
@@ -56,6 +57,8 @@ public:
         {
             m_midiIn->openPort(portIndex);
             m_portOpened = portIndex;
+            m_name = QString::fromStdString(m_midiIn->getPortName(portIndex));
+
             qDebug() << "[QMidiIn]" << portIndex << "Open MIDI port" << portIndex;
         }
         catch (RtMidiError const& e)
@@ -100,15 +103,15 @@ private:
         emit q->messageReceived(message);
     }
 private:
+    QString m_name;
     QMidiIn* const q_ptr;
     std::unique_ptr<RtMidiIn> m_midiIn;
     int m_portOpened = -1;
     bool m_enabled = true;
 };
 
-QMidiIn::QMidiIn(QObject* parent) :
-    QObject(parent),
-    d_ptr(new QMidiInPrivate(this))
+QMidiIn::QMidiIn()
+: d_ptr(new QMidiInPrivate(this))
 {
 }
 
@@ -149,14 +152,14 @@ int QMidiIn::portOpened() const noexcept
     return d->m_portOpened;
 }
 
-QString QMidiIn::portName(int const index) const noexcept
+QString QMidiIn::portName() const noexcept
 {
     Q_D(const QMidiIn);
 
-    return d->portName(index);
+    return d->m_name;
 }
 
-void QMidiIn::setEnabled(bool const enabled)
+void QMidiIn::setPortEnabled(bool const enabled) noexcept
 {
     Q_D(QMidiIn);
 

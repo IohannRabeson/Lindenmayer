@@ -9,7 +9,24 @@
 class QMidiMessage;
 class QMidiOutPrivate;
 
-class QMidiOut : public QObject
+class QAbstractMidiOut : public QObject
+{
+    Q_OBJECT
+public:
+    using QObject::QObject;
+
+    virtual bool openPort(int const portIndex) noexcept = 0;
+    virtual void closePort() noexcept = 0;
+    virtual int portOpened() const noexcept = 0;
+    virtual QString portName() const noexcept = 0;
+    virtual void setEnabled(bool const enabled) = 0;
+    virtual void sendMessage(QMidiMessage const& message) = 0;
+signals:
+    void messageSended(QMidiMessage const& message);
+    void error(QString const& error);
+};
+
+class QMidiOut : public QAbstractMidiOut
 {
     Q_DECLARE_PRIVATE(QMidiOut)
     Q_OBJECT
@@ -17,14 +34,15 @@ public:
     explicit QMidiOut(QObject* parent = nullptr);
     ~QMidiOut();
 
-    bool openPort(int const portIndex) noexcept;
-    void closePort() noexcept;
-    int portCount() const noexcept;
-    int portOpened() const noexcept;
+    bool openPort(int const portIndex) noexcept override;
+    void closePort() noexcept override;
+    int portOpened() const noexcept override;
     QString portName(int const index) const noexcept;
-public slots:
-    void setEnabled(bool const enabled);
-    void sendMessage(QMidiMessage const& message);
+    QString portName() const noexcept override;
+    void setEnabled(bool const enabled) override;
+    void sendMessage(QMidiMessage const& message) override;
+
+    int portCount() const noexcept;
 signals:
     void messageSended(QMidiMessage const& message);
     void error(QString const& error);

@@ -47,7 +47,7 @@ private:
 
     void onInputPortEnabled(int const portId, bool const enabled);
     void onOutputPortEnabled(int const portId, bool const enabled);
-    void resetMidiInputs();
+    void resetMidiPorts();
 
     void saveSettings() const;
     void loadSettings();
@@ -72,7 +72,6 @@ private:
     MidiKeyboardWidget* const m_keyboardWidget;
 
     // File actions
-    QAction* const m_actionRescanMidiPorts;
     QAction* const m_actionQuit;
     QAction* const m_actionAbout;
     // Edit actions

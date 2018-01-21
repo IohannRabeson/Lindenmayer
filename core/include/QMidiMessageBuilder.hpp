@@ -9,7 +9,7 @@
 class QMidiMessageBuilder
 {
 public:
-    static QMidiMessage note(unsigned char const note, unsigned char const velocity, unsigned char const channel, bool const onOrOff);
+    static QMidiMessage note(unsigned char const note, unsigned char const velocity, unsigned char const channel, unsigned char const port, bool const onOrOff);
 };
 
 #endif //MIDIMONITOR_QMIDIMESSAGEBUILDER_HPP
