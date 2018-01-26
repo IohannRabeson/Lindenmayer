@@ -5,7 +5,7 @@
 #ifndef MIDIMONITOR_QMIDIPORTMODEL_HPP
 #define MIDIMONITOR_QMIDIPORTMODEL_HPP
 #include "QAbstractMidiIn.hpp"
-
+#include "QMidiOut.hpp" // TODO: replace "QMidiOut.hpp" by "QAbstractMidiOut.hpp"
 #include <QAbstractListModel>
 
 #include <memory>
@@ -45,7 +45,7 @@ public:
     void clear();
 
     void reset(std::vector<std::unique_ptr<QAbstractMidiIn>> const& midiIns);
-    void reset(QVector<QAbstractMidiOut*> const& midiOuts);
+    void reset(std::vector<std::unique_ptr<QAbstractMidiOut>> const& midiOuts);
 
     void setChecked(int const row, bool checked);
 

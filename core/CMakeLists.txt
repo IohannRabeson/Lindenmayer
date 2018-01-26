@@ -25,7 +25,7 @@ add_library(QMidi
             src/QMidiNoteModel.cpp
             include/QMidiNoteModel.hpp
             include/Format.hpp
-            src/Format.cpp src/QMidiMessageBuilder.cpp include/QMidiMessageBuilder.hpp src/QMidiMessageMatrix.cpp include/QMidiMessageMatrix.hpp src/QMidiMessageMatrixModel.cpp include/QMidiMessageMatrixModel.hpp src/QAbstractMidiIn.cpp include/QAbstractMidiIn.hpp private/ListenerHelpers.hpp)
+            src/Format.cpp src/QMidiMessageBuilder.cpp include/QMidiMessageBuilder.hpp src/QMidiMessageMatrix.cpp include/QMidiMessageMatrix.hpp src/QMidiMessageMatrixModel.cpp include/QMidiMessageMatrixModel.hpp src/QAbstractMidiIn.cpp include/QAbstractMidiIn.hpp private/ListenerHelpers.hpp src/QAbstractMidiOut.cpp include/QAbstractMidiOut.hpp)
 
 target_link_libraries(QMidi PRIVATE rtmidi Qt5::Core Qt5::Widgets)
 

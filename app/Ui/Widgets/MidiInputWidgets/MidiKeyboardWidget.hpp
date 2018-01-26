@@ -35,6 +35,7 @@ public:
 private:
     void setChordEditionEnabled(bool const enabled);
     void setChordEnabled(bool const enabled);
+    bool isChordEnabled() const;
     void clearChord();
 protected:
     void showEvent(QShowEvent* e);

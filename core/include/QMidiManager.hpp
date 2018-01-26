@@ -5,7 +5,8 @@
 #ifndef MIDIMONITOR_QMIDIMANAGER_HPP
 #define MIDIMONITOR_QMIDIMANAGER_HPP
 #include <QObject>
-#include <QVector>
+#include <vector>
+#include <memory>
 
 class QMidiDeviceModel;
 class QAbstractMidiIn;
@@ -22,7 +23,7 @@ public:
     void rescanPorts();
     void rescanPorts(QMap<int, int>& inputRemapping, QMap<int, int>& outputRemapping);
     void addInputPort(std::unique_ptr<QAbstractMidiIn>&& midiIn);
-    void addOutputPort(QAbstractMidiOut* midiOut);
+    void addOutputPort(std::unique_ptr<QAbstractMidiOut>&& midiOut);
     void sendMessage(QMidiMessage const& message);
 
     QMidiDeviceModel* getInputDeviceModel() const;
@@ -51,7 +52,7 @@ private:
 
     // TODO: use unique_ptr and std::vector instead of QVector and raw pointers.
     std::vector<std::unique_ptr<QAbstractMidiIn>> m_midiIns;
-    QVector<QAbstractMidiOut*> m_midiOuts;
+    std::vector<std::unique_ptr<QAbstractMidiOut>> m_midiOuts;
 };
 
 #endif //MIDIMONITOR_QMIDIMANAGER_HPP

@@ -159,7 +159,7 @@ void QMidiManager::resetMidiOutPorts(QMap<int, int>& outputRemappings)
     closeOutputPorts();
     resetPhysicalMidiOutPorts();
 
-    if (m_midiOuts.isEmpty())
+    if (m_midiOuts.empty())
     {
         qWarning() << "[MidiMonitor]: No midi outputs";
     }
@@ -178,16 +178,16 @@ void QMidiManager::resetPhysicalMidiOutPorts()
 {
     // Instanciate the first MIDI port, then scans available ports.
     // Wierd but it seems to be required by RtMidi
-    auto* const firstMidiOut = new QMidiOut(this);
+    auto firstMidiOut = std::make_unique<QMidiOut>();
 
-    m_midiOuts.append(firstMidiOut);
+    m_midiOuts.emplace_back(std::move(firstMidiOut));
 
     // Instanciate midi other inputs
-    for (int i = 0; i < firstMidiOut->portCount() - 1; ++i)
+    for (int i = 0; i < m_midiOuts.front()->portCount() - 1; ++i)
     {
-        auto* const midiOut = new QMidiOut(this);
+        auto midiOut = std::make_unique<QMidiOut>();
 
-        m_midiOuts.append(midiOut);
+        m_midiOuts.emplace_back(std::move(midiOut));
     }
     for (int i = 0; i < m_midiOuts.size(); ++i)
     {
@@ -217,7 +217,7 @@ void QMidiManager::setInputPortEnabled(int const portId, bool const enabled)
 
 void QMidiManager::setOutputPortEnabled(int const portId, bool const enabled)
 {
-    for (auto* midiOut : m_midiOuts)
+    for (auto const& midiOut : m_midiOuts)
     {
         if (midiOut->portOpened() == portId)
         {
@@ -229,7 +229,6 @@ void QMidiManager::setOutputPortEnabled(int const portId, bool const enabled)
 
 void QMidiManager::closeOutputPorts()
 {
-    qDeleteAll(m_midiOuts);
     m_midiOuts.clear();
 }
 
@@ -240,7 +239,7 @@ void QMidiManager::closeInputPorts()
 
 void QMidiManager::sendMessage(QMidiMessage const& message)
 {
-    for (auto* midiOut : m_midiOuts)
+    for (auto const& midiOut : m_midiOuts)
     {
         midiOut->sendMessage(message);
     }
@@ -281,8 +280,8 @@ void QMidiManager::addInputPort(std::unique_ptr<QAbstractMidiIn>&& midiIn)
     }
 }
 
-void QMidiManager::addOutputPort(QAbstractMidiOut* midiOut)
+void QMidiManager::addOutputPort(std::unique_ptr<QAbstractMidiOut>&& midiOut)
 {
-    m_midiOuts.append(midiOut);
+    m_midiOuts.emplace_back(std::move(midiOut));
     m_matrixModel->reset(m_midiOuts.size(), m_midiIns.size(), extractPortNames(m_midiOuts), extractPortNames(m_midiIns));
 }
