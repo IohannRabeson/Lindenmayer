@@ -13,12 +13,15 @@ class QAbstractMidiIn;
 class QAbstractMidiOut;
 class QMidiMessage;
 class QMidiMessageMatrixModel;
+class QMidiManagerPrivate;
 
 class QMidiManager : public QObject
 {
     Q_OBJECT
+    Q_DECLARE_PRIVATE(QMidiManager)
 public:
-    QMidiManager(QObject* parent = nullptr);
+    explicit QMidiManager(QObject* parent = nullptr);
+    ~QMidiManager();
 
     void rescanPorts();
     void rescanPorts(QMap<int, int>& inputRemapping, QMap<int, int>& outputRemapping);
@@ -38,19 +41,7 @@ signals:
     void messageSent(QMidiMessage const& message);
     void portsRescaned();
 private:
-    void resetMidiInPorts(QMap<int, int>& inputRemappings);
-    void resetMidiOutPorts(QMap<int, int>& outputRemappings);
-    void closeOutputPorts();
-    void closeInputPorts();
-    void resetPhysicalMidiInPorts();
-    void resetPhysicalMidiOutPorts();
-    void forwardMidiMessage(QMidiMessage const& message);
-private:
-    QMidiDeviceModel* const m_inputDeviceModel;
-    QMidiDeviceModel* const m_outputDeviceModel;
-    QMidiMessageMatrixModel* const m_matrixModel;
-    std::vector<std::unique_ptr<QAbstractMidiIn>> m_midiIns;
-    std::vector<std::unique_ptr<QAbstractMidiOut>> m_midiOuts;
+    QScopedPointer<QMidiManagerPrivate> d_ptr;
 };
 
 #endif //MIDIMONITOR_QMIDIMANAGER_HPP
