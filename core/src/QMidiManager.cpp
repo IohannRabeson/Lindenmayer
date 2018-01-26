@@ -15,7 +15,6 @@
 #include <QSize>
 
 #include <vector>
-#include <memory>
 
 class QMidiManagerPrivate
 {
@@ -308,18 +307,18 @@ void QMidiManagerPrivate::forwardMidiMessage(QMidiMessage const& message)
     matrix.forachInput(message.port(),
                          [this, &message](auto out, auto in)
                          {
-                             qDebug() << message.port() << "->" << out;
                              m_midiOuts.at(out)->sendMessage(message);
                          });
 }
 
+// TODO: return the index of the new port
 void QMidiManager::addInputPort(std::unique_ptr<QAbstractMidiIn>&& midiIn)
 {
     Q_D(QMidiManager);
 
     int const newPortIndex = d->m_midiIns.size();
 
-    if (midiIn->openPort(newPortIndex))
+    if (midiIn->isPortOpen() || midiIn->openPort(newPortIndex))
     {
         midiIn->addMessageReceivedListener([this, d](QMidiMessage const& message)
                                            {
@@ -332,10 +331,17 @@ void QMidiManager::addInputPort(std::unique_ptr<QAbstractMidiIn>&& midiIn)
     }
 }
 
+// TODO: return the index of the new port
 void QMidiManager::addOutputPort(std::unique_ptr<QAbstractMidiOut>&& midiOut)
 {
     Q_D(QMidiManager);
 
-    d->m_midiOuts.emplace_back(std::move(midiOut));
-    d->m_matrixModel->reset(d->m_midiOuts.size(), d->m_midiIns.size(), extractPortNames(d->m_midiOuts), extractPortNames(d->m_midiIns));
+    int const newPortIndex = d->m_midiIns.size();
+
+    if (midiOut->isPortOpen() || midiOut->openPort(newPortIndex))
+    {
+        d->m_outputDeviceModel->append(midiOut->portName());
+        d->m_midiOuts.emplace_back(std::move(midiOut));
+        d->m_matrixModel->reset(d->m_midiOuts.size(), d->m_midiIns.size(), extractPortNames(d->m_midiOuts), extractPortNames(d->m_midiIns));
+    }
 }

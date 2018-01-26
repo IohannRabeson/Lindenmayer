@@ -20,9 +20,13 @@ public:
     virtual ~QAbstractMidiIn() = default;
     virtual bool openPort(int const portIndex) noexcept = 0;
     virtual void closePort() noexcept = 0;
+    /*!
+     * \brief Return the index of the opened port or -1 if the port is not open.
+     */
     virtual int portOpened() const noexcept = 0;
     virtual QString portName() const noexcept = 0;
     virtual void setPortEnabled(bool const enabled) noexcept = 0;
+    bool isPortOpen() const;
 
     void addErrorListener(ErrorListener&& listener);
     void addMessageReceivedListener(MessageReceivedCallback&& listener);

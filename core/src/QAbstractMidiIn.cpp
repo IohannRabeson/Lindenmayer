@@ -8,6 +8,11 @@
 
 #include <QtDebug>
 
+bool QAbstractMidiIn::isPortOpen() const
+{
+    return portOpened() != -1;
+}
+
 void QAbstractMidiIn::addErrorListener(ErrorListener&& listener)
 {
     m_errorListeners.emplace_back(std::move(listener));

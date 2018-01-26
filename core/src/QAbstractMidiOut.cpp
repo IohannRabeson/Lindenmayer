@@ -6,6 +6,11 @@
 
 #include "ListenerHelpers.hpp"
 
+bool QAbstractMidiOut::isPortOpen() const
+{
+    return portOpened() != -1;
+}
+
 void QAbstractMidiOut::error(QString const& error)
 {
     callEachListener(m_errorListeners, error);

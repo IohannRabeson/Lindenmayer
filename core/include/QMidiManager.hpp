@@ -5,7 +5,6 @@
 #ifndef MIDIMONITOR_QMIDIMANAGER_HPP
 #define MIDIMONITOR_QMIDIMANAGER_HPP
 #include <QObject>
-#include <vector>
 #include <memory>
 
 class QMidiDeviceModel;

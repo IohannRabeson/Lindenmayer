@@ -24,6 +24,7 @@ public:
     virtual int portCount() const noexcept = 0;
     virtual void setEnabled(bool const enabled) = 0;
     virtual void sendMessage(QMidiMessage const& message) = 0;
+    bool isPortOpen() const;
 
     void error(QString const& error);
     void messageReceived(QMidiMessage const& message);
