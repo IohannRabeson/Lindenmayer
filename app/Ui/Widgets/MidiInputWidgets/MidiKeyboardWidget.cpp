@@ -463,8 +463,6 @@ MidiKeyboardWidget::MidiKeyboardWidget(QWidget* parent)
     m_channel->setRange(1, 16);
 
     m_view->setMouseTracking(true);
-
-    m_chordEditor = false;
 }
 
 MidiKeyboardWidget::~MidiKeyboardWidget()

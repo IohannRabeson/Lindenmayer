@@ -49,8 +49,6 @@ private:
     QMidiDeviceModel* const m_inputDeviceModel;
     QMidiDeviceModel* const m_outputDeviceModel;
     QMidiMessageMatrixModel* const m_matrixModel;
-
-    // TODO: use unique_ptr and std::vector instead of QVector and raw pointers.
     std::vector<std::unique_ptr<QAbstractMidiIn>> m_midiIns;
     std::vector<std::unique_ptr<QAbstractMidiOut>> m_midiOuts;
 };

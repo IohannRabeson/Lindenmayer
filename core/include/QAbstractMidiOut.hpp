@@ -11,7 +11,6 @@
 
 class QMidiMessage;
 
-
 class QAbstractMidiOut
 {
 public:

@@ -5,7 +5,8 @@
 #ifndef MIDIMONITOR_MIDINOTETRIGGERWIDGET_HPP
 #define MIDIMONITOR_MIDINOTETRIGGERWIDGET_HPP
 #include <QWidget>
-#include <QAbstractMidiIn.hpp>
+#include "QAbstractMidiIn.hpp"
+#include "QMidiInBase.hpp"
 
 class QMidiMessage;
 class QPushButton;
