@@ -7,6 +7,10 @@ Actually it support the following MIDI message types:
  - Program change
  - System exclusive
 
+## Git and submodule
+We use git submodules. Keep in mind to update submodules after
+checkout and clone using `--recursive`.
+
 ## Build
 Require Qt 5 and RtMidi installed on your system.
 Also a C++ compiler with support for C++17 is required.

@@ -128,6 +128,7 @@ void MainWindow::setupActions()
     connect(m_actionAbout, &QAction::triggered, this, &MainWindow::showAbout);
     connect(m_actionSwitchAutoScrollToBottom, &QAction::triggered, m_messageView, &MidiMessageListView::setAutoScrollToBottomEnabled);
 }
+#include <QHeaderView>
 
 void MainWindow::setupUi()
 {
@@ -164,21 +165,24 @@ void MainWindow::setupUi()
 
     // Setup matrix view
     QTableView* messageMatrixView = new QTableView(this);
+    constexpr auto const MatrixCellSize = 32;
 
     messageMatrixView->setModel(m_midiManager->getMessageMatrixModel());
-    connect(m_midiManager, &QMidiManager::portsRescanned, [messageMatrixView, this]()
+    messageMatrixView->horizontalHeader()->setDefaultSectionSize(MatrixCellSize);
+    messageMatrixView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeMode::Fixed);
+    messageMatrixView->verticalHeader()->setDefaultSectionSize(MatrixCellSize);
+    messageMatrixView->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeMode::Fixed);
+    connect(m_midiManager, &QMidiManager::portsRescanned, [messageMatrixView, this, MatrixCellSize]()
     {
-        static constexpr auto const Size = 32;
-
         auto const& matrix = m_midiManager->getMessageMatrixModel()->matrix();
 
         for (auto i = 0; i < matrix.outputCount(); ++i)
         {
-            messageMatrixView->setColumnWidth(i, Size);
+            messageMatrixView->setColumnWidth(i, MatrixCellSize);
         }
         for (auto i = 0; i < matrix.inputCount(); ++i)
         {
-            messageMatrixView->setRowHeight(i, Size);
+            messageMatrixView->setRowHeight(i, MatrixCellSize);
         }
     });
     m_dockWidgets->addDockWidget(messageMatrixView, tr("MIDI Message Matrix"));

@@ -4,3 +4,6 @@
 [submodule "externals/vst3sdk"]
 	path = externals/vst3sdk
 	url = https://github.com/steinbergmedia/vst3sdk.git
+[submodule "externals/Qt-Frameless-Window-DarkStyle"]
+	path = externals/Qt-Frameless-Window-DarkStyle
+	url = git@github.com:IohannRabeson/Qt-Frameless-Window-DarkStyle.git

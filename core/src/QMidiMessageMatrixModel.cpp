@@ -71,7 +71,7 @@ void QMidiMessageMatrixModel::clear()
 
 Qt::ItemFlags QMidiMessageMatrixModel::flags(const QModelIndex& index) const
 {
-    return QAbstractTableModel::flags(index) | Qt::ItemIsEditable | Qt::ItemIsUserCheckable;
+    return QAbstractTableModel::flags(index) | Qt::ItemIsUserCheckable;
 }
 
 QMidiMessageMatrix const& QMidiMessageMatrixModel::matrix() const
