@@ -67,7 +67,7 @@ namespace
 
     public:
         explicit HorizontalHeader(QWidget* parent)
-                : QHeaderView(Qt::Horizontal, parent)
+        : QHeaderView(Qt::Horizontal, parent)
         {
         }
     };
@@ -84,27 +84,42 @@ MidiMatrixWidget::MidiMatrixWidget(QWidget* parent)
     layout->addWidget(m_table);
 
     m_table->setHorizontalHeader(new HorizontalHeader(this));
-}
-
-void MidiMatrixWidget::setModel(QAbstractTableModel* model)
-{
-    constexpr int const MatrixCellSize = 32;
-
-    m_table->setModel(model);
     m_table->horizontalHeader()->setDefaultSectionSize(MatrixCellSize);
     m_table->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeMode::Fixed);
     m_table->verticalHeader()->setDefaultSectionSize(MatrixCellSize);
     m_table->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeMode::Fixed);
     m_table->verticalHeader()->setSectionsClickable(false);
-    connect(model, &QAbstractTableModel::modelReset, [this, model]()
+}
+
+void MidiMatrixWidget::setModel(QAbstractTableModel* model)
+{
+    if (m_model == model)
     {
-        for (auto i = 0; i < model->columnCount(); ++i)
+        return;
+    }
+    m_table->setModel(model);
+    if (m_model)
+    {
+        disconnect(m_model, &QAbstractTableModel::modelReset, this, &MidiMatrixWidget::onModelReset);
+    }
+    m_model = model;
+    if (m_model)
+    {
+        connect(m_model, &QAbstractTableModel::modelReset, this, &MidiMatrixWidget::onModelReset);
+    }
+}
+
+void MidiMatrixWidget::onModelReset()
+{
+    if (m_model)
+    {
+        for (auto i = 0; i < m_model->columnCount(); ++i)
         {
             m_table->setColumnWidth(i, MatrixCellSize);
         }
-        for (auto i = 0; i < model->rowCount(); ++i)
+        for (auto i = 0; i < m_model->rowCount(); ++i)
         {
             m_table->setRowHeight(i, MatrixCellSize);
         }
-    });
+    }
 }
