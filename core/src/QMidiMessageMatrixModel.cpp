@@ -71,7 +71,7 @@ void QMidiMessageMatrixModel::clear()
 
 Qt::ItemFlags QMidiMessageMatrixModel::flags(const QModelIndex& index) const
 {
-    return QAbstractTableModel::flags(index) | Qt::ItemIsEditable | Qt::ItemIsUserCheckable;
+    return QAbstractTableModel::flags(index) | Qt::ItemIsUserCheckable;
 }
 
 QMidiMessageMatrix const& QMidiMessageMatrixModel::matrix() const
@@ -103,7 +103,7 @@ QVariant QMidiMessageMatrixModel::headerData(int section, Qt::Orientation orient
         switch (role)
         {
             case Qt::DisplayRole:
-                result = section;
+                result = m_rowNames.value(section);
                 break;
             case Qt::ToolTipRole:
                 result = tr("Output '%0'").arg(m_columnNames.value(section));

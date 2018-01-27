@@ -14,6 +14,7 @@
 
 #include "Ui/Widgets/Widgets/MidiNoteTriggerWidget.hpp"
 #include "Ui/Widgets/Widgets/MidiKeyboardWidget.hpp"
+#include "Ui/Widgets/Widgets/MidiMatrixWidget.hpp"
 
 #include <QToolBar>
 #include <QMenuBar>
@@ -22,7 +23,6 @@
 #include <QMessageBox>
 #include <QTableView>
 #include <QSystemTrayIcon>
-#include <QEvent>
 
 #include <QtDebug>
 
@@ -163,24 +163,9 @@ void MainWindow::setupUi()
     m_dockWidgets->addDockWidget(m_keyboardWidget, tr("MIDI Keyboard"));
 
     // Setup matrix view
-    QTableView* messageMatrixView = new QTableView(this);
+    MidiMatrixWidget* messageMatrixView = new MidiMatrixWidget(this);
 
     messageMatrixView->setModel(m_midiManager->getMessageMatrixModel());
-    connect(m_midiManager, &QMidiManager::portsRescanned, [messageMatrixView, this]()
-    {
-        static constexpr auto const Size = 32;
-
-        auto const& matrix = m_midiManager->getMessageMatrixModel()->matrix();
-
-        for (auto i = 0; i < matrix.outputCount(); ++i)
-        {
-            messageMatrixView->setColumnWidth(i, Size);
-        }
-        for (auto i = 0; i < matrix.inputCount(); ++i)
-        {
-            messageMatrixView->setRowHeight(i, Size);
-        }
-    });
     m_dockWidgets->addDockWidget(messageMatrixView, tr("MIDI Message Matrix"));
 
     // Setup window

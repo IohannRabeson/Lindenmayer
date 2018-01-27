@@ -10,22 +10,24 @@ set(THE_APPLICATION_ICON ${CMAKE_SOURCE_DIR}/configurations/macos/Application.ic
 set(UI_SOURCES
         Ui/Widgets/Views/MidiMessageListView.cpp
         Ui/Widgets/Views/MidiMessageListView.hpp
-        MainWindow.cpp
-        MainWindow.hpp
+    MainWindow.cpp
+    MainWindow.hpp
     Ui/DockWidgetManager.hpp
     Ui/DockWidgetManager.cpp
     Ui/ToolBarManager.hpp
     Ui/ToolBarManager.cpp
         Ui/CommonUi.cpp
     Ui/CommonUi.hpp
-        Ui/Widgets/Dialogs/AboutMidiMonitorDialog.hpp
-        Ui/Widgets/Dialogs/AboutMidiMonitorDialog.cpp
-        Ui/Widgets/Dialogs/AboutMidiMonitorDialog.ui
+    Ui/Widgets/Dialogs/AboutMidiMonitorDialog.hpp
+    Ui/Widgets/Dialogs/AboutMidiMonitorDialog.cpp
+    Ui/Widgets/Dialogs/AboutMidiMonitorDialog.ui
     Ui/Delegates/MidiDelegates.cpp
     Ui/Delegates/MidiDelegates.hpp
     Ui/SettingsUtils.hpp
-        Ui/Widgets/Widgets/MidiNoteTriggerWidget.cpp
-        Ui/Widgets/Widgets/MidiNoteTriggerWidget.hpp Ui/Widgets/Widgets/MidiKeyboardWidget.cpp Ui/Widgets/Widgets/MidiKeyboardWidget.hpp)
+    Ui/Widgets/Widgets/MidiNoteTriggerWidget.cpp
+    Ui/Widgets/Widgets/MidiNoteTriggerWidget.hpp
+    Ui/Widgets/Widgets/MidiKeyboardWidget.cpp
+    Ui/Widgets/Widgets/MidiKeyboardWidget.hpp)
 
 set(PLUGINS_SOURCES
     Plugins/Plugins.qrc
@@ -33,7 +35,8 @@ set(PLUGINS_SOURCES
     Plugins/Waldorf/Pulse2/Pulse2Translator.hpp
     Plugins/Commons/TextDatabase.cpp
     Plugins/Commons/TextDatabase.hpp
-        Ui/Widgets/Widgets/MidiKeyboardWidget.cpp Ui/Widgets/Widgets/MidiKeyboardWidget.hpp)
+        Ui/Widgets/Widgets/MidiKeyboardWidget.cpp 
+        Ui/Widgets/Widgets/MidiKeyboardWidget.hpp Ui/Widgets/Widgets/MidiMatrixWidget.cpp Ui/Widgets/Widgets/MidiMatrixWidget.hpp)
 
 add_executable(MidiMonitor
     MACOSX_BUNDLE ${THE_APPLICATION_ICON}
@@ -44,8 +47,8 @@ add_executable(MidiMonitor
 )
 
 set_target_properties(MidiMonitor PROPERTIES OUTPUT_NAME ${THE_APPLICATION_DISPLAY_NAME})
-target_include_directories(MidiMonitor PRIVATE "${CMAKE_SOURCE_DIR}/app")
-target_link_libraries(MidiMonitor PRIVATE QMidi rtmidi Qt5::Core Qt5::Widgets)
+target_include_directories(MidiMonitor PRIVATE "${CMAKE_SOURCE_DIR}/app" "${CMAKE_SOURCE_DIR}/externals/Qt-Frameless-Window-DarkStyle")
+target_link_libraries(MidiMonitor PRIVATE QMidi rtmidi Qt5::Core Qt5::Widgets QtFramelessWindowDarkStyle)
 target_compile_definitions(MidiMonitor PRIVATE
     APPLICATION_VERSION="${APPLICATION_VERSION}"
     APPLICATION_ORGANIZATION="${THE_APPLICATION_ORGANIZATION}"

@@ -36,6 +36,7 @@
 #include <QApplication>
 
 #include "MainWindow.hpp"
+#include <DarkStyle.h>
 
 static void messageHandler(QtMsgType type, QMessageLogContext const&, QString const& msg)
 {
@@ -76,6 +77,11 @@ static void setupApplication()
     QApplication::setOrganizationName(APPLICATION_ORGANIZATION);
     QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+
+    if (QApplication::arguments().contains("darkstyle"))
+    {
+        QApplication::setStyle(new DarkStyle);
+    }
 
     qInstallMessageHandler(&messageHandler);
 }
