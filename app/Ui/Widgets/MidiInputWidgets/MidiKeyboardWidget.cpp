@@ -227,12 +227,17 @@ public:
 
     bool isChordEditionEnabled() const
     {
-        return m_chordEditingEnabled;
+        return m_chordEnabled && m_chordEditingEnabled;
     }
 
     void setChordEnabled(bool const enabled)
     {
         m_chordEnabled = enabled;
+    }
+
+    bool isChordEnabled() const
+    {
+        return m_chordEnabled;
     }
 protected:
     KeyGraphicsItem* keyItemAt(QPointF const& pos) const
@@ -458,8 +463,6 @@ MidiKeyboardWidget::MidiKeyboardWidget(QWidget* parent)
     m_channel->setRange(1, 16);
 
     m_view->setMouseTracking(true);
-
-    m_chordEditor = false;
 }
 
 MidiKeyboardWidget::~MidiKeyboardWidget()
@@ -484,7 +487,7 @@ void MidiKeyboardWidget::saveSettings(QSettings& settings) const
     settings.beginGroup("midi_keyboard_widget");
     settings.setValue("velocity", m_velocity->value());
     settings.setValue("channel", m_channel->value());
-    settings.setValue("chord_edit", m_chordGroup->isChecked());
+    settings.setValue("chord_enabled", isChordEnabled());
 
     auto const& chord = m_scene->chord();
     auto chordIt = chord.begin();
@@ -505,7 +508,7 @@ void MidiKeyboardWidget::loadSettings(QSettings& settings)
     settings.beginGroup("midi_keyboard_widget");
     m_velocity->setValue(settings.value("velocity", 100).toInt());
     m_channel->setValue(settings.value("channel", 1).toInt());
-    m_chordGroup->setChecked(settings.value("chord_edit").toBool());
+    setChordEnabled(settings.value("chord_enabled").toBool());
 
     std::set<unsigned char> chord;
     auto const size = settings.beginReadArray("chord");
@@ -539,6 +542,11 @@ void MidiKeyboardWidget::setChordEnabled(bool const enabled)
     {
         setChordEditionEnabled(false);
     }
+}
+
+bool MidiKeyboardWidget::isChordEnabled() const
+{
+    return m_scene->isChordEnabled();
 }
 
 QMidiMessage MidiMessageSender::makeNoteMessage(unsigned char const note, unsigned char const port, bool const onOrOff)

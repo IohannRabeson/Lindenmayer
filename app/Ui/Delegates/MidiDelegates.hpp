@@ -25,7 +25,7 @@ private:
         {QMidiMessage::Type::ControlChange, QObject::tr("Control Change")},
         {QMidiMessage::Type::ProgramChange, QObject::tr("Program Change")},
         {QMidiMessage::Type::SystemExclusive, QObject::tr("System Exclusive")},
-        {QMidiMessage::Type::Undefined, QObject::tr("Unknow")}
+        {QMidiMessage::Type::Undefined, QObject::tr("Unknown")}
     };
 };
 

@@ -14,14 +14,10 @@ class QMidiOutPrivate
     Q_DECLARE_PUBLIC(QMidiOut)
 public:
     inline QMidiOutPrivate(QMidiOut* q)
-            : q_ptr(q)
-            , m_midiOut(new RtMidiOut)
+    : q_ptr(q)
+    , m_midiOut(new RtMidiOut)
     {
         qRegisterMetaType<QMidiMessage>();
-    }
-
-    ~QMidiOutPrivate()
-    {
     }
 
     inline bool openPort(int const portIndex) noexcept
@@ -68,13 +64,6 @@ public:
         return m_midiOut->getPortCount();
     }
 
-    inline QString portName(int const index) const
-    {
-        Q_ASSERT( index > -1 && index < portCount() );
-
-        return m_name;
-    }
-
     void sendMessage(QMidiMessage const& message)
     {
         Q_Q(QMidiOut);
@@ -82,7 +71,6 @@ public:
         if (m_enabled)
         {
             m_midiOut->sendMessage(&message.bytes());
-            emit q->messageSended(message);
         }
     }
 private:
@@ -93,9 +81,8 @@ private:
     bool m_enabled = true;
 };
 
-QMidiOut::QMidiOut(QObject* parent)
-: QAbstractMidiOut(parent)
-, d_ptr(new QMidiOutPrivate(this))
+QMidiOut::QMidiOut()
+: d_ptr(new QMidiOutPrivate(this))
 {
 }
 
@@ -134,13 +121,6 @@ int QMidiOut::portOpened() const noexcept
     Q_D(const QMidiOut);
 
     return d->m_portOpened;
-}
-
-QString QMidiOut::portName(int const index) const noexcept
-{
-    Q_D(const QMidiOut);
-
-    return d->portName(index);
 }
 
 void QMidiOut::setEnabled(bool const enabled)

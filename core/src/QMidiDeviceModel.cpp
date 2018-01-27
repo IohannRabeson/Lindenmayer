@@ -82,7 +82,7 @@ void QMidiDeviceModel::reset(std::vector<std::unique_ptr<QAbstractMidiIn>> const
           });
 }
 
-void QMidiDeviceModel::reset(QVector<QAbstractMidiOut*> const& midiOuts)
+void QMidiDeviceModel::reset(std::vector<std::unique_ptr<QAbstractMidiOut>> const& midiOuts)
 {
     reset([&midiOuts = midiOuts]() -> Ports
           {
