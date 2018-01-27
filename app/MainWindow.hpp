@@ -45,8 +45,6 @@ private:
 
     void updateActions();
 
-    void onInputPortEnabled(int const portId, bool const enabled);
-    void onOutputPortEnabled(int const portId, bool const enabled);
     void resetMidiPorts();
 
     void saveSettings() const;

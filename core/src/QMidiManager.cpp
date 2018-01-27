@@ -242,10 +242,10 @@ void QMidiManager::rescanPorts(QMap<int, int>& inputRemapping, QMap<int, int>& o
     d->resetMidiInPorts(inputRemapping);
     d->resetMidiOutPorts(outputRemapping);
     d->m_matrixModel->reset(d->m_midiOuts.size(), d->m_midiIns.size(), extractPortNames(d->m_midiOuts), extractPortNames(d->m_midiIns));
-    emit portsRescaned();
+    emit portsRescanned();
 }
 
-void QMidiManager::closeAll()
+void QMidiManager::closeAllPorts()
 {
     Q_D(QMidiManager);
 
@@ -282,17 +282,6 @@ void QMidiManager::setOutputPortEnabled(int const portId, bool const enabled)
     }
 }
 
-void QMidiManager::sendMessage(QMidiMessage const& message)
-{
-    Q_D(QMidiManager);
-
-    for (auto const& midiOut : d->m_midiOuts)
-    {
-        midiOut->sendMessage(message);
-    }
-    emit messageSent(message);
-}
-
 QMidiMessageMatrixModel* QMidiManager::getMessageMatrixModel() const
 {
     Q_D(const QMidiManager);
@@ -300,6 +289,10 @@ QMidiMessageMatrixModel* QMidiManager::getMessageMatrixModel() const
     return d->m_matrixModel;
 }
 
+/*!
+ * \brief Method called by a MIDI input port when a message is received.
+ * \param message Message forwarded through the MIDI message matrix.
+ */
 void QMidiManagerPrivate::forwardMidiMessage(QMidiMessage const& message)
 {
     auto const& matrix = m_matrixModel->matrix();
@@ -311,12 +304,13 @@ void QMidiManagerPrivate::forwardMidiMessage(QMidiMessage const& message)
                          });
 }
 
-// TODO: return the index of the new port
-void QMidiManager::addInputPort(std::unique_ptr<QAbstractMidiIn>&& midiIn)
+int QMidiManager::addInputPort(std::unique_ptr<QAbstractMidiIn>&& midiIn)
 {
+    Q_ASSERT( midiIn != nullptr );
     Q_D(QMidiManager);
 
     int const newPortIndex = d->m_midiIns.size();
+    int returnedPortIndex = -1;
 
     if (midiIn->isPortOpen() || midiIn->openPort(newPortIndex))
     {
@@ -328,20 +322,25 @@ void QMidiManager::addInputPort(std::unique_ptr<QAbstractMidiIn>&& midiIn)
         d->m_inputDeviceModel->append(midiIn->portName());
         d->m_midiIns.emplace_back(std::move(midiIn));
         d->m_matrixModel->reset(d->m_midiOuts.size(), d->m_midiIns.size(), extractPortNames(d->m_midiOuts), extractPortNames(d->m_midiIns));
+        returnedPortIndex = newPortIndex;
     }
+    return returnedPortIndex;
 }
 
-// TODO: return the index of the new port
-void QMidiManager::addOutputPort(std::unique_ptr<QAbstractMidiOut>&& midiOut)
+int QMidiManager::addOutputPort(std::unique_ptr<QAbstractMidiOut>&& midiOut)
 {
+    Q_ASSERT( midiOut != nullptr );
     Q_D(QMidiManager);
 
     int const newPortIndex = d->m_midiIns.size();
+    int returnedPortIndex = -1;
 
     if (midiOut->isPortOpen() || midiOut->openPort(newPortIndex))
     {
         d->m_outputDeviceModel->append(midiOut->portName());
         d->m_midiOuts.emplace_back(std::move(midiOut));
         d->m_matrixModel->reset(d->m_midiOuts.size(), d->m_midiIns.size(), extractPortNames(d->m_midiOuts), extractPortNames(d->m_midiIns));
+        returnedPortIndex = newPortIndex;
     }
+    return returnedPortIndex;
 }

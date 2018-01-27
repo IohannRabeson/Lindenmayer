@@ -119,14 +119,14 @@ MainWindow::MainWindow(QWidget* parent)
 MainWindow::~MainWindow()
 {
     saveSettings();
-    m_midiManager->closeAll();
+    m_midiManager->closeAllPorts();
 }
 
 void MainWindow::setupMIDI()
 {
     resetMidiPorts();
-    connect(m_inputPortModel, &QMidiDeviceModel::checkedChanged, this, &MainWindow::onInputPortEnabled);
-    connect(m_outputPortModel, &QMidiDeviceModel::checkedChanged, this, &MainWindow::onOutputPortEnabled);
+    connect(m_inputPortModel, &QMidiDeviceModel::checkedChanged, m_midiManager, &QMidiManager::setInputPortEnabled);
+    connect(m_outputPortModel, &QMidiDeviceModel::checkedChanged, m_midiManager, &QMidiManager::setOutputPortEnabled);
     connect(m_midiManager, &QMidiManager::messageReceived, m_messageModel, &QMidiMessageModel::append);
     connect(m_midiManager, &QMidiManager::messageSent, m_messageModel, &QMidiMessageModel::append);
     m_manufacturerModel->load(QMidiManufacturerModel::LoadFromCSV(":/Texts/Resources/MIDI_Manufacturers.csv"));
@@ -207,7 +207,7 @@ void MainWindow::setupUi()
     QTableView* messageMatrixView = new QTableView(this);
 
     messageMatrixView->setModel(m_midiManager->getMessageMatrixModel());
-    connect(m_midiManager, &QMidiManager::portsRescaned, [messageMatrixView, this]()
+    connect(m_midiManager, &QMidiManager::portsRescanned, [messageMatrixView, this]()
     {
         static constexpr auto const Size = 32;
 
@@ -278,16 +278,6 @@ void MainWindow::setupMenus()
     windowMenu->addMenu(m_toolbars->controlMenu());
 
     helpMenu->addAction(m_actionAbout);
-}
-
-void MainWindow::onInputPortEnabled(int const portId, bool const enabled)
-{
-    m_midiManager->setInputPortEnabled(portId, enabled);
-}
-
-void MainWindow::onOutputPortEnabled(int const portId, bool const enabled)
-{
-    m_midiManager->setOutputPortEnabled(portId, enabled);
 }
 
 void MainWindow::saveSettings() const
