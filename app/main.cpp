@@ -1,6 +1,7 @@
 //
 // Created by Io on 30/12/2017.
 //
+
 // TODO:
 // - DONE: port selector
 // - DONE: schemes integration
@@ -34,27 +35,18 @@
 
 #include <QApplication>
 
-#include "Ui/MainWindow.hpp"
+#include "MainWindow.hpp"
 
-#if defined(APPLICATION_RETAIL)
-// Noop message handler, used in RETAIL mode
-static void messageHandler(QtMsgType type, QMessageLogContext const& context, QString const& msg)
-{
-    if (type == QtFatalMsg)
-    {
-        QByteArray const localMsg = msg.toLocal8Bit();
-
-        std::fprintf(stderr, "[Fatal]: %s (%s:%u, %s)\n", localMsg.toStdString().c_str(), context.file, context.line, context.function);
-        abort();
-    }
-}
-#else
-//#elif defined(NDEBUG)
-// Without details message handler, used in RELEASE mode
 static void messageHandler(QtMsgType type, QMessageLogContext const&, QString const& msg)
 {
     QByteArray const localMsg = msg.toLocal8Bit();
-
+#if defined(APPLICATION_RETAIL)
+    if (type == QtFatalMsg)
+    {
+        std::fprintf(stderr, "[Fatal]: %s (%s:%u, %s)\n", localMsg.toStdString().c_str(), context.file, context.line, context.function);
+        abort();
+    }
+#else
     switch (type)
     {
         case QtDebugMsg:
@@ -73,33 +65,8 @@ static void messageHandler(QtMsgType type, QMessageLogContext const&, QString co
             std::fprintf(stderr, "[Fatal]: %s\n", localMsg.constData());
             std::abort();
     }
-}
-//#else
-//// Detailed message handler, used in DEBUG mode
-//static void messageHandler(QtMsgType type, QMessageLogContext const& context, QString const& msg)
-//{
-//    QByteArray const localMsg = msg.toLocal8Bit();
-//
-//    switch (type)
-//    {
-//        case QtDebugMsg:
-//            std::fprintf(stderr, "[Debug]: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
-//            break;
-//        case QtInfoMsg:
-//            std::fprintf(stderr, "[Info]: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
-//            break;
-//        case QtWarningMsg:
-//            std::fprintf(stderr, "[Warning]: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
-//            break;
-//        case QtCriticalMsg:
-//            std::fprintf(stderr, "[Critical]: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
-//            break;
-//        case QtFatalMsg:
-//            std::fprintf(stderr, "[Fatal]: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
-//            std::abort();
-//    }
-//}
 #endif
+}
 
 static void setupApplication()
 {
@@ -107,6 +74,8 @@ static void setupApplication()
     QApplication::setApplicationName(APPLICATION_NAME);
     QApplication::setApplicationVersion(APPLICATION_VERSION);
     QApplication::setOrganizationName(APPLICATION_ORGANIZATION);
+    QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
     qInstallMessageHandler(&messageHandler);
 }

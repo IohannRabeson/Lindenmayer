@@ -7,7 +7,6 @@
 #include <QMainWindow>
 #include <QModelIndex>
 
-class QMidiTranslatorFactory;
 class QMidiMessageModel;
 class QMidiDeviceModel;
 class QMidiMessage;
@@ -20,7 +19,6 @@ class MidiNoteTriggerWidget;
 class MidiKeyboardWidget;
 
 class DockWidgetManager;
-class DeviceSchemeWidget;
 class ToolBarManager;
 
 class QAction;
@@ -38,16 +36,14 @@ public:
 private:
     void setupUi();
     void setupActions();
-    void setupSystem();
+    void setupMIDI();
     void setupMenus();
     void setupToolbars();
     void setupTrayIcon();
 
     void updateActions();
 
-    void onInputPortEnabled(int const portId, bool const enabled);
-    void onOutputPortEnabled(int const portId, bool const enabled);
-    void resetMidiInputs();
+    void resetMidiPorts();
 
     void saveSettings() const;
     void loadSettings();
@@ -55,11 +51,9 @@ private:
     void showAbout();
 protected:
     void changeEvent(QEvent* event) override;
-
 private:
     QSystemTrayIcon* const m_trayIcon;
     QMidiManager* const m_midiManager;
-    QMidiTranslatorFactory* const m_deviceSchemeFactory;
     QMidiDeviceModel* const m_inputPortModel;
     QMidiDeviceModel* const m_outputPortModel;
     QMidiMessageModel* const m_messageModel;
@@ -72,7 +66,6 @@ private:
     MidiKeyboardWidget* const m_keyboardWidget;
 
     // File actions
-    QAction* const m_actionRescanMidiPorts;
     QAction* const m_actionQuit;
     QAction* const m_actionAbout;
     // Edit actions

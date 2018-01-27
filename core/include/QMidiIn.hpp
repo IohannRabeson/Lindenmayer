@@ -4,29 +4,28 @@
 
 #ifndef SYSEXVIEWER_QMIDIIN_HPP
 #define SYSEXVIEWER_QMIDIIN_HPP
-#include <QObject>
+#include "QAbstractMidiIn.hpp"
+
+#include <QtGlobal>
+#include <QScopedPointer>
 
 class QMidiMessage;
 class QMidiInPrivate;
 
-class QMidiIn : public QObject
+class QMidiIn : public QAbstractMidiIn
 {
     Q_DECLARE_PRIVATE(QMidiIn)
-    Q_OBJECT
 public:
-    explicit QMidiIn(QObject* parent = nullptr);
+    explicit QMidiIn();
     ~QMidiIn();
 
-    bool openPort(int const portIndex) noexcept;
-    void closePort() noexcept;
+    bool openPort(int const portIndex) noexcept override;
+    void closePort() noexcept override;
+    int portOpened() const noexcept override;
+    QString portName() const noexcept override;
+    void setPortEnabled(bool const enabled) noexcept override;
+
     int portCount() const noexcept;
-    int portOpened() const noexcept;
-    QString portName(int const index) const noexcept;
-signals:
-    void messageReceived(QMidiMessage const& message);
-    void error(QString const& error);
-public slots:
-    void setEnabled(bool const enabled);
 private:
     QScopedPointer<QMidiInPrivate> d_ptr;
 };

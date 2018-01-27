@@ -3,22 +3,18 @@
 //
 
 #include "MainWindow.hpp"
-#include "Ui/Widgets/MidiMessageListView.hpp"
+#include "Ui/Widgets/Views/MidiMessageListView.hpp"
 #include "Ui/DockWidgetManager.hpp"
 #include "Ui/ToolBarManager.hpp"
-#include "Ui/Widgets/DeviceSchemeWidget.hpp"
 #include "Ui/CommonUi.hpp"
-#include "Ui/Widgets/AboutMidiMonitorDialog.hpp"
+#include "Ui/Widgets/Dialogs/AboutMidiMonitorDialog.hpp"
 #include "Ui/SettingsUtils.hpp"
 
-#include "Plugins/Waldorf/Pulse2/Pulse2Translator.hpp"
+#include "Ui/Delegates/MidiDelegates.hpp"
 
-#include "Delegates/MidiDelegates.hpp"
+#include "Ui/Widgets/Widgets/MidiNoteTriggerWidget.hpp"
+#include "Ui/Widgets/Widgets/MidiKeyboardWidget.hpp"
 
-#include "Ui/Widgets/MidiNoteTriggerWidget.hpp"
-#include "Ui/Widgets/MidiKeyboardWidget.hpp"
-
-#include <QComboBox>
 #include <QToolBar>
 #include <QMenuBar>
 #include <QLineEdit>
@@ -30,9 +26,9 @@
 
 #include <QtDebug>
 
-#include <QMidiTranslatorFactory.hpp>
 #include <QMidiIn.hpp>
 #include <QMidiMessageModel.hpp>
+#include <QMidiMessageMatrixModel.hpp>
 #include <QMidiManager.hpp>
 
 #include <QMetaEnum>
@@ -46,49 +42,12 @@ namespace
         action->setSeparator(true);
         return action;
     }
-
-    class ComboBox : public QComboBox
-    {
-    protected:
-        void paintEvent(QPaintEvent*) override
-        {
-            QStylePainter painter(this);
-            painter.setPen(palette().color(QPalette::Text));
-
-            QStyleOptionComboBox option;
-            initStyleOption(&option);
-
-            if (!m_label.isEmpty())
-            {
-                option.currentText = QString("%0 | %1").arg(m_label).arg(currentText());
-            }
-
-            painter.drawComplexControl(QStyle::CC_ComboBox, option);
-
-            // draw the icon and text
-            painter.drawControl(QStyle::CE_ComboBoxLabel, option);
-        }
-
-    public:
-        using QComboBox::QComboBox;
-
-        ComboBox(QString const& label, QWidget* parent)
-                : QComboBox(parent), m_label(label)
-        {
-            setSizeAdjustPolicy(QComboBox::AdjustToContents);
-            setMinimumContentsLength(m_label.size() + 10);
-        }
-
-    private:
-        QString m_label;
-    };
 }
 
 MainWindow::MainWindow(QWidget* parent)
 : QMainWindow(parent)
 , m_trayIcon(new QSystemTrayIcon(this))
 , m_midiManager(new QMidiManager(this))
-, m_deviceSchemeFactory(new QMidiTranslatorFactory(this))
 , m_inputPortModel(m_midiManager->getInputDeviceModel())
 , m_outputPortModel(m_midiManager->getOutputDeviceModel())
 , m_messageModel(new QMidiMessageModel(this))
@@ -100,18 +59,17 @@ MainWindow::MainWindow(QWidget* parent)
 , m_noteWidget(new MidiNoteTriggerWidget(this))
 , m_keyboardWidget(new MidiKeyboardWidget(this))
 
-, m_actionRescanMidiPorts(new QAction(tr("Rescan"), this))
 , m_actionQuit(new QAction(tr("Quit"), this))
-, m_actionClearAll(new QAction(tr("Clear all"), this))
-, m_actionAbout(new QAction(tr("About...")))
-, m_actionSwitchAutoScrollToBottom(new QAction(tr("Auto scrolling")))
-, m_actionRestoreWindow(new QAction(tr("Show")))
+, m_actionClearAll(new QAction(QIcon(":/Images/Resources/Clear.png"), tr("Clear all"), this))
+, m_actionAbout(new QAction(tr("About..."), this))
+, m_actionSwitchAutoScrollToBottom(new QAction(QIcon(":/Images/Resources/ScrollDown.png"), tr("Auto scrolling"), this))
+, m_actionRestoreWindow(new QAction(tr("Show"), this))
 {
-    setupSystem();
+    setupUi();
+    setupMIDI();
     setupActions();
     setupToolbars();
     setupMenus();
-    setupUi();
     setupTrayIcon();
     loadSettings();
     updateActions();
@@ -120,26 +78,25 @@ MainWindow::MainWindow(QWidget* parent)
 MainWindow::~MainWindow()
 {
     saveSettings();
-    m_midiManager->closeAll();
+    m_midiManager->closeAllPorts();
 }
 
-void MainWindow::setupSystem()
+void MainWindow::setupMIDI()
 {
-    // Setup scheme factory
-    m_deviceSchemeFactory->add<Pulse2Translator>("Pulse 2");
-    m_midiManager->resetPorts();
-    connect(m_inputPortModel, &QMidiDeviceModel::checkedChanged, this, &MainWindow::onInputPortEnabled);
-    connect(m_outputPortModel, &QMidiDeviceModel::checkedChanged, this, &MainWindow::onOutputPortEnabled);
+    resetMidiPorts();
+    connect(m_inputPortModel, &QMidiDeviceModel::checkedChanged, m_midiManager, &QMidiManager::setInputPortEnabled);
+    connect(m_outputPortModel, &QMidiDeviceModel::checkedChanged, m_midiManager, &QMidiManager::setOutputPortEnabled);
     connect(m_midiManager, &QMidiManager::messageReceived, m_messageModel, &QMidiMessageModel::append);
     connect(m_midiManager, &QMidiManager::messageSent, m_messageModel, &QMidiMessageModel::append);
     m_manufacturerModel->load(QMidiManufacturerModel::LoadFromCSV(":/Texts/Resources/MIDI_Manufacturers.csv"));
 }
 
-void MainWindow::resetMidiInputs()
+void MainWindow::resetMidiPorts()
 {
     auto const* const midiInModel = m_midiManager->getInputDeviceModel();
+    auto const* const midiOutModel = m_midiManager->getOutputDeviceModel();
 
-    if (midiInModel->rowCount() > 0)
+    if (midiInModel->rowCount() > 0 || midiOutModel->rowCount() > 0)
     {
         if (QMessageBox::warning(this, tr("Clear messages"),
                                  tr("Messages can lost their input port information.\nAre you sure you want to do that?"),
@@ -151,11 +108,12 @@ void MainWindow::resetMidiInputs()
         }
     }
 
-    // The message with input port information will have their indexes
-    // updated when possible and set to -1 removed indexes.
     QMap<int, int> inputPortRemappings;
+    QMap<int, int> outputPortRemappings;
 
-    m_midiManager->resetPorts(inputPortRemappings);
+    m_midiManager->rescanPorts(inputPortRemappings, outputPortRemappings);
+    m_midiManager->addInputPort(std::unique_ptr<QAbstractMidiIn>(m_noteWidget));
+    m_midiManager->addInputPort(std::unique_ptr<QAbstractMidiIn>(m_keyboardWidget));
     m_messageModel->remapInputPorts(inputPortRemappings);
 }
 
@@ -167,7 +125,6 @@ void MainWindow::setupActions()
 
     connect(m_actionClearAll, &QAction::triggered, m_messageModel, &QMidiMessageModel::clear);
     connect(m_actionQuit, &QAction::triggered, this, &QMainWindow::close);
-    connect(m_actionRescanMidiPorts, &QAction::triggered, this, &MainWindow::resetMidiInputs);
     connect(m_actionAbout, &QAction::triggered, this, &MainWindow::showAbout);
     connect(m_actionSwitchAutoScrollToBottom, &QAction::triggered, m_messageView, &MidiMessageListView::setAutoScrollToBottomEnabled);
 }
@@ -201,11 +158,30 @@ void MainWindow::setupUi()
 
     // Setup note widget
     m_dockWidgets->addDockWidget(m_noteWidget, tr("MIDI Note Trigger"));
-    connect(m_noteWidget, &MidiNoteTriggerWidget::sendMessage, m_midiManager, &QMidiManager::sendMessage);
 
     // Setup keyboard widget
-    m_dockWidgets->addDockWidget(m_keyboardWidget, tr("MIDI keyboard"));
-    connect(m_keyboardWidget, &MidiKeyboardWidget::sendMessage, m_midiManager, &QMidiManager::sendMessage);
+    m_dockWidgets->addDockWidget(m_keyboardWidget, tr("MIDI Keyboard"));
+
+    // Setup matrix view
+    QTableView* messageMatrixView = new QTableView(this);
+
+    messageMatrixView->setModel(m_midiManager->getMessageMatrixModel());
+    connect(m_midiManager, &QMidiManager::portsRescanned, [messageMatrixView, this]()
+    {
+        static constexpr auto const Size = 32;
+
+        auto const& matrix = m_midiManager->getMessageMatrixModel()->matrix();
+
+        for (auto i = 0; i < matrix.outputCount(); ++i)
+        {
+            messageMatrixView->setColumnWidth(i, Size);
+        }
+        for (auto i = 0; i < matrix.inputCount(); ++i)
+        {
+            messageMatrixView->setRowHeight(i, Size);
+        }
+    });
+    m_dockWidgets->addDockWidget(messageMatrixView, tr("MIDI Message Matrix"));
 
     // Setup window
     setAnimated(true);
@@ -217,7 +193,6 @@ void MainWindow::setupToolbars()
     QToolBar* const mainToolbar = m_toolbars->addToolBar(tr("Main"));
 
     mainToolbar->setIconSize(QSize(16, 16));
-    mainToolbar->addAction(m_actionRescanMidiPorts);
     mainToolbar->addAction(m_actionClearAll);
 }
 
@@ -252,7 +227,6 @@ void MainWindow::setupMenus()
     QMenu* const windowMenu = bar->addMenu(tr("Window"));
     QMenu* const helpMenu = bar->addMenu(tr("?"));
 
-    fileMenu->addAction(m_actionRescanMidiPorts);
     fileMenu->addAction(m_actionQuit);
 
     editMenu->addAction(m_actionClearAll);
@@ -263,16 +237,6 @@ void MainWindow::setupMenus()
     windowMenu->addMenu(m_toolbars->controlMenu());
 
     helpMenu->addAction(m_actionAbout);
-}
-
-void MainWindow::onInputPortEnabled(int const portId, bool const enabled)
-{
-    m_midiManager->setInputPortEnabled(portId, enabled);
-}
-
-void MainWindow::onOutputPortEnabled(int const portId, bool const enabled)
-{
-    m_midiManager->setOutputPortEnabled(portId, enabled);
 }
 
 void MainWindow::saveSettings() const

@@ -81,9 +81,9 @@ TEST_F(QMidiManufacturerModelTestFixture, duplicate)
     // The duplicate should be ignored
     load({{{"0_0_0"}, {0, 0, 0}}});
     load({{{"0_0_0_duplicate"}, {0, 0, 0}}});
-    load({{{"0"}, {0}}});
+    load({{{"1"}, {1}}});
 
     ASSERT_TRUE( findCode({0, 0, 0}) );
     ASSERT_STRCASEEQ( getName({0, 0, 0}).toStdString().c_str(), "0_0_0" );
-    ASSERT_STRCASEEQ( getName({0}).toStdString().c_str(), "0" );
+    ASSERT_STRCASEEQ( getName({1}).toStdString().c_str(), "1" );
 }

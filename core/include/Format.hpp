@@ -6,10 +6,13 @@
 #define MIDIMONITOR_FORMAT_HPP
 #include <QString>
 #include <QTextStream>
+#include <QCoreApplication>
+
 #include <vector>
 
 class Format
 {
+    Q_DECLARE_TR_FUNCTIONS(Format)
 public:
     template <class I>
     static QString formatBytes(I begin, I end, int const base = 16, QChar const separator = ' ')

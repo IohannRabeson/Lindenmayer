@@ -14,14 +14,10 @@ class QMidiOutPrivate
     Q_DECLARE_PUBLIC(QMidiOut)
 public:
     inline QMidiOutPrivate(QMidiOut* q)
-            : q_ptr(q)
-            , m_midiOut(new RtMidiOut)
+    : q_ptr(q)
+    , m_midiOut(new RtMidiOut)
     {
         qRegisterMetaType<QMidiMessage>();
-    }
-
-    ~QMidiOutPrivate()
-    {
     }
 
     inline bool openPort(int const portIndex) noexcept
@@ -34,7 +30,11 @@ public:
         {
             m_midiOut->openPort(portIndex);
             m_portOpened = portIndex;
-            qDebug() << "[QMidiOut]" << portIndex << "Open MIDI port" << portIndex;
+            m_name = QString::fromStdString(m_midiOut->getPortName(portIndex));
+
+            Q_ASSERT( !m_name.isEmpty() );
+
+            qDebug() << "[QMidiOut]" << portIndex << "Open MIDI port" << m_name << "(" << portIndex << ")";
         }
         catch (RtMidiError const& e)
         {
@@ -64,13 +64,6 @@ public:
         return m_midiOut->getPortCount();
     }
 
-    inline QString portName(int const index) const
-    {
-        Q_ASSERT( index > -1 && index < portCount() );
-
-        return QString::fromStdString(m_midiOut->getPortName(index));
-    }
-
     void sendMessage(QMidiMessage const& message)
     {
         Q_Q(QMidiOut);
@@ -78,19 +71,18 @@ public:
         if (m_enabled)
         {
             m_midiOut->sendMessage(&message.bytes());
-            emit q->messageSended(message);
         }
     }
 private:
+    QString m_name;
     QMidiOut* const q_ptr;
     std::unique_ptr<RtMidiOut> m_midiOut;
     int m_portOpened = -1;
     bool m_enabled = true;
 };
 
-QMidiOut::QMidiOut(QObject* parent) :
-        QObject(parent),
-        d_ptr(new QMidiOutPrivate(this))
+QMidiOut::QMidiOut()
+: d_ptr(new QMidiOutPrivate(this))
 {
 }
 
@@ -131,13 +123,6 @@ int QMidiOut::portOpened() const noexcept
     return d->m_portOpened;
 }
 
-QString QMidiOut::portName(int const index) const noexcept
-{
-    Q_D(const QMidiOut);
-
-    return d->portName(index);
-}
-
 void QMidiOut::setEnabled(bool const enabled)
 {
     Q_D(QMidiOut);
@@ -151,4 +136,11 @@ void QMidiOut::sendMessage(QMidiMessage const& message)
     Q_D(QMidiOut);
 
     d->sendMessage(message);
+}
+
+QString QMidiOut::portName() const noexcept
+{
+    Q_D(const QMidiOut);
+
+    return d->m_name;
 }

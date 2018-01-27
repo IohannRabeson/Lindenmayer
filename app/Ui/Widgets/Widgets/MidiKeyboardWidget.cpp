@@ -23,15 +23,12 @@
 
 class MidiMessageSender : public QObject
 {
-    Q_OBJECT
 public:
     using QObject::QObject;
 
-    void sendNoteMessage(unsigned char const note, bool const onOrOff);
+    QMidiMessage makeNoteMessage(unsigned char const note, unsigned char const port, bool const onOrOff);
     void setVelocity(unsigned char const value);
     void setChannel(unsigned char const value);
-signals:
-    void sendMessage(QMidiMessage const& message);
 private:
     unsigned char m_velocity = 100u;
     unsigned char m_channel = 1u;
@@ -49,6 +46,17 @@ public:
     void setHighlighted(bool const selected);
     void setMidiNote(unsigned char const note);
     unsigned char midiNote() const;
+
+    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override
+    {
+        QGraphicsRectItem::paint(painter, option, widget);
+
+        constexpr static qreal const TextPadding = 8;
+        QFontMetrics metrics(painter->font());
+
+        painter->drawText(TextPadding, boundingRect().bottom() - metrics.lineSpacing(), m_text);
+    }
+
 private:
     void updateColor()
     {
@@ -66,12 +74,13 @@ private:
         }
     }
 private:
+    QFont m_font;
     QBrush m_normalBrush;
     QBrush m_hoveredBrush;
     QBrush m_clickedBrush;
     QBrush m_selectedBrush;
+    QString m_text;
     QGraphicsRectItem* const m_rectangle;
-    QGraphicsSimpleTextItem* const m_noteText;
     unsigned char m_midiNote = std::numeric_limits<unsigned char>::max();
     bool m_hovered;
     bool m_clicked;
@@ -82,8 +91,9 @@ class KeyboardGraphicsScene : public QGraphicsScene
 {
     Q_OBJECT
 public:
-    explicit KeyboardGraphicsScene(QObject* parent = nullptr)
+    explicit KeyboardGraphicsScene(MidiKeyboardWidget* parent = nullptr)
     : QGraphicsScene(parent)
+    , m_keyboard(parent)
     , m_sender(new MidiMessageSender(this))
     {
         createKeyboard();
@@ -154,14 +164,20 @@ public:
         {
             item->setPressed(false);
             m_keyItemsPressed.remove(item);
-            m_sender->sendNoteMessage(item->midiNote(), false);
+
+            auto const message = m_sender->makeNoteMessage(item->midiNote(), m_keyboard->portOpened(), false);
+
+            m_keyboard->messageReceived(message);
         }
 
         for (auto* item : toAdd)
         {
             item->setPressed(true);
             m_keyItemsPressed.insert(item);
-            m_sender->sendNoteMessage(item->midiNote(), true);
+            // TODO: use the real port index
+            auto const message = m_sender->makeNoteMessage(item->midiNote(), m_keyboard->portOpened(), true);
+
+            m_keyboard->messageReceived(message);
         }
     }
 
@@ -211,12 +227,17 @@ public:
 
     bool isChordEditionEnabled() const
     {
-        return m_chordEditingEnabled;
+        return m_chordEnabled && m_chordEditingEnabled;
     }
 
     void setChordEnabled(bool const enabled)
     {
         m_chordEnabled = enabled;
+    }
+
+    bool isChordEnabled() const
+    {
+        return m_chordEnabled;
     }
 protected:
     KeyGraphicsItem* keyItemAt(QPointF const& pos) const
@@ -305,7 +326,7 @@ private:
     {
         for (auto* const item : m_keyItemsPressed)
         {
-            m_sender->sendNoteMessage(item->midiNote(), false);
+            m_sender->makeNoteMessage(item->midiNote(), -1, false);
         }
         m_keyItemsPressed.clear();
     }
@@ -371,6 +392,7 @@ private:
     // Notice we use std::set instead of QSet because
     // QSet is hash based so the elements order is not guaranted.
     std::set<unsigned char> m_chordNotes;
+    MidiKeyboardWidget* const m_keyboard;
     MidiMessageSender* const m_sender;
     bool m_mousePressed = false;
     bool m_chordEditingEnabled = false;
@@ -397,6 +419,7 @@ protected:
 
 MidiKeyboardWidget::MidiKeyboardWidget(QWidget* parent)
 : QWidget(parent)
+, QMidiInBase(tr("Keyboard"))
 , m_scene(new KeyboardGraphicsScene(this))
 , m_view(new KeyboardGraphicsView(m_scene, this))
 , m_velocity(new QSpinBox(this))
@@ -440,9 +463,6 @@ MidiKeyboardWidget::MidiKeyboardWidget(QWidget* parent)
     m_channel->setRange(1, 16);
 
     m_view->setMouseTracking(true);
-    connect(m_scene->messageSender(), &MidiMessageSender::sendMessage, this, &MidiKeyboardWidget::sendMessage);
-
-    m_chordEditor = false;
 }
 
 MidiKeyboardWidget::~MidiKeyboardWidget()
@@ -467,7 +487,7 @@ void MidiKeyboardWidget::saveSettings(QSettings& settings) const
     settings.beginGroup("midi_keyboard_widget");
     settings.setValue("velocity", m_velocity->value());
     settings.setValue("channel", m_channel->value());
-    settings.setValue("chord_edit", m_chordGroup->isChecked());
+    settings.setValue("chord_enabled", isChordEnabled());
 
     auto const& chord = m_scene->chord();
     auto chordIt = chord.begin();
@@ -488,7 +508,7 @@ void MidiKeyboardWidget::loadSettings(QSettings& settings)
     settings.beginGroup("midi_keyboard_widget");
     m_velocity->setValue(settings.value("velocity", 100).toInt());
     m_channel->setValue(settings.value("channel", 1).toInt());
-    m_chordGroup->setChecked(settings.value("chord_edit").toBool());
+    setChordEnabled(settings.value("chord_enabled").toBool());
 
     std::set<unsigned char> chord;
     auto const size = settings.beginReadArray("chord");
@@ -524,9 +544,14 @@ void MidiKeyboardWidget::setChordEnabled(bool const enabled)
     }
 }
 
-void MidiMessageSender::sendNoteMessage(unsigned char const note, bool const onOrOff)
+bool MidiKeyboardWidget::isChordEnabled() const
 {
-    emit sendMessage(QMidiMessageBuilder::note(note, m_velocity, m_channel - 1u, onOrOff));
+    return m_scene->isChordEnabled();
+}
+
+QMidiMessage MidiMessageSender::makeNoteMessage(unsigned char const note, unsigned char const port, bool const onOrOff)
+{
+    return QMidiMessageBuilder::note(note, m_velocity, m_channel - 1u, port, onOrOff);
 }
 
 void MidiMessageSender::setVelocity(unsigned char const value)
@@ -546,8 +571,7 @@ void MidiMessageSender::setChannel(unsigned char const value)
 
 KeyGraphicsItem::KeyGraphicsItem(QColor const& color, int const width, int const height, QFont const& font, QGraphicsItem* parent)
 : QGraphicsRectItem(parent)
-, m_rectangle(new QGraphicsRectItem)
-, m_noteText(new QGraphicsSimpleTextItem(this))
+, m_rectangle(new QGraphicsRectItem(this))
 , m_hovered(false)
 , m_clicked(false)
 {
@@ -559,17 +583,14 @@ KeyGraphicsItem::KeyGraphicsItem(QColor const& color, int const width, int const
     rect.setHeight(height);
 
     setRect(rect);
-    m_noteText->setFont(font);
-    m_noteText->setZValue(1);
-
     m_normalBrush = color;
     m_hoveredBrush = Qt::lightGray;
     m_clickedBrush = Qt::darkGray;
     m_selectedBrush = Qt::red;
-
+    m_font.setPointSize(30);
     setAcceptHoverEvents(true);
     setAcceptTouchEvents(true);
-    setHandlesChildEvents(true);
+    m_rectangle->setHandlesChildEvents(true);
 }
 
 void KeyGraphicsItem::setMidiNote(unsigned char const note)
@@ -579,10 +600,7 @@ void KeyGraphicsItem::setMidiNote(unsigned char const note)
 
     if (m_midiNote % 12u == 0u)
     {
-        constexpr static qreal const TextPadding = 8;
-
-        m_noteText->setText(Format::formatMidiNote(m_midiNote));
-        m_noteText->setPos(TextPadding, boundingRect().bottom() - m_noteText->boundingRect().height() - TextPadding);
+        m_text = Format::formatMidiNote(m_midiNote);
     }
 }
 

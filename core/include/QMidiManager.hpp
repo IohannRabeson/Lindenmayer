@@ -5,42 +5,74 @@
 #ifndef MIDIMONITOR_QMIDIMANAGER_HPP
 #define MIDIMONITOR_QMIDIMANAGER_HPP
 #include <QObject>
-#include <QVector>
+#include <memory>
 
 class QMidiDeviceModel;
-class QMidiIn;
-class QMidiOut;
+class QAbstractMidiIn;
+class QAbstractMidiOut;
 class QMidiMessage;
+class QMidiMessageMatrixModel;
+class QMidiManagerPrivate;
 
 class QMidiManager : public QObject
 {
     Q_OBJECT
+    Q_DECLARE_PRIVATE(QMidiManager)
 public:
-    QMidiManager(QObject* parent = nullptr);
+    explicit QMidiManager(QObject* parent = nullptr);
+    ~QMidiManager();
 
-    void resetPorts();
-    void resetPorts(QMap<int, int>& inputRemappings);
-    void sendMessage(QMidiMessage const& message);
+    /*!
+     * \brief Rescan MIDI ports
+     *
+     * Each ports are destroyed, including ports added using addInputPort() and addOutputPort().
+     */
+    void rescanPorts();
+
+    /*!
+     * \brief Rescan MIDI ports
+     *
+     * Each ports are destroyed, including ports added using addInputPort() and addOutputPort().
+     *
+     * \param inputRemapping Mapping between the old and the new index of each ports
+     * \param outputRemapping Mapping between the old and the new index of each ports
+     */
+    void rescanPorts(QMap<int, int>& inputRemapping, QMap<int, int>& outputRemapping);
+
+    /*!
+     * \brief Add an input port
+     * \param midiIn Input port to add
+     * Before adding it, this function open the port if it not already opened.
+     *
+     * When the input port added will receives a message it will be forwarded through
+     * the MIDI message matrix to the outputs ports.
+     */
+    int addInputPort(std::unique_ptr<QAbstractMidiIn>&& midiIn);
+
+    /*!
+     * \brief Add an output port
+     * \param midiIn Output port to add
+     * Before adding it, this function open the port if it not already opened.
+     */
+    int addOutputPort(std::unique_ptr<QAbstractMidiOut>&& midiOut);
+
+    /*!
+     * \brief Close and destroy each input and output ports.
+     */
+    void closeAllPorts();
 
     QMidiDeviceModel* getInputDeviceModel() const;
     QMidiDeviceModel* getOutputDeviceModel() const;
+    QMidiMessageMatrixModel* getMessageMatrixModel() const;
 
     void setInputPortEnabled(int const portId, bool const enabled);
     void setOutputPortEnabled(int const portId, bool const enabled);
-    void closeAll();
 signals:
     void messageReceived(QMidiMessage const& message);
     void messageSent(QMidiMessage const& message);
+    void portsRescanned();
 private:
-    void resetMidiInPorts(QMap<int, int>& inputRemappings);
-    void resetMidiOutPorts();
-    void closeOutputPorts();
-    void closeInputPorts();
-private:
-    QMidiDeviceModel* const m_inputDeviceModel;
-    QMidiDeviceModel* const m_outputDeviceModel;
-    QVector<QMidiIn*> m_midiIns;
-    QVector<QMidiOut*> m_midiOuts;
+    QScopedPointer<QMidiManagerPrivate> d_ptr;
 };
 
 #endif //MIDIMONITOR_QMIDIMANAGER_HPP

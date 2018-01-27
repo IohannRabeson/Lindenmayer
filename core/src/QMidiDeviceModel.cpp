@@ -40,17 +40,18 @@ QVariant QMidiDeviceModel::data(QModelIndex const& index, int role) const
     return result;
 }
 
-void QMidiDeviceModel::append(QString const& name, int const index, bool const defaultPort)
+int QMidiDeviceModel::append(QString const& name, bool const defaultPort)
 {
     auto const newRow = m_ports.size();
 
     beginInsertRows(QModelIndex(), newRow, newRow);
-    m_ports.append(MidiPort{name, index});
+    m_ports.append(MidiPort{name, newRow});
     endInsertRows();
     if (defaultPort)
     {
         m_defaultPortIndex = newRow;
     }
+    return newRow;
 }
 
 void QMidiDeviceModel::clear()
@@ -67,29 +68,29 @@ void QMidiDeviceModel::reset(Loader&& loader)
     endResetModel();
 }
 
-void QMidiDeviceModel::rescan(QMidiIn* midiIn)
+void QMidiDeviceModel::reset(std::vector<std::unique_ptr<QAbstractMidiIn>> const& midiIns)
 {
-    reset([midiIn]() -> Ports
-    {
-        Ports ports;
-
-        for (auto i = 0; i < midiIn->portCount(); ++i)
-        {
-            ports.append(MidiPort{midiIn->portName(i), i});
-        }
-        return ports;
-    });
-}
-
-void QMidiDeviceModel::rescan(QMidiOut* midiOut)
-{
-    reset([midiOut]() -> Ports
+    reset([&midiIns = midiIns]() -> Ports
           {
               Ports ports;
 
-              for (auto i = 0; i < midiOut->portCount(); ++i)
+              for (auto i = 0; i < midiIns.size(); ++i)
               {
-                  ports.append(MidiPort{midiOut->portName(i), i});
+                  ports.append(MidiPort{midiIns[i]->portName(), i});
+              }
+              return ports;
+          });
+}
+
+void QMidiDeviceModel::reset(std::vector<std::unique_ptr<QAbstractMidiOut>> const& midiOuts)
+{
+    reset([&midiOuts = midiOuts]() -> Ports
+          {
+              Ports ports;
+
+              for (auto i = 0; i < midiOuts.size(); ++i)
+              {
+                  ports.append(MidiPort{midiOuts[i]->portName(), i});
               }
               return ports;
           });
@@ -97,7 +98,17 @@ void QMidiDeviceModel::rescan(QMidiOut* midiOut)
 
 Qt::ItemFlags QMidiDeviceModel::flags(QModelIndex const& index) const
 {
-    return index.isValid() ? Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsUserCheckable : Qt::NoItemFlags;
+    Qt::ItemFlags result = Qt::NoItemFlags;
+
+    if (index.isValid())
+    {
+        result = Qt::ItemIsSelectable | Qt::ItemIsUserCheckable;
+        if (m_ports[index.row()].enabled)
+        {
+            result |= Qt::ItemIsEnabled;
+        }
+    }
+    return result;
 }
 
 void QMidiDeviceModel::setChecked(int const row, bool checked)

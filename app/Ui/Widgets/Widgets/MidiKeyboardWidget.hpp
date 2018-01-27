@@ -7,6 +7,8 @@
 #include <QWidget>
 #include <QGraphicsItem>
 #include <QMap>
+#include "QAbstractMidiIn.hpp"
+#include "QMidiInBase.hpp"
 
 class QGraphicsView;
 class QGraphicsScene;
@@ -22,11 +24,11 @@ class MidiMessageSender;
 class KeyboardGraphicsScene;
 class KeyboardGraphicsView;
 
-class MidiKeyboardWidget : public QWidget
+class MidiKeyboardWidget : public QWidget, public QMidiInBase
 {
     Q_OBJECT
 public:
-    MidiKeyboardWidget(QWidget* parent = nullptr);
+    explicit MidiKeyboardWidget(QWidget* parent = nullptr);
     ~MidiKeyboardWidget();
 
     void saveSettings(QSettings& settings) const;
@@ -34,12 +36,11 @@ public:
 private:
     void setChordEditionEnabled(bool const enabled);
     void setChordEnabled(bool const enabled);
+    bool isChordEnabled() const;
     void clearChord();
 protected:
     void showEvent(QShowEvent* e);
     void resizeEvent(QResizeEvent* e);
-signals:
-    void sendMessage(QMidiMessage const& message);
 private:
     KeyboardGraphicsScene* const m_scene;
     KeyboardGraphicsView* const m_view;
@@ -48,7 +49,6 @@ private:
     QPushButton* const m_editChord;
     QPushButton* const m_clearChord;
     QGroupBox* const m_chordGroup;
-    bool m_chordEditor;
 };
 
 #endif //MIDIMONITOR_MIDIKEYBOARDWIDGET_HPP

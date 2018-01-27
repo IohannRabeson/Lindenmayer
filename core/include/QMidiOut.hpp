@@ -4,30 +4,27 @@
 
 #ifndef MIDIMONITOR_QMIDIOUT_HPP
 #define MIDIMONITOR_QMIDIOUT_HPP
-#include <QObject>
+
+#include "QAbstractMidiOut.hpp"
+#include <QScopedPointer>
 
 class QMidiMessage;
 class QMidiOutPrivate;
 
-class QMidiOut : public QObject
+class QMidiOut : public QAbstractMidiOut
 {
     Q_DECLARE_PRIVATE(QMidiOut)
-    Q_OBJECT
 public:
-    explicit QMidiOut(QObject* parent = nullptr);
+    explicit QMidiOut();
     ~QMidiOut();
 
-    bool openPort(int const portIndex) noexcept;
-    void closePort() noexcept;
-    int portCount() const noexcept;
-    int portOpened() const noexcept;
-    QString portName(int const index) const noexcept;
-public slots:
-    void setEnabled(bool const enabled);
-    void sendMessage(QMidiMessage const& message);
-signals:
-    void messageSended(QMidiMessage const& message);
-    void error(QString const& error);
+    bool openPort(int const portIndex) noexcept override;
+    void closePort() noexcept override;
+    int portOpened() const noexcept override;
+    QString portName() const noexcept override;
+    void setEnabled(bool const enabled) override;
+    void sendMessage(QMidiMessage const& message) override;
+    int portCount() const noexcept override;
 private:
     QScopedPointer<QMidiOutPrivate> d_ptr;
 };
