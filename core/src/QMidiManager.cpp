@@ -53,16 +53,19 @@ void QMidiManagerPrivate::resetPhysicalMidiInPorts()
     auto firstMidiPort = std::make_unique<QMidiIn>();
     auto const portCount = firstMidiPort->portCount();
 
-    m_midiIns.emplace_back(std::move(firstMidiPort));
+    if (portCount > 0u)
+    {
+        m_midiIns.emplace_back(std::move(firstMidiPort));
 
-    // Instanciate midi other inputs
-    for (int i = 0; i < portCount - 1; ++i)
-    {
-        m_midiIns.emplace_back(std::make_unique<QMidiIn>());
-    }
-    for (int i = 0; i < m_midiIns.size(); ++i)
-    {
-        m_midiIns[i]->openPort(i);
+        // Instanciate midi other inputs
+        for (int i = 0; i < portCount - 1; ++i)
+        {
+            m_midiIns.emplace_back(std::make_unique<QMidiIn>());
+        }
+        for (int i = 0; i < m_midiIns.size(); ++i)
+        {
+            m_midiIns[i]->openPort(i);
+        }
     }
     m_inputDeviceModel->reset(m_midiIns);
 }
@@ -145,22 +148,28 @@ void QMidiManagerPrivate::resetMidiOutPorts(QMap<int, int>& outputRemappings)
 
 void QMidiManagerPrivate::resetPhysicalMidiOutPorts()
 {
-    // Instanciate the first MIDI port, then scans available ports.
-    // Wierd but it seems to be required by RtMidi
+    // We need one instance of QMidiOut in order to get the port count.
+    // This limitation is discused here: https://github.com/thestk/rtmidi/issues/50
+    // It could be done by using a static instance of MidiApi but it can cause several
+    // drawback. The first I get in mind it can become difficult to manage several port instances into
+    // different thread because ports should share the same MidiApi instance.
     auto firstMidiOut = std::make_unique<QMidiOut>();
 
-    m_midiOuts.emplace_back(std::move(firstMidiOut));
-
-    // Instanciate midi other inputs
-    for (int i = 0; i < m_midiOuts.front()->portCount() - 1; ++i)
+    if (firstMidiOut->portCount() > 0u)
     {
-        auto midiOut = std::make_unique<QMidiOut>();
+        m_midiOuts.emplace_back(std::move(firstMidiOut));
 
-        m_midiOuts.emplace_back(std::move(midiOut));
-    }
-    for (int i = 0; i < m_midiOuts.size(); ++i)
-    {
-        m_midiOuts[i]->openPort(i);
+        // Instanciate midi other inputs
+        for (int i = 0; i < m_midiOuts.front()->portCount() - 1; ++i)
+        {
+            auto midiOut = std::make_unique<QMidiOut>();
+
+            m_midiOuts.emplace_back(std::move(midiOut));
+        }
+        for (int i = 0; i < m_midiOuts.size(); ++i)
+        {
+            m_midiOuts[i]->openPort(i);
+        }
     }
     m_outputDeviceModel->reset(m_midiOuts);
 }
