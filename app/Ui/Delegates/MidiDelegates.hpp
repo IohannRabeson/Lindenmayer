@@ -5,6 +5,8 @@
 #ifndef MIDIMONITOR_MIDIDELEGATES_HPP
 #define MIDIMONITOR_MIDIDELEGATES_HPP
 #include <QStyledItemDelegate>
+#include <QCoreApplication>
+
 #include <QMidiMessage.hpp>
 #include <QMidiDeviceModel.hpp>
 #include <QMidiManufacturerModel.hpp>
@@ -13,6 +15,7 @@ class QMidiMessageModel;
 
 class MidiMessageTypeDelegate : public QStyledItemDelegate
 {
+    Q_DECLARE_TR_FUNCTIONS(MidiMessageTypeDelegate)
 public:
     explicit MidiMessageTypeDelegate(QObject* parent = nullptr);
 
@@ -20,12 +23,12 @@ public:
 private:
     QMap<QMidiMessage::Type, QString> const m_types =
     {
-        {QMidiMessage::Type::NoteOn, QObject::tr("Note On")},
-        {QMidiMessage::Type::NoteOff, QObject::tr("Note Off")},
-        {QMidiMessage::Type::ControlChange, QObject::tr("Control Change")},
-        {QMidiMessage::Type::ProgramChange, QObject::tr("Program Change")},
-        {QMidiMessage::Type::SystemExclusive, QObject::tr("System Exclusive")},
-        {QMidiMessage::Type::Undefined, QObject::tr("Unknown")}
+        {QMidiMessage::Type::NoteOn, tr("Note On")},
+        {QMidiMessage::Type::NoteOff, tr("Note Off")},
+        {QMidiMessage::Type::ControlChange, tr("Control Change")},
+        {QMidiMessage::Type::ProgramChange, tr("Program Change")},
+        {QMidiMessage::Type::SystemExclusive, tr("System Exclusive")},
+        {QMidiMessage::Type::Undefined, tr("Unknown")}
     };
 };
 

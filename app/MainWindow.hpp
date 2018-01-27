@@ -7,7 +7,6 @@
 #include <QMainWindow>
 #include <QModelIndex>
 
-class QMidiTranslatorFactory;
 class QMidiMessageModel;
 class QMidiDeviceModel;
 class QMidiMessage;
@@ -20,7 +19,6 @@ class MidiNoteTriggerWidget;
 class MidiKeyboardWidget;
 
 class DockWidgetManager;
-class DeviceSchemeWidget;
 class ToolBarManager;
 
 class QAction;
@@ -53,11 +51,9 @@ private:
     void showAbout();
 protected:
     void changeEvent(QEvent* event) override;
-
 private:
     QSystemTrayIcon* const m_trayIcon;
     QMidiManager* const m_midiManager;
-    QMidiTranslatorFactory* const m_deviceSchemeFactory;
     QMidiDeviceModel* const m_inputPortModel;
     QMidiDeviceModel* const m_outputPortModel;
     QMidiMessageModel* const m_messageModel;

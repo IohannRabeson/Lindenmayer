@@ -8,26 +8,24 @@ set(THE_APPLICATION_GUI_IDENTIFIER "com.dead.devs.society.midimonitor")
 set(THE_APPLICATION_ICON ${CMAKE_SOURCE_DIR}/configurations/macos/Application.icns)
 
 set(UI_SOURCES
-    Ui/Widgets/MidiMessageListView.cpp
-    Ui/Widgets/MidiMessageListView.hpp
+        Ui/Widgets/Views/MidiMessageListView.cpp
+        Ui/Widgets/Views/MidiMessageListView.hpp
         MainWindow.cpp
         MainWindow.hpp
     Ui/DockWidgetManager.hpp
     Ui/DockWidgetManager.cpp
     Ui/ToolBarManager.hpp
     Ui/ToolBarManager.cpp
-    Ui/Widgets/DeviceSchemeWidget.cpp
-    Ui/Widgets/DeviceSchemeWidget.hpp
-    Ui/CommonUi.cpp
+        Ui/CommonUi.cpp
     Ui/CommonUi.hpp
-        Ui/Widgets/AboutMidiMonitorDialog.hpp
-        Ui/Widgets/AboutMidiMonitorDialog.cpp
-        Ui/Widgets/AboutMidiMonitorDialog.ui
+        Ui/Widgets/Dialogs/AboutMidiMonitorDialog.hpp
+        Ui/Widgets/Dialogs/AboutMidiMonitorDialog.cpp
+        Ui/Widgets/Dialogs/AboutMidiMonitorDialog.ui
     Ui/Delegates/MidiDelegates.cpp
     Ui/Delegates/MidiDelegates.hpp
     Ui/SettingsUtils.hpp
-        Ui/Widgets/MidiInputWidgets/MidiNoteTriggerWidget.cpp
-        Ui/Widgets/MidiInputWidgets/MidiNoteTriggerWidget.hpp Ui/Widgets/MidiInputWidgets/MidiKeyboardWidget.cpp Ui/Widgets/MidiInputWidgets/MidiKeyboardWidget.hpp)
+        Ui/Widgets/Widgets/MidiNoteTriggerWidget.cpp
+        Ui/Widgets/Widgets/MidiNoteTriggerWidget.hpp Ui/Widgets/Widgets/MidiKeyboardWidget.cpp Ui/Widgets/Widgets/MidiKeyboardWidget.hpp)
 
 set(PLUGINS_SOURCES
     Plugins/Plugins.qrc
@@ -35,7 +33,7 @@ set(PLUGINS_SOURCES
     Plugins/Waldorf/Pulse2/Pulse2Translator.hpp
     Plugins/Commons/TextDatabase.cpp
     Plugins/Commons/TextDatabase.hpp
-        Ui/Widgets/MidiInputWidgets/MidiKeyboardWidget.cpp Ui/Widgets/MidiInputWidgets/MidiKeyboardWidget.hpp)
+        Ui/Widgets/Widgets/MidiKeyboardWidget.cpp Ui/Widgets/Widgets/MidiKeyboardWidget.hpp)
 
 add_executable(MidiMonitor
     MACOSX_BUNDLE ${THE_APPLICATION_ICON}

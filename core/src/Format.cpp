@@ -11,18 +11,18 @@ QString Format::formatMidiNote(unsigned char const note)
 {
     static QVector<QString> const NoteTexts =
     {
-        QObject::tr("C"),
-        QObject::tr("C#"),
-        QObject::tr("D"),
-        QObject::tr("D#"),
-        QObject::tr("E"),
-        QObject::tr("F"),
-        QObject::tr("F#"),
-        QObject::tr("G"),
-        QObject::tr("G#"),
-        QObject::tr("A"),
-        QObject::tr("A#"),
-        QObject::tr("B"),
+        tr("C"),
+        tr("C#"),
+        tr("D"),
+        tr("D#"),
+        tr("E"),
+        tr("F"),
+        tr("F#"),
+        tr("G"),
+        tr("G#"),
+        tr("A"),
+        tr("A#"),
+        tr("B"),
     };
 
     return NoteTexts.value(note % 12) % "-" % QString::number(note / 12);

@@ -419,7 +419,7 @@ protected:
 
 MidiKeyboardWidget::MidiKeyboardWidget(QWidget* parent)
 : QWidget(parent)
-, QMidiInBase(QObject::tr("Keyboard"))
+, QMidiInBase(tr("Keyboard"))
 , m_scene(new KeyboardGraphicsScene(this))
 , m_view(new KeyboardGraphicsView(m_scene, this))
 , m_velocity(new QSpinBox(this))

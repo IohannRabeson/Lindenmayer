@@ -3,22 +3,18 @@
 //
 
 #include "MainWindow.hpp"
-#include "Ui/Widgets/MidiMessageListView.hpp"
+#include "Ui/Widgets/Views/MidiMessageListView.hpp"
 #include "Ui/DockWidgetManager.hpp"
 #include "Ui/ToolBarManager.hpp"
-#include "Ui/Widgets/DeviceSchemeWidget.hpp"
 #include "Ui/CommonUi.hpp"
-#include "Ui/Widgets/AboutMidiMonitorDialog.hpp"
+#include "Ui/Widgets/Dialogs/AboutMidiMonitorDialog.hpp"
 #include "Ui/SettingsUtils.hpp"
-
-#include "Plugins/Waldorf/Pulse2/Pulse2Translator.hpp"
 
 #include "Ui/Delegates/MidiDelegates.hpp"
 
-#include "Ui/Widgets/MidiInputWidgets/MidiNoteTriggerWidget.hpp"
-#include "Ui/Widgets/MidiInputWidgets/MidiKeyboardWidget.hpp"
+#include "Ui/Widgets/Widgets/MidiNoteTriggerWidget.hpp"
+#include "Ui/Widgets/Widgets/MidiKeyboardWidget.hpp"
 
-#include <QComboBox>
 #include <QToolBar>
 #include <QMenuBar>
 #include <QLineEdit>
@@ -27,11 +23,9 @@
 #include <QTableView>
 #include <QSystemTrayIcon>
 #include <QEvent>
-#include <QHeaderView>
 
 #include <QtDebug>
 
-#include <QMidiTranslatorFactory.hpp>
 #include <QMidiIn.hpp>
 #include <QMidiMessageModel.hpp>
 #include <QMidiMessageMatrixModel.hpp>
@@ -48,47 +42,12 @@ namespace
         action->setSeparator(true);
         return action;
     }
-
-    class ComboBox : public QComboBox
-    {
-    protected:
-        void paintEvent(QPaintEvent*) override
-        {
-            QStylePainter painter(this);
-            painter.setPen(palette().color(QPalette::Text));
-
-            QStyleOptionComboBox option;
-            initStyleOption(&option);
-
-            if (!m_label.isEmpty())
-            {
-                option.currentText = QString("%0 | %1").arg(m_label).arg(currentText());
-            }
-
-            painter.drawComplexControl(QStyle::CC_ComboBox, option);
-
-            // draw the icon and text
-            painter.drawControl(QStyle::CE_ComboBoxLabel, option);
-        }
-    public:
-        using QComboBox::QComboBox;
-
-        ComboBox(QString const& label, QWidget* parent)
-                : QComboBox(parent), m_label(label)
-        {
-            setSizeAdjustPolicy(QComboBox::AdjustToContents);
-            setMinimumContentsLength(m_label.size() + 10);
-        }
-    private:
-        QString m_label;
-    };
 }
 
 MainWindow::MainWindow(QWidget* parent)
 : QMainWindow(parent)
 , m_trayIcon(new QSystemTrayIcon(this))
 , m_midiManager(new QMidiManager(this))
-, m_deviceSchemeFactory(new QMidiTranslatorFactory(this))
 , m_inputPortModel(m_midiManager->getInputDeviceModel())
 , m_outputPortModel(m_midiManager->getOutputDeviceModel())
 , m_messageModel(new QMidiMessageModel(this))
