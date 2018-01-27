@@ -36,7 +36,7 @@ set(PLUGINS_SOURCES
     Plugins/Commons/TextDatabase.cpp
     Plugins/Commons/TextDatabase.hpp
         Ui/Widgets/Widgets/MidiKeyboardWidget.cpp 
-        Ui/Widgets/Widgets/MidiKeyboardWidget.hpp)
+        Ui/Widgets/Widgets/MidiKeyboardWidget.hpp Ui/Widgets/Widgets/MidiMatrixWidget.cpp Ui/Widgets/Widgets/MidiMatrixWidget.hpp)
 
 add_executable(MidiMonitor
     MACOSX_BUNDLE ${THE_APPLICATION_ICON}
