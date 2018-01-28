@@ -7,10 +7,10 @@ set(THE_APPLICATION_VERSION "${APPLICATION_VERSION}")
 set(THE_APPLICATION_GUI_IDENTIFIER "com.dead.devs.society.midimonitor")
 set(THE_APPLICATION_ICON ${CMAKE_SOURCE_DIR}/configurations/macos/Application.icns)
 
-set(TRANSLATION_FILES
-    Languages/MidiBoy_en.ts
-    Languages/MidiBoy_fr.ts
-)
+# Prevent .ts files to be deleted when the project is cleaned?
+set_directory_properties(PROPERTIES CLEAN_NO_CUSTOM 1)
+
+add_subdirectory(Languages)
 
 set(UI_SOURCES
     Ui/Widgets/Views/MidiMessageListView.cpp
@@ -41,24 +41,11 @@ set(PLUGINS_SOURCES
     Plugins/Commons/TextDatabase.cpp
     Plugins/Commons/TextDatabase.hpp
     Ui/Widgets/Widgets/MidiKeyboardWidget.cpp
-    Ui/Widgets/Widgets/MidiKeyboardWidget.hpp Ui/Widgets/Widgets/MidiMatrixWidget.cpp Ui/Widgets/Widgets/MidiMatrixWidget.hpp System/TranslatorManager.cpp System/TranslatorManager.hpp)
+    Ui/Widgets/Widgets/MidiKeyboardWidget.hpp Ui/Widgets/Widgets/MidiMatrixWidget.cpp Ui/Widgets/Widgets/MidiMatrixWidget.hpp Translators/TranslatorManager.cpp Translators/TranslatorManager.hpp)
 
-
-# Translation business...
-# Here we collect the C++ sources where can be found text to translate.
-# We include applications files and also core files.
-file(GLOB_RECURSE TRANSLATION_CPP_SOURCE_FILES "${PROJECT_SOURCE_DIR}/core/*.hpp" "${PROJECT_SOURCE_DIR}/core/*.cpp")
-list(APPEND TRANSLATION_CPP_SOURCE_FILES ${UI_SOURCES} ${PLUGINS_SOURCES})
-
-qt5_create_translation(QM_FILES
-        main.cpp
-        ${TRANSLATION_CPP_SOURCE_FILES}
-        ${TRANSLATION_FILES}
-)
-
-foreach(QM_FILE ${QM_FILES})
-    list(APPEND RESOURCE_FILES "${CMAKE_CURRENT_BINARY_DIR}/${QM_FILE}")
-endforeach()
+qt5_add_translation(QM_FILES ${TS_FILES})
+# This works only because QM_FILES is given to add_executable (I guess).
+set_property(SOURCE ${QM_FILES} PROPERTY MACOSX_PACKAGE_LOCATION "Resources/translations")
 
 add_executable(MidiMonitor
     MACOSX_BUNDLE ${THE_APPLICATION_ICON}
@@ -68,6 +55,8 @@ add_executable(MidiMonitor
     MidiMonitor.qrc
     ${QM_FILES}
 )
+
+add_dependencies(MidiMonitor translations_update)
 
 set_target_properties(MidiMonitor PROPERTIES OUTPUT_NAME ${THE_APPLICATION_DISPLAY_NAME})
 target_include_directories(MidiMonitor PRIVATE "${CMAKE_SOURCE_DIR}/app" "${CMAKE_SOURCE_DIR}/externals/Qt-Frameless-Window-DarkStyle")
@@ -87,7 +76,6 @@ endif()
 if (APPLE)
     set(MACOSX_BUNDLE_EXECUTABLE_NAME ${OUTPUT_NAME})
     set_source_files_properties(${THE_APPLICATION_ICON} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
-    SET_SOURCE_FILES_PROPERTIES(${QM_FILES} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources/translations")
 
     set_target_properties(MidiMonitor
             PROPERTIES
@@ -101,6 +89,5 @@ if (APPLE)
             MACOSX_BUNDLE_INFO_STRING "${THE_APPLICATION_BRIEF}"
             MACOSX_BUNDLE_LONG_VERSION_STRING "${THE_APPLICATION_VERSION_LONG}"
             MACOSX_BUNDLE_SHORT_VERSION_STRING "${THE_APPLICATION_VERSION}"
-            RESOURCE "${RESOURCE_FILES}"
     )
 endif()

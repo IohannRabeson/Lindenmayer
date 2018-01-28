@@ -9,7 +9,7 @@
 
 class TranslatorManager : public QObject
 {
-    static QDir makeTranslationDirectory();
+    static QDir getTranslationDirectory();
 public:
     TranslatorManager();
 
