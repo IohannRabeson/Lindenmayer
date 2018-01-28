@@ -43,10 +43,16 @@ set(PLUGINS_SOURCES
     Ui/Widgets/Widgets/MidiKeyboardWidget.cpp
     Ui/Widgets/Widgets/MidiKeyboardWidget.hpp Ui/Widgets/Widgets/MidiMatrixWidget.cpp Ui/Widgets/Widgets/MidiMatrixWidget.hpp System/TranslatorManager.cpp System/TranslatorManager.hpp)
 
+
+# Translation business...
+# Here we collect the C++ sources where can be found text to translate.
+# We include applications files and also core files.
+file(GLOB_RECURSE TRANSLATION_CPP_SOURCE_FILES "${PROJECT_SOURCE_DIR}/core/*.hpp" "${PROJECT_SOURCE_DIR}/core/*.cpp")
+list(APPEND TRANSLATION_CPP_SOURCE_FILES ${UI_SOURCES} ${PLUGINS_SOURCES})
+
 qt5_create_translation(QM_FILES
         main.cpp
-        ${UI_SOURCES}
-        ${PLUGINS_SOURCES}
+        ${TRANSLATION_CPP_SOURCE_FILES}
         ${TRANSLATION_FILES}
 )
 
@@ -54,16 +60,12 @@ foreach(QM_FILE ${QM_FILES})
     list(APPEND RESOURCE_FILES "${CMAKE_CURRENT_BINARY_DIR}/${QM_FILE}")
 endforeach()
 
-message("RESOURCE_FILES ${RESOURCE_FILES}")
-
-list(APPEND QRC_FILES MidiMonitor.qrc)
-
 add_executable(MidiMonitor
     MACOSX_BUNDLE ${THE_APPLICATION_ICON}
     main.cpp
     ${UI_SOURCES}
     ${PLUGINS_SOURCES}
-    ${QRC_FILES}
+    MidiMonitor.qrc
     ${QM_FILES}
 )
 

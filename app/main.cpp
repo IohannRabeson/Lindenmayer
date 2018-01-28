@@ -49,7 +49,7 @@ static void messageHandler(QtMsgType type, QMessageLogContext const& context, QS
     if (type == QtFatalMsg)
     {
         std::fprintf(stderr, "[Fatal]: %s (%s:%u, %s)\n", localMsg.toStdString().c_str(), context.file, context.line, context.function);
-        QMessageBox::warning(QApplication::activeWindow(), QObject::tr("Fatal error"), msg);
+        QMessageBox::warning(QApplication::activeWindow(), QApplication::applicationDisplayName(), QObject::tr("Fatal error: %0\nThe application will be closed.").arg(msg));
         abort();
     }
 #else

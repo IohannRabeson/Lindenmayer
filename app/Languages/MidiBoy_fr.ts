@@ -39,6 +39,69 @@
     </message>
 </context>
 <context>
+    <name>Format</name>
+    <message>
+        <location filename="../../core/src/Format.cpp" line="14"/>
+        <source>C</source>
+        <translation>C</translation>
+    </message>
+    <message>
+        <location filename="../../core/src/Format.cpp" line="15"/>
+        <source>C#</source>
+        <translation>C#</translation>
+    </message>
+    <message>
+        <location filename="../../core/src/Format.cpp" line="16"/>
+        <source>D</source>
+        <translation>D</translation>
+    </message>
+    <message>
+        <location filename="../../core/src/Format.cpp" line="17"/>
+        <source>D#</source>
+        <translation>D#</translation>
+    </message>
+    <message>
+        <location filename="../../core/src/Format.cpp" line="18"/>
+        <source>E</source>
+        <translation>E</translation>
+    </message>
+    <message>
+        <location filename="../../core/src/Format.cpp" line="19"/>
+        <source>F</source>
+        <translation>F</translation>
+    </message>
+    <message>
+        <location filename="../../core/src/Format.cpp" line="20"/>
+        <source>F#</source>
+        <translation>F#</translation>
+    </message>
+    <message>
+        <location filename="../../core/src/Format.cpp" line="21"/>
+        <source>G</source>
+        <translation>G</translation>
+    </message>
+    <message>
+        <location filename="../../core/src/Format.cpp" line="22"/>
+        <source>G#</source>
+        <translation>G#</translation>
+    </message>
+    <message>
+        <location filename="../../core/src/Format.cpp" line="23"/>
+        <source>A</source>
+        <translation>A</translation>
+    </message>
+    <message>
+        <location filename="../../core/src/Format.cpp" line="24"/>
+        <source>A#</source>
+        <translation>A#</translation>
+    </message>
+    <message>
+        <location filename="../../core/src/Format.cpp" line="25"/>
+        <source>B</source>
+        <translation>B</translation>
+    </message>
+</context>
+<context>
     <name>MainWindow</name>
     <message>
         <location filename="../MainWindow.cpp" line="62"/>
@@ -230,10 +293,54 @@ Etes-vous sûr de vouloir faire ça?</translation>
     </message>
 </context>
 <context>
+    <name>QDefaultMidiTranslator</name>
+    <message>
+        <location filename="../../core/src/QDefaultMidiTranslator.cpp" line="24"/>
+        <source>[CC%0]</source>
+        <extracomment>Format control change name</extracomment>
+        <translation>[CC%0]</translation>
+    </message>
+</context>
+<context>
+    <name>QMidiMessageMatrixModel</name>
+    <message>
+        <location filename="../../core/src/QMidiMessageMatrixModel.cpp" line="30"/>
+        <source>Connection from input &apos;%0&apos; to output &apos;%1&apos;</source>
+        <translation>Connection depuis l&apos;entrée &apos;%0&apos; vers la sortie &apos;%1&apos;</translation>
+    </message>
+    <message>
+        <location filename="../../core/src/QMidiMessageMatrixModel.cpp" line="95"/>
+        <source>Input &apos;%0&apos;</source>
+        <translation>Entrée &apos;%0&apos;</translation>
+    </message>
+    <message>
+        <location filename="../../core/src/QMidiMessageMatrixModel.cpp" line="109"/>
+        <source>Output &apos;%0&apos;</source>
+        <translation>Sortie &apos;%0&apos;</translation>
+    </message>
+</context>
+<context>
     <name>QObject</name>
     <message>
-        <location filename="../main.cpp" line="52"/>
         <source>Fatal error</source>
+        <translation type="vanished">Erreur fatale</translation>
+    </message>
+    <message>
+        <location filename="../../core/src/QDefaultMidiTranslator.cpp" line="18"/>
+        <source>Default</source>
+        <extracomment>Default midi translator</extracomment>
+        <translation>Défaut</translation>
+    </message>
+    <message>
+        <location filename="../../core/src/QAbstractMidiTranslator.cpp" line="34"/>
+        <source>%0: %1</source>
+        <extracomment>Format for control change display text</extracomment>
+        <translation>%0: %1</translation>
+    </message>
+    <message>
+        <location filename="../main.cpp" line="52"/>
+        <source>Fatal error: %0
+The application will be closed.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

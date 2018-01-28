@@ -39,6 +39,69 @@
     </message>
 </context>
 <context>
+    <name>Format</name>
+    <message>
+        <location filename="../../core/src/Format.cpp" line="14"/>
+        <source>C</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../core/src/Format.cpp" line="15"/>
+        <source>C#</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../core/src/Format.cpp" line="16"/>
+        <source>D</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../core/src/Format.cpp" line="17"/>
+        <source>D#</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../core/src/Format.cpp" line="18"/>
+        <source>E</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../core/src/Format.cpp" line="19"/>
+        <source>F</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../core/src/Format.cpp" line="20"/>
+        <source>F#</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../core/src/Format.cpp" line="21"/>
+        <source>G</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../core/src/Format.cpp" line="22"/>
+        <source>G#</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../core/src/Format.cpp" line="23"/>
+        <source>A</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../core/src/Format.cpp" line="24"/>
+        <source>A#</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../core/src/Format.cpp" line="25"/>
+        <source>B</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>MainWindow</name>
     <message>
         <location filename="../MainWindow.cpp" line="62"/>
@@ -229,10 +292,50 @@ Are you sure you want to do that?</translation>
     </message>
 </context>
 <context>
+    <name>QDefaultMidiTranslator</name>
+    <message>
+        <location filename="../../core/src/QDefaultMidiTranslator.cpp" line="24"/>
+        <source>[CC%0]</source>
+        <extracomment>Format control change name</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>QMidiMessageMatrixModel</name>
+    <message>
+        <location filename="../../core/src/QMidiMessageMatrixModel.cpp" line="30"/>
+        <source>Connection from input &apos;%0&apos; to output &apos;%1&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../core/src/QMidiMessageMatrixModel.cpp" line="95"/>
+        <source>Input &apos;%0&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../core/src/QMidiMessageMatrixModel.cpp" line="109"/>
+        <source>Output &apos;%0&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>QObject</name>
     <message>
+        <location filename="../../core/src/QDefaultMidiTranslator.cpp" line="18"/>
+        <source>Default</source>
+        <extracomment>Default midi translator</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../core/src/QAbstractMidiTranslator.cpp" line="34"/>
+        <source>%0: %1</source>
+        <extracomment>Format for control change display text</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../main.cpp" line="52"/>
-        <source>Fatal error</source>
+        <source>Fatal error: %0
+The application will be closed.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
