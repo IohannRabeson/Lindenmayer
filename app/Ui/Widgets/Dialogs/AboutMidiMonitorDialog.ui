@@ -37,7 +37,7 @@
         <string/>
        </property>
        <property name="pixmap">
-        <pixmap resource="../../MidiMonitor.qrc">:/Images/Resources/Midi.png</pixmap>
+        <pixmap resource="../../../MidiMonitor.qrc">:/Images/Resources/Icons/Midi.png</pixmap>
        </property>
        <property name="scaledContents">
         <bool>true</bool>
@@ -57,7 +57,7 @@
           </font>
          </property>
          <property name="text">
-          <string>!Application name!</string>
+          <string notr="true">&lt;Application name&gt;</string>
          </property>
         </widget>
        </item>
@@ -73,7 +73,7 @@
          <item>
           <widget class="QLabel" name="applicationVersionLabel">
            <property name="text">
-            <string>!Version!</string>
+            <string notr="true">&lt;Version&gt;</string>
            </property>
           </widget>
          </item>
@@ -183,7 +183,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="../../MidiMonitor.qrc"/>
+  <include location="../../../MidiMonitor.qrc"/>
  </resources>
  <connections>
   <connection>

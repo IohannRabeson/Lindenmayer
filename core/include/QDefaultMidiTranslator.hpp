@@ -6,9 +6,11 @@
 #define MIDIMONITOR_QDEFAULTTRANSLATOR_HPP
 
 #include <QAbstractMidiTranslator.hpp>
+#include <QCoreApplication>
 
 class QDefaultMidiTranslator : public QAbstractMidiTranslator
 {
+    Q_DECLARE_TR_FUNCTIONS(QDefaultMidiTranslator)
 public:
     QString getTranslatorManufacturer() const override;
     QString getTranslatorName() const override;

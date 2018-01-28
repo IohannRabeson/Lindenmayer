@@ -44,12 +44,10 @@ private:
     std::vector<std::unique_ptr<QAbstractMidiOut>> m_midiOuts;
 };
 
-
 void QMidiManagerPrivate::resetPhysicalMidiInPorts()
 {
-    // Instanciate the first MIDI port, then scans available ports.
-    // Wierd but it seems to be required by RtMidi
-
+    // We need one instance of QMidiOut in order to get the port count.
+    // This limitation is discused here: https://github.com/thestk/rtmidi/issues/50
     auto firstMidiPort = std::make_unique<QMidiIn>();
     auto const portCount = firstMidiPort->portCount();
 
