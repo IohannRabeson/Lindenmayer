@@ -98,12 +98,12 @@ QVariant QMidiMessageMatrixModel::headerData(int section, Qt::Orientation orient
                 break;
         }
     }
-    else if (orientation == Qt::Horizontal)
+    else if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
     {
         switch (role)
         {
             case Qt::DisplayRole:
-                result = m_rowNames.value(section);
+                result = m_columnNames.value(section);
                 break;
             case Qt::ToolTipRole:
                 result = tr("Output '%0'").arg(m_columnNames.value(section));

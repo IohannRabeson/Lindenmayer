@@ -41,7 +41,7 @@
 #include <DarkStyle.h>
 #include <QMessageBox>
 
-static void messageHandler(QtMsgType type, QMessageLogContext const&, QString const& msg)
+static void messageHandler(QtMsgType type, QMessageLogContext const& context, QString const& msg)
 {
     QByteArray const localMsg = msg.toLocal8Bit();
 
@@ -83,11 +83,15 @@ static void setupApplication()
     QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
+    qInstallMessageHandler(&messageHandler);
+}
+
+void processCommandLine()
+{
     if (QApplication::arguments().contains("darkstyle"))
     {
         QApplication::setStyle(new DarkStyle);
     }
-    qInstallMessageHandler(&messageHandler);
 }
 
 int main(int argc, char** argv)
@@ -97,6 +101,7 @@ int main(int argc, char** argv)
 
     setupApplication();
     translatorManager.loadSystemTranslator();
+    processCommandLine();
 
     MainWindow widget;
 

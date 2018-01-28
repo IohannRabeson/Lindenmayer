@@ -16,16 +16,15 @@ public:
     void reset(int const columns, int const rows, QMap<int, QString> const& columnNames, QMap<int, QString> const& rowNames);
     void clear();
 
+    QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
+    QVariant data(const QModelIndex& index, int role) const override;
+
     int rowCount(QModelIndex const& parent) const override;
     int columnCount(QModelIndex const& parent) const override;
-    QVariant data(const QModelIndex& index, int role) const override;
     bool setData(const QModelIndex& index, const QVariant& value, int role) override;
 
     Qt::ItemFlags flags(const QModelIndex& index) const override;
     QMidiMessageMatrix const& matrix() const;
-
-    QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
-
 private:
     QMidiMessageMatrix m_matrix;
     QMap<int, QString> m_columnNames;
