@@ -30,6 +30,7 @@ QString QAbstractMidiTranslator::formatControlChangeData(unsigned char const con
 {
     QString const formatedControlName = translateControlChangeName(control);
     QString const formatedValue = translateControlChangeValue(control, value);
+    //: Format for control change display text
     QString const format = QObject::tr("%0: %1");
 
     return format.arg(formatedControlName).arg(formatedValue);

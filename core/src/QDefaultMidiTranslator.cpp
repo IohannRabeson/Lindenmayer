@@ -14,12 +14,14 @@ QString QDefaultMidiTranslator::getTranslatorManufacturer() const
 
 QString QDefaultMidiTranslator::getTranslatorName() const
 {
+    //: Default midi translator
     return QObject::tr("Default");
 }
 
 QString QDefaultMidiTranslator::translateControlChangeName(unsigned char const control) const
 {
-    return QString("[CC%0]").arg(control);
+    //: Format control change name
+    return tr("[CC%0]").arg(control);
 }
 
 QString QDefaultMidiTranslator::translateControlChangeValue(unsigned char const, unsigned char const value) const

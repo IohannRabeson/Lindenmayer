@@ -34,17 +34,22 @@
 // - Message recorder / player to be able to record messages then replays them.
 
 #include <QApplication>
+#include <QtDebug>
 
 #include "MainWindow.hpp"
+#include "System/TranslatorManager.hpp"
 #include <DarkStyle.h>
+#include <QMessageBox>
 
 static void messageHandler(QtMsgType type, QMessageLogContext const&, QString const& msg)
 {
     QByteArray const localMsg = msg.toLocal8Bit();
+
 #if defined(APPLICATION_RETAIL)
     if (type == QtFatalMsg)
     {
         std::fprintf(stderr, "[Fatal]: %s (%s:%u, %s)\n", localMsg.toStdString().c_str(), context.file, context.line, context.function);
+        QMessageBox::warning(QApplication::activeWindow(), QObject::tr("Fatal error"), msg);
         abort();
     }
 #else
@@ -82,15 +87,16 @@ static void setupApplication()
     {
         QApplication::setStyle(new DarkStyle);
     }
-
     qInstallMessageHandler(&messageHandler);
 }
 
 int main(int argc, char** argv)
 {
     QApplication app(argc, argv);
+    TranslatorManager translatorManager;
 
     setupApplication();
+    translatorManager.loadSystemTranslator();
 
     MainWindow widget;
 
