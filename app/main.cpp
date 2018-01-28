@@ -14,16 +14,55 @@
 // and detailed informations.
 
 #include <QApplication>
+#include <QCommandLineParser>
 #include <QtDebug>
 
 #include "MainWindow.hpp"
-#include "System/TranslatorManager.hpp"
+#include "Translators/TranslatorManager.hpp"
+
 #include <DarkStyle.h>
+
+#if defined(APPLICATION_RETAIL)
 #include <QMessageBox>
+#endif
+
+QCommandLineOption const DarkThemeOption("dark", QCoreApplication::translate("main", "Enable dark theme (experimental)"));
+QCommandLineOption const TargetDirectoryOption(QStringList() << "language" << "selected-language",
+                                         QCoreApplication::translate("main", "Select language"),
+                                         QCoreApplication::translate("main", "language name"));
+
+namespace Log
+{
+    static char const* formatMessageType(QtMsgType const type)
+    {
+        char const* typeText = nullptr;
+
+        switch (type)
+        {
+            case QtDebugMsg:
+                typeText = "[Debug]";
+                break;
+            case QtInfoMsg:
+                typeText = "[Info]";
+                break;
+            case QtWarningMsg:
+                typeText = "[Warning]";
+                break;
+            case QtCriticalMsg:
+                typeText = "[Critical]";
+                break;
+            case QtFatalMsg:
+                typeText = "[Fatal]";
+                std::abort();
+        }
+        return typeText;
+    }
+}
 
 static void messageHandler(QtMsgType type, QMessageLogContext const& context, QString const& msg)
 {
     QByteArray const localMsg = msg.toLocal8Bit();
+    auto const messageTypeText = Log::formatMessageType(type);
 
 #if defined(APPLICATION_RETAIL)
     if (type == QtFatalMsg)
@@ -32,23 +71,27 @@ static void messageHandler(QtMsgType type, QMessageLogContext const& context, QS
         QMessageBox::warning(QApplication::activeWindow(), QApplication::applicationDisplayName(), QObject::tr("Fatal error: %0\nThe application will be closed.").arg(msg));
         abort();
     }
+    else if (type > QtDebugMsg)
+    {
+        std::fprintf(stdout, messageTypeText + ": %s (%s:%u, %s)\n", localMsg.toStdString().c_str(), context.file, context.line, context.function);
+    }
 #else
     switch (type)
     {
         case QtDebugMsg:
-            std::fprintf(stderr, "[Debug]: %s\n", localMsg.constData());
+            std::fprintf(stdout, "%s: %s\n", messageTypeText, localMsg.constData());
             break;
         case QtInfoMsg:
-            std::fprintf(stderr, "[Info]: %s\n", localMsg.constData());
+            std::fprintf(stdout, "%s: %s\n", messageTypeText, localMsg.constData());
             break;
         case QtWarningMsg:
-            std::fprintf(stderr, "[Warning]: %s\n", localMsg.constData());
+            std::fprintf(stderr, "%s: %s\n", messageTypeText, localMsg.constData());
             break;
         case QtCriticalMsg:
-            std::fprintf(stderr, "[Critical]: %s\n", localMsg.constData());
+            std::fprintf(stderr, "%s: %s\n", messageTypeText, localMsg.constData());
             break;
         case QtFatalMsg:
-            std::fprintf(stderr, "[Fatal]: %s\n", localMsg.constData());
+            std::fprintf(stderr, "%s: %s\n", messageTypeText, localMsg.constData());
             std::abort();
     }
 #endif
@@ -66,22 +109,30 @@ static void setupApplication()
     qInstallMessageHandler(&messageHandler);
 }
 
-void processCommandLine()
-{
-    if (QApplication::arguments().contains("darkstyle"))
-    {
-        QApplication::setStyle(new DarkStyle);
-    }
-}
-
 int main(int argc, char** argv)
 {
     QApplication app(argc, argv);
+    QCommandLineParser commandLineParser;
+
+    commandLineParser.addOption(DarkThemeOption);
+    commandLineParser.addOption(TargetDirectoryOption);
+    commandLineParser.process(app);
+
     TranslatorManager translatorManager;
 
     setupApplication();
-    translatorManager.loadSystemTranslator();
-    processCommandLine();
+
+    if (commandLineParser.isSet(DarkThemeOption))
+    {
+        qInfo() << "[CommandLineParser]: Dark theme enabled";
+        QApplication::setStyle(new DarkStyle);
+    }
+
+    if (!commandLineParser.isSet(TargetDirectoryOption)
+        || !translatorManager.loadTranslator(QLocale(commandLineParser.value(TargetDirectoryOption))))
+    {
+        translatorManager.loadSystemTranslator();
+    }
 
     MainWindow widget;
 

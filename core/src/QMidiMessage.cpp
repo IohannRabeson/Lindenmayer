@@ -52,7 +52,7 @@ class QMidiMessageData : public QSharedData
                 result = Type::ProgramChange;
                 break;
             case 0xF0:
-                // System exclusive
+                // Translators exclusive
                 result = Type::SystemExclusive;
                 break;
             default:

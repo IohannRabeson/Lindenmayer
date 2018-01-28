@@ -4,25 +4,20 @@
 <context>
     <name>AboutMidiMonitorDialog</name>
     <message>
-        <location filename="../Ui/Widgets/Dialogs/AboutMidiMonitorDialog.ui" line="14"/>
         <source>About MIDI monitor</source>
-        <translation>A propos de MIDI Boy</translation>
+        <translation type="vanished">A propos de MIDI Boy</translation>
     </message>
     <message>
-        <location filename="../Ui/Widgets/Dialogs/AboutMidiMonitorDialog.ui" line="69"/>
         <source>Version:</source>
-        <translation>Version:</translation>
+        <translation type="vanished">Version:</translation>
     </message>
     <message>
-        <location filename="../Ui/Widgets/Dialogs/AboutMidiMonitorDialog.ui" line="106"/>
         <source>About</source>
-        <translation>A propos</translation>
+        <translation type="vanished">A propos</translation>
     </message>
     <message>
-        <location filename="../Ui/Widgets/Dialogs/AboutMidiMonitorDialog.ui" line="135"/>
-        <location filename="../Ui/Widgets/Dialogs/AboutMidiMonitorDialog.ui" line="156"/>
         <source>Licences</source>
-        <translation>Licences</translation>
+        <translation type="vanished">Licences</translation>
     </message>
     <message>
         <location filename="../Ui/Widgets/Dialogs/AboutMidiMonitorDialog.cpp" line="33"/>
@@ -338,10 +333,11 @@ Etes-vous sûr de vouloir faire ça?</translation>
         <translation>%0: %1</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="52"/>
+        <location filename="../main.cpp" line="71"/>
         <source>Fatal error: %0
 The application will be closed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Erreur fatale: %0
+L&apos;application va être fermée.</translation>
     </message>
 </context>
 <context>
@@ -350,6 +346,24 @@ The application will be closed.</source>
         <location filename="../Ui/ToolBarManager.hpp" line="20"/>
         <source>Toolbars</source>
         <translation>Barres d&apos;outils</translation>
+    </message>
+</context>
+<context>
+    <name>main</name>
+    <message>
+        <location filename="../main.cpp" line="29"/>
+        <source>Enable dark theme (experimental)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../main.cpp" line="31"/>
+        <source>Select language</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../main.cpp" line="32"/>
+        <source>language name</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>
