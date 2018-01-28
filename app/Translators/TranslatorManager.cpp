@@ -6,8 +6,10 @@
 #include <QCoreApplication>
 #include <QtDebug>
 
-QDir TranslatorManager::makeTranslationDirectory()
+QDir TranslatorManager::getTranslationDirectory()
 {
+    // TODO: OS depedent!
+    // This is for OSX bundle
     QDir dir(QCoreApplication::applicationDirPath());
 
     dir.cdUp();
@@ -16,14 +18,13 @@ QDir TranslatorManager::makeTranslationDirectory()
 }
 
 TranslatorManager::TranslatorManager()
-: m_translationDirectory(makeTranslationDirectory())
+: m_translationDirectory(getTranslationDirectory())
 {
 }
 
 bool TranslatorManager::loadSystemTranslator()
 {
-    qDebug() << "Using system local:" << QLocale::system().language() << QLocale::system().uiLanguages();
-
+    qDebug() << "[TranslatorManager] Loading system language" << QLocale::system().nativeLanguageName();
     return loadTranslator(QLocale::system());
 }
 
@@ -60,6 +61,7 @@ bool TranslatorManager::loadTranslatorImp(QLocale const& locale)
 
     if (m_translator.load(locale, QCoreApplication::applicationName(), "_", m_translationDirectory.absolutePath(), ".qm"))
     {
+        qInfo() << "[TranslatorManager]: Using " << QLocale::system().language() << QLocale::system().uiLanguages();
         loaded = QCoreApplication::installTranslator(&m_translator);
     }
     return loaded;
@@ -69,8 +71,9 @@ void TranslatorManager::loadDefaultTranslator()
 {
     QLocale const defaultLocale(QLocale::Language::English, QLocale::Country::AnyCountry);
 
+    qDebug() << "[TranslatorManager]: Loading default language" << defaultLocale.nativeLanguageName();
     if (!loadTranslatorImp(defaultLocale))
     {
-        qFatal("Unable to load default translation file.");
+        qWarning("[TranslatorManager]: Unable to load default translation file.");
     }
 }
