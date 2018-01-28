@@ -1,22 +1,7 @@
 //
 // Created by Io on 30/12/2017.
 //
-
 // TODO:
-// - DONE: port selector
-// - DONE: schemes integration
-// - DONE: TranslatorCreatorItem selector
-// - DONE: ability to listen multiple ports at the same time
-// - DONE: icon tray!
-// - DONE virtual keyboard
-
-// - use dockwidget and toolbar manager to build a layout system
-
-// - input message filters
-//   - message filters list view
-//   - filter function
-//   - model to store filters states
-// - A data transit LED
 // - Replace scheme by device translator:
 // A device translator can format informations:
 //      - message type
@@ -24,14 +9,9 @@
 //      - control change
 //      - program change
 //      - sysex
-// - Save/load settings of inputs / outputs ports enabled value
-// - Commands for context menu in Midi Inputs dock widget and Midi Output dock widget:
-//      - enable only (double click)
-//      - enable all / disable all (depending of the selection state of the item under the cursor)
 // - data details with QML:
 // Display raw byte as hexadecimal with text highlighting and tooltips for very explicative
 // and detailed informations.
-// - Message recorder / player to be able to record messages then replays them.
 
 #include <QApplication>
 #include <QtDebug>
