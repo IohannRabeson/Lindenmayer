@@ -15,7 +15,7 @@ QString QDefaultMidiTranslator::getTranslatorManufacturer() const
 QString QDefaultMidiTranslator::getTranslatorName() const
 {
     //: Default midi translator
-    return QObject::tr("Default");
+    return tr("Default");
 }
 
 QString QDefaultMidiTranslator::translateControlChangeName(unsigned char const control) const
