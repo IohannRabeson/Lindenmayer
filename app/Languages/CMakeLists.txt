@@ -5,6 +5,9 @@ file(GLOB_RECURSE TRANSLATION_CPP_SOURCE_FILES
      "${PROJECT_SOURCE_DIR}/app/*.hpp" "${PROJECT_SOURCE_DIR}/app/*.cpp"
      "${PROJECT_SOURCE_DIR}/core/*.hpp" "${PROJECT_SOURCE_DIR}/core/*.cpp")
 
+foreach(FILE_PATH ${TRANSLATION_CPP_SOURCE_FILES})
+    message(" - ${FILE_PATH}")
+endforeach()
 set(TRANSLATION_FILES
     MidiBoy_en.ts
     MidiBoy_fr.ts

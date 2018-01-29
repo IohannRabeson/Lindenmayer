@@ -6,6 +6,9 @@
 #include <cassert>
 #include <iomanip>
 
+static constexpr std::uint8_t MidiDataMask = 0x7F; // 0111 1111b
+static constexpr std::uint8_t MidiStatusMask = 0x80; // 1000 0000b
+
 class QMidiMessageData : public QSharedData
 {
     using TimePoint = QMidiMessage::TimePoint;
@@ -25,38 +28,119 @@ class QMidiMessageData : public QSharedData
      * \return Type of message
      *
      * Constants found here: https://www.midi.org/specifications/item/table-1-summary-of-midi-message
+     * http://www.music.mcgill.ca/~ich/classes/mumt306/StandardMIDIfileformat.html
      */
     static Type detectMessageType(Bytes const& bytes)
     {
-        Q_ASSERT( (bytes[0u] & 0x80) == 0x80 ); // Is status byte?
+        Q_ASSERT( (bytes[0u] & MidiStatusMask) == MidiStatusMask ); // Is status byte?
 
-        unsigned char const typePart = bytes[0u] & 0xF0;
+        if (bytes.empty())
+        {
+            return Type::Undefined;
+        }
         Type result = Type::Undefined;
 
-        switch (typePart)
+        if (bytes[0u] >= 0x80 && bytes[0u] < 0xF0)
         {
-            case 0x90:
-                // Note on
-                result = Type::NoteOn;
-                break;
-            case 0x80:
-                // Note off
-                result = Type::NoteOff;
-                break;
-            case 0xB0:
-                // Control change
-                result = Type::ControlChange;
-                break;
-            case 0xC0:
-                // Program change
-                result = Type::ProgramChange;
-                break;
-            case 0xF0:
-                // Translators exclusive
-                result = Type::SystemExclusive;
-                break;
-            default:
-                break;
+            // 0xF0 == 1111 0000b
+
+            switch (bytes[0u] & 0xF0)
+            {
+                case 0x90:
+                    // Note on
+                    if (bytes.size() == 3u)
+                    {
+                        result = Type::NoteOn;
+                    }
+                    break;
+                case 0x80:
+                    // Note off
+                    if (bytes.size() == 3u)
+                    {
+                        result = Type::NoteOff;
+                    }
+                    break;
+                case 0xA0:
+                    // Polyphonic key pressure
+                    if (bytes.size() == 3u)
+                    {
+                        result = Type::PolyphonicKeyPressure;
+                    }
+                    break;
+                case 0xB0:
+                    // Control change
+                    // TODO: support for Channel Mode Messages
+                    if (bytes.size() == 3u)
+                    {
+                        result = Type::ControlChange;
+                    }
+                    break;
+                case 0xC0:
+                    // Program change
+                    if (bytes.size() == 2u)
+                    {
+                        result = Type::ProgramChange;
+                    }
+                    break;
+                case 0xD0:
+                    // Channel pressure
+                    if (bytes.size() == 2u)
+                    {
+                        result = Type::ChannelChange;
+                    }
+                    break;
+                case 0xE0:
+                    // Pitch
+                    if (bytes.size() == 3u)
+                    {
+                        result = Type::PitchWheelChange;
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+        else
+        {
+            switch (bytes[0u])
+            {
+                case 0b11110000:
+                    result = Type::SystemExclusive;
+                    break;
+                case 0b11110010:
+                    result = Type::SongPositionPointer;
+                    break;
+                case 0b11110011:
+                    if (bytes.size() > 1u)
+                    {
+                        result = Type::SongSelect;
+                    }
+                    break;
+                case 0b11110110:
+                    result = Type::TuneRequest;
+                    break;
+                case 0b11110111:
+                    result = Type::EndOfExclusive;
+                    break;
+                case 0b11111000:
+                    result = Type::TimingClock;
+                    break;
+                case 0b11111010:
+                    result = Type::Start;
+                    break;
+                case 0b11111011:
+                    result = Type::Continue;
+                    break;
+                case 0b11111100:
+                    result = Type::Stop;
+                    break;
+                case 0b11111110:
+                    result = Type::ActiveSensing;
+                    break;
+                case 0b11111111:
+                    result = Type::Reset;
+                    break;
+            }
         }
         return result;
     }
@@ -69,11 +153,11 @@ public:
         , m_type(detectMessageType(bytes))
         , m_port(port)
     {
-        Q_ASSERT( bytes.size() > 1u );
+        Q_ASSERT( bytes.size() > 0u );
         Q_ASSERT( (bytes.front() & 0x80) == 0x80 ); // Is the first byte is a status byte
     }
 
-    unsigned char getChecksum() const
+    std::uint8_t getChecksum() const
     {
         assert( m_bytes.size() > 1u );
 
@@ -114,7 +198,7 @@ QMidiMessage::~QMidiMessage()
 {
 }
 
-unsigned char QMidiMessage::byteAt(int pos) const
+std::uint8_t QMidiMessage::byteAt(int pos) const
 {
     Q_ASSERT( pos < data->m_bytes.size() );
 
@@ -141,43 +225,65 @@ int QMidiMessage::port() const
     return data->m_port;
 }
 
-unsigned char QMidiMessage::getControlChangeNumber() const
+std::uint8_t QMidiMessage::getNote() const
 {
-    return byteAt(1u) & 0x7F;;
+    return data->m_bytes[1u];
 }
 
-unsigned char QMidiMessage::getControlChangeValue() const
+std::uint8_t QMidiMessage::getVelocity() const
 {
-    return byteAt(2u) & 0x7F;;
+    return data->m_bytes[2u];
 }
 
-unsigned char QMidiMessage::getProgramChange() const
+std::uint8_t QMidiMessage::getControlChangeNumber() const
 {
-    return byteAt(1u) & 0x7F;
+    return byteAt(1u) & MidiDataMask;;
 }
 
-unsigned char QMidiMessage::getChannel() const
+std::uint8_t QMidiMessage::getControlChangeValue() const
 {
-    Q_ASSERT( (byteAt(0u) & 0x80) == 0x80 ); // Is status byte?
+    return byteAt(2u) & MidiDataMask;
+}
 
+std::uint8_t QMidiMessage::getProgramChange() const
+{
+    return byteAt(1u) & MidiDataMask;
+}
+
+std::uint8_t QMidiMessage::getChannel() const
+{
+    Q_ASSERT( (byteAt(0u) & MidiStatusMask) == MidiStatusMask ); // Is status byte?
+
+    // 0xF == 1111b
     auto const channel = data->m_bytes[0] & 0xF;
 
     return channel > -1 ? channel + 1u : 0u;
 }
 
-unsigned char QMidiMessage::getChecksum() const
+std::uint8_t QMidiMessage::getChecksum() const
 {
     return data->getChecksum();
 }
 
-unsigned char QMidiMessage::getNote() const
+std::uint8_t QMidiMessage::getSong() const
 {
-    return data->m_bytes[1u];
+    Q_ASSERT( type() == Type::SongSelect );
+
+    return data->m_bytes[1] & 0x7F;
 }
 
-unsigned char QMidiMessage::getVelocity() const
+std::uint16_t QMidiMessage::getSongPosition() const
 {
-    return data->m_bytes[2u];
+    Q_ASSERT( type() == Type::SongPositionPointer );
+
+    return data->m_bytes[1u] | data->m_bytes[2u] << 7u;
+}
+
+std::uint16_t QMidiMessage::getPitchWheel() const
+{
+    Q_ASSERT( type() == Type::PitchWheelChange );
+
+    return data->m_bytes[1u] | data->m_bytes[2u] << 7u;
 }
 
 QDateTime const& QMidiMessage::timestamp() const
@@ -192,4 +298,5 @@ void QMidiMessage::remapPort(QMap<int, int> const& remappings)
         data->m_port = remappings.value(data->m_port, -1);
     }
 }
+
 

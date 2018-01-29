@@ -290,6 +290,12 @@ Etes-vous sûr de vouloir faire ça?</translation>
 <context>
     <name>QDefaultMidiTranslator</name>
     <message>
+        <location filename="../../core/src/QDefaultMidiTranslator.cpp" line="18"/>
+        <source>Default</source>
+        <extracomment>Default midi translator</extracomment>
+        <translation>Défaut</translation>
+    </message>
+    <message>
         <location filename="../../core/src/QDefaultMidiTranslator.cpp" line="24"/>
         <source>[CC%0]</source>
         <extracomment>Format control change name</extracomment>
@@ -315,16 +321,78 @@ Etes-vous sûr de vouloir faire ça?</translation>
     </message>
 </context>
 <context>
+    <name>QMidiMessageModelPrivate</name>
+    <message>
+        <location filename="../../core/src/QMidiMessageModel.cpp" line="22"/>
+        <source>Type</source>
+        <translation>Type</translation>
+    </message>
+    <message>
+        <location filename="../../core/src/QMidiMessageModel.cpp" line="23"/>
+        <source>Timestamp</source>
+        <translation>Timestamp</translation>
+    </message>
+    <message>
+        <location filename="../../core/src/QMidiMessageModel.cpp" line="24"/>
+        <source>Channel</source>
+        <translation>Canal</translation>
+    </message>
+    <message>
+        <location filename="../../core/src/QMidiMessageModel.cpp" line="25"/>
+        <source>Value</source>
+        <translation>Valeur</translation>
+    </message>
+    <message>
+        <location filename="../../core/src/QMidiMessageModel.cpp" line="26"/>
+        <source>Data</source>
+        <translation>Donnée</translation>
+    </message>
+    <message>
+        <location filename="../../core/src/QMidiMessageModel.cpp" line="27"/>
+        <source>Input</source>
+        <translation>Entrée</translation>
+    </message>
+    <message>
+        <location filename="../../core/src/QMidiMessageModel.cpp" line="32"/>
+        <source>Note On</source>
+        <translation>Note On</translation>
+    </message>
+    <message>
+        <location filename="../../core/src/QMidiMessageModel.cpp" line="33"/>
+        <source>Note Off</source>
+        <translation>Note Off</translation>
+    </message>
+    <message>
+        <location filename="../../core/src/QMidiMessageModel.cpp" line="34"/>
+        <source>CC</source>
+        <translation>CC</translation>
+    </message>
+    <message>
+        <location filename="../../core/src/QMidiMessageModel.cpp" line="35"/>
+        <source>PC</source>
+        <translation>PC</translation>
+    </message>
+    <message>
+        <location filename="../../core/src/QMidiMessageModel.cpp" line="36"/>
+        <source>SysEx</source>
+        <translation>SysEx</translation>
+    </message>
+    <message>
+        <location filename="../../core/src/QMidiMessageModel.cpp" line="37"/>
+        <source>Undefined</source>
+        <translation>Non défini</translation>
+    </message>
+</context>
+<context>
     <name>QObject</name>
     <message>
         <source>Fatal error</source>
         <translation type="vanished">Erreur fatale</translation>
     </message>
     <message>
-        <location filename="../../core/src/QDefaultMidiTranslator.cpp" line="18"/>
         <source>Default</source>
         <extracomment>Default midi translator</extracomment>
-        <translation>Défaut</translation>
+        <translation type="vanished">Défaut</translation>
     </message>
     <message>
         <location filename="../../core/src/QAbstractMidiTranslator.cpp" line="34"/>
@@ -353,17 +421,17 @@ L&apos;application va être fermée.</translation>
     <message>
         <location filename="../main.cpp" line="29"/>
         <source>Enable dark theme (experimental)</source>
-        <translation type="unfinished"></translation>
+        <translation>Active le theme sombre</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="31"/>
         <source>Select language</source>
-        <translation type="unfinished"></translation>
+        <translation>Selectionne la langue</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="32"/>
         <source>language name</source>
-        <translation type="unfinished"></translation>
+        <translation>langue</translation>
     </message>
 </context>
 </TS>

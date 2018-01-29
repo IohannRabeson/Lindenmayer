@@ -7,6 +7,7 @@
 
 class QMidiMessageModelPrivate
 {
+    Q_DECLARE_TR_FUNCTIONS(QMidiMessageModelPrivate)
 public:
     static QMap<int, QString> const s_header;
     static QMap<QMidiMessage::Type, QString> const s_messageTypes;
@@ -17,24 +18,24 @@ public:
 };
 
 QMap<int, QString> const QMidiMessageModelPrivate::s_header =
-        {
-            {QMidiMessageModel::Columns::Type, "Type"},
-            {QMidiMessageModel::Columns::Timestamp, "Timestamp"},
-            {QMidiMessageModel::Columns::Channel, "Channel"},
-            {QMidiMessageModel::Columns::Value, "Value"},
-            {QMidiMessageModel::Columns::Data, "Data"},
-            {QMidiMessageModel::Columns::Input, "Input"}
-        };
+{
+    {QMidiMessageModel::Columns::Type, tr("Type")},
+    {QMidiMessageModel::Columns::Timestamp, tr("Timestamp")},
+    {QMidiMessageModel::Columns::Channel, tr("Channel")},
+    {QMidiMessageModel::Columns::Value, tr("Value")},
+    {QMidiMessageModel::Columns::Data, tr("Data")},
+    {QMidiMessageModel::Columns::Input, tr("Input")}
+};
 
 QMap<QMidiMessage::Type, QString> const QMidiMessageModelPrivate::s_messageTypes =
-        {
-                {QMidiMessage::Type::NoteOn, "Note On"},
-                {QMidiMessage::Type::NoteOff, "Note Off"},
-                {QMidiMessage::Type::ControlChange, "CC"},
-                {QMidiMessage::Type::ProgramChange, "PC"},
-                {QMidiMessage::Type::SystemExclusive, "Sysex"},
-                {QMidiMessage::Type::Undefined, "Undefined"},
-        };
+{
+    {QMidiMessage::Type::NoteOn, tr("Note On")},
+    {QMidiMessage::Type::NoteOff, tr("Note Off")},
+    {QMidiMessage::Type::ControlChange, tr("CC")},
+    {QMidiMessage::Type::ProgramChange, tr("PC")},
+    {QMidiMessage::Type::SystemExclusive, tr("SysEx")},
+    {QMidiMessage::Type::Undefined, tr("Undefined")},
+};
 
 QMidiMessageModel::QMidiMessageModel(QObject *parent)
     : QAbstractTableModel(parent)

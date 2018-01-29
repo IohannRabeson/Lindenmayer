@@ -273,18 +273,18 @@ namespace
     {
         if (code.isEmpty())
         {
-            qWarning() << "Null manufacturer code (" << name << ")" << QString("line %0").arg(lineIndex);
+            qWarning() << "[QMidiManufacturerModel]: Null manufacturer code (" << name << ")" << QString("line %0").arg(lineIndex);
             return false;
         }
         if (code.size() == 1 && !(code.front() > 0u && code.front() < 125u))
         {
-            qWarning() << "Invalid manufacturer code (" << name << ")" << QString("line %0").arg(lineIndex)
+            qWarning() << "[QMidiManufacturerModel]: Invalid manufacturer code (" << name << ")" << QString("line %0").arg(lineIndex)
                        << Format::formatBytes(code);
             return false;
         }
         if (code.size() == 3 && !(code.front() == 0u))
         {
-            qWarning() << "Invalid manufacturer code (" << name << ")" << QString("line %0").arg(lineIndex)
+            qWarning() << "[QMidiManufacturerModel]: Invalid manufacturer code (" << name << ")" << QString("line %0").arg(lineIndex)
                        << Format::formatBytes(code);
             return false;
         }

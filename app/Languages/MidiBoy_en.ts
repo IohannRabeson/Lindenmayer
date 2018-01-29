@@ -38,62 +38,62 @@
     <message>
         <location filename="../../core/src/Format.cpp" line="14"/>
         <source>C</source>
-        <translation type="unfinished"></translation>
+        <translation>C</translation>
     </message>
     <message>
         <location filename="../../core/src/Format.cpp" line="15"/>
         <source>C#</source>
-        <translation type="unfinished"></translation>
+        <translation>C#</translation>
     </message>
     <message>
         <location filename="../../core/src/Format.cpp" line="16"/>
         <source>D</source>
-        <translation type="unfinished"></translation>
+        <translation>D</translation>
     </message>
     <message>
         <location filename="../../core/src/Format.cpp" line="17"/>
         <source>D#</source>
-        <translation type="unfinished"></translation>
+        <translation>D#</translation>
     </message>
     <message>
         <location filename="../../core/src/Format.cpp" line="18"/>
         <source>E</source>
-        <translation type="unfinished"></translation>
+        <translation>E</translation>
     </message>
     <message>
         <location filename="../../core/src/Format.cpp" line="19"/>
         <source>F</source>
-        <translation type="unfinished"></translation>
+        <translation>F</translation>
     </message>
     <message>
         <location filename="../../core/src/Format.cpp" line="20"/>
         <source>F#</source>
-        <translation type="unfinished"></translation>
+        <translation>F#</translation>
     </message>
     <message>
         <location filename="../../core/src/Format.cpp" line="21"/>
         <source>G</source>
-        <translation type="unfinished"></translation>
+        <translation>G</translation>
     </message>
     <message>
         <location filename="../../core/src/Format.cpp" line="22"/>
         <source>G#</source>
-        <translation type="unfinished"></translation>
+        <translation>G#</translation>
     </message>
     <message>
         <location filename="../../core/src/Format.cpp" line="23"/>
         <source>A</source>
-        <translation type="unfinished"></translation>
+        <translation>A</translation>
     </message>
     <message>
         <location filename="../../core/src/Format.cpp" line="24"/>
         <source>A#</source>
-        <translation type="unfinished"></translation>
+        <translation>A#</translation>
     </message>
     <message>
         <location filename="../../core/src/Format.cpp" line="25"/>
         <source>B</source>
-        <translation type="unfinished"></translation>
+        <translation>B</translation>
     </message>
 </context>
 <context>
@@ -289,10 +289,16 @@ Are you sure you want to do that?</translation>
 <context>
     <name>QDefaultMidiTranslator</name>
     <message>
+        <location filename="../../core/src/QDefaultMidiTranslator.cpp" line="18"/>
+        <source>Default</source>
+        <extracomment>Default midi translator</extracomment>
+        <translation>Default</translation>
+    </message>
+    <message>
         <location filename="../../core/src/QDefaultMidiTranslator.cpp" line="24"/>
         <source>[CC%0]</source>
         <extracomment>Format control change name</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>[CC%0]</translation>
     </message>
 </context>
 <context>
@@ -300,38 +306,101 @@ Are you sure you want to do that?</translation>
     <message>
         <location filename="../../core/src/QMidiMessageMatrixModel.cpp" line="30"/>
         <source>Connection from input &apos;%0&apos; to output &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>Connection from input &apos;%0&apos; to output &apos;%1&apos;</translation>
     </message>
     <message>
         <location filename="../../core/src/QMidiMessageMatrixModel.cpp" line="95"/>
         <source>Input &apos;%0&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>Input &apos;%0&apos;</translation>
     </message>
     <message>
         <location filename="../../core/src/QMidiMessageMatrixModel.cpp" line="109"/>
         <source>Output &apos;%0&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>Output &apos;%0&apos;</translation>
+    </message>
+</context>
+<context>
+    <name>QMidiMessageModelPrivate</name>
+    <message>
+        <location filename="../../core/src/QMidiMessageModel.cpp" line="22"/>
+        <source>Type</source>
+        <translation>Type</translation>
+    </message>
+    <message>
+        <location filename="../../core/src/QMidiMessageModel.cpp" line="23"/>
+        <source>Timestamp</source>
+        <translation>Timestamp</translation>
+    </message>
+    <message>
+        <location filename="../../core/src/QMidiMessageModel.cpp" line="24"/>
+        <source>Channel</source>
+        <translation>Channel</translation>
+    </message>
+    <message>
+        <location filename="../../core/src/QMidiMessageModel.cpp" line="25"/>
+        <source>Value</source>
+        <translation>Value</translation>
+    </message>
+    <message>
+        <location filename="../../core/src/QMidiMessageModel.cpp" line="26"/>
+        <source>Data</source>
+        <translation>Data</translation>
+    </message>
+    <message>
+        <location filename="../../core/src/QMidiMessageModel.cpp" line="27"/>
+        <source>Input</source>
+        <translation>Input</translation>
+    </message>
+    <message>
+        <location filename="../../core/src/QMidiMessageModel.cpp" line="32"/>
+        <source>Note On</source>
+        <translation>Note On</translation>
+    </message>
+    <message>
+        <location filename="../../core/src/QMidiMessageModel.cpp" line="33"/>
+        <source>Note Off</source>
+        <translation>Note Off</translation>
+    </message>
+    <message>
+        <location filename="../../core/src/QMidiMessageModel.cpp" line="34"/>
+        <source>CC</source>
+        <translation>CC</translation>
+    </message>
+    <message>
+        <location filename="../../core/src/QMidiMessageModel.cpp" line="35"/>
+        <source>PC</source>
+        <translation>PC</translation>
+    </message>
+    <message>
+        <location filename="../../core/src/QMidiMessageModel.cpp" line="36"/>
+        <source>SysEx</source>
+        <translation>SysEx</translation>
+    </message>
+    <message>
+        <location filename="../../core/src/QMidiMessageModel.cpp" line="37"/>
+        <source>Undefined</source>
+        <translation>Undefined</translation>
     </message>
 </context>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../../core/src/QDefaultMidiTranslator.cpp" line="18"/>
         <source>Default</source>
         <extracomment>Default midi translator</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">Default</translation>
     </message>
     <message>
         <location filename="../../core/src/QAbstractMidiTranslator.cpp" line="34"/>
         <source>%0: %1</source>
         <extracomment>Format for control change display text</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%0: %1</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="71"/>
         <source>Fatal error: %0
 The application will be closed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fatal error: %0
+The application will be closed.</translation>
     </message>
 </context>
 <context>
@@ -347,17 +416,17 @@ The application will be closed.</source>
     <message>
         <location filename="../main.cpp" line="29"/>
         <source>Enable dark theme (experimental)</source>
-        <translation type="unfinished"></translation>
+        <translation>Enable dark theme (experimental)</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="31"/>
         <source>Select language</source>
-        <translation type="unfinished"></translation>
+        <translation>Select language</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="32"/>
         <source>language name</source>
-        <translation type="unfinished"></translation>
+        <translation>language name</translation>
     </message>
 </context>
 </TS>

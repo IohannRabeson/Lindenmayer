@@ -7,6 +7,7 @@
 #include <chrono>
 #include <limits>
 #include <array>
+#include <cstdint>
 
 class QMidiMessageData;
 
@@ -26,7 +27,7 @@ class QMidiMessage
 {
     Q_GADGET
 public:
-    using Bytes = std::vector<unsigned char>;
+    using Bytes = std::vector<std::uint8_t>;
     using Clock = std::chrono::system_clock;
     using TimePoint = Clock::time_point;
     static TimePoint now() { return Clock::now(); }
@@ -34,36 +35,57 @@ public:
     enum Type
     {
         Undefined,
+        // Voice channel messages
         NoteOn,
         NoteOff,
+        PolyphonicKeyPressure,
         ControlChange,
         ProgramChange,
-        SystemExclusive
+        ChannelChange,
+        PitchWheelChange,
+        // System Common Messages
+        SystemExclusive,
+        SongPositionPointer,
+        SongSelect,
+        TuneRequest,
+        EndOfExclusive,
+        // System Real-Time Messages
+        TimingClock,
+        Start,
+        Continue,
+        Stop,
+        ActiveSensing,
+        Reset
     };
 
     Q_ENUM(Type);
 
     QMidiMessage();
     explicit QMidiMessage(Bytes const& bytes, int port = -1, TimePoint const timestamp = now());
-    explicit QMidiMessage(Type type, int port = -1, TimePoint const timestamp = now());
     QMidiMessage(const QMidiMessage &);
     QMidiMessage &operator=(const QMidiMessage &);
     ~QMidiMessage();
 
+    /*!
+     * \brief Get the type of the message
+     */
     Type type() const;
-    unsigned char byteAt(int pos) const;
+    std::uint8_t byteAt(int pos) const;
     int byteCount() const;
     Bytes const& bytes() const;
     QDateTime const& timestamp() const;
     int port() const;
 
-    unsigned char getNote() const;
-    unsigned char getVelocity() const;
-    unsigned char getControlChangeNumber() const;
-    unsigned char getControlChangeValue() const;
-    unsigned char getProgramChange() const;
-    unsigned char getChannel() const;
-    unsigned char getChecksum() const;
+    std::uint8_t getNote() const;
+    std::uint8_t getVelocity() const;
+    std::uint8_t getControlChangeNumber() const;
+    std::uint8_t getControlChangeValue() const;
+    std::uint8_t getProgramChange() const;
+    std::uint8_t getChannel() const;
+    std::uint8_t getChecksum() const;
+    std::uint8_t getSong() const;
+    std::uint16_t getSongPosition() const;
+    std::uint16_t getPitchWheel() const;
 
     void remapPort(QMap<int, int> const& remappings);
 private:
