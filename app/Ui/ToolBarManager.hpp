@@ -20,9 +20,11 @@ public:
     explicit ToolBarManager(QMainWindow* mainWindow, QString const& menuTitle = tr("Toolbars"));
     ~ToolBarManager();
 
-    QToolBar* addToolBar(QString const& title, Qt::ToolBarArea allowedAreas = Qt::AllToolBarAreas, bool addToMenu = true);
-    QToolBar* addToolBar(QString const& title, QList<QAction*> const& actions, Qt::ToolBarArea allowedAreas = Qt::AllToolBarAreas, bool addToMenu = true);
-    QToolBar* addToolBar(QToolBar* toolBar, QString const& title, Qt::ToolBarArea allowedAreas = Qt::AllToolBarAreas, bool addToMenu = true);
+    void setDefaultAreas(Qt::ToolBarAreas const areas);
+
+    QToolBar* addToolBar(QString const& title, QString const& objectName, bool addToMenu = true);
+    QToolBar* addToolBar(QString const& title, QString const& objectName, QList<QAction*> const& actions, bool addToMenu);
+    QToolBar* addToolBar(QToolBar* toolBar, QString const& title, QString const& objectName, bool addToMenu);
     void removeToolBar(QToolBar* toolBar);
     void destroyToolBar(QToolBar* toolBar);
     QMenu *controlMenu() const;
