@@ -5,9 +5,6 @@ file(GLOB_RECURSE TRANSLATION_CPP_SOURCE_FILES
      "${PROJECT_SOURCE_DIR}/app/*.hpp" "${PROJECT_SOURCE_DIR}/app/*.cpp"
      "${PROJECT_SOURCE_DIR}/core/*.hpp" "${PROJECT_SOURCE_DIR}/core/*.cpp")
 
-foreach(FILE_PATH ${TRANSLATION_CPP_SOURCE_FILES})
-    message(" - ${FILE_PATH}")
-endforeach()
 set(TRANSLATION_FILES
     MidiBoy_en.ts
     MidiBoy_fr.ts
@@ -18,6 +15,7 @@ qt5_create_translation(TRANSLATION_MESSAGES ${TRANSLATION_CPP_SOURCE_FILES} ${TR
 foreach(TRANSLATION_FILE ${TRANSLATION_FILES})
 list(APPEND TS_FILES_TEMP "${CMAKE_CURRENT_SOURCE_DIR}/${TRANSLATION_FILE}")
 endforeach()
+
 set(TS_FILES "${TS_FILES_TEMP}" PARENT_SCOPE)
 
 add_custom_target(translations_update DEPENDS "${TRANSLATION_FILES}" COMMENT "Updating translation files...")

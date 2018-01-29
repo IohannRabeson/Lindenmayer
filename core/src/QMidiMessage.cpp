@@ -32,9 +32,7 @@ class QMidiMessageData : public QSharedData
      */
     static Type detectMessageType(Bytes const& bytes)
     {
-        Q_ASSERT( (bytes[0u] & MidiStatusMask) == MidiStatusMask ); // Is status byte?
-
-        if (bytes.empty())
+        if (bytes.empty() || (bytes[0u] & MidiStatusMask) != MidiStatusMask)
         {
             return Type::Undefined;
         }
@@ -154,7 +152,6 @@ public:
         , m_port(port)
     {
         Q_ASSERT( bytes.size() > 0u );
-        Q_ASSERT( (bytes.front() & 0x80) == 0x80 ); // Is the first byte is a status byte
     }
 
     std::uint8_t getChecksum() const

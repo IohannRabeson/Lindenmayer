@@ -4,6 +4,7 @@
 
 #include <gtest/gtest.h>
 #include <QMidiMessage.hpp>
+#include <random>
 
 TEST(QMidiMessageTest, MessageType)
 {
@@ -115,4 +116,24 @@ TEST(QMidiMessageTest, MessageChannel)
     EXPECT_EQ(msg4.getChannel(), 5);
     EXPECT_EQ(msg5.getChannel(), 6);
     EXPECT_EQ(msg6.getChannel(), 7);
+}
+
+TEST(QMidiMessageTest, RandomMessageTest)
+{
+    std::mt19937_64 engine;
+    std::uniform_int_distribution<std::uint8_t> distribution0_255;
+    std::uniform_int_distribution<std::size_t> distribution_1_4{1, 4};
+
+    for (auto i = 0; i < 200000u; ++i)
+    {
+        auto const messageSize = distribution_1_4(engine);
+        QMidiMessage::Bytes bytes;
+
+        for (auto j = 0u; j < messageSize; ++j)
+        {
+            bytes.push_back(distribution0_255(engine));
+        }
+
+        QMidiMessage const message(bytes);
+    }
 }
