@@ -32,6 +32,9 @@ public:
     QMainWindow* m_mainWindow;
     QPointer<QMenu> m_menu;
     QSet<QDockWidget*> m_dockWidgets;
+    QDockWidget::DockWidgetFeatures m_defaultFeatures = QDockWidget::AllDockWidgetFeatures;
+    Qt::DockWidgetAreas m_defaultAreas = Qt::DockWidgetArea::AllDockWidgetAreas;
+    bool m_defaultShow = true;
 };
 
 DockWidgetManager::DockWidgetManager(QMainWindow *parent, QString const& menuTitle) :
@@ -41,6 +44,27 @@ DockWidgetManager::DockWidgetManager(QMainWindow *parent, QString const& menuTit
 }
 
 DockWidgetManager::~DockWidgetManager() = default;
+
+void DockWidgetManager::setDefaultFeatures(QDockWidget::DockWidgetFeatures const features)
+{
+    Q_D(DockWidgetManager);
+
+    d->m_defaultFeatures = features;
+}
+
+void DockWidgetManager::setDefaultAreas(Qt::DockWidgetAreas const areas)
+{
+    Q_D(DockWidgetManager);
+
+    d->m_defaultAreas = areas;
+}
+
+void DockWidgetManager::setDefaultShow(bool const show)
+{
+    Q_D(DockWidgetManager);
+
+    d->m_defaultShow = show;
+}
 
 /*!
  * \fn QDockWidget *DockWidgetManager::addDockWidget(QWidget *widget, QString const& title, bool addToMenu, QDockWidget::DockWidgetFeatures features, Qt::DockWidgetAreas allowedAreas)
@@ -54,7 +78,7 @@ DockWidgetManager::~DockWidgetManager() = default;
  * \param allowedAreas
  * \return
  */
-QDockWidget *DockWidgetManager::addDockWidget(QWidget *widget, QString const& title, bool addToMenu, QDockWidget::DockWidgetFeatures features, Qt::DockWidgetAreas allowedAreas, bool show)
+QDockWidget *DockWidgetManager::addDockWidget(QWidget *widget, QString const& title, QString const& dockObjectName, bool addToMenu)
 {
     Q_ASSERT(widget != nullptr);
     Q_ASSERT(title.trimmed().isEmpty() == false);
@@ -62,7 +86,7 @@ QDockWidget *DockWidgetManager::addDockWidget(QWidget *widget, QString const& ti
     QDockWidget* const dockWidget = new QDockWidget(title, d->m_mainWindow);
 
     dockWidget->setWidget(widget);
-    addDockWidget(dockWidget, title, addToMenu, features, allowedAreas, show);
+    addDockWidget(dockWidget, title, dockObjectName, addToMenu, d->m_defaultFeatures, d->m_defaultAreas, d->m_defaultShow);
     return (dockWidget);
 }
 
@@ -77,7 +101,7 @@ QDockWidget *DockWidgetManager::addDockWidget(QWidget *widget, QString const& ti
  * \param features
  * \param allowedAreas
  */
-void DockWidgetManager::addDockWidget(QDockWidget *dockWidget, QString const& title, bool addToMenu, QDockWidget::DockWidgetFeatures features, Qt::DockWidgetAreas allowedAreas, bool show)
+void DockWidgetManager::addDockWidget(QDockWidget *dockWidget, QString const& title, QString const& dockObjectName, bool addToMenu, QDockWidget::DockWidgetFeatures features, Qt::DockWidgetAreas allowedAreas, bool show)
 {
     Q_ASSERT(dockWidget != nullptr);
     Q_ASSERT(title.trimmed().isEmpty() == false);
@@ -94,7 +118,7 @@ void DockWidgetManager::addDockWidget(QDockWidget *dockWidget, QString const& ti
             action->setText(title);
             d->m_menu->addAction(action);
         }
-        dockWidget->setObjectName("dockwidget_" + title.toLower());
+        dockWidget->setObjectName("dockwidget_" + dockObjectName);
         dockWidget->setVisible(show);
         d->m_dockWidgets.insert(dockWidget);
         d->m_mainWindow->addDockWidget(Qt::RightDockWidgetArea, dockWidget);

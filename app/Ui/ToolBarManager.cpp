@@ -28,6 +28,7 @@ public:
     QMainWindow* const m_mainWindow;
     QPointer<QMenu> m_menu;
     QSet<QToolBar*> m_toolBars;
+    Qt::ToolBarAreas m_defaultAreas = Qt::ToolBarArea::AllToolBarAreas;
 };
 
 ToolBarManager::ToolBarManager(QMainWindow* mainWindow, QString const& menuTitle) :
@@ -48,13 +49,14 @@ ToolBarManager::~ToolBarManager() = default;
  * \param addToMenu If true, an entry is added to the menu.
  * \return
  */
-QToolBar *ToolBarManager::addToolBar(const QString &title, Qt::ToolBarArea allowedAreas, bool addToMenu)
+QToolBar *ToolBarManager::addToolBar(const QString &title, QString const& objectName, bool addToMenu)
 {
+    Q_D(ToolBarManager);
     Q_ASSERT(title.trimmed().isEmpty() == false);
 
     QToolBar* const newToolBar = new QToolBar(title);
 
-    return addToolBar(newToolBar, title, allowedAreas, addToMenu);
+    return addToolBar(newToolBar, title, objectName, addToMenu);
 }
 
 /*!
@@ -68,11 +70,12 @@ QToolBar *ToolBarManager::addToolBar(const QString &title, Qt::ToolBarArea allow
  * \param addToMenu If true, an entry is added to the menu.
  * \return
  */
-QToolBar *ToolBarManager::addToolBar(const QString &title, const QList<QAction *> &actions, Qt::ToolBarArea allowedAreas, bool addToMenu)
+QToolBar *ToolBarManager::addToolBar(const QString &title, QString const& objectName, const QList<QAction *> &actions, bool addToMenu)
 {
+    Q_D(ToolBarManager);
     Q_ASSERT(title.trimmed().isEmpty() == false);
 
-    auto* const newToolBar = addToolBar(title, allowedAreas, addToMenu);
+    auto* const newToolBar = addToolBar(title, objectName, addToMenu);
 
     newToolBar->addActions(actions);
     return newToolBar;
@@ -88,7 +91,7 @@ QToolBar *ToolBarManager::addToolBar(const QString &title, const QList<QAction *
  * \param addToMenu If true, an entry is added to the menu.
  * \return
  */
-QToolBar *ToolBarManager::addToolBar(QToolBar *toolBar, QString const& title, Qt::ToolBarArea allowedAreas, bool addToMenu)
+QToolBar *ToolBarManager::addToolBar(QToolBar *toolBar, QString const& title, QString const& objectName, bool addToMenu)
 {
     Q_ASSERT(toolBar != nullptr);
     Q_ASSERT(title.trimmed().isEmpty() == false);
@@ -103,8 +106,8 @@ QToolBar *ToolBarManager::addToolBar(QToolBar *toolBar, QString const& title, Qt
             action->setText(title);
             d->m_menu->addAction(action);
         }
-        toolBar->setAllowedAreas(allowedAreas);
-        toolBar->setObjectName("toolbar_" + title.toLower());
+        toolBar->setAllowedAreas(d->m_defaultAreas);
+        toolBar->setObjectName("toolbar_" + objectName);
         d->m_toolBars.insert(toolBar);
         d->m_mainWindow->addToolBar(toolBar);
     }
@@ -148,4 +151,11 @@ QMenu *ToolBarManager::controlMenu() const
     Q_D(const ToolBarManager);
 
     return (d->m_menu);
+}
+
+void ToolBarManager::setDefaultAreas(Qt::ToolBarAreas const areas)
+{
+    Q_D(ToolBarManager);
+
+    d->m_defaultAreas = areas;
 }

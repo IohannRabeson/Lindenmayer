@@ -147,26 +147,26 @@ void MainWindow::setupUi()
 
     CommonUi::standardTableView(midiInputPortView, false);
     midiInputPortView->setModel(m_inputPortModel);
-    m_dockWidgets->addDockWidget(midiInputPortView, tr("MIDI Inputs"));
+    m_dockWidgets->addDockWidget(midiInputPortView, tr("MIDI Inputs"), "midi_input");
 
     // Setup MIDI output port view
     QTableView* midiOutputPortView = new QTableView(this);
 
     CommonUi::standardTableView(midiOutputPortView, false);
     midiOutputPortView->setModel(m_midiManager->getOutputDeviceModel());
-    m_dockWidgets->addDockWidget(midiOutputPortView, tr("MIDI Outputs"));
+    m_dockWidgets->addDockWidget(midiOutputPortView, tr("MIDI Outputs"), "midi_output");
 
     // Setup note widget
-    m_dockWidgets->addDockWidget(m_noteWidget, tr("MIDI Note Trigger"));
+    m_dockWidgets->addDockWidget(m_noteWidget, tr("MIDI Note Trigger"), "midi_note_trigger");
 
     // Setup keyboard widget
-    m_dockWidgets->addDockWidget(m_keyboardWidget, tr("MIDI Keyboard"));
+    m_dockWidgets->addDockWidget(m_keyboardWidget, tr("MIDI Keyboard"), "midi_keyboard");
 
     // Setup matrix view
     MidiMatrixWidget* messageMatrixView = new MidiMatrixWidget(this);
 
     messageMatrixView->setModel(m_midiManager->getMessageMatrixModel());
-    m_dockWidgets->addDockWidget(messageMatrixView, tr("MIDI Message Matrix"));
+    m_dockWidgets->addDockWidget(messageMatrixView, tr("MIDI Message Matrix"), "midi_message_matrix");
 
     // Setup window
     setAnimated(true);
@@ -175,7 +175,7 @@ void MainWindow::setupUi()
 
 void MainWindow::setupToolbars()
 {
-    QToolBar* const mainToolbar = m_toolbars->addToolBar(tr("Main"));
+    QToolBar* const mainToolbar = m_toolbars->addToolBar(tr("Main"), "main");
 
     mainToolbar->setIconSize(QSize(16, 16));
     mainToolbar->addAction(m_actionClearAll);
