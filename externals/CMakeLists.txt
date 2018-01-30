@@ -1,6 +1,7 @@
 add_subdirectory(googletest)
 add_subdirectory(Qt-Frameless-Window-DarkStyle)
 
+# Setup RtMidi
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     find_library( COREFOUNDATION_LIBRARY CoreFoundation )
     find_library( COREMIDI_LIBRARY CoreMIDI )
@@ -10,14 +11,17 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
         ${COREFOUNDATION_LIBRARY}
         ${COREMIDI_LIBRARY}
         ${COREAUDIO_LIBRARY})
-    set( MIDIBOY_MIDI_DEFINTIONS __MACOSX_AU__ __MACOSX_CORE__ )
+    set( MIDIBOY_MIDI_DEFINTIONS __MACOSX_CORE__ )
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     set( MIDIBOY_MIDI_LIBRARIES winmm)
     set( MIDIBOY_MIDI_DEFINTIONS __WINDOWS_MM__ )
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-    find_package( ALSA REQUIRED )
+    set(THREADS_PREFER_PTHREAD_FLAG ON)
 
-    set( MIDIBOY_MIDI_LIBRARIES ${ALSA_LIBRARY} pthread )
+    find_package(ALSA REQUIRED)
+    find_package(Threads REQUIRED)
+
+    set( MIDIBOY_MIDI_LIBRARIES ${ALSA_LIBRARY} Threads::Threads )
     set( MIDIBOY_MIDI_DEFINTIONS __LINUX_ALSA__ )
 else()
     message(FATAL_ERROR "Unsupported plateform: ${CMAKE_SYSTEM_NAME}")

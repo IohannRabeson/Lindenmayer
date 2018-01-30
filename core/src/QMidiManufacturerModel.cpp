@@ -110,8 +110,6 @@ namespace
 
             while (current && codePosition < code.size())
             {
-                bool createdTemp = false;
-
                 next = current->get(code[codePosition]);
 
                 if (next == nullptr)

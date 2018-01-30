@@ -51,7 +51,6 @@ ToolBarManager::~ToolBarManager() = default;
  */
 QToolBar *ToolBarManager::addToolBar(const QString &title, QString const& objectName, bool addToMenu)
 {
-    Q_D(ToolBarManager);
     Q_ASSERT(title.trimmed().isEmpty() == false);
 
     QToolBar* const newToolBar = new QToolBar(title);
@@ -72,7 +71,6 @@ QToolBar *ToolBarManager::addToolBar(const QString &title, QString const& object
  */
 QToolBar *ToolBarManager::addToolBar(const QString &title, QString const& objectName, const QList<QAction *> &actions, bool addToMenu)
 {
-    Q_D(ToolBarManager);
     Q_ASSERT(title.trimmed().isEmpty() == false);
 
     auto* const newToolBar = addToolBar(title, objectName, addToMenu);

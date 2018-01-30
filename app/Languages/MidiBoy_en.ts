@@ -194,33 +194,33 @@ Are you sure you want to do that?</translation>
 <context>
     <name>MidiKeyboardWidget</name>
     <message>
-        <location filename="../Ui/Widgets/Widgets/MidiKeyboardWidget.cpp" line="422"/>
+        <location filename="../Ui/Widgets/Widgets/MidiKeyboardWidget.cpp" line="421"/>
         <source>Keyboard</source>
         <translation>Keyboard</translation>
     </message>
     <message>
-        <location filename="../Ui/Widgets/Widgets/MidiKeyboardWidget.cpp" line="427"/>
+        <location filename="../Ui/Widgets/Widgets/MidiKeyboardWidget.cpp" line="426"/>
         <source>Edit chord</source>
         <translation>Edit chord</translation>
     </message>
     <message>
-        <location filename="../Ui/Widgets/Widgets/MidiKeyboardWidget.cpp" line="428"/>
+        <location filename="../Ui/Widgets/Widgets/MidiKeyboardWidget.cpp" line="427"/>
         <source>Clear chord</source>
         <translation>Clear chord</translation>
     </message>
     <message>
-        <location filename="../Ui/Widgets/Widgets/MidiKeyboardWidget.cpp" line="429"/>
-        <location filename="../Ui/Widgets/Widgets/MidiKeyboardWidget.cpp" line="448"/>
+        <location filename="../Ui/Widgets/Widgets/MidiKeyboardWidget.cpp" line="428"/>
+        <location filename="../Ui/Widgets/Widgets/MidiKeyboardWidget.cpp" line="447"/>
         <source>Chord</source>
         <translation>Chord</translation>
     </message>
     <message>
-        <location filename="../Ui/Widgets/Widgets/MidiKeyboardWidget.cpp" line="443"/>
+        <location filename="../Ui/Widgets/Widgets/MidiKeyboardWidget.cpp" line="442"/>
         <source>Channel:</source>
         <translation>Channel:</translation>
     </message>
     <message>
-        <location filename="../Ui/Widgets/Widgets/MidiKeyboardWidget.cpp" line="444"/>
+        <location filename="../Ui/Widgets/Widgets/MidiKeyboardWidget.cpp" line="443"/>
         <source>Velocity:</source>
         <translation>Velocity:</translation>
     </message>
