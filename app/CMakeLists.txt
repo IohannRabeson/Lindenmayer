@@ -76,7 +76,6 @@ endif()
 if (APPLE)
     set(MACOSX_BUNDLE_EXECUTABLE_NAME ${OUTPUT_NAME})
     set_source_files_properties(${THE_APPLICATION_ICON} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
-
     set_target_properties(MidiMonitor
             PROPERTIES
             MACOSX_BUNDLE TRUE
