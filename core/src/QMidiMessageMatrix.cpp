@@ -153,8 +153,6 @@ auto QMidiMessageMatrix::end() -> Iterator
  */
 void QMidiMessageMatrix::forachInput(int const inputPortIndex, std::function<void(int const, int const)> const&& f) const
 {
-    int x = 0u;
-
     for (auto x = 0; x < outputCount(); ++x)
     {
         if (get(x, inputPortIndex))

@@ -71,7 +71,6 @@ int QMidiMessageModel::columnCount(const QModelIndex &parent) const
 
 QVariant QMidiMessageModelPrivate::getValue(int const column, QMidiMessage const& message) const
 {
-    static auto const metaEnum = QMetaEnum::fromType<QMidiMessage::Type>();
     QVariant result;
 
     switch (column)

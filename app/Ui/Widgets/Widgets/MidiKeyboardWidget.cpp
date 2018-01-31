@@ -340,7 +340,6 @@ private:
         constexpr static qreal const OctaveWidth = WhiteKeyWidth * 7;
         constexpr static qreal const WhiteZValue = -1;
         constexpr static qreal const BlackZValue = 0;
-        constexpr static qreal const TextPadding = 8;
 
         QFont textFont;
 

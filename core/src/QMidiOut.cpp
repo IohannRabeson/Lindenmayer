@@ -66,8 +66,6 @@ public:
 
     void sendMessage(QMidiMessage const& message)
     {
-        Q_Q(QMidiOut);
-
         if (m_enabled)
         {
             m_midiOut->sendMessage(&message.bytes());
