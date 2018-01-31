@@ -262,27 +262,27 @@ Etes-vous sûr de vouloir faire ça?</translation>
 <context>
     <name>MidiNoteTriggerWidget</name>
     <message>
-        <location filename="../Ui/Widgets/Widgets/MidiNoteTriggerWidget.cpp" line="27"/>
+        <location filename="../Ui/Widgets/Widgets/MidiNoteTriggerWidget.cpp" line="26"/>
         <source>Note trigger</source>
         <translation>Déclencheur de note</translation>
     </message>
     <message>
-        <location filename="../Ui/Widgets/Widgets/MidiNoteTriggerWidget.cpp" line="28"/>
+        <location filename="../Ui/Widgets/Widgets/MidiNoteTriggerWidget.cpp" line="27"/>
         <source>Trigger</source>
         <translation>Déclencheur</translation>
     </message>
     <message>
-        <location filename="../Ui/Widgets/Widgets/MidiNoteTriggerWidget.cpp" line="46"/>
+        <location filename="../Ui/Widgets/Widgets/MidiNoteTriggerWidget.cpp" line="45"/>
         <source>Note:</source>
         <translation>Note:</translation>
     </message>
     <message>
-        <location filename="../Ui/Widgets/Widgets/MidiNoteTriggerWidget.cpp" line="47"/>
+        <location filename="../Ui/Widgets/Widgets/MidiNoteTriggerWidget.cpp" line="46"/>
         <source>Velocity:</source>
         <translation>Vélocité:</translation>
     </message>
     <message>
-        <location filename="../Ui/Widgets/Widgets/MidiNoteTriggerWidget.cpp" line="48"/>
+        <location filename="../Ui/Widgets/Widgets/MidiNoteTriggerWidget.cpp" line="47"/>
         <source>Channel:</source>
         <translation>Canal:</translation>
     </message>

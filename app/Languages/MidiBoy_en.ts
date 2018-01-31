@@ -261,27 +261,27 @@ Are you sure you want to do that?</translation>
 <context>
     <name>MidiNoteTriggerWidget</name>
     <message>
-        <location filename="../Ui/Widgets/Widgets/MidiNoteTriggerWidget.cpp" line="27"/>
+        <location filename="../Ui/Widgets/Widgets/MidiNoteTriggerWidget.cpp" line="26"/>
         <source>Note trigger</source>
         <translation>Note trigger</translation>
     </message>
     <message>
-        <location filename="../Ui/Widgets/Widgets/MidiNoteTriggerWidget.cpp" line="28"/>
+        <location filename="../Ui/Widgets/Widgets/MidiNoteTriggerWidget.cpp" line="27"/>
         <source>Trigger</source>
         <translation>Trigger</translation>
     </message>
     <message>
-        <location filename="../Ui/Widgets/Widgets/MidiNoteTriggerWidget.cpp" line="46"/>
+        <location filename="../Ui/Widgets/Widgets/MidiNoteTriggerWidget.cpp" line="45"/>
         <source>Note:</source>
         <translation>Note:</translation>
     </message>
     <message>
-        <location filename="../Ui/Widgets/Widgets/MidiNoteTriggerWidget.cpp" line="47"/>
+        <location filename="../Ui/Widgets/Widgets/MidiNoteTriggerWidget.cpp" line="46"/>
         <source>Velocity:</source>
         <translation>Velocity:</translation>
     </message>
     <message>
-        <location filename="../Ui/Widgets/Widgets/MidiNoteTriggerWidget.cpp" line="48"/>
+        <location filename="../Ui/Widgets/Widgets/MidiNoteTriggerWidget.cpp" line="47"/>
         <source>Channel:</source>
         <translation>Channel:</translation>
     </message>
