@@ -401,7 +401,7 @@ Etes-vous sûr de vouloir faire ça?</translation>
         <translation>%0: %1</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="71"/>
+        <location filename="../Logger/LogManager.cpp" line="64"/>
         <source>Fatal error: %0
 The application will be closed.</source>
         <translation>Erreur fatale: %0
@@ -419,17 +419,17 @@ L&apos;application va être fermée.</translation>
 <context>
     <name>main</name>
     <message>
-        <location filename="../main.cpp" line="29"/>
+        <location filename="../main.cpp" line="26"/>
         <source>Enable dark theme (experimental)</source>
         <translation>Active le theme sombre</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="31"/>
+        <location filename="../main.cpp" line="28"/>
         <source>Select language</source>
         <translation>Selectionne la langue</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="32"/>
+        <location filename="../main.cpp" line="29"/>
         <source>language name</source>
         <translation>langue</translation>
     </message>

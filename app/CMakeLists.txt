@@ -32,7 +32,14 @@ set(UI_SOURCES
     Ui/Widgets/Widgets/MidiNoteTriggerWidget.cpp
     Ui/Widgets/Widgets/MidiNoteTriggerWidget.hpp
     Ui/Widgets/Widgets/MidiKeyboardWidget.cpp
-    Ui/Widgets/Widgets/MidiKeyboardWidget.hpp)
+    Ui/Widgets/Widgets/MidiKeyboardWidget.hpp
+    Ui/Widgets/Widgets/MidiKeyboardWidget.cpp
+    Ui/Widgets/Widgets/MidiKeyboardWidget.hpp
+    Ui/Widgets/Widgets/MidiMatrixWidget.cpp
+    Ui/Widgets/Widgets/MidiMatrixWidget.hpp
+    Logger/LogManager.hpp
+    Logger/LogManager.cpp
+        )
 
 set(PLUGINS_SOURCES
     Plugins/Plugins.qrc
@@ -40,8 +47,8 @@ set(PLUGINS_SOURCES
     Plugins/Waldorf/Pulse2/Pulse2Translator.hpp
     Plugins/Commons/TextDatabase.cpp
     Plugins/Commons/TextDatabase.hpp
-    Ui/Widgets/Widgets/MidiKeyboardWidget.cpp
-    Ui/Widgets/Widgets/MidiKeyboardWidget.hpp Ui/Widgets/Widgets/MidiMatrixWidget.cpp Ui/Widgets/Widgets/MidiMatrixWidget.hpp Translators/TranslatorManager.cpp Translators/TranslatorManager.hpp)
+    Translators/TranslatorManager.cpp
+    Translators/TranslatorManager.hpp)
 
 qt5_add_translation(QM_FILES ${TS_FILES})
 # This works only because QM_FILES is given to add_executable (I guess).
