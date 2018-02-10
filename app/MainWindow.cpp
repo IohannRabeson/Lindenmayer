@@ -4,8 +4,6 @@
 
 #include "MainWindow.hpp"
 #include "Ui/Widgets/Views/MidiMessageListView.hpp"
-#include "Ui/DockWidgetManager.hpp"
-#include "Ui/ToolBarManager.hpp"
 #include "Ui/CommonUi.hpp"
 #include "Ui/Widgets/Dialogs/AboutMidiMonitorDialog.hpp"
 #include "Ui/SettingsUtils.hpp"
@@ -33,6 +31,9 @@
 
 #include <QMetaEnum>
 
+#include <Qool/DockWidgetManager.hpp>
+#include <Qool/ToolBarManager.hpp>
+
 namespace
 {
     QAction* createSeparator(QObject* parent)
@@ -53,8 +54,8 @@ MainWindow::MainWindow(QWidget* parent)
 , m_messageModel(new QMidiMessageModel(this))
 , m_messageSelection(new QItemSelectionModel(m_messageModel, this))
 , m_messageView(new MidiMessageListView(m_messageModel, this))
-, m_dockWidgets(new DockWidgetManager(this))
-, m_toolbars(new ToolBarManager(this))
+, m_dockWidgets(new qool::DockWidgetManager(this))
+, m_toolbars(new qool::ToolBarManager(this))
 , m_manufacturerModel(new QMidiManufacturerModel(this))
 , m_noteWidget(new MidiNoteTriggerWidget(this))
 , m_keyboardWidget(new MidiKeyboardWidget(this))

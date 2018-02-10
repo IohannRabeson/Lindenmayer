@@ -18,8 +18,12 @@ class MidiMessageListView;
 class MidiNoteTriggerWidget;
 class MidiKeyboardWidget;
 
-class DockWidgetManager;
-class ToolBarManager;
+namespace qool
+{
+
+    class DockWidgetManager;
+    class ToolBarManager;
+}
 
 class QAction;
 class QComboBox;
@@ -59,8 +63,8 @@ private:
     QMidiMessageModel* const m_messageModel;
     QItemSelectionModel* const m_messageSelection;
     MidiMessageListView* const m_messageView;
-    DockWidgetManager* const m_dockWidgets;
-    ToolBarManager* const m_toolbars;
+    qool::DockWidgetManager* const m_dockWidgets;
+    qool::ToolBarManager* const m_toolbars;
     QMidiManufacturerModel* const m_manufacturerModel;
     MidiNoteTriggerWidget* const m_noteWidget;
     MidiKeyboardWidget* const m_keyboardWidget;

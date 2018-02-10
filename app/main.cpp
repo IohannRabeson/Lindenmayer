@@ -19,7 +19,7 @@
 
 #include "MainWindow.hpp"
 #include "Translators/TranslatorManager.hpp"
-#include "Logger/LogManager.hpp"
+#include <Qool/LogManager.hpp>
 
 #include <DarkStyle.h>
 
@@ -37,7 +37,7 @@ static void setupApplication()
     QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
-    LogManager::setupLoggers();
+    qool::LogManager::setupLoggers();
 }
 
 int main(int argc, char** argv)

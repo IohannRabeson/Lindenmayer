@@ -1,5 +1,6 @@
 add_subdirectory(googletest)
 add_subdirectory(Qt-Frameless-Window-DarkStyle)
+add_subdirectory(Qool)
 
 # Setup RtMidi
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
