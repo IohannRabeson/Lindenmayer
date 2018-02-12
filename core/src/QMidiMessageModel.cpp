@@ -1,6 +1,6 @@
 #include "QMidiMessageModel.hpp"
-#include "QDefaultMidiTranslator.hpp"
 
+#include <QCoreApplication>
 #include <QMap>
 #include <QVector>
 #include <QMetaEnum>

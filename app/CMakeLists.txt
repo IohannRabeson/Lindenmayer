@@ -36,9 +36,7 @@ set(UI_SOURCES
 
 set(PLUGINS_SOURCES
     Plugins/Plugins.qrc
-    Plugins/Waldorf/Pulse2/Pulse2Translator.cpp
-    Plugins/Waldorf/Pulse2/Pulse2Translator.hpp
-    Plugins/Commons/TextDatabase.cpp
+        Plugins/Commons/TextDatabase.cpp
     Plugins/Commons/TextDatabase.hpp
     Translators/TranslatorManager.cpp
     Translators/TranslatorManager.hpp)
