@@ -5,14 +5,8 @@ set(QMIDIBOY_CORE_SOURCES
         src/QMidiMessage.cpp
         include/QMidiMessageModel.hpp
         src/QMidiMessageModel.cpp
-        src/QAbstractMidiTranslator.cpp
-        include/QAbstractMidiTranslator.hpp
-        src/QDefaultMidiTranslator.cpp
-        include/QDefaultMidiTranslator.hpp
         src/QMidiDeviceModel.cpp
         include/QMidiDeviceModel.hpp
-        src/QMidiTranslatorFactory.cpp
-        include/QMidiTranslatorFactory.hpp
         include/QMidiChecksums.cpp
         include/QMidiChecksums.hpp
         src/QMidiManufacturerModel.cpp
