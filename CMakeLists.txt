@@ -1,6 +1,15 @@
 cmake_minimum_required(VERSION 3.9)
 project(MIDIMonitor)
 
+set(CMAKE_CXX_FLAGS_RETAIL "${CMAKE_CXX_FLAGS_RELEASE}")
+
+if (${CMAKE_BUILD_TYPE} MATCHES Retail)
+    set(RETAIL_MODE ON)
+    set(CMAKE_BUILD_TYPE Release)
+else()
+    set(RETAIL_MODE OFF)
+endif()
+
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/")
 
 include("${CMAKE_SOURCE_DIR}/cmake/GitInfo.cmake")
@@ -11,6 +20,7 @@ if (NOT APPLICATION_VERSION)
         set(APPLICATION_VERSION "${APPLICATION_VERSION}-${TRAVIS_BUILD_NUMBER}")
     endif()
 endif()
+
 
 set(BUILD_INFOS "-- Build version: ${APPLICATION_VERSION}")
 
