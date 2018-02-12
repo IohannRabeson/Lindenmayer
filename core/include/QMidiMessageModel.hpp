@@ -5,8 +5,6 @@
 
 #include <QMidiMessage.hpp>
 
-#include "QAbstractMidiTranslator.hpp"
-
 class QMidiMessageModelPrivate;
 
 class QMidiMessageModel : public QAbstractTableModel

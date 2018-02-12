@@ -227,32 +227,61 @@ Are you sure you want to do that?</translation>
 <context>
     <name>MidiMessageTypeDelegate</name>
     <message>
-        <location filename="../Ui/Delegates/MidiDelegates.hpp" line="26"/>
+        <location filename="../Ui/Delegates/MidiDelegates.hpp" line="28"/>
         <source>Note On</source>
         <translation>Note On</translation>
     </message>
     <message>
-        <location filename="../Ui/Delegates/MidiDelegates.hpp" line="27"/>
+        <location filename="../Ui/Delegates/MidiDelegates.hpp" line="29"/>
         <source>Note Off</source>
         <translation>Note Off</translation>
     </message>
     <message>
-        <location filename="../Ui/Delegates/MidiDelegates.hpp" line="28"/>
+        <location filename="../Ui/Delegates/MidiDelegates.hpp" line="30"/>
         <source>Control Change</source>
         <translation>Control Change</translation>
     </message>
     <message>
-        <location filename="../Ui/Delegates/MidiDelegates.hpp" line="29"/>
+        <location filename="../Ui/Delegates/MidiDelegates.hpp" line="31"/>
         <source>Program Change</source>
         <translation>Program Change</translation>
     </message>
     <message>
-        <location filename="../Ui/Delegates/MidiDelegates.hpp" line="30"/>
-        <source>System Exclusive</source>
-        <translation>System Exclusive</translation>
+        <location filename="../Ui/Delegates/MidiDelegates.hpp" line="32"/>
+        <source>Channel Change</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Ui/Delegates/MidiDelegates.hpp" line="31"/>
+        <location filename="../Ui/Delegates/MidiDelegates.hpp" line="33"/>
+        <source>Pitch Wheel Change</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../Ui/Delegates/MidiDelegates.hpp" line="34"/>
+        <source>Song Position</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../Ui/Delegates/MidiDelegates.hpp" line="35"/>
+        <source>Song Select</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../Ui/Delegates/MidiDelegates.hpp" line="36"/>
+        <source>Tune Request</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../Ui/Delegates/MidiDelegates.hpp" line="37"/>
+        <source>End Of Exclusive</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>System Exclusive</source>
+        <translation type="vanished">System Exclusive</translation>
+    </message>
+    <message>
+        <location filename="../Ui/Delegates/MidiDelegates.hpp" line="38"/>
         <source>Unknown</source>
         <translation>Unknown</translation>
     </message>
@@ -288,16 +317,14 @@ Are you sure you want to do that?</translation>
 <context>
     <name>QDefaultMidiTranslator</name>
     <message>
-        <location filename="../../core/src/QDefaultMidiTranslator.cpp" line="18"/>
         <source>Default</source>
         <extracomment>Default midi translator</extracomment>
-        <translation>Default</translation>
+        <translation type="vanished">Default</translation>
     </message>
     <message>
-        <location filename="../../core/src/QDefaultMidiTranslator.cpp" line="24"/>
         <source>[CC%0]</source>
         <extracomment>Format control change name</extracomment>
-        <translation>[CC%0]</translation>
+        <translation type="vanished">[CC%0]</translation>
     </message>
 </context>
 <context>
@@ -389,10 +416,9 @@ Are you sure you want to do that?</translation>
         <translation type="vanished">Default</translation>
     </message>
     <message>
-        <location filename="../../core/src/QAbstractMidiTranslator.cpp" line="34"/>
         <source>%0: %1</source>
         <extracomment>Format for control change display text</extracomment>
-        <translation>%0: %1</translation>
+        <translation type="vanished">%0: %1</translation>
     </message>
     <message>
         <source>Fatal error: %0
