@@ -20,13 +20,14 @@
 #include "MainWindow.hpp"
 #include "Translators/TranslatorManager.hpp"
 #include <Qool/LogManager.hpp>
+#include <Qool/StyleFactory.hpp>
 
 #include <DarkStyle.h>
 
-QCommandLineOption const DarkThemeOption("dark", QCoreApplication::translate("main", "Enable dark theme (experimental)"));
-QCommandLineOption const TargetDirectoryOption(QStringList() << "language" << "selected-language",
-                                         QCoreApplication::translate("main", "Select language"),
-                                         QCoreApplication::translate("main", "language name"));
+QCommandLineOption const ThemeOption("theme", QCoreApplication::translate("main", "Select theme"), "theme key");
+QCommandLineOption const TargetDirectoryOption(QStringList() << "language" << "selected-language"
+                                              , QCoreApplication::translate("main", "Select language")
+                                              , QCoreApplication::translate("main", "language name"));
 
 static void setupApplication()
 {
@@ -40,24 +41,45 @@ static void setupApplication()
     qool::LogManager::setupLoggers();
 }
 
+static void setupStyleFactory(qool::StyleFactory& styleFactory)
+{
+    styleFactory.addCreator("dark", []() -> QStyle* { return new DarkStyle; });
+}
+
 int main(int argc, char** argv)
 {
     QApplication app(argc, argv);
+    qool::StyleFactory styleFactory;
+    TranslatorManager translatorManager;
 
     setupApplication();
+    setupStyleFactory(styleFactory);
 
     QCommandLineParser commandLineParser;
 
-    commandLineParser.addOption(DarkThemeOption);
+    qDebug() << "[CommandLineParser]: arguments:" << QApplication::arguments();
+
+    commandLineParser.addOption(ThemeOption);
     commandLineParser.addOption(TargetDirectoryOption);
-    commandLineParser.process(app);
 
-    TranslatorManager translatorManager;
-
-    if (commandLineParser.isSet(DarkThemeOption))
+    if (!commandLineParser.parse(app.arguments()))
     {
-        qInfo() << "[CommandLineParser]: Dark theme enabled";
-        QApplication::setStyle(new DarkStyle);
+        qDebug() << commandLineParser.errorText();
+        return 1;
+    }
+
+    if (commandLineParser.isSet(ThemeOption))
+    {
+        QString const themeKey = commandLineParser.value(ThemeOption);
+
+        qInfo() << "[CommandLineParser]: theme selected:" << themeKey;
+
+        QStyle* const style = styleFactory.create(themeKey);
+
+        if (style)
+        {
+            QApplication::setStyle(new DarkStyle);
+        }
     }
 
     if (!commandLineParser.isSet(TargetDirectoryOption)

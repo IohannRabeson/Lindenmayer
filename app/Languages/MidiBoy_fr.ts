@@ -442,17 +442,21 @@ L&apos;application va être fermée.</translation>
 <context>
     <name>main</name>
     <message>
-        <location filename="../main.cpp" line="26"/>
         <source>Enable dark theme (experimental)</source>
-        <translation>Active le theme sombre</translation>
+        <translation type="vanished">Active le theme sombre</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="28"/>
+        <location filename="../main.cpp" line="27"/>
+        <source>Select theme</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../main.cpp" line="29"/>
         <source>Select language</source>
         <translation>Selectionne la langue</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="29"/>
+        <location filename="../main.cpp" line="30"/>
         <source>language name</source>
         <translation>langue</translation>
     </message>
