@@ -437,17 +437,21 @@ The application will be closed.</translation>
 <context>
     <name>main</name>
     <message>
-        <location filename="../main.cpp" line="26"/>
         <source>Enable dark theme (experimental)</source>
-        <translation>Enable dark theme (experimental)</translation>
+        <translation type="vanished">Enable dark theme (experimental)</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="28"/>
+        <location filename="../main.cpp" line="27"/>
+        <source>Select theme</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../main.cpp" line="29"/>
         <source>Select language</source>
         <translation>Select language</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="29"/>
+        <location filename="../main.cpp" line="30"/>
         <source>language name</source>
         <translation>language name</translation>
     </message>
