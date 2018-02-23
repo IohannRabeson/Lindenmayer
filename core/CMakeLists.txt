@@ -31,7 +31,11 @@ set(QMIDIBOY_CORE_SOURCES
         src/QAbstractMidiOut.cpp
         include/QAbstractMidiOut.hpp
         include/QMidiInBase.hpp
-        src/QMidiInBase.cpp)
+        src/QMidiInBase.cpp
+        src/QAbstractMidiMessageFilter.cpp
+        include/QAbstractMidiMessageFilter.hpp
+        src/QMidiMessageFilterModel.cpp
+        include/QMidiMessageFilterModel.hpp)
 
 add_library(QMidi
             resources/QMidi.qrc

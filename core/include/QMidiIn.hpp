@@ -11,6 +11,8 @@
 
 class QMidiMessage;
 class QMidiInPrivate;
+class QMidiMessageFilterModel;
+class QItemSelectionModel;
 
 class QMidiIn : public QAbstractMidiIn
 {
@@ -26,6 +28,9 @@ public:
     void setPortEnabled(bool const enabled) noexcept override;
 
     int portCount() const noexcept;
+
+    QMidiMessageFilterModel* filterModel() const;
+    QItemSelectionModel* filterSelectionModel() const;
 private:
     QScopedPointer<QMidiInPrivate> d_ptr;
 };

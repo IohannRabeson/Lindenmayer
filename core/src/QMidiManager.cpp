@@ -7,6 +7,7 @@
 #include "QMidiIn.hpp"
 #include "QMidiOut.hpp"
 #include "QMidiMessageMatrixModel.hpp"
+#include "QMidiMessageFilterModel.hpp"
 #include "QMidiMessage.hpp"
 #include "QMidiIn.hpp"
 #include "QMidiOut.hpp"

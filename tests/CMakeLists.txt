@@ -7,10 +7,10 @@ endif()
 
 set(SRC
     gtest.cpp
-        QMidiManufacturerModelTest.cpp QMidiMessageMatrixTest.cpp QMidiMessageTest.cpp)
+        QMidiManufacturerModelTest.cpp QMidiMessageMatrixTest.cpp QMidiMessageTest.cpp QMidiMessageFilterTest.cpp mocks/MidiMessageFilterMock.hpp QMidiMessageFilterModelTest.cpp)
 
 add_executable(unit_tests ${SRC})
 target_link_libraries(unit_tests PRIVATE QMidi gtest gmock Qt5::Core Qt5::Widgets)
-target_include_directories(unit_tests PRIVATE "${GTEST_INCLUDE_DIR}" "${PROJECT_SOURCE_DIR}/app")
+target_include_directories(unit_tests PRIVATE "${GTEST_INCLUDE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/mocks" "${PROJECT_SOURCE_DIR}/app")
 set_property(TARGET unit_tests PROPERTY CXX_STANDARD 14)
 set_property(TARGET unit_tests PROPERTY CXX_STANDARD_REQUIRED ON)

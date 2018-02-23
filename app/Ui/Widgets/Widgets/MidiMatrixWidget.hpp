@@ -12,6 +12,9 @@ class QTableView;
 
 class MidiMatrixWidget : public QWidget
 {
+    /*!
+     * \brief Visual size of a cell.
+     */
     static constexpr int const MatrixCellSize = 32;
 public:
     explicit MidiMatrixWidget(QWidget* parent = nullptr);
