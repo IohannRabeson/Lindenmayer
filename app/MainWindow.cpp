@@ -27,6 +27,7 @@
 #include <QMidiIn.hpp>
 #include <QMidiMessageModel.hpp>
 #include <QMidiMessageMatrixModel.hpp>
+#include <QMidiMessageFilterModel.hpp>
 #include <QMidiManager.hpp>
 
 #include <QMetaEnum>

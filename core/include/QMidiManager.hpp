@@ -12,6 +12,7 @@ class QAbstractMidiIn;
 class QAbstractMidiOut;
 class QMidiMessage;
 class QMidiMessageMatrixModel;
+class QMidiMessageFilterModel;
 class QMidiManagerPrivate;
 
 class QMidiManager : public QObject

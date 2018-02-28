@@ -134,6 +134,8 @@ TEST(QMidiMessageTest, RandomMessageTest)
             bytes.push_back(distribution0_255(engine));
         }
 
+        // Check the QMidiMessage's constructor.
+        // It should never crash even if the input buffer is random.
         QMidiMessage const message(bytes);
     }
 }
