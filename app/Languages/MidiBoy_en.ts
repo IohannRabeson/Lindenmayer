@@ -227,52 +227,52 @@ Are you sure you want to do that?</translation>
 <context>
     <name>MidiMessageTypeDelegate</name>
     <message>
-        <location filename="../Ui/Delegates/MidiDelegates.hpp" line="28"/>
+        <location filename="../Ui/Delegates/MidiDelegates.hpp" line="29"/>
         <source>Note On</source>
         <translation>Note On</translation>
     </message>
     <message>
-        <location filename="../Ui/Delegates/MidiDelegates.hpp" line="29"/>
+        <location filename="../Ui/Delegates/MidiDelegates.hpp" line="30"/>
         <source>Note Off</source>
         <translation>Note Off</translation>
     </message>
     <message>
-        <location filename="../Ui/Delegates/MidiDelegates.hpp" line="30"/>
+        <location filename="../Ui/Delegates/MidiDelegates.hpp" line="31"/>
         <source>Control Change</source>
         <translation>Control Change</translation>
     </message>
     <message>
-        <location filename="../Ui/Delegates/MidiDelegates.hpp" line="31"/>
+        <location filename="../Ui/Delegates/MidiDelegates.hpp" line="32"/>
         <source>Program Change</source>
         <translation>Program Change</translation>
     </message>
     <message>
-        <location filename="../Ui/Delegates/MidiDelegates.hpp" line="32"/>
+        <location filename="../Ui/Delegates/MidiDelegates.hpp" line="33"/>
         <source>Channel Change</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Ui/Delegates/MidiDelegates.hpp" line="33"/>
+        <location filename="../Ui/Delegates/MidiDelegates.hpp" line="34"/>
         <source>Pitch Wheel Change</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Ui/Delegates/MidiDelegates.hpp" line="34"/>
+        <location filename="../Ui/Delegates/MidiDelegates.hpp" line="35"/>
         <source>Song Position</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Ui/Delegates/MidiDelegates.hpp" line="35"/>
+        <location filename="../Ui/Delegates/MidiDelegates.hpp" line="36"/>
         <source>Song Select</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Ui/Delegates/MidiDelegates.hpp" line="36"/>
+        <location filename="../Ui/Delegates/MidiDelegates.hpp" line="37"/>
         <source>Tune Request</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Ui/Delegates/MidiDelegates.hpp" line="37"/>
+        <location filename="../Ui/Delegates/MidiDelegates.hpp" line="38"/>
         <source>End Of Exclusive</source>
         <translation type="unfinished"></translation>
     </message>
@@ -281,7 +281,7 @@ Are you sure you want to do that?</translation>
         <translation type="vanished">System Exclusive</translation>
     </message>
     <message>
-        <location filename="../Ui/Delegates/MidiDelegates.hpp" line="38"/>
+        <location filename="../Ui/Delegates/MidiDelegates.hpp" line="39"/>
         <source>Unknown</source>
         <translation>Unknown</translation>
     </message>
@@ -335,12 +335,12 @@ Are you sure you want to do that?</translation>
         <translation>Connection from input &apos;%0&apos; to output &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../../core/src/QMidiMessageMatrixModel.cpp" line="95"/>
+        <location filename="../../core/src/QMidiMessageMatrixModel.cpp" line="97"/>
         <source>Input &apos;%0&apos;</source>
         <translation>Input &apos;%0&apos;</translation>
     </message>
     <message>
-        <location filename="../../core/src/QMidiMessageMatrixModel.cpp" line="109"/>
+        <location filename="../../core/src/QMidiMessageMatrixModel.cpp" line="111"/>
         <source>Output &apos;%0&apos;</source>
         <translation>Output &apos;%0&apos;</translation>
     </message>
@@ -425,11 +425,6 @@ Are you sure you want to do that?</translation>
 The application will be closed.</source>
         <translation type="vanished">Fatal error: %0
 The application will be closed.</translation>
-    </message>
-    <message>
-        <location filename="../../core/src/QMidiIn.cpp" line="68"/>
-        <source>Filter notes</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

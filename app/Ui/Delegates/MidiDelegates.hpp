@@ -11,6 +11,7 @@
 
 #include <QMidiMessage.hpp>
 #include <QMidiDeviceModel.hpp>
+#include <QMidiInListModel.hpp>
 #include <QMidiManufacturerModel.hpp>
 
 class QMidiMessageModel;
@@ -47,6 +48,16 @@ public:
     QString displayText(QVariant const& value, QLocale const&) const override;
 private:
     QMidiDeviceModel const* const m_model;
+};
+
+class MidiInPortDelegate : public QStyledItemDelegate
+{
+public:
+    explicit MidiInPortDelegate(QMidiInListModel const* const model, QObject* parent = nullptr);
+
+    QString displayText(QVariant const& value, QLocale const&) const override;
+private:
+    QMidiInListModel const* const m_model;
 };
 
 class MidiChannelDelegate : public QStyledItemDelegate

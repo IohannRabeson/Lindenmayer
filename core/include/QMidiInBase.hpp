@@ -18,9 +18,9 @@ public:
     int portOpened() const noexcept override;
     QString portName() const noexcept override;
     void setPortEnabled(bool const enabled) noexcept override;
+    bool isPortEnabled() const noexcept override;
 
     void messageReceived(QMidiMessage const& message) override;
-    bool isPortEnabled() const noexcept;
 private:
     QString const m_name;
     int m_portIndex = -1;

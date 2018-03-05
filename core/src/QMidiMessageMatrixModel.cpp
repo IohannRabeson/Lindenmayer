@@ -55,7 +55,9 @@ bool QMidiMessageMatrixModel::setData(const QModelIndex& index, const QVariant& 
     return result;
 }
 
-void QMidiMessageMatrixModel::reset(int const columns, int const rows, QMap<int, QString> const& columnNames, QMap<int, QString> const& rowNames)
+void QMidiMessageMatrixModel::reset(int const columns, int const rows,
+                                    QMap<int, QString> const& columnNames,
+                                    QMap<int, QString> const& rowNames)
 {
     beginResetModel();
     m_matrix.resize(columns, rows);

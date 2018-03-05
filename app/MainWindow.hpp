@@ -9,6 +9,7 @@
 
 class QMidiMessageModel;
 class QMidiDeviceModel;
+class QMidiInListModel;
 class QMidiMessage;
 class QMidiIn;
 class QMidiManufacturerModel;
@@ -58,7 +59,7 @@ protected:
 private:
     QSystemTrayIcon* const m_trayIcon;
     QMidiManager* const m_midiManager;
-    QMidiDeviceModel* const m_inputPortModel;
+    QMidiInListModel* const m_inputPortModel;
     QMidiDeviceModel* const m_outputPortModel;
     QMidiMessageModel* const m_messageModel;
     QItemSelectionModel* const m_messageSelection;

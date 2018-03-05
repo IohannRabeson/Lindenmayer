@@ -27,7 +27,7 @@
 #include <QMidiIn.hpp>
 #include <QMidiMessageModel.hpp>
 #include <QMidiMessageMatrixModel.hpp>
-#include <QMidiMessageFilterModel.hpp>
+#include <QMidiInListModel.hpp>
 #include <QMidiManager.hpp>
 
 #include <QMetaEnum>
@@ -86,7 +86,7 @@ MainWindow::~MainWindow()
 void MainWindow::setupMIDI()
 {
     resetMidiPorts();
-    connect(m_inputPortModel, &QMidiDeviceModel::checkedChanged, m_midiManager, &QMidiManager::setInputPortEnabled);
+    //connect(m_inputPortModel, &QMidiDeviceModel::checkedChanged, m_midiManager, &QMidiManager::setInputPortEnabled);
     connect(m_outputPortModel, &QMidiDeviceModel::checkedChanged, m_midiManager, &QMidiManager::setOutputPortEnabled);
     connect(m_midiManager, &QMidiManager::messageReceived, m_messageModel, &QMidiMessageModel::append);
     connect(m_midiManager, &QMidiManager::messageSent, m_messageModel, &QMidiMessageModel::append);
@@ -114,8 +114,8 @@ void MainWindow::resetMidiPorts()
     QMap<int, int> outputPortRemappings;
 
     m_midiManager->rescanPorts(inputPortRemappings, outputPortRemappings);
-    m_midiManager->addInputPort(std::unique_ptr<QAbstractMidiIn>(m_noteWidget));
-    m_midiManager->addInputPort(std::unique_ptr<QAbstractMidiIn>(m_keyboardWidget));
+    m_midiManager->addInputPort(std::shared_ptr<QAbstractMidiIn>(m_noteWidget));
+    m_midiManager->addInputPort(std::shared_ptr<QAbstractMidiIn>(m_keyboardWidget));
     m_messageModel->remapInputPorts(inputPortRemappings);
 }
 
@@ -137,7 +137,7 @@ void MainWindow::setupUi()
     m_messageView->setModel(m_messageModel);
     m_messageView->setSelectionModel(m_messageSelection);
     m_messageView->setItemDelegateForColumn(QMidiMessageModel::Columns::Type, new MidiMessageTypeDelegate(this));
-    m_messageView->setItemDelegateForColumn(QMidiMessageModel::Columns::Input, new MidiPortDelegate(m_inputPortModel, this));
+    m_messageView->setItemDelegateForColumn(QMidiMessageModel::Columns::Input, new MidiInPortDelegate(m_inputPortModel, this));
     m_messageView->setItemDelegateForColumn(QMidiMessageModel::Columns::Channel, new MidiChannelDelegate(this));
     m_messageView->setItemDelegateForColumn(QMidiMessageModel::Columns::Timestamp, new MidiTimeDelegate(this));
     m_messageView->setItemDelegateForColumn(QMidiMessageModel::Columns::Value, new MidiValueDelegate(m_messageModel, m_manufacturerModel, this));
@@ -145,9 +145,9 @@ void MainWindow::setupUi()
     setCentralWidget(m_messageView);
 
     // Setup MIDI input port view
-    QTableView* midiInputPortView = new QTableView(this);
+    QTreeView* midiInputPortView = new QTreeView(this);
 
-    CommonUi::standardTableView(midiInputPortView, false);
+    CommonUi::standardTreeView(midiInputPortView, false);
     midiInputPortView->setModel(m_inputPortModel);
     m_dockWidgets->addDockWidget(midiInputPortView, tr("MIDI Inputs"), "midi_input");
 

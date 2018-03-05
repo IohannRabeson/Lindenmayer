@@ -36,7 +36,6 @@ public:
     inline explicit QMidiInPrivate(QMidiIn* q)
         : q_ptr(q)
         , m_midiIn(new RtMidiIn)
-        , m_filters(new QMidiMessageFilterModel)
     {
         qRegisterMetaType<QMidiMessage>();
 
@@ -100,11 +99,6 @@ public:
         return QString::fromStdString(m_midiIn->getPortName(index));
     }
 private:
-    bool acceptMessage(QMidiMessage const& message) const
-    {
-        return m_filters->acceptMessage(message);
-    }
-
     /*!
      * \brief Method called for each MIDI message received.
      */
@@ -112,17 +106,12 @@ private:
     {
         Q_Q(QMidiIn);
 
-        if (acceptMessage(message))
-        {
-            emit q->messageReceived(message);
-        }
+        q->messageReceived(message);
     }
 private:
     QString m_name;
     QMidiIn* const q_ptr;
     std::unique_ptr<RtMidiIn> m_midiIn;
-    std::unique_ptr<QMidiMessageFilterModel> m_filters;
-    std::unique_ptr<QItemSelectionModel> m_filterSelection;
     int m_portOpened = -1;
     bool m_enabled = true;
 };
@@ -184,16 +173,9 @@ void QMidiIn::setPortEnabled(bool const enabled) noexcept
     qDebug() << "[QMidiIn]" << d->m_portOpened << "enabled:" << d->m_enabled;
 }
 
-QMidiMessageFilterModel* QMidiIn::filterModel() const
+bool QMidiIn::isPortEnabled() const noexcept
 {
     Q_D(const QMidiIn);
 
-    return d->m_filters.get();
-}
-
-QItemSelectionModel* QMidiIn::filterSelectionModel() const
-{
-    Q_D(const QMidiIn);
-
-    return d->m_filterSelection.get();
+    return d->m_enabled;
 }

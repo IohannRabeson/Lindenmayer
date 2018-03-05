@@ -11,7 +11,7 @@
 #include <QPainter>
 
 MidiMessageTypeDelegate::MidiMessageTypeDelegate(QObject *parent)
-    : QStyledItemDelegate(parent)
+: QStyledItemDelegate(parent)
 {
 }
 
@@ -97,8 +97,8 @@ void MidiValueDelegate::initStyleOption(QStyleOptionViewItem *option, const QMod
 }
 
 MidiDataDelegate::MidiDataDelegate(const QMidiMessageModel * const model, QObject *parent)
-    : QStyledItemDelegate(parent)
-    , m_model(model)
+: QStyledItemDelegate(parent)
+, m_model(model)
 {
 }
 
@@ -110,4 +110,23 @@ void MidiDataDelegate::initStyleOption(QStyleOptionViewItem *option, const QMode
     QStyledItemDelegate::initStyleOption(option, index);
 
     option->text = Format::formatBytes(message.bytes());
+}
+
+MidiInPortDelegate::MidiInPortDelegate(QMidiInListModel const* const model, QObject* parent)
+: QStyledItemDelegate(parent)
+, m_model(model)
+{
+}
+
+QString MidiInPortDelegate::displayText(QVariant const& value, QLocale const&) const
+{
+    QString result;
+    bool isOk = true;
+    auto const portIndex = value.toInt(&isOk);
+
+    if (isOk && portIndex > -1)
+    {
+        result = m_model->name(portIndex);
+    }
+    return result;
 }

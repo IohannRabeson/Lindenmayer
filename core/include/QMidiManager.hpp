@@ -8,6 +8,7 @@
 #include <memory>
 
 class QMidiDeviceModel;
+class QMidiInListModel;
 class QAbstractMidiIn;
 class QAbstractMidiOut;
 class QMidiMessage;
@@ -48,7 +49,7 @@ public:
      * When the input port added will receives a message it will be forwarded through
      * the MIDI message matrix to the outputs ports.
      */
-    int addInputPort(std::unique_ptr<QAbstractMidiIn>&& midiIn);
+    int addInputPort(std::shared_ptr<QAbstractMidiIn>&& midiIn);
 
     /*!
      * \brief Add an output port
@@ -62,7 +63,7 @@ public:
      */
     void closeAllPorts();
 
-    QMidiDeviceModel* getInputDeviceModel() const;
+    QMidiInListModel* getInputDeviceModel() const;
     QMidiDeviceModel* getOutputDeviceModel() const;
     QMidiMessageMatrixModel* getMessageMatrixModel() const;
 
