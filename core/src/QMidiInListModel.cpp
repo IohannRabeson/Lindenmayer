@@ -22,7 +22,8 @@ public:
     virtual Type type() const = 0;
     virtual QVariant data(int const role) const = 0;
     virtual bool setData(QVariant const& value, int const role) = 0;
-    virtual Qt::ItemFlags flags() const = 0;
+    virtual Qt::ItemFlags flags(int const column) const = 0;
+    virtual int columnCount() const = 0;
 
     NodePtr const& child(int const index) const
     {
@@ -95,7 +96,8 @@ public:
     AbstractTreeNode::Type type() const override { return AbstractTreeNode::Type::Root; }
     QVariant data(int const role) const override { return QVariant(); }
     bool setData(QVariant const& value, int const role) override { return false; }
-    Qt::ItemFlags flags() const override { return Qt::NoItemFlags; }
+    Qt::ItemFlags flags(int const) const override { return Qt::NoItemFlags; }
+    int columnCount() const override { return 0; }
 
     std::shared_ptr<MidiInTreeNode> appendMidiIn(std::shared_ptr<QAbstractMidiIn> const& port);
 };
@@ -116,7 +118,9 @@ public:
         return m_port->portName();
     }
 
-    Qt::ItemFlags flags() const override
+    int columnCount() const override { return 1; }
+
+    Qt::ItemFlags flags(int const) const override
     {
         return Qt::ItemIsSelectable | Qt::ItemIsUserCheckable | Qt::ItemIsEnabled;
     }
@@ -150,7 +154,7 @@ public:
         {
             case Qt::CheckStateRole:
             {
-                auto const checked = value.value<Qt::CheckState>() == Qt::Checked;
+                auto const checked = (value.value<Qt::CheckState>() == Qt::Checked);
 
                 if (checked != m_port->isPortEnabled())
                 {
@@ -171,6 +175,8 @@ class QMidiInListModel::MidiFilterTreeNode : public AbstractTreeNode
 {
 public:
     AbstractTreeNode::Type type() const override { return AbstractTreeNode::Type::MidiFilter; }
+
+    int columnCount() const override { return 0; }
 
     QVariant data(int const role) const override
     {
@@ -218,7 +224,10 @@ QVariant QMidiInListModel::data(QModelIndex const& index, int role) const
     {
         auto const node = getNode(index);
 
-        result = node->data(role);
+        if (index.column() < node->columnCount())
+        {
+            result = node->data(role);
+        }
     }
     return result;
 }
@@ -271,7 +280,10 @@ Qt::ItemFlags QMidiInListModel::flags(QModelIndex const& index) const
     {
         auto const node = getNode(index);
 
-        result = node->flags();
+        if (index.column() < node->columnCount())
+        {
+            result = node->flags(index.column());
+        }
     }
     return result;
 }
@@ -287,11 +299,11 @@ bool QMidiInListModel::setData(const QModelIndex& index, const QVariant& value, 
 {
     bool result = false;
 
-    if (index.isValid() && index.column() == 0)
+    if (index.isValid())
     {
         auto const node = getNode(index);
 
-        if (node->setData(value, role))
+        if (node && index.column() < node->columnCount() && node->setData(value, role))
         {
             emit dataChanged(index, index);
             result = true;
