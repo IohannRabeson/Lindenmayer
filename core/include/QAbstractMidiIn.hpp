@@ -21,15 +21,15 @@ public:
     using FilterPointer = std::unique_ptr<QAbstractMidiMessageFilter>;
 
     virtual ~QAbstractMidiIn() = default;
-    virtual bool openPort(int const portIndex) noexcept = 0;
-    virtual void closePort() noexcept = 0;
+    virtual bool openPort(int const portIndex) = 0;
+    virtual void closePort() = 0;
     /*!
      * \brief Return the index of the opened port or -1 if the port is not open.
      */
-    virtual int portOpened() const noexcept = 0;
-    virtual QString portName() const noexcept = 0;
-    virtual void setPortEnabled(bool const enabled) noexcept = 0;
-    virtual bool isPortEnabled() const noexcept = 0;
+    virtual int portOpened() const = 0;
+    virtual QString portName() const = 0;
+    virtual void setPortEnabled(bool const enabled) = 0;
+    virtual bool isPortEnabled() const = 0;
     bool isPortOpen() const;
 
     void addErrorListener(ErrorListener&& listener);

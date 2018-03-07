@@ -79,7 +79,7 @@ void QMidiManagerPrivate::resetMidiInPorts(QMap<int, int>& inputRemappings)
 
     for (int i = 0; i < m_inputDeviceModel->rowCount(); ++i)
     {
-        oldPortNameIndexes.insert(m_inputDeviceModel->name(i), i);
+        oldPortNameIndexes.insert(m_inputDeviceModel->getPortName(i), i);
     }
 
     // Remove all inputs
@@ -110,7 +110,7 @@ void QMidiManagerPrivate::resetMidiInPorts(QMap<int, int>& inputRemappings)
     // Replace the old inputs ports indexes by the new ones if possible.
     for (int i = 0; i < m_inputDeviceModel->rowCount(); ++i)
     {
-        auto const name = m_inputDeviceModel->name(i);
+        auto const name = m_inputDeviceModel->getPortName(i);
         auto const oldIndex = oldPortNameIndexes.value(name);
 
         inputRemappings.insert(oldIndex, i);

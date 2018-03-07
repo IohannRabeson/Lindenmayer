@@ -126,7 +126,7 @@ QString MidiInPortDelegate::displayText(QVariant const& value, QLocale const&) c
 
     if (isOk && portIndex > -1)
     {
-        result = m_model->name(portIndex);
+        result = m_model->getPortName(portIndex);
     }
     return result;
 }

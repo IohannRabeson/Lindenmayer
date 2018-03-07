@@ -251,14 +251,16 @@ void QMidiInListModel::reset(std::vector<std::shared_ptr<QAbstractMidiIn>> const
           });
 }
 
-int QMidiInListModel::append(std::shared_ptr<QAbstractMidiIn> const& port)
+QModelIndex QMidiInListModel::append(std::shared_ptr<QAbstractMidiIn> const& port)
 {
+    Q_ASSERT( port->isPortOpen() );
+
     auto const newRow = m_root->childrenCount();
 
     beginInsertRows(QModelIndex(), newRow, newRow);
     m_root->appendMidiIn(port);
     endInsertRows();
-    return newRow;
+    return index(newRow, 0);
 }
 
 Qt::ItemFlags QMidiInListModel::flags(QModelIndex const& index) const
@@ -274,13 +276,11 @@ Qt::ItemFlags QMidiInListModel::flags(QModelIndex const& index) const
     return result;
 }
 
-QString QMidiInListModel::name(int const row) const
+QString QMidiInListModel::getPortName(int const row) const
 {
-    Q_ASSERT( row < m_root->childrenCount() );
-
     auto const rowIndex = index(row, 0);
 
-    return getMidiInNode(rowIndex)->portName();
+    return rowIndex.isValid() ? getMidiInNode(rowIndex)->portName() : QString();
 }
 
 bool QMidiInListModel::setData(const QModelIndex& index, const QVariant& value, int role)
@@ -310,16 +310,20 @@ QModelIndex QMidiInListModel::index(int row, int column, QModelIndex const& pare
         if (parent.isValid())
         {
             parentNode = static_cast<AbstractTreeNode*>(parent.internalPointer());
-        } else
+        }
+        else
         {
             parentNode = m_root.get();
         }
 
-        auto const& currentNode = parentNode->child(row);
-
-        if (currentNode)
+        if (row < parentNode->childrenCount())
         {
-            finalIndex = createIndex(row, column, currentNode.get());
+            auto const& currentNode = parentNode->child(row);
+
+            if (currentNode)
+            {
+                finalIndex = createIndex(row, column, currentNode.get());
+            }
         }
     }
     return finalIndex;
@@ -327,10 +331,19 @@ QModelIndex QMidiInListModel::index(int row, int column, QModelIndex const& pare
 
 QModelIndex QMidiInListModel::parent(const QModelIndex& child) const
 {
+    QModelIndex parentIndex;
     auto* const childNode = static_cast<AbstractTreeNode*>(child.internalPointer());
-    auto const parentNode = childNode->parent();
 
-    return parentNode == m_root ? QModelIndex() : createIndex(parentNode->childIndex(), 0, parentNode.get());
+    if (childNode)
+    {
+        auto const parentNode = childNode->parent();
+
+        if (parentNode != m_root)
+        {
+            parentIndex = createIndex(parentNode->childIndex(), 0, parentNode.get());
+        }
+    }
+    return parentIndex;
 }
 
 std::shared_ptr<QMidiInListModel::AbstractTreeNode> QMidiInListModel::getNode(QModelIndex const& index) const

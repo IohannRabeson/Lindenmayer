@@ -25,14 +25,14 @@ public:
 
     using Loader = std::function<void(std::shared_ptr<RootTreeNode>&)>;
 
-    explicit QMidiInListModel(QObject* parent);
+    explicit QMidiInListModel(QObject* parent = nullptr);
 
     void reset(Loader&& loader);
     void reset(std::vector<std::shared_ptr<QAbstractMidiIn>> const& midiIns);
-    int append(std::shared_ptr<QAbstractMidiIn> const& port);
+    QModelIndex append(std::shared_ptr<QAbstractMidiIn> const& port);
     void clear();
 
-    QString name(int const row) const;
+    QString getPortName(int const row) const;
 
     QVariant data(const QModelIndex& index, int role) const override;
     bool setData(const QModelIndex& index, const QVariant& value, int role) override;
