@@ -25,11 +25,6 @@ void QAbstractMidiMessageFilter::setupWidget()
     m_widget = instanciateWidget();
 }
 
-void QAbstractMidiMessageFilter::setName(QString const& name)
-{
-    m_name = name;
-}
-
 void QAbstractMidiMessageFilter::setEnabled(bool const enabled)
 {
     m_enabled = enabled;

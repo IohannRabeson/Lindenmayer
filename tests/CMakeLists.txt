@@ -11,6 +11,7 @@ set(MOCK_SRC
     )
 
 set(SRC
+    ${MOCK_SRC}
     gtest.cpp
     QMidiManufacturerModelTest.cpp
     QMidiMessageMatrixTest.cpp

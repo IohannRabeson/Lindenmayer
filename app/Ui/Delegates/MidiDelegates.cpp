@@ -25,8 +25,8 @@ QString MidiMessageTypeDelegate::displayText(const QVariant &value, const QLocal
 }
 
 MidiPortDelegate::MidiPortDelegate(const QMidiDeviceModel * const model, QObject *parent)
-    : QStyledItemDelegate(parent)
-    , m_model(model)
+: QStyledItemDelegate(parent)
+, m_model(model)
 {
 }
 

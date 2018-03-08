@@ -69,7 +69,8 @@ public:
             m_parent = parent;
         }
 
-        // TODO: move theses checks to the unit tests project
+        // Ensure m_childIndex is set to -1 if the parent is null or
+        // ensure m_childIndex is not set to -1 if the parent is not null.
         Q_ASSERT( (m_parent.lock() == nullptr && m_childIndex == -1) ||
                   (m_parent.lock() != nullptr && m_childIndex > -1 && m_childIndex < m_parent.lock()->childrenCount()) );
     }
@@ -275,12 +276,12 @@ QMidiInListModel::QMidiInListModel(QObject* parent)
 
 int QMidiInListModel::rowCount(QModelIndex const& parent) const
 {
-    return parent.isValid() ? 0 : getNode(parent)->childrenCount();
+    return getNode(parent)->childrenCount();
 }
 
 int QMidiInListModel::columnCount(QModelIndex const& parent) const
 {
-    return parent.isValid() ? 0 : 1;
+    return getNode(parent)->columnCount();
 }
 
 QVariant QMidiInListModel::data(QModelIndex const& index, int role) const
@@ -329,6 +330,7 @@ void QMidiInListModel::reset(std::vector<std::shared_ptr<QAbstractMidiIn>> const
 
 QModelIndex QMidiInListModel::add(std::shared_ptr<QAbstractMidiIn> const& port)
 {
+    Q_ASSERT( port != nullptr );
     Q_ASSERT( port->isPortOpen() );
 
     auto const newRow = m_root->childrenCount();
@@ -341,6 +343,8 @@ QModelIndex QMidiInListModel::add(std::shared_ptr<QAbstractMidiIn> const& port)
 
 QModelIndex QMidiInListModel::add(QModelIndex const& portIndex, std::shared_ptr<QAbstractMidiMessageFilter> const& filter)
 {
+    Q_ASSERT( filter != nullptr );
+
     QModelIndex result;
 
     if (portIndex.isValid())

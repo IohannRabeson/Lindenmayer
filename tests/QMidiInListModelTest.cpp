@@ -37,6 +37,8 @@ TEST(QMidiInListModelTest, port_only)
     ASSERT_FALSE( model.parent(QModelIndex()).isValid() );
     ASSERT_EQ( model.parent(QModelIndex()).internalPointer(), nullptr );
     ASSERT_NE( model.index(0, 0, QModelIndex()).internalPointer(), nullptr );
+    ASSERT_EQ( model.rowCount(), 1 );
+    ASSERT_EQ( model.rowCount(portIndex), 0 );
 }
 
 TEST(QMidiInListModelTest, only_port_flags)
@@ -91,15 +93,6 @@ TEST(QMidiInListModelTest, get_set_port_datas)
     ASSERT_EQ( model.data(portIndex, Qt::CheckStateRole).value<Qt::CheckState>(), Qt::Checked );
     ASSERT_EQ( model.data(portIndex, Qt::CheckStateRole).value<Qt::CheckState>(), Qt::Unchecked );
     ASSERT_TRUE( model.setData(portIndex, QVariant::fromValue(Qt::Checked), Qt::CheckStateRole) );
-
-    // Calls to setData() and data() with an invalid index.
-    // Should never triggers calls to isPortEnabled().
-    ASSERT_FALSE( model.setData(model.index(1, 0), QVariant::fromValue(Qt::Checked), Qt::CheckStateRole) );
-    ASSERT_FALSE( model.setData(model.index(0, 1), QVariant::fromValue(Qt::Checked), Qt::CheckStateRole) );
-    ASSERT_FALSE( model.setData(model.index(0, 1, portIndex), QVariant::fromValue(Qt::Checked), Qt::CheckStateRole) );
-    ASSERT_FALSE( model.data(model.index(1, 0), Qt::CheckStateRole).isValid() );
-    ASSERT_FALSE( model.data(model.index(0, 1), Qt::CheckStateRole).isValid() );
-    ASSERT_FALSE( model.data(model.index(0, 1, portIndex), Qt::CheckStateRole).isValid() );
 }
 
 TEST(QMidiInListModelTest, port_with_filter)
@@ -122,4 +115,39 @@ TEST(QMidiInListModelTest, port_with_filter)
     ASSERT_TRUE( model.setData(filterIndex, Qt::Unchecked, Qt::CheckStateRole) );
     ASSERT_EQ( model.parent(filterIndex), portIndex );
     ASSERT_EQ( model.index(0, 0, portIndex), filterIndex );
+    ASSERT_EQ( model.rowCount(portIndex), 1 );
+}
+
+TEST(QMidiInListModelTest, check_incorrect_calls_to_data_and_set_data)
+{
+    using ::testing::_;
+    using ::testing::NiceMock;
+
+    QMidiInListModel model;
+
+    auto const port = std::make_shared<NiceMock<AbstractMidiInMock>>();
+
+    EXPECT_CALL(*port, setPortEnabled(_))
+                .Times(0);
+
+    EXPECT_CALL(*port, isPortEnabled())
+            .Times(0);
+
+    auto const portIndex = model.add(port);
+
+    // Calls to setData() and data() with an invalid index.
+    // Should never triggers calls to isPortEnabled().
+    ASSERT_FALSE( model.setData(model.index(1, 0), QVariant::fromValue(Qt::Checked), Qt::CheckStateRole) );
+    ASSERT_FALSE( model.setData(model.index(0, 1), QVariant::fromValue(Qt::Checked), Qt::CheckStateRole) );
+    ASSERT_FALSE( model.setData(model.index(0, 1, portIndex), QVariant::fromValue(Qt::Checked), Qt::CheckStateRole) );
+    ASSERT_FALSE( model.data(model.index(1, 0), Qt::CheckStateRole).isValid() );
+    ASSERT_FALSE( model.data(model.index(0, 1), Qt::CheckStateRole).isValid() );
+    ASSERT_FALSE( model.data(model.index(0, 1, portIndex), Qt::CheckStateRole).isValid() );
+}
+
+TEST(QMidiInListModelTest, death_test_add_null_port)
+{
+    QMidiInListModel model;
+
+    EXPECT_DEBUG_DEATH( model.add(std::shared_ptr<QAbstractMidiIn>()), "ASSERT: *" );
 }
