@@ -7,7 +7,6 @@
 #include "QMidiIn.hpp"
 #include "QMidiOut.hpp"
 #include "QMidiMessageMatrixModel.hpp"
-#include "QMidiMessageFilterModel.hpp"
 #include "QMidiMessage.hpp"
 #include "QMidiInListModel.hpp"
 
@@ -330,7 +329,7 @@ int QMidiManager::addInputPort(std::shared_ptr<QAbstractMidiIn>&& midiIn)
                                                d->forwardMidiMessage(message);
                                            });
         d->m_midiIns.emplace_back(std::move(midiIn));
-        d->m_inputDeviceModel->append(d->m_midiIns.back());
+        d->m_inputDeviceModel->add(d->m_midiIns.back());
         d->m_matrixModel->reset(d->m_midiOuts.size(), d->m_midiIns.size(), extractPortNames(d->m_midiOuts), extractPortNames(d->m_midiIns));
         returnedPortIndex = newPortIndex;
     }

@@ -34,8 +34,6 @@ set(QMIDIBOY_CORE_SOURCES
         src/QMidiInBase.cpp
         src/QAbstractMidiMessageFilter.cpp
         include/QAbstractMidiMessageFilter.hpp
-        src/QMidiMessageFilterModel.cpp
-        include/QMidiMessageFilterModel.hpp
         src/QMidiInListModel.cpp
         include/QMidiInListModel.hpp)
 

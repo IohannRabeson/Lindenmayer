@@ -122,7 +122,7 @@ TEST(QMidiMessageTest, RandomMessageTest)
 {
     std::mt19937_64 engine;
     std::uniform_int_distribution<std::uint8_t> distribution0_255;
-    std::uniform_int_distribution<std::size_t> distribution_1_4{1, 4};
+    std::uniform_int_distribution<std::size_t> distribution_1_4{1, 40};
 
     for (auto i = 0; i < 200000u; ++i)
     {

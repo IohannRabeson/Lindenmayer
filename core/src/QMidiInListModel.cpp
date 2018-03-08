@@ -4,6 +4,10 @@
 
 #include "QMidiInListModel.hpp"
 
+/*!
+ * \class QMidiInListModel::AbstractTreeNode
+ * \brief Abstract node
+ */
 class QMidiInListModel::AbstractTreeNode : public std::enable_shared_from_this<AbstractTreeNode>
 {
 public:
@@ -90,6 +94,10 @@ private:
     int m_childIndex = -1;
 };
 
+/*!
+ * \class QMidiInListModel::RootTreeNode
+ * \brief Root node
+ */
 class QMidiInListModel::RootTreeNode : public AbstractTreeNode
 {
 public:
@@ -99,13 +107,17 @@ public:
     Qt::ItemFlags flags(int const) const override { return Qt::NoItemFlags; }
     int columnCount() const override { return 0; }
 
-    std::shared_ptr<MidiInTreeNode> appendMidiIn(std::shared_ptr<QAbstractMidiIn> const& port);
+    std::shared_ptr<MidiPortTreeNode> add(std::shared_ptr<QAbstractMidiIn> const& port);
 };
 
-class QMidiInListModel::MidiInTreeNode : public AbstractTreeNode
+/*!
+ * \class QMidiInListModel::MidiPortTreeNode
+ * \brief Midi in port node
+ */
+class QMidiInListModel::MidiPortTreeNode : public AbstractTreeNode
 {
 public:
-    explicit MidiInTreeNode(std::shared_ptr<QAbstractMidiIn> const& port)
+    explicit MidiPortTreeNode(std::shared_ptr<QAbstractMidiIn> const& port)
     : m_port(port)
     {
         Q_ASSERT(m_port != nullptr);
@@ -167,34 +179,89 @@ public:
         }
         return result;
     }
+
+    std::shared_ptr<MidiFilterTreeNode> add(std::shared_ptr<QAbstractMidiMessageFilter> const& filter);
 private:
     std::shared_ptr<QAbstractMidiIn> const m_port;
 };
 
+/*!
+ * \class QMidiInListModel::MidiFilterTreeNode
+ * \brief Filter node
+ */
 class QMidiInListModel::MidiFilterTreeNode : public AbstractTreeNode
 {
 public:
+    explicit MidiFilterTreeNode(std::shared_ptr<QAbstractMidiMessageFilter> const& filter)
+    : m_filter(filter)
+    {
+    }
+
     AbstractTreeNode::Type type() const override { return AbstractTreeNode::Type::MidiFilter; }
 
-    int columnCount() const override { return 0; }
+    int columnCount() const override { return 1; }
+
+    Qt::ItemFlags flags(int const) const override
+    {
+        return Qt::ItemIsSelectable | Qt::ItemIsUserCheckable | Qt::ItemIsEnabled;
+    }
 
     QVariant data(int const role) const override
     {
-        return QVariant();
+        QVariant result;
+
+        switch (role)
+        {
+            case Roles::Name:
+                result = m_filter->name();
+                break;
+            case Roles::Checked:
+                result = m_filter->isEnabled() ? Qt::Checked : Qt::Unchecked;
+                break;
+            default:
+                break;
+        }
+        return result;
     }
 
     bool setData(QVariant const& value, int const role) override
     {
-        return false;
+        bool result = false;
+
+        switch (role)
+        {
+            case Qt::CheckStateRole:
+            {
+                auto const checked = (value.value<Qt::CheckState>() == Qt::Checked);
+
+                if (checked != m_filter->isEnabled())
+                {
+                    m_filter->setEnabled(checked);
+                    result = true;
+                }
+            }
+            default:
+                break;
+        }
+        return result;
     }
 private:
-
+    std::shared_ptr<QAbstractMidiMessageFilter> const m_filter;
 };
 
-std::shared_ptr<QMidiInListModel::MidiInTreeNode>
-QMidiInListModel::RootTreeNode::appendMidiIn(std::shared_ptr<QAbstractMidiIn> const& port)
+std::shared_ptr<QMidiInListModel::MidiPortTreeNode>
+QMidiInListModel::RootTreeNode::add(std::shared_ptr<QAbstractMidiIn> const& port)
 {
-    auto const node = std::make_shared<MidiInTreeNode>(port);
+    auto const node = std::make_shared<MidiPortTreeNode>(port);
+
+    node->setParent(shared_from_this());
+    return node;
+}
+
+std::shared_ptr<QMidiInListModel::MidiFilterTreeNode>
+QMidiInListModel::MidiPortTreeNode::add(std::shared_ptr<QAbstractMidiMessageFilter> const& filter)
+{
+    auto const node = std::make_shared<MidiFilterTreeNode>(filter);
 
     node->setParent(shared_from_this());
     return node;
@@ -253,23 +320,44 @@ void QMidiInListModel::reset(std::vector<std::shared_ptr<QAbstractMidiIn>> const
           {
               for (auto i = 0; i < midiIns.size(); ++i)
               {
-                  auto node = std::make_shared<MidiInTreeNode>(midiIns[i]);
+                  auto node = std::make_shared<MidiPortTreeNode>(midiIns[i]);
 
                   node->setParent(root);
               };
           });
 }
 
-QModelIndex QMidiInListModel::append(std::shared_ptr<QAbstractMidiIn> const& port)
+QModelIndex QMidiInListModel::add(std::shared_ptr<QAbstractMidiIn> const& port)
 {
     Q_ASSERT( port->isPortOpen() );
 
     auto const newRow = m_root->childrenCount();
 
     beginInsertRows(QModelIndex(), newRow, newRow);
-    m_root->appendMidiIn(port);
+    m_root->add(port);
     endInsertRows();
     return index(newRow, 0);
+}
+
+QModelIndex QMidiInListModel::add(QModelIndex const& portIndex, std::shared_ptr<QAbstractMidiMessageFilter> const& filter)
+{
+    QModelIndex result;
+
+    if (portIndex.isValid())
+    {
+        auto const portNode = getPortNode(portIndex);
+
+        if (portNode)
+        {
+            auto const newRow = portNode->childrenCount();
+
+            beginInsertRows(portIndex, newRow, newRow);
+            portNode->add(filter);
+            endInsertRows();
+            result = index(newRow, 0, portIndex);
+        }
+    }
+    return result;
 }
 
 Qt::ItemFlags QMidiInListModel::flags(QModelIndex const& index) const
@@ -292,7 +380,7 @@ QString QMidiInListModel::getPortName(int const row) const
 {
     auto const rowIndex = index(row, 0);
 
-    return rowIndex.isValid() ? getMidiInNode(rowIndex)->portName() : QString();
+    return rowIndex.isValid() ? getPortNode(rowIndex)->portName() : QString();
 }
 
 bool QMidiInListModel::setData(const QModelIndex& index, const QVariant& value, int role)
@@ -372,9 +460,9 @@ std::shared_ptr<QMidiInListModel::AbstractTreeNode> QMidiInListModel::getNode(QM
     }
 }
 
-std::shared_ptr<QMidiInListModel::MidiInTreeNode> QMidiInListModel::getMidiInNode(QModelIndex const& index) const
+std::shared_ptr<QMidiInListModel::MidiPortTreeNode> QMidiInListModel::getPortNode(QModelIndex const& index) const
 {
     auto const node = getNode(index);
 
-    return node && node->type() == AbstractTreeNode::Type::MidiIn ? std::static_pointer_cast<MidiInTreeNode>(node) : std::shared_ptr<QMidiInListModel::MidiInTreeNode>();
+    return (node && node->type() == AbstractTreeNode::Type::MidiIn) ? std::static_pointer_cast<MidiPortTreeNode>(node) : std::shared_ptr<QMidiInListModel::MidiPortTreeNode>();
 }

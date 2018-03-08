@@ -13,7 +13,7 @@ class QMidiInListModel : public QAbstractItemModel
 
     class AbstractTreeNode;
     class RootTreeNode;
-    class MidiInTreeNode;
+    class MidiPortTreeNode;
     class MidiFilterTreeNode;
 public:
     enum Roles
@@ -29,7 +29,8 @@ public:
 
     void reset(Loader&& loader);
     void reset(std::vector<std::shared_ptr<QAbstractMidiIn>> const& midiIns);
-    QModelIndex append(std::shared_ptr<QAbstractMidiIn> const& port);
+    QModelIndex add(std::shared_ptr<QAbstractMidiIn> const& port);
+    QModelIndex add(QModelIndex const& portIndex, std::shared_ptr<QAbstractMidiMessageFilter> const& filter);
     void clear();
 
     QString getPortName(int const row) const;
@@ -43,7 +44,7 @@ public:
     QModelIndex parent(const QModelIndex& child) const override;
 private:
     std::shared_ptr<AbstractTreeNode> getNode(QModelIndex const& index) const;
-    std::shared_ptr<MidiInTreeNode> getMidiInNode(QModelIndex const& index) const;
+    std::shared_ptr<MidiPortTreeNode> getPortNode(QModelIndex const& index) const;
 private:
     std::shared_ptr<RootTreeNode> m_root;
 };

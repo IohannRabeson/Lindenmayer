@@ -5,7 +5,6 @@
 #include "QMidiIn.hpp"
 #include "QMidiMessage.hpp"
 #include "QAbstractMidiMessageFilter.hpp"
-#include "QMidiMessageFilterModel.hpp"
 
 #include <RtMidi.h>
 
