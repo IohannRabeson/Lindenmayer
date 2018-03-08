@@ -6,6 +6,8 @@
 #include "QMidiMessage.hpp"
 
 #include "ListenerHelpers.hpp"
+#include "FilterHelpers.hpp"
+#include "VectorHelpers.hpp"
 
 bool QAbstractMidiIn::isPortOpen() const
 {
@@ -24,37 +26,25 @@ void QAbstractMidiIn::addMessageReceivedListener(MessageReceivedCallback&& liste
 
 void QAbstractMidiIn::error(QString const& error)
 {
-    callEachListener(m_errorListeners, error);
+    imp::callEachListener(m_errorListeners, error);
 }
 
 void QAbstractMidiIn::messageReceived(QMidiMessage const& message)
 {
-    if (acceptMessage(message))
+    if (imp::acceptMessage(message, std::cbegin(m_messageFilters), std::cend(m_messageFilters)))
     {
-        callEachListener(m_messageReceivedListeners, message);
+        imp::callEachListener(m_messageReceivedListeners, message);
     }
-}
-
-bool QAbstractMidiIn::acceptMessage(QMidiMessage const& message) const
-{
-    return m_messageFilters.empty() || std::all_of(m_messageFilters.begin(), m_messageFilters.end(),
-                                                   [&message](FilterPointer const& filter)
-    {
-        return filter->acceptMessage(message);
-    });
 }
 
 int QAbstractMidiIn::addFilter(FilterPointer&& filter)
 {
-    int const newIndex = m_messageFilters.size();
-
-    m_messageFilters.emplace_back(std::move(filter));
-    return newIndex;
+    return imp::addToVector(m_messageFilters, std::move(filter));
 }
 
 void QAbstractMidiIn::removeFilter(int const filterIndex)
 {
-    m_messageFilters.erase(m_messageFilters.begin() + filterIndex);
+    imp::removeFromVector(m_messageFilters, filterIndex);
 }
 
 void QAbstractMidiIn::clearFilters()

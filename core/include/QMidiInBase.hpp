@@ -19,7 +19,6 @@ public:
     QString portName() const override;
     void setPortEnabled(bool const enabled) override;
     bool isPortEnabled() const override;
-
     void messageReceived(QMidiMessage const& message) override;
 private:
     QString const m_name;

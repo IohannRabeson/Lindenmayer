@@ -24,7 +24,7 @@ QString MidiMessageTypeDelegate::displayText(const QVariant &value, const QLocal
     return m_types.value(type, metaEnum.valueToKey(type));
 }
 
-MidiPortDelegate::MidiPortDelegate(const QMidiDeviceModel * const model, QObject *parent)
+MidiPortDelegate::MidiPortDelegate(const QMidiPortModel * const model, QObject *parent)
 : QStyledItemDelegate(parent)
 , m_model(model)
 {
@@ -38,7 +38,7 @@ QString MidiPortDelegate::displayText(const QVariant &value, const QLocale &) co
 
     if (isOk && portIndex > -1)
     {
-        result = m_model->name(portIndex);
+        result = m_model->getPortName(portIndex);
     }
     return result;
 }
@@ -112,7 +112,7 @@ void MidiDataDelegate::initStyleOption(QStyleOptionViewItem *option, const QMode
     option->text = Format::formatBytes(message.bytes());
 }
 
-MidiInPortDelegate::MidiInPortDelegate(QMidiInListModel const* const model, QObject* parent)
+MidiInPortDelegate::MidiInPortDelegate(QMidiPortModel const* const model, QObject* parent)
 : QStyledItemDelegate(parent)
 , m_model(model)
 {

@@ -18,13 +18,16 @@ public:
     explicit QMidiOut();
     ~QMidiOut();
 
-    bool openPort(int const portIndex) noexcept override;
-    void closePort() noexcept override;
-    int portOpened() const noexcept override;
-    QString portName() const noexcept override;
-    void setEnabled(bool const enabled) override;
-    void sendMessage(QMidiMessage const& message) override;
-    int portCount() const noexcept override;
+    bool openPort(int const portIndex) override;
+    void closePort() override;
+    int portOpened() const override;
+    QString portName() const override;
+    void setPortEnabled(bool const enabled) override;
+    bool isPortEnabled() const override;
+
+    int portCount() const;
+private:
+    void outputMessage(QMidiMessage const& message) override;
 private:
     QScopedPointer<QMidiOutPrivate> d_ptr;
 };

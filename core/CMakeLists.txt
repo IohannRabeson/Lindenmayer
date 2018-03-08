@@ -5,8 +5,6 @@ set(QMIDIBOY_CORE_SOURCES
         src/QMidiMessage.cpp
         include/QMidiMessageModel.hpp
         src/QMidiMessageModel.cpp
-        src/QMidiDeviceModel.cpp
-        include/QMidiDeviceModel.hpp
         include/QMidiChecksums.cpp
         include/QMidiChecksums.hpp
         src/QMidiManufacturerModel.cpp
@@ -34,8 +32,8 @@ set(QMIDIBOY_CORE_SOURCES
         src/QMidiInBase.cpp
         src/QAbstractMidiMessageFilter.cpp
         include/QAbstractMidiMessageFilter.hpp
-        src/QMidiInListModel.cpp
-        include/QMidiInListModel.hpp)
+        src/QMidiPortModel.cpp
+        include/QMidiPortModel.hpp private/FilterHelpers.hpp private/VectorHelpers.hpp)
 
 add_library(QMidi
             resources/QMidi.qrc

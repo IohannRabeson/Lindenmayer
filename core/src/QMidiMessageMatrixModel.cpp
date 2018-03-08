@@ -85,9 +85,8 @@ QVariant QMidiMessageMatrixModel::headerData(int section, Qt::Orientation orient
 {
     QVariant result;
 
-    if (orientation == Qt::Vertical && role == Qt::DisplayRole)
+    if (orientation == Qt::Vertical)
     {
-
         switch (role)
         {
             case Qt::DisplayRole:
@@ -100,7 +99,7 @@ QVariant QMidiMessageMatrixModel::headerData(int section, Qt::Orientation orient
                 break;
         }
     }
-    else if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
+    else if (orientation == Qt::Horizontal)
     {
         switch (role)
         {

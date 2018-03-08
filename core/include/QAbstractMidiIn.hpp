@@ -43,8 +43,6 @@ protected:
     void error(QString const& error);
     virtual void messageReceived(QMidiMessage const& message);
 private:
-    bool acceptMessage(QMidiMessage const& message) const;
-private:
     std::vector<ErrorListener> m_errorListeners;
     std::vector<MessageReceivedCallback> m_messageReceivedListeners;
     std::vector<FilterPointer> m_messageFilters;

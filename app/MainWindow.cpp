@@ -27,7 +27,7 @@
 #include <QMidiIn.hpp>
 #include <QMidiMessageModel.hpp>
 #include <QMidiMessageMatrixModel.hpp>
-#include <QMidiInListModel.hpp>
+#include <QMidiPortModel.hpp>
 #include <QMidiManager.hpp>
 
 #include <QMetaEnum>
@@ -86,8 +86,6 @@ MainWindow::~MainWindow()
 void MainWindow::setupMIDI()
 {
     resetMidiPorts();
-    //connect(m_inputPortModel, &QMidiDeviceModel::checkedChanged, m_midiManager, &QMidiManager::setInputPortEnabled);
-    connect(m_outputPortModel, &QMidiDeviceModel::checkedChanged, m_midiManager, &QMidiManager::setOutputPortEnabled);
     connect(m_midiManager, &QMidiManager::messageReceived, m_messageModel, &QMidiMessageModel::append);
     connect(m_midiManager, &QMidiManager::messageSent, m_messageModel, &QMidiMessageModel::append);
     m_manufacturerModel->load(QMidiManufacturerModel::LoadFromCSV(":/Texts/Resources/MIDI_Manufacturers.csv"));
@@ -110,13 +108,9 @@ void MainWindow::resetMidiPorts()
         }
     }
 
-    QMap<int, int> inputPortRemappings;
-    QMap<int, int> outputPortRemappings;
-
-    m_midiManager->rescanPorts(inputPortRemappings, outputPortRemappings);
+    m_midiManager->rescanPorts();
     m_midiManager->addInputPort(std::shared_ptr<QAbstractMidiIn>(m_noteWidget));
     m_midiManager->addInputPort(std::shared_ptr<QAbstractMidiIn>(m_keyboardWidget));
-    m_messageModel->remapInputPorts(inputPortRemappings);
 }
 
 void MainWindow::setupActions()
@@ -152,9 +146,9 @@ void MainWindow::setupUi()
     m_dockWidgets->addDockWidget(midiInputPortView, tr("MIDI Inputs"), "midi_input");
 
     // Setup MIDI output port view
-    QTableView* midiOutputPortView = new QTableView(this);
+    QTreeView* midiOutputPortView = new QTreeView(this);
 
-    CommonUi::standardTableView(midiOutputPortView, false);
+    CommonUi::standardTreeView(midiOutputPortView, false);
     midiOutputPortView->setModel(m_midiManager->getOutputDeviceModel());
     m_dockWidgets->addDockWidget(midiOutputPortView, tr("MIDI Outputs"), "midi_output");
 
