@@ -43,6 +43,7 @@ public:
     QModelIndex add(std::shared_ptr<QAbstractMidiIn> const& port);
     QModelIndex add(std::shared_ptr<QAbstractMidiOut> const& port);
     QModelIndex add(QModelIndex const& portIndex, std::shared_ptr<QAbstractMidiMessageFilter> const& filter);
+    void remove(QModelIndex const& index);
     void clear();
 
     QVariant data(const QModelIndex& index, int role) const override;

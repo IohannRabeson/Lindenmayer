@@ -6,7 +6,7 @@
 #include "QMidiMessage.hpp"
 
 #include "ListenerHelpers.hpp"
-#include "FilterHelpers.hpp"
+#include "MidiMessageFilterHelpers.hpp"
 #include "VectorHelpers.hpp"
 
 bool QAbstractMidiIn::isPortOpen() const

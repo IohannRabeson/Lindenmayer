@@ -483,6 +483,22 @@ QModelIndex QMidiPortModel::add(QModelIndex const& portIndex, std::shared_ptr<QA
     return result;
 }
 
+void QMidiPortModel::remove(QModelIndex const& index)
+{
+    if (!index.isValid())
+    {
+        return;
+    }
+
+    auto const parentIndex = parent(index);
+    auto const nodeToRemove = getNode(index);
+    auto const rowIndex = nodeToRemove->childIndex();
+
+    beginRemoveRows(parentIndex, rowIndex, rowIndex);
+    nodeToRemove->setParent(nullptr);
+    endRemoveRows();
+}
+
 Qt::ItemFlags QMidiPortModel::flags(QModelIndex const& index) const
 {
     Qt::ItemFlags result = Qt::NoItemFlags;
@@ -604,8 +620,6 @@ auto QMidiPortModel::getNode(QModelIndex const& index) const -> std::shared_ptr<
 template <class Node>
 void QMidiPortModel::addPortFilter(std::shared_ptr<Node> const& node, std::shared_ptr<QAbstractMidiMessageFilter> const& filter)
 {
-    auto const newRow = node->childrenCount();
-
     node->add(filter);
 }
 

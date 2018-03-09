@@ -5,7 +5,7 @@
 #include "QAbstractMidiOut.hpp"
 
 #include "ListenerHelpers.hpp"
-#include "FilterHelpers.hpp"
+#include "MidiMessageFilterHelpers.hpp"
 #include "VectorHelpers.hpp"
 
 bool QAbstractMidiOut::isPortOpen() const

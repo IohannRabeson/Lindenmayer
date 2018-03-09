@@ -39,7 +39,7 @@ set(PLUGINS_SOURCES
         Plugins/Commons/TextDatabase.cpp
     Plugins/Commons/TextDatabase.hpp
     Translators/TranslatorManager.cpp
-    Translators/TranslatorManager.hpp)
+    Translators/TranslatorManager.hpp MidiMessageFilterFactory.cpp MidiMessageFilterFactory.hpp)
 
 qt5_add_translation(QM_FILES ${TS_FILES})
 # This works only because QM_FILES is given to add_executable (I guess).
