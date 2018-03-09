@@ -17,7 +17,7 @@ set(SRC
     QMidiMessageMatrixTest.cpp
     QMidiMessageTest.cpp
     QMidiMessageFilterTest.cpp
-    QMidiInListModelTest.cpp
+        QMidiPortModelTest.cpp
         mocks/AbstractMidiOutMock.hpp)
 
 add_executable(unit_tests ${SRC})
