@@ -18,22 +18,9 @@ void QAbstractMidiOut::error(QString const& error)
     imp::callEachListener(m_errorListeners, error);
 }
 
-void QAbstractMidiOut::messageReceived(QMidiMessage const& message)
-{
-    if (imp::acceptMessage(message, std::cbegin(m_messageFilters), std::cend(m_messageFilters)))
-    {
-        imp::callEachListener(m_messageReceivedListeners, message);
-    }
-}
-
 void QAbstractMidiOut::addErrorListener(ErrorListener&& listener)
 {
     m_errorListeners.emplace_back(std::move(listener));
-}
-
-void QAbstractMidiOut::addMessageReceivedListener(MessageReceivedCallback&& listener)
-{
-    m_messageReceivedListeners.emplace_back(std::move(listener));
 }
 
 int QAbstractMidiOut::addFilter(FilterPointer&& filter)

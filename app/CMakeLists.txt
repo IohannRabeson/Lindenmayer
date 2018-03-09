@@ -32,14 +32,16 @@ set(UI_SOURCES
     Ui/Widgets/Widgets/MidiKeyboardWidget.cpp
     Ui/Widgets/Widgets/MidiKeyboardWidget.hpp
     Ui/Widgets/Widgets/MidiMatrixWidget.cpp
-    Ui/Widgets/Widgets/MidiMatrixWidget.hpp)
+    Ui/Widgets/Widgets/MidiMatrixWidget.hpp
+    Ui/Widgets/Views/MidiPortTreeView.cpp
+    Ui/Widgets/Views/MidiPortTreeView.hpp)
 
 set(PLUGINS_SOURCES
     Plugins/Plugins.qrc
-        Plugins/Commons/TextDatabase.cpp
+    Plugins/Commons/TextDatabase.cpp
     Plugins/Commons/TextDatabase.hpp
     Translators/TranslatorManager.cpp
-    Translators/TranslatorManager.hpp MidiMessageFilterFactory.cpp MidiMessageFilterFactory.hpp)
+    Translators/TranslatorManager.hpp)
 
 qt5_add_translation(QM_FILES ${TS_FILES})
 # This works only because QM_FILES is given to add_executable (I guess).

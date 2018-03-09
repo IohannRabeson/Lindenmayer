@@ -3,7 +3,10 @@
 //
 
 #include "MainWindow.hpp"
+
 #include "Ui/Widgets/Views/MidiMessageListView.hpp"
+#include "Ui/Widgets/Views/MidiPortTreeView.hpp"
+
 #include "Ui/CommonUi.hpp"
 #include "Ui/Widgets/Dialogs/AboutMidiMonitorDialog.hpp"
 #include "Ui/SettingsUtils.hpp"
@@ -52,6 +55,7 @@ MainWindow::MainWindow(QWidget* parent)
 , m_midiManager(new QMidiManager(this))
 , m_inputPortModel(m_midiManager->getInputDeviceModel())
 , m_outputPortModel(m_midiManager->getOutputDeviceModel())
+, m_midiMessageFilterFactory(m_midiManager->getMessageFilterFactory())
 , m_messageModel(new QMidiMessageModel(this))
 , m_messageSelection(new QItemSelectionModel(m_messageModel, this))
 , m_messageView(new MidiMessageListView(m_messageModel, this))
@@ -139,17 +143,15 @@ void MainWindow::setupUi()
     setCentralWidget(m_messageView);
 
     // Setup MIDI input port view
-    QTreeView* midiInputPortView = new QTreeView(this);
+    MidiPortTreeView* midiInputPortView = new MidiPortTreeView(m_inputPortModel, m_midiMessageFilterFactory, this);
 
     CommonUi::standardTreeView(midiInputPortView, false);
-    midiInputPortView->setModel(m_inputPortModel);
     m_dockWidgets->addDockWidget(midiInputPortView, tr("MIDI Inputs"), "midi_input");
 
     // Setup MIDI output port view
-    QTreeView* midiOutputPortView = new QTreeView(this);
+    MidiPortTreeView* midiOutputPortView = new MidiPortTreeView(m_outputPortModel, m_midiMessageFilterFactory, this);
 
     CommonUi::standardTreeView(midiOutputPortView, false);
-    midiOutputPortView->setModel(m_midiManager->getOutputDeviceModel());
     m_dockWidgets->addDockWidget(midiOutputPortView, tr("MIDI Outputs"), "midi_output");
 
     // Setup note widget

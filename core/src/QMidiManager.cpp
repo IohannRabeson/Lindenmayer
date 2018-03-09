@@ -8,6 +8,7 @@
 #include "QMidiMessageMatrixModel.hpp"
 #include "QMidiMessage.hpp"
 #include "QMidiPortModel.hpp"
+#include "QMidiMessageFilterFactory.hpp"
 
 #include <QtDebug>
 #include <QSize>
@@ -23,6 +24,7 @@ public:
     , m_inputDeviceModel(new QMidiPortModel(q))
     , m_outputDeviceModel(new QMidiPortModel(q))
     , m_matrixModel(new QMidiMessageMatrixModel(q))
+    , m_messageFilterFactory(new QMidiMessageFilterFactory(q))
     {
     }
 
@@ -38,6 +40,7 @@ private:
     QMidiPortModel* const m_inputDeviceModel;
     QMidiPortModel* const m_outputDeviceModel;
     QMidiMessageMatrixModel* const m_matrixModel;
+    QMidiMessageFilterFactory* const m_messageFilterFactory;
     std::vector<std::shared_ptr<QAbstractMidiIn>> m_midiIns;
     std::vector<std::shared_ptr<QAbstractMidiOut>> m_midiOuts;
 };
@@ -198,27 +201,6 @@ void QMidiManager::rescanPorts()
     emit portsRescanned();
 }
 
-
-// TODO: should be better if inputRemappings is returned as value instead of passed as parameter because
-// we can try to changes the values of inputs remappings passed as parameters but it changes nothing.
-//
-// But the return type is not used to define method signature so if I remove the parameter mapping then
-// I must change the name of one overload (e.g rescanPortsAndGetMappings()).
-///*!
-// * \brief Rescans MIDI ports
-// *
-// * Input ports model, output ports model and matrix model are updated.
-// */
-//void QMidiManager::rescanPorts(QMap<int, int>& inputRemapping, QMap<int, int>& outputRemapping)
-//{
-//    Q_D(QMidiManager);
-//
-//    d->resetMidiInPorts(inputRemapping);
-//    d->resetMidiOutPorts(outputRemapping);
-//    d->m_matrixModel->reset(d->m_midiOuts.size(), d->m_midiIns.size(), extractPortNames(d->m_midiOuts), extractPortNames(d->m_midiIns));
-//    emit portsRescanned();
-//}
-
 void QMidiManager::closeAllPorts()
 {
     Q_D(QMidiManager);
@@ -228,39 +210,18 @@ void QMidiManager::closeAllPorts()
     d->m_matrixModel->clear();
 }
 
-void QMidiManager::setInputPortEnabled(int const portId, bool const enabled)
-{
-    Q_D(QMidiManager);
-
-    for (auto const& midiIn : d->m_midiIns)
-    {
-        if (midiIn->portOpened() == portId)
-        {
-            midiIn->setPortEnabled(enabled);
-            return;
-        }
-    }
-}
-
-void QMidiManager::setOutputPortEnabled(int const portId, bool const enabled)
-{
-    Q_D(QMidiManager);
-
-    for (auto const& midiOut : d->m_midiOuts)
-    {
-        if (midiOut->portOpened() == portId)
-        {
-            midiOut->setPortEnabled(enabled);
-            return;
-        }
-    }
-}
-
 QMidiMessageMatrixModel* QMidiManager::getMessageMatrixModel() const
 {
     Q_D(const QMidiManager);
 
     return d->m_matrixModel;
+}
+
+QMidiMessageFilterFactory* QMidiManager::getMessageFilterFactory() const
+{
+    Q_D(const QMidiManager);
+
+    return d->m_messageFilterFactory;
 }
 
 /*!

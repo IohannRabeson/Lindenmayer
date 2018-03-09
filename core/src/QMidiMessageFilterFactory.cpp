@@ -2,15 +2,15 @@
 // Created by Io on 08/03/2018.
 //
 
-#include "MidiMessageFilterFactory.hpp"
+#include "QMidiMessageFilterFactory.hpp"
 #include <QtDebug>
 
-int MidiMessageFilterFactory::rowCount(QModelIndex const& parent) const
+int QMidiMessageFilterFactory::rowCount(QModelIndex const& parent) const
 {
     return m_creators.size();
 }
 
-QVariant MidiMessageFilterFactory::data(const QModelIndex& index, int role) const
+QVariant QMidiMessageFilterFactory::data(const QModelIndex& index, int role) const
 {
     QVariant result;
 
@@ -21,7 +21,7 @@ QVariant MidiMessageFilterFactory::data(const QModelIndex& index, int role) cons
     return result;
 }
 
-void MidiMessageFilterFactory::add(QString const& label, MidiMessageFilterFactory::Creator&& creator)
+void QMidiMessageFilterFactory::add(QString const& label, QMidiMessageFilterFactory::Creator&& creator)
 {
     Q_ASSERT(!label.trimmed().isEmpty());
 
@@ -30,7 +30,7 @@ void MidiMessageFilterFactory::add(QString const& label, MidiMessageFilterFactor
         return entry.label == label;
     }) != std::end(m_creators))
     {
-        qWarning() << "[MidiMessageFilterFactory] Duplicated label:" << label;
+        qWarning() << "[QMidiMessageFilterFactory] Duplicated label:" << label;
         return;
     }
 
@@ -41,7 +41,7 @@ void MidiMessageFilterFactory::add(QString const& label, MidiMessageFilterFactor
     endInsertRows();
 }
 
-MidiMessageFilterFactory::Pointer MidiMessageFilterFactory::create(QModelIndex const& index) const
+QMidiMessageFilterFactory::Pointer QMidiMessageFilterFactory::create(QModelIndex const& index) const
 {
     Pointer result;
 
@@ -54,7 +54,20 @@ MidiMessageFilterFactory::Pointer MidiMessageFilterFactory::create(QModelIndex c
     return result;
 }
 
-MidiMessageFilterFactory::CreatorEntry::CreatorEntry(MidiMessageFilterFactory::Creator&& creator, QString const& label)
+QString QMidiMessageFilterFactory::getLabel(QModelIndex const& index) const
+{
+    QString result;
+
+    if (index.isValid())
+    {
+        auto const& entry = m_creators[index.row()];
+
+        result = entry.label;
+    }
+    return result;
+}
+
+QMidiMessageFilterFactory::CreatorEntry::CreatorEntry(QMidiMessageFilterFactory::Creator&& creator, QString const& label)
 : creator(std::move(creator))
 , label(label)
 {

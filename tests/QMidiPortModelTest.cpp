@@ -8,6 +8,10 @@
 #include "mocks/AbstractMidiOutMock.hpp"
 #include "mocks/AbstractMidiMessageFilterMock.hpp"
 
+using ::testing::NiceMock;
+using ::testing::Return;
+using ::testing::_;
+
 TEST(QMidiPortModelTest, empty_model)
 {
     QMidiPortModel model;
@@ -24,9 +28,6 @@ TEST(QMidiPortModelTest, empty_model)
 
 TEST(QMidiPortModelTest, input_port_only)
 {
-    using ::testing::Return;
-    using ::testing::NiceMock;
-
     QMidiPortModel model;
 
     auto const port = std::make_shared<NiceMock<AbstractMidiInMock>>();
@@ -44,9 +45,6 @@ TEST(QMidiPortModelTest, input_port_only)
 
 TEST(QMidiPortModelTest, output_port_only)
 {
-    using ::testing::Return;
-    using ::testing::NiceMock;
-
     QMidiPortModel model;
 
     auto const port = std::make_shared<NiceMock<AbstractMidiOutMock>>();
@@ -64,9 +62,6 @@ TEST(QMidiPortModelTest, output_port_only)
 
 TEST(QMidiPortModelTest, only_input_port_flags)
 {
-    using ::testing::Return;
-    using ::testing::NiceMock;
-
     QMidiPortModel model;
     auto const port = std::make_shared<NiceMock<AbstractMidiInMock>>();
     auto const portIndex = model.add(port);
@@ -84,9 +79,6 @@ TEST(QMidiPortModelTest, only_input_port_flags)
 
 TEST(QMidiPortModelTest, only_output_port_flags)
 {
-    using ::testing::Return;
-    using ::testing::NiceMock;
-
     QMidiPortModel model;
     auto const port = std::make_shared<NiceMock<AbstractMidiOutMock>>();
     auto const portIndex = model.add(port);
@@ -104,9 +96,6 @@ TEST(QMidiPortModelTest, only_output_port_flags)
 
 TEST(QMidiPortModelTest, get_set_input_port_datas)
 {
-    using ::testing::Return;
-    using ::testing::NiceMock;
-
     QMidiPortModel model;
     auto const port = std::make_shared<NiceMock<AbstractMidiInMock>>();
 
@@ -138,9 +127,6 @@ TEST(QMidiPortModelTest, get_set_input_port_datas)
 
 TEST(QMidiPortModelTest, get_set_output_port_datas)
 {
-    using ::testing::Return;
-    using ::testing::NiceMock;
-
     QMidiPortModel model;
     auto const port = std::make_shared<NiceMock<AbstractMidiOutMock>>();
 
@@ -172,9 +158,6 @@ TEST(QMidiPortModelTest, get_set_output_port_datas)
 
 TEST(QMidiPortModelTest, input_port_with_filter)
 {
-    using ::testing::Return;
-    using ::testing::NiceMock;
-
     QMidiPortModel model;
 
     auto const port = std::make_shared<NiceMock<AbstractMidiInMock>>();
@@ -195,9 +178,6 @@ TEST(QMidiPortModelTest, input_port_with_filter)
 
 TEST(QMidiPortModelTest, output_port_with_filter)
 {
-    using ::testing::Return;
-    using ::testing::NiceMock;
-
     QMidiPortModel model;
 
     auto const port = std::make_shared<NiceMock<AbstractMidiOutMock>>();
@@ -218,9 +198,6 @@ TEST(QMidiPortModelTest, output_port_with_filter)
 
 TEST(QMidiPortModelTest, check_incorrect_calls_to_data_and_set_data)
 {
-    using ::testing::_;
-    using ::testing::NiceMock;
-
     QMidiPortModel model;
 
     auto const port = std::make_shared<NiceMock<AbstractMidiInMock>>();
@@ -280,11 +257,8 @@ TEST(QMidiPortModelTest, add_filter)
 
 TEST(QMidiPortModelTest, remove_port)
 {
-    using ::testing::NiceMock;
-
     QMidiPortModel model;
     auto const port = std::make_shared<NiceMock<AbstractMidiInMock>>();
-
     auto const portIndex = model.add(port);
 
     model.remove(portIndex);
@@ -294,14 +268,12 @@ TEST(QMidiPortModelTest, remove_port)
 
 TEST(QMidiPortModelTest, remove_port_and_child_filter)
 {
-    using ::testing::NiceMock;
-
     QMidiPortModel model;
 
     auto const port = std::make_shared<NiceMock<AbstractMidiOutMock>>();
     auto const filter = std::make_shared<NiceMock<AbstractMidiMessageFilterMock>>();
     auto const portIndex = model.add(port);
-    auto const filterIndex = model.add(portIndex, filter);
+    model.add(portIndex, filter);
 
     model.remove(portIndex);
 
@@ -310,8 +282,6 @@ TEST(QMidiPortModelTest, remove_port_and_child_filter)
 
 TEST(QMidiPortModelTest, remove_filter_port)
 {
-    using ::testing::NiceMock;
-
     QMidiPortModel model;
 
     auto const port = std::make_shared<NiceMock<AbstractMidiOutMock>>();
@@ -327,15 +297,12 @@ TEST(QMidiPortModelTest, remove_filter_port)
 
 TEST(QMidiPortModelTest, remove_invalid)
 {
-    using ::testing::Return;
-    using ::testing::NiceMock;
-
     QMidiPortModel model;
 
     auto const port = std::make_shared<NiceMock<AbstractMidiOutMock>>();
     auto const filter = std::make_shared<NiceMock<AbstractMidiMessageFilterMock>>();
     auto const portIndex = model.add(port);
-    auto const filterIndex = model.add(portIndex, filter);
+    model.add(portIndex, filter);
 
     model.remove(QModelIndex());
 

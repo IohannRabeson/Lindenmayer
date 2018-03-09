@@ -9,7 +9,7 @@
 #include <functional>
 #include <memory>
 
-class MidiMessageFilterFactory : public QAbstractListModel
+class QMidiMessageFilterFactory : public QAbstractListModel
 {
 public:
     using Pointer = std::shared_ptr<QAbstractMidiMessageFilter>;
@@ -21,6 +21,7 @@ public:
     int rowCount(QModelIndex const& parent = QModelIndex()) const override;
     QVariant data(const QModelIndex& index, int role) const override;
 
+    QString getLabel(QModelIndex const& index) const;
     Pointer create(QModelIndex const& index) const;
 private:
     struct CreatorEntry

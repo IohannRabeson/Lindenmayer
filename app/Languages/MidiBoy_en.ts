@@ -98,94 +98,94 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../MainWindow.cpp" line="64"/>
+        <location filename="../MainWindow.cpp" line="68"/>
         <source>Quit</source>
         <translation>Quit</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="65"/>
+        <location filename="../MainWindow.cpp" line="69"/>
         <source>Clear all</source>
         <translation>Clear all</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="66"/>
+        <location filename="../MainWindow.cpp" line="70"/>
         <source>About...</source>
         <translation>About...</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="67"/>
+        <location filename="../MainWindow.cpp" line="71"/>
         <source>Auto scrolling</source>
         <translation>Auto scrolling</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="68"/>
+        <location filename="../MainWindow.cpp" line="72"/>
         <source>Show</source>
         <translation>Show</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="101"/>
+        <location filename="../MainWindow.cpp" line="105"/>
         <source>Clear messages</source>
         <translation>Clear messages</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="102"/>
+        <location filename="../MainWindow.cpp" line="106"/>
         <source>Messages can lost their input port information.
 Are you sure you want to do that?</source>
         <translation>Messages can lost their input port information.
 Are you sure you want to do that?</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="146"/>
+        <location filename="../MainWindow.cpp" line="149"/>
         <source>MIDI Inputs</source>
         <translation>MIDI Inputs</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="153"/>
+        <location filename="../MainWindow.cpp" line="155"/>
         <source>MIDI Outputs</source>
         <translation>MIDI Outputs</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="156"/>
+        <location filename="../MainWindow.cpp" line="158"/>
         <source>MIDI Note Trigger</source>
         <translation>MIDI Note Trigger</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="159"/>
+        <location filename="../MainWindow.cpp" line="161"/>
         <source>MIDI Keyboard</source>
         <translation>MIDI Keyboard</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="165"/>
+        <location filename="../MainWindow.cpp" line="167"/>
         <source>MIDI Message Matrix</source>
         <translation>MIDI Message Matrix</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="174"/>
+        <location filename="../MainWindow.cpp" line="176"/>
         <source>Main</source>
         <translation>Main</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="205"/>
+        <location filename="../MainWindow.cpp" line="207"/>
         <source>File</source>
         <translation>File</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="206"/>
+        <location filename="../MainWindow.cpp" line="208"/>
         <source>Edit</source>
         <translation>Edit</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="207"/>
+        <location filename="../MainWindow.cpp" line="209"/>
         <source>View</source>
         <translation>View</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="208"/>
+        <location filename="../MainWindow.cpp" line="210"/>
         <source>Window</source>
         <translation>Window</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="209"/>
+        <location filename="../MainWindow.cpp" line="211"/>
         <source>?</source>
         <translation>?</translation>
     </message>
@@ -312,6 +312,19 @@ Are you sure you want to do that?</translation>
         <location filename="../Ui/Widgets/Widgets/MidiNoteTriggerWidget.cpp" line="47"/>
         <source>Channel:</source>
         <translation>Channel:</translation>
+    </message>
+</context>
+<context>
+    <name>MidiPortTreeView</name>
+    <message>
+        <location filename="../Ui/Widgets/Views/MidiPortTreeView.cpp" line="33"/>
+        <source>Remove</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../Ui/Widgets/Views/MidiPortTreeView.cpp" line="87"/>
+        <source>Add filter</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

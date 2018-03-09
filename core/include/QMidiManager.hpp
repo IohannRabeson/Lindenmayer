@@ -13,7 +13,7 @@ class QAbstractMidiIn;
 class QAbstractMidiOut;
 class QMidiMessage;
 class QMidiMessageMatrixModel;
-class QMidiMessageFilterModel;
+class QMidiMessageFilterFactory;
 class QMidiManagerPrivate;
 
 class QMidiManager : public QObject
@@ -30,16 +30,6 @@ public:
      * Each ports are destroyed, including ports added using addInputPort() and addOutputPort().
      */
     void rescanPorts();
-
-//    /*!
-//     * \brief Rescan MIDI ports
-//     *
-//     * Each ports are destroyed, including ports added using addInputPort() and addOutputPort().
-//     *
-//     * \param inputRemapping Mapping between the old and the new index of each ports
-//     * \param outputRemapping Mapping between the old and the new index of each ports
-//     */
-//    void rescanPorts(QMap<int, int>& inputRemapping, QMap<int, int>& outputRemapping);
 
     /*!
      * \brief Add an input port
@@ -66,9 +56,7 @@ public:
     QMidiPortModel* getInputDeviceModel() const;
     QMidiPortModel* getOutputDeviceModel() const;
     QMidiMessageMatrixModel* getMessageMatrixModel() const;
-
-    void setInputPortEnabled(int const portId, bool const enabled);
-    void setOutputPortEnabled(int const portId, bool const enabled);
+    QMidiMessageFilterFactory* getMessageFilterFactory() const;
 signals:
     void messageReceived(QMidiMessage const& message);
     void messageSent(QMidiMessage const& message);

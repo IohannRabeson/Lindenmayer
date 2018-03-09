@@ -10,6 +10,7 @@
 class QMidiMessageModel;
 class QMidiDeviceModel;
 class QMidiPortModel;
+class QMidiMessageFilterFactory;
 class QMidiMessage;
 class QMidiIn;
 class QMidiManufacturerModel;
@@ -61,6 +62,7 @@ private:
     QMidiManager* const m_midiManager;
     QMidiPortModel* const m_inputPortModel;
     QMidiPortModel* const m_outputPortModel;
+    QMidiMessageFilterFactory* const m_midiMessageFilterFactory;
     QMidiMessageModel* const m_messageModel;
     QItemSelectionModel* const m_messageSelection;
     MidiMessageListView* const m_messageView;
