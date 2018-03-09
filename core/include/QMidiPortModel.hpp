@@ -11,7 +11,7 @@
 class QMidiPortModel : public QAbstractItemModel
 {
     Q_OBJECT
-
+private:
     class AbstractTreeNode;
     class RootTreeNode;
     class MidiInputPortTreeNode;
@@ -58,9 +58,6 @@ public:
     QString getPortName(int const row) const;
 private:
     std::shared_ptr<AbstractTreeNode> getNode(QModelIndex const& index) const;
-
-    template <class Node>
-    static void addPortFilter(std::shared_ptr<Node> const& node, std::shared_ptr<QAbstractMidiMessageFilter> const& filter);
 
     template <class Node>
     static QString getPortName(std::shared_ptr<Node> const& node);

@@ -13,7 +13,7 @@ class MidiMessageFilterNoteOn : public QAbstractMidiMessageFilter
 {
 public:
     MidiMessageFilterNoteOn()
-            : QAbstractMidiMessageFilter("filter on", true)
+    : QAbstractMidiMessageFilter("filter on", true)
     {
     }
 

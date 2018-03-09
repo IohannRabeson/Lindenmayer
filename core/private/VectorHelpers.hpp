@@ -9,6 +9,15 @@
 namespace imp
 {
     template <class T>
+    inline int addToVector(std::vector<T>& vector, T const& value)
+    {
+        int const index = vector.size();
+
+        vector.emplace_back(value);
+        return index;
+    }
+
+    template <class T>
     inline int addToVector(std::vector<T>& vector, T&& value)
     {
         int const index = vector.size();

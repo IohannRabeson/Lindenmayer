@@ -15,6 +15,7 @@ class QMidiPortModel;
 
 class MidiPortTreeView : public QTreeView
 {
+    Q_OBJECT
 public:
     MidiPortTreeView(QMidiPortModel* model, QMidiMessageFilterFactory* filterFactory, QWidget* parent = nullptr);
 protected:
@@ -27,6 +28,7 @@ private:
     void onFilterFactoryResetted();
     void onFilterFactoryRowsInserted(QModelIndex const& parent, int first, int last);
     void onAddFilterActionTriggered(int const filterRow);
+    void onRemoveFilterActionTriggered();
 private:
     QPointer<QMidiPortModel> m_portModel;
     QPointer<QMidiMessageFilterFactory> m_filterFactory;

@@ -23,7 +23,7 @@ void QAbstractMidiOut::addErrorListener(ErrorListener&& listener)
     m_errorListeners.emplace_back(std::move(listener));
 }
 
-int QAbstractMidiOut::addFilter(FilterPointer&& filter)
+int QAbstractMidiOut::addFilter(FilterPointer const& filter)
 {
     return imp::addToVector(m_messageFilters, std::move(filter));
 }

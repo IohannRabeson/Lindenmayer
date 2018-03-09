@@ -18,7 +18,7 @@ class QAbstractMidiIn
 public:
     using ErrorListener = std::function<void(QString const&)>;
     using MessageReceivedCallback = std::function<void(QMidiMessage const&)>;
-    using FilterPointer = std::unique_ptr<QAbstractMidiMessageFilter>;
+    using FilterPointer = std::shared_ptr<QAbstractMidiMessageFilter>;
 
     virtual ~QAbstractMidiIn() = default;
     virtual bool openPort(int const portIndex) = 0;
@@ -35,7 +35,7 @@ public:
     void addErrorListener(ErrorListener&& listener);
     void addMessageReceivedListener(MessageReceivedCallback&& listener);
 
-    int addFilter(FilterPointer&& filter);
+    int addFilter(FilterPointer const& filter);
     void removeFilter(int const filterIndex);
     void clearFilters();
     int filterCount() const;

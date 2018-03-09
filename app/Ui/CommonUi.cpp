@@ -31,6 +31,7 @@ void CommonUi::standardTableView(QTableView* const view, bool const showTopHeade
 
 void CommonUi::standardTreeView(QTreeView* const view, bool const showTopHeader)
 {
+    view->setAnimated(true);
     view->setUniformRowHeights(true);
     view->header()->setStretchLastSection(true);
     view->header()->setVisible(showTopHeader);

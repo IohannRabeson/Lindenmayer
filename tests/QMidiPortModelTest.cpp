@@ -239,13 +239,17 @@ TEST(QMidiPortModelTest, add_port)
     ASSERT_EQ( model.rowCount(), 1 );
 }
 
-TEST(QMidiPortModelTest, add_filter)
+TEST(QMidiPortModelTest, add_filter_on_output)
 {
     using ::testing::NiceMock;
 
     QMidiPortModel model;
     auto const port = std::make_shared<NiceMock<AbstractMidiOutMock>>();
     auto const filter = std::make_shared<NiceMock<AbstractMidiMessageFilterMock>>();
+
+    EXPECT_CALL(*filter, filterMessage(_))
+                .Times(1);
+
     auto const portIndex = model.add(port);
     auto const filterIndex = model.add(portIndex, filter);
 
@@ -253,6 +257,30 @@ TEST(QMidiPortModelTest, add_filter)
     ASSERT_TRUE( filterIndex.isValid() );
     ASSERT_EQ( model.rowCount(), 1 );
     ASSERT_EQ( model.rowCount(portIndex), 1 );
+
+    port->sendMessage(QMidiMessage());
+}
+
+TEST(QMidiPortModelTest, add_filter_on_input)
+{
+    using ::testing::NiceMock;
+
+    QMidiPortModel model;
+    auto const port = std::make_shared<NiceMock<AbstractMidiInMock>>();
+    auto const filter = std::make_shared<NiceMock<AbstractMidiMessageFilterMock>>();
+
+    EXPECT_CALL(*filter, filterMessage(_))
+                .Times(1);
+
+    auto const portIndex = model.add(port);
+    auto const filterIndex = model.add(portIndex, filter);
+
+    ASSERT_TRUE( portIndex.isValid() );
+    ASSERT_TRUE( filterIndex.isValid() );
+    ASSERT_EQ( model.rowCount(), 1 );
+    ASSERT_EQ( model.rowCount(portIndex), 1 );
+
+    port->sendMessageThrough(QMidiMessage());
 }
 
 TEST(QMidiPortModelTest, remove_port)
@@ -280,12 +308,16 @@ TEST(QMidiPortModelTest, remove_port_and_child_filter)
     ASSERT_EQ( model.rowCount(), 0 );
 }
 
-TEST(QMidiPortModelTest, remove_filter_port)
+TEST(QMidiPortModelTest, remove_filter_from_input_port)
 {
     QMidiPortModel model;
 
-    auto const port = std::make_shared<NiceMock<AbstractMidiOutMock>>();
+    auto const port = std::make_shared<NiceMock<AbstractMidiInMock>>();
     auto const filter = std::make_shared<NiceMock<AbstractMidiMessageFilterMock>>();
+
+    EXPECT_CALL(*filter, filterMessage(_))
+                .Times(0);
+
     auto const portIndex = model.add(port);
     auto const filterIndex = model.add(portIndex, filter);
 
@@ -293,6 +325,29 @@ TEST(QMidiPortModelTest, remove_filter_port)
 
     ASSERT_EQ( model.rowCount(), 1 );
     ASSERT_EQ( model.rowCount(portIndex), 0 );
+
+    port->sendMessageThrough(QMidiMessage());
+}
+
+TEST(QMidiPortModelTest, remove_filter_from_output_port)
+{
+    QMidiPortModel model;
+
+    auto const port = std::make_shared<NiceMock<AbstractMidiOutMock>>();
+    auto const filter = std::make_shared<NiceMock<AbstractMidiMessageFilterMock>>();
+
+    EXPECT_CALL(*filter, filterMessage(_))
+                .Times(0);
+
+    auto const portIndex = model.add(port);
+    auto const filterIndex = model.add(portIndex, filter);
+
+    model.remove(filterIndex);
+
+    ASSERT_EQ( model.rowCount(), 1 );
+    ASSERT_EQ( model.rowCount(portIndex), 0 );
+
+    port->sendMessage(QMidiMessage());
 }
 
 TEST(QMidiPortModelTest, remove_invalid)

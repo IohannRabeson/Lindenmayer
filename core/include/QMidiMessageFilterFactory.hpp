@@ -17,6 +17,12 @@ public:
 
     using QAbstractListModel::QAbstractListModel;
 
+    template <class T>
+    void add(QString const& label)
+    {
+        add(label, [](QString const& label) { return std::make_shared<T>(label, true); });
+    }
+
     void add(QString const& label, Creator&& creator);
     int rowCount(QModelIndex const& parent = QModelIndex()) const override;
     QVariant data(const QModelIndex& index, int role) const override;

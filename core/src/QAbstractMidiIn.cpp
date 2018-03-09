@@ -37,7 +37,7 @@ void QAbstractMidiIn::messageReceived(QMidiMessage const& message)
     }
 }
 
-int QAbstractMidiIn::addFilter(FilterPointer&& filter)
+int QAbstractMidiIn::addFilter(FilterPointer const& filter)
 {
     return imp::addToVector(m_messageFilters, std::move(filter));
 }

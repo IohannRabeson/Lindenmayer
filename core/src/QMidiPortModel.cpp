@@ -3,6 +3,7 @@
 //
 
 #include "QMidiPortModel.hpp"
+#include "VectorHelpers.hpp"
 
 /*!
  * \class QMidiInListModel::AbstractTreeNode
@@ -22,6 +23,8 @@ public:
     virtual bool setData(QVariant const& value, int const role) = 0;
     virtual Qt::ItemFlags flags(int const column) const = 0;
     virtual int columnCount() const = 0;
+    virtual void onChildAdded(int const childIndex) {}
+    virtual void onChildRemoved(int const childIndex) {}
 
     NodePtr const& child(int const index) const
     {
@@ -46,7 +49,13 @@ public:
 
             if (oldParentNode)
             {
+                oldParentNode->onChildRemoved(m_childIndex);
                 oldParentNode->m_children.erase(oldParentNode->m_children.begin() + m_childIndex);
+
+                for (int i = m_childIndex; i < oldParentNode->m_children.size(); ++i)
+                {
+                    oldParentNode->m_children[i]->m_childIndex -= 1;
+                }
             }
 
             if (parent)
@@ -58,6 +67,7 @@ public:
                 newChildIndex = newParentChildren.size();
 
                 newParentChildren.push_back(shared_from_this());
+                parent->onChildAdded(newChildIndex);
             }
             m_childIndex = newChildIndex;
             m_parent = parent;
@@ -69,8 +79,26 @@ public:
                   (m_parent.lock() != nullptr && m_childIndex > -1 && m_childIndex < m_parent.lock()->childrenCount()) );
     }
 
+    void removeChild(int const index)
+    {
+        auto const child = m_children.at(index);
+
+        child->setParent(nullptr);
+
+        imp::removeFromVector(m_children, index);
+
+        for (auto i = 0; i < m_children.size(); ++i)
+        {
+            m_children[i]->m_childIndex = i;
+        }
+    }
+
     void destroyChildren()
     {
+        for (auto const& child : m_children)
+        {
+            child->setParent(nullptr);
+        }
         m_children.clear();
     }
 
@@ -81,8 +109,17 @@ public:
 
     int childrenCount() const
     {
-        return m_children.size();
+        return static_cast<int>(m_children.size());
     }
+
+    NodePtr const& getChild(int const index) const
+    {
+        Q_ASSERT( index > -1 );
+        Q_ASSERT( index < m_children.size() );
+
+        return m_children[static_cast<std::size_t>(index)];
+    }
+
 private:
     std::vector<NodePtr> m_children;
     ParentNode m_parent;
@@ -101,9 +138,6 @@ public:
     bool setData(QVariant const& value, int const role) override { return false; }
     Qt::ItemFlags flags(int const) const override { return Qt::NoItemFlags; }
     int columnCount() const override { return 1; }
-
-    std::shared_ptr<MidiInputPortTreeNode> add(std::shared_ptr<QAbstractMidiIn> const& port);
-    std::shared_ptr<MidiOutputPortTreeNode> add(std::shared_ptr<QAbstractMidiOut> const& port);
 };
 
 /*!
@@ -176,7 +210,9 @@ public:
         return result;
     }
 
-    std::shared_ptr<MidiFilterTreeNode> add(std::shared_ptr<QAbstractMidiMessageFilter> const& filter);
+    virtual void onChildAdded(int const childIndex) override;
+
+    virtual void onChildRemoved(int const childIndex) override;
 private:
     std::shared_ptr<QAbstractMidiIn> const m_port;
 };
@@ -195,7 +231,7 @@ public:
     }
 
     AbstractTreeNode::Type type() const override { return AbstractTreeNode::Type::OutputPort; }
-
+    
     QString portName() const
     {
         return m_port->portName();
@@ -251,7 +287,9 @@ public:
         return result;
     }
 
-    std::shared_ptr<MidiFilterTreeNode> add(std::shared_ptr<QAbstractMidiMessageFilter> const& filter);
+    virtual void onChildAdded(int const childIndex) override;
+
+    virtual void onChildRemoved(int const childIndex) override;
 private:
     std::shared_ptr<QAbstractMidiOut> const m_port;
 };
@@ -316,40 +354,54 @@ public:
         }
         return result;
     }
+
+    std::shared_ptr<QAbstractMidiMessageFilter> const& getFilter() const { return m_filter; }
 private:
     std::shared_ptr<QAbstractMidiMessageFilter> const m_filter;
 };
 
-auto QMidiPortModel::RootTreeNode::add(std::shared_ptr<QAbstractMidiIn> const& port) -> std::shared_ptr<MidiInputPortTreeNode>
+void QMidiPortModel::MidiInputPortTreeNode::onChildAdded(int const childIndex)
 {
-    auto const node = std::make_shared<MidiInputPortTreeNode>(port);
+    auto const nodeAdded = getChild(childIndex);
+    auto const filterNode = std::dynamic_pointer_cast<MidiFilterTreeNode>(nodeAdded);
 
-    node->setParent(shared_from_this());
-    return node;
+    if (filterNode)
+    {
+        m_port->addFilter(filterNode->getFilter());
+    }
 }
 
-auto QMidiPortModel::RootTreeNode::add(std::shared_ptr<QAbstractMidiOut> const& port) -> std::shared_ptr<MidiOutputPortTreeNode>
+void QMidiPortModel::MidiInputPortTreeNode::onChildRemoved(int const childIndex)
 {
-    auto const node = std::make_shared<MidiOutputPortTreeNode>(port);
+    auto const nodeAdded = getChild(childIndex);
+    auto const filterNode = std::dynamic_pointer_cast<MidiFilterTreeNode>(nodeAdded);
 
-    node->setParent(shared_from_this());
-    return node;
+    if (filterNode)
+    {
+        m_port->removeFilter(filterNode->childIndex());
+    }
 }
 
-auto QMidiPortModel::MidiInputPortTreeNode::add(std::shared_ptr<QAbstractMidiMessageFilter> const& filter) -> std::shared_ptr<MidiFilterTreeNode>
+void QMidiPortModel::MidiOutputPortTreeNode::onChildAdded(int const childIndex)
 {
-    auto const node = std::make_shared<MidiFilterTreeNode>(filter);
+    auto const nodeAdded = getChild(childIndex);
+    auto const filterNode = std::dynamic_pointer_cast<MidiFilterTreeNode>(nodeAdded);
 
-    node->setParent(shared_from_this());
-    return node;
+    if (filterNode)
+    {
+        m_port->addFilter(filterNode->getFilter());
+    }
 }
 
-auto QMidiPortModel::MidiOutputPortTreeNode::add(std::shared_ptr<QAbstractMidiMessageFilter> const& filter) -> std::shared_ptr<MidiFilterTreeNode>
+void QMidiPortModel::MidiOutputPortTreeNode::onChildRemoved(int const childIndex)
 {
-    auto const node = std::make_shared<MidiFilterTreeNode>(filter);
+    auto const nodeAdded = getChild(childIndex);
+    auto const filterNode = std::dynamic_pointer_cast<MidiFilterTreeNode>(nodeAdded);
 
-    node->setParent(shared_from_this());
-    return node;
+    if (filterNode)
+    {
+        m_port->removeFilter(filterNode->childIndex());
+    }
 }
 
 QMidiPortModel::QMidiPortModel(QObject* parent)
@@ -431,9 +483,10 @@ QModelIndex QMidiPortModel::add(std::shared_ptr<QAbstractMidiIn> const& port)
     Q_ASSERT( port->isPortOpen() );
 
     auto const newRow = m_root->childrenCount();
+    auto const node = std::make_shared<MidiInputPortTreeNode>(port);
 
     beginInsertRows(QModelIndex(), newRow, newRow);
-    m_root->add(port);
+    node->setParent(m_root);
     endInsertRows();
     return index(newRow, 0);
 }
@@ -444,9 +497,10 @@ QModelIndex QMidiPortModel::add(std::shared_ptr<QAbstractMidiOut> const& port)
     Q_ASSERT( port->isPortOpen() );
 
     auto const newRow = m_root->childrenCount();
+    auto const node = std::make_shared<MidiOutputPortTreeNode>(port);
 
     beginInsertRows(QModelIndex(), newRow, newRow);
-    m_root->add(port);
+    node->setParent(m_root);
     endInsertRows();
     return index(newRow, 0);
 }
@@ -461,24 +515,12 @@ QModelIndex QMidiPortModel::add(QModelIndex const& portIndex, std::shared_ptr<QA
     {
         auto const node = getNode(portIndex);
         auto const newRow = node->childrenCount();
+        auto const filterNode = std::make_shared<MidiFilterTreeNode>(filter);
 
-        switch (node->type())
-        {
-            case AbstractTreeNode::Type::InputPort:
-                beginInsertRows(portIndex, newRow, newRow);
-                addPortFilter(std::static_pointer_cast<MidiInputPortTreeNode>(node), filter);
-                endInsertRows();
-                result = index(newRow, 0, portIndex);
-                break;
-            case AbstractTreeNode::Type::OutputPort:
-                beginInsertRows(portIndex, newRow, newRow);
-                addPortFilter(std::static_pointer_cast<MidiOutputPortTreeNode>(node), filter);
-                endInsertRows();
-                result = index(newRow, 0, portIndex);
-                break;
-            default:
-                break;
-        }
+        beginInsertRows(portIndex, newRow, newRow);
+        filterNode->setParent(node);
+        endInsertRows();
+        result = index(newRow, 0, portIndex);
     }
     return result;
 }
@@ -615,12 +657,6 @@ auto QMidiPortModel::getNode(QModelIndex const& index) const -> std::shared_ptr<
     {
         return m_root;
     }
-}
-
-template <class Node>
-void QMidiPortModel::addPortFilter(std::shared_ptr<Node> const& node, std::shared_ptr<QAbstractMidiMessageFilter> const& filter)
-{
-    node->add(filter);
 }
 
 template <class Node>

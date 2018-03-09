@@ -16,7 +16,7 @@ class QAbstractMidiOut
 {
 public:
     using ErrorListener = std::function<void(QString const&)>;
-    using FilterPointer = std::unique_ptr<QAbstractMidiMessageFilter>;
+    using FilterPointer = std::shared_ptr<QAbstractMidiMessageFilter>;
 
     virtual bool openPort(int const portIndex) = 0;
     virtual void closePort() = 0;
@@ -30,7 +30,7 @@ public:
 
     void addErrorListener(ErrorListener&& listener);
 
-    int addFilter(FilterPointer&& filter);
+    int addFilter(FilterPointer const& filter);
     void removeFilter(int const filterIndex);
     void clearFilters();
     int filterCount() const;

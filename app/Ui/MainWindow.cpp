@@ -48,6 +48,31 @@ namespace
     }
 }
 
+#include <QAbstractMidiMessageFilter.hpp>
+#include <QMidiMessageFilterFactory.hpp>
+
+class FilterNoteOn : public QAbstractMidiMessageFilter
+{
+public:
+    using QAbstractMidiMessageFilter::QAbstractMidiMessageFilter;
+
+    bool filterMessage(QMidiMessage const& message) const override
+    {
+        return message.type() == QMidiMessage::Type::NoteOn;
+    }
+};
+
+class FilterNoteOff : public QAbstractMidiMessageFilter
+{
+public:
+    using QAbstractMidiMessageFilter::QAbstractMidiMessageFilter;
+
+    bool filterMessage(QMidiMessage const& message) const override
+    {
+        return message.type() == QMidiMessage::Type::NoteOff;
+    }
+};
+
 MainWindow::MainWindow(QWidget* parent)
 : QMainWindow(parent)
 , m_trayIcon(new QSystemTrayIcon(this))
@@ -70,6 +95,10 @@ MainWindow::MainWindow(QWidget* parent)
 , m_actionSwitchAutoScrollToBottom(new QAction(QIcon(":/Images/Resources/Icons/ScrollDown.png"), tr("Auto scrolling"), this))
 , m_actionRestoreWindow(new QAction(tr("Show"), this))
 {
+    // Test - TODO: remove
+    m_midiMessageFilterFactory->add<FilterNoteOn>("Note On");
+    m_midiMessageFilterFactory->add<FilterNoteOff>("Note Off");
+
     setupUi();
     setupMIDI();
     setupActions();
