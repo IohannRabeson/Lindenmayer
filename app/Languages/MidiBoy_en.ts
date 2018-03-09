@@ -322,7 +322,7 @@ Are you sure you want to do that?</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Ui/Views/MidiPortTreeView.cpp" line="117"/>
+        <location filename="../Ui/Views/MidiPortTreeView.cpp" line="119"/>
         <source>Add filter</source>
         <translation type="unfinished"></translation>
     </message>

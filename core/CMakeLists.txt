@@ -2,7 +2,7 @@ set(QMIDIBOY_CORE_PRIVATE
     private/MidiMessageFilterHelpers.hpp
     private/VectorHelpers.hpp
     private/ListenerHelpers.hpp
-)
+        private/MidiPortModelPrivate.hpp private/MidiPortModelPrivate.cpp)
 
 set(QMIDIBOY_CORE_SOURCES
     src/QMidiIn.cpp

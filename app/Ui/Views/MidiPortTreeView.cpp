@@ -113,6 +113,8 @@ void MidiPortTreeView::onRemoveFilterActionTriggered()
 
 void MidiPortTreeView::contextMenuEvent(QContextMenuEvent* event)
 {
+    // Produce memory leaks on OSX: it seems the cocoa code behind
+    // produce a leak repeatedly...
     QMenu menu(this);
     QMenu* const addFilterSubmenu = menu.addMenu(tr("Add filter"));
 

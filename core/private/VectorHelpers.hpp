@@ -35,4 +35,5 @@ namespace imp
         }
     }
 }
+
 #endif //MIDIMONITOR_VECTORHELPERS_HPP
