@@ -81,7 +81,7 @@ void QMidiManagerPrivate::resetMidiInPorts()
 
     if (m_midiIns.empty())
     {
-        qWarning() << "[MidiMonitor]: No midi inputs";
+        qWarning() << "[MidiMonitor]: No physical midi inputs";
     }
     else
     {
@@ -106,7 +106,7 @@ void QMidiManagerPrivate::resetMidiOutPorts()
 
     if (m_midiOuts.empty())
     {
-        qWarning() << "[MidiMonitor]: No midi outputs";
+        qWarning() << "[MidiMonitor]: No physical midi outputs";
     }
 }
 
