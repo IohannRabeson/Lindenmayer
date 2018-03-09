@@ -17,7 +17,7 @@
 #include <QCommandLineParser>
 #include <QtDebug>
 
-#include "MainWindow.hpp"
+#include "Ui/MainWindow.hpp"
 #include "Translators/TranslatorManager.hpp"
 #include <Qool/LogManager.hpp>
 #include <Qool/StyleFactory.hpp>

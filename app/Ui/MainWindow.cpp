@@ -4,25 +4,24 @@
 
 #include "MainWindow.hpp"
 
-#include "Ui/Widgets/Views/MidiMessageListView.hpp"
-#include "Ui/Widgets/Views/MidiPortTreeView.hpp"
+#include "Ui/Views/MidiMessageListView.hpp"
+#include "Ui/Views/MidiPortTreeView.hpp"
 
 #include "Ui/CommonUi.hpp"
-#include "Ui/Widgets/Dialogs/AboutMidiMonitorDialog.hpp"
+#include "Ui/Dialogs/AboutMidiMonitorDialog.hpp"
 #include "Ui/SettingsUtils.hpp"
 
 #include "Ui/Delegates/MidiDelegates.hpp"
 
-#include "Ui/Widgets/Widgets/MidiNoteTriggerWidget.hpp"
-#include "Ui/Widgets/Widgets/MidiKeyboardWidget.hpp"
-#include "Ui/Widgets/Widgets/MidiMatrixWidget.hpp"
+#include "Ui/Widgets/MidiNoteTriggerWidget.hpp"
+#include "Ui/Widgets/MidiKeyboardWidget.hpp"
+#include "Ui/Widgets/MidiMatrixWidget.hpp"
 
 #include <QToolBar>
 #include <QMenuBar>
 #include <QLineEdit>
 #include <QStylePainter>
 #include <QMessageBox>
-#include <QTableView>
 #include <QSystemTrayIcon>
 
 #include <QtDebug>
