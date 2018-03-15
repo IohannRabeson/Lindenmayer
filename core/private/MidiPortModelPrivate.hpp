@@ -6,6 +6,9 @@
 #define MIDIMONITOR_MIDIPORTMODELPRIVATE_HPP
 
 #include "QMidiPortModel.hpp"
+#include "QAbstractMidiIn.hpp"
+#include "QAbstractMidiOut.hpp"
+#include "QAbstractMidiMessageFilter.hpp"
 #include "VectorHelpers.hpp"
 
 /*!
@@ -22,8 +25,8 @@ public:
     virtual ~AbstractTreeNode() = default;
 
     virtual Type type() const = 0;
-    virtual QVariant data(int const role) const = 0;
-    virtual bool setData(QVariant const& value, int const role) = 0;
+    virtual QVariant data(int const column, int const role) const = 0;
+    virtual bool setData(int const column, QVariant const& value, int const role) = 0;
     virtual Qt::ItemFlags flags(int const column) const = 0;
     virtual int columnCount() const = 0;
 
@@ -62,10 +65,10 @@ class QMidiPortModel::RootTreeNode : public AbstractTreeNode
 {
 public:
     AbstractTreeNode::Type type() const override { return AbstractTreeNode::Type::Invalid; }
-    QVariant data(int const /*role*/) const override { return QVariant(); }
-    bool setData(QVariant const& /*value*/, int const /*role*/) override { return false; }
+    QVariant data(int const /*column*/, int const /*role*/) const override { return QVariant(); }
+    bool setData(int const /*column*/, QVariant const& /*value*/, int const /*role*/) override { return false; }
     Qt::ItemFlags flags(int const /*column*/) const override { return Qt::NoItemFlags; }
-    int columnCount() const override { return 1; }
+    int columnCount() const override { return 2; }
 };
 
 /*!
@@ -88,8 +91,8 @@ public:
         return Qt::ItemIsSelectable | Qt::ItemIsUserCheckable | Qt::ItemIsEnabled;
     }
 
-    QVariant data(int const role) const override;
-    bool setData(QVariant const& value, int const role) override;
+    QVariant data(int const column, int const role) const override;
+    bool setData(int const column, QVariant const& value, int const role) override;
 private:
     virtual void onChildAdded(int const childIndex) override;
     virtual void onChildRemoved(int const childIndex) override;
@@ -124,8 +127,8 @@ public:
         return Qt::ItemIsSelectable | Qt::ItemIsUserCheckable | Qt::ItemIsEnabled;
     }
 
-    QVariant data(int const role) const override;
-    bool setData(QVariant const& value, int const role) override;
+    QVariant data(int const column, int const role) const override;
+    bool setData(int const column, QVariant const& value, int const role) override;
 private:
     virtual void onChildAdded(int const childIndex) override;
     virtual void onChildRemoved(int const childIndex) override;
@@ -140,26 +143,45 @@ private:
 class QMidiPortModel::MidiFilterTreeNode : public AbstractTreeNode
 {
 public:
-    explicit MidiFilterTreeNode(std::shared_ptr<QAbstractMidiMessageFilter> const& filter)
-    : m_filter(filter)
-    {
-    }
+    explicit MidiFilterTreeNode(std::shared_ptr<QAbstractMidiMessageFilter> const& filter);
 
     AbstractTreeNode::Type type() const override { return AbstractTreeNode::Type::Filter; }
 
     int columnCount() const override { return 1; }
 
-    Qt::ItemFlags flags(int const) const override
-    {
-        return Qt::ItemIsSelectable | Qt::ItemIsUserCheckable | Qt::ItemIsEnabled;
-    }
+    Qt::ItemFlags flags(int const column) const override;
 
-    QVariant data(int const role) const override;
-    bool setData(QVariant const& value, int const role) override;
+    QVariant data(int const column, int const role) const override;
+    bool setData(int const column, QVariant const& value, int const role) override;
 
     std::shared_ptr<QAbstractMidiMessageFilter> const& getFilter() const { return m_filter; }
 private:
     std::shared_ptr<QAbstractMidiMessageFilter> const m_filter;
+};
+
+class QMidiPortModel::MidiFilterPropertyTreeNode : public AbstractTreeNode
+{
+    enum Columns
+    {
+        Name = 0,
+        Value,
+        ColumnCount
+    };
+public:
+    MidiFilterPropertyTreeNode(std::shared_ptr<Parametrable> const& parametrable, std::size_t const index)
+    : m_parametrable(parametrable)
+    , m_propertyIndex(index)
+    {
+    }
+
+    Type type() const override;
+    QVariant data(int const column, const int role) const override;
+    bool setData(int const column, const QVariant &value, const int role) override;
+    Qt::ItemFlags flags(const int column) const override;
+    int columnCount() const override;
+private:
+    std::shared_ptr<Parametrable> const m_parametrable;
+    std::size_t const m_propertyIndex;
 };
 
 #endif //MIDIMONITOR_MIDIPORTMODELPRIVATE_HPP

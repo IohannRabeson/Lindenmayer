@@ -53,15 +53,18 @@ void QMidiPortModel::AbstractTreeNode::setParent(NodePtr const& parent)
 
 void QMidiPortModel::AbstractTreeNode::removeChild(int const index)
 {
-    auto const child = m_children.at(index);
+    Q_ASSERT( index > -1 );
+    Q_ASSERT( index < static_cast<int>(m_children.size()) );
+
+    auto const child = m_children[static_cast<std::size_t>(index)];
 
     child->setParent(nullptr);
 
     imp::removeFromVector(m_children, index);
 
-    for (auto i = 0; i < m_children.size(); ++i)
+    for (auto i = 0u; i < m_children.size(); ++i)
     {
-        m_children[i]->m_childIndex = i;
+        m_children[i]->m_childIndex = static_cast<int>(i);
     }
 }
 
@@ -98,7 +101,7 @@ auto QMidiPortModel::AbstractTreeNode::child(int const index) const -> NodePtr c
 }
 
 //
-// class MidiFilterTreeNode
+// class MidiInputPortTreeNode
 //
 
 QMidiPortModel::MidiInputPortTreeNode::MidiInputPortTreeNode(const std::shared_ptr<QAbstractMidiIn> &port)
@@ -107,46 +110,54 @@ QMidiPortModel::MidiInputPortTreeNode::MidiInputPortTreeNode(const std::shared_p
     Q_ASSERT(m_port != nullptr);
 }
 
-QVariant QMidiPortModel::MidiInputPortTreeNode::data(const int role) const
+QVariant QMidiPortModel::MidiInputPortTreeNode::data(int const column, int const role) const
 {
     QVariant result;
 
-    switch (role)
+    if (column == 0)
     {
-    case Roles::Name:
-        result = portName();
-        break;
-    case Roles::Index:
-        result = m_port->portOpened();
-        break;
-    case Roles::Checked:
-        result = m_port->isPortEnabled() ? Qt::Checked : Qt::Unchecked;
-        break;
-    default:
-        break;
+        switch (role)
+        {
+        case Qt::DisplayRole:
+            result = portName();
+            break;
+        case Qt::UserRole:
+            result = m_port->portOpened();
+            break;
+        case Qt::CheckStateRole:
+            result = m_port->isPortEnabled() ? Qt::Checked : Qt::Unchecked;
+            break;
+        default:
+            break;
+        }
     }
+
     return result;
 }
 
-bool QMidiPortModel::MidiInputPortTreeNode::setData(const QVariant &value, const int role)
+bool QMidiPortModel::MidiInputPortTreeNode::setData(int const column, QVariant const& value, const int role)
 {
     bool result = false;
 
-    switch (role)
+    if (column == 0)
     {
-    case Qt::CheckStateRole:
-    {
-        auto const checked = (value.value<Qt::CheckState>() == Qt::Checked);
-
-        if (checked != m_port->isPortEnabled())
+        switch (role)
         {
-            m_port->setPortEnabled(checked);
-            result = true;
+        case Qt::CheckStateRole:
+            {
+                auto const checked = (value.value<Qt::CheckState>() == Qt::Checked);
+
+                if (checked != m_port->isPortEnabled())
+                {
+                    m_port->setPortEnabled(checked);
+                    result = true;
+                }
+            }
+        default:
+            break;
         }
     }
-    default:
-        break;
-    }
+
     return result;
 }
 
@@ -172,46 +183,58 @@ void QMidiPortModel::MidiInputPortTreeNode::onChildRemoved(int const childIndex)
     }
 }
 
-QVariant QMidiPortModel::MidiOutputPortTreeNode::data(const int role) const
+//
+// class MidiInputPortTreeNode
+//
+
+QVariant QMidiPortModel::MidiOutputPortTreeNode::data(int const column, int const role) const
 {
     QVariant result;
 
-    switch (role)
+    if (column == 0)
     {
-    case Roles::Name:
-        result = portName();
-        break;
-    case Roles::Index:
-        result = m_port->portOpened();
-        break;
-    case Roles::Checked:
-        result = m_port->isPortEnabled() ? Qt::Checked : Qt::Unchecked;
-        break;
-    default:
-        break;
+        switch (role)
+        {
+        case Qt::DisplayRole:
+            result = portName();
+            break;
+        case Qt::UserRole:
+            result = m_port->portOpened();
+            break;
+        case Qt::CheckStateRole:
+            result = m_port->isPortEnabled() ? Qt::Checked : Qt::Unchecked;
+            break;
+        default:
+            break;
+        }
     }
+
     return result;
 }
 
-bool QMidiPortModel::MidiOutputPortTreeNode::setData(const QVariant &value, const int role)
+bool QMidiPortModel::MidiOutputPortTreeNode::setData(int const column, QVariant const& value, int const role)
 {
     bool result = false;
 
-    switch (role)
+    if (column == 0)
     {
-    case Qt::CheckStateRole:
-    {
-        auto const checked = (value.value<Qt::CheckState>() == Qt::Checked);
-
-        if (checked != m_port->isPortEnabled())
+        switch (role)
         {
-            m_port->setPortEnabled(checked);
-            result = true;
+        case Qt::CheckStateRole:
+        {
+            auto const checked = (value.value<Qt::CheckState>() == Qt::Checked);
+
+            if (checked != m_port->isPortEnabled())
+            {
+                m_port->setPortEnabled(checked);
+                result = true;
+            }
+        }
+        default:
+            break;
         }
     }
-    default:
-        break;
-    }
+
     return result;
 }
 
@@ -237,42 +260,137 @@ void QMidiPortModel::MidiOutputPortTreeNode::onChildRemoved(int const childIndex
     }
 }
 
-QVariant QMidiPortModel::MidiFilterTreeNode::data(const int role) const
+//
+// class MidiFilterTreeNode
+//
+
+QMidiPortModel::MidiFilterTreeNode::MidiFilterTreeNode(std::shared_ptr<QAbstractMidiMessageFilter> const& filter)
+: m_filter(filter)
+{
+}
+
+Qt::ItemFlags QMidiPortModel::MidiFilterTreeNode::flags(int const column) const
+{
+    Qt::ItemFlags flags = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+
+    if (column == 0)
+    {
+        flags |= Qt::ItemIsUserCheckable;
+    }
+
+    return flags;
+}
+
+QVariant QMidiPortModel::MidiFilterTreeNode::data(int const column, int const role) const
 {
     QVariant result;
 
-    switch (role)
+    if (column == 0)
     {
-    case Roles::Name:
-        result = m_filter->name();
+        switch (role)
+        {
+        case Qt::DisplayRole:
+            result = m_filter->name();
+            break;
+        case Qt::CheckStateRole:
+            result = m_filter->isEnabled() ? Qt::Checked : Qt::Unchecked;
+            break;
+        default:
+            break;
+        }
+    }
+
+    return result;
+}
+
+bool QMidiPortModel::MidiFilterTreeNode::setData(int const column, QVariant const& value, int const role)
+{
+    bool result = false;
+
+    if (column == 0)
+    {
+        switch (role)
+        {
+        case Qt::CheckStateRole:
+        {
+            auto const checked = (value.value<Qt::CheckState>() == Qt::Checked);
+
+            if (checked != m_filter->isEnabled())
+            {
+                m_filter->setEnabled(checked);
+                result = true;
+            }
+        }
+        default:
+            break;
+        }
+    }
+
+    return result;
+}
+
+//
+// class MidiFilterPropertyTreeNode
+//
+
+auto QMidiPortModel::MidiFilterPropertyTreeNode::type() const -> Type
+{
+    return Type::Parameter;
+}
+
+QVariant QMidiPortModel::MidiFilterPropertyTreeNode::data(int const column, int const role) const
+{
+    QVariant result;
+
+    switch (column)
+    {
+    case Columns::Name:
+        switch (role)
+        {
+        case Qt::DisplayRole:
+            result = m_parametrable->name(m_propertyIndex);
+            break;
+        case Qt::ToolTipRole:
+            result = m_parametrable->tooltip(m_propertyIndex);
+            break;
+        }
         break;
-    case Roles::Checked:
-        result = m_filter->isEnabled() ? Qt::Checked : Qt::Unchecked;
+    case Columns::Value:
+        if (role == Qt::DisplayRole)
+        {
+            result = m_parametrable->getValue(m_propertyIndex);
+        }
         break;
     default:
         break;
+    }
+
+    return result;
+}
+
+bool QMidiPortModel::MidiFilterPropertyTreeNode::setData(int const column, QVariant const& value, int const role)
+{
+    bool result = false;
+
+    if (column == Columns::Value && role == Qt::EditRole)
+    {
+        result = m_parametrable->setValue(m_propertyIndex, value);
     }
     return result;
 }
 
-bool QMidiPortModel::MidiFilterTreeNode::setData(const QVariant &value, const int role)
+Qt::ItemFlags QMidiPortModel::MidiFilterPropertyTreeNode::flags(int const column) const
 {
-    bool result = false;
+    Qt::ItemFlags result = Qt::ItemIsEnabled | Qt::ItemIsSelectable;
 
-    switch (role)
+    if (column == Columns::Value)
     {
-    case Qt::CheckStateRole:
-    {
-        auto const checked = (value.value<Qt::CheckState>() == Qt::Checked);
-
-        if (checked != m_filter->isEnabled())
-        {
-            m_filter->setEnabled(checked);
-            result = true;
-        }
-    }
-    default:
-        break;
+        result |= Qt::ItemIsEditable;
     }
     return result;
+}
+
+int QMidiPortModel::MidiFilterPropertyTreeNode::columnCount() const
+{
+    return ColumnCount;
 }

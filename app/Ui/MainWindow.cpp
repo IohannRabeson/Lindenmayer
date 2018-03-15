@@ -51,6 +51,40 @@ namespace
 #include <QAbstractMidiMessageFilter.hpp>
 #include <QMidiMessageFilterFactory.hpp>
 
+class FilterByType : public QAbstractMidiMessageFilter
+{
+public:
+    explicit FilterByType(QString const& label)
+    : QAbstractMidiMessageFilter(label)
+    {
+        addParameter(QObject::tr("Message type"), "",
+                     [this](QVariant const& value)
+        {
+            auto const newType = value.value<QMidiMessage::Type>();
+            auto const changed = m_type != newType;
+
+            m_type = newType;
+            return changed;
+        },
+                     [this]() -> QVariant
+        {
+            return QVariant::fromValue(m_type);
+        });
+    }
+
+    bool filterMessage(QMidiMessage const& message) const override
+    {
+        return message.type() == m_type;
+    }
+
+    void setMessageType(QMidiMessage::Type const type)
+    {
+        m_type = type;
+    }
+private:
+    QMidiMessage::Type m_type = QMidiMessage::Type::NoteOn;
+};
+
 class FilterNoteOn : public QAbstractMidiMessageFilter
 {
 public:
@@ -98,6 +132,7 @@ MainWindow::MainWindow(QWidget* parent)
     // Test - TODO: remove
     m_midiMessageFilterFactory->add<FilterNoteOn>("Note On");
     m_midiMessageFilterFactory->add<FilterNoteOff>("Note Off");
+    m_midiMessageFilterFactory->add<FilterByType>("Filter by type");
 
     setupUi();
     setupMIDI();
@@ -162,12 +197,12 @@ void MainWindow::setupUi()
     // Setup message view
     m_messageView->setModel(m_messageModel);
     m_messageView->setSelectionModel(m_messageSelection);
-    m_messageView->setItemDelegateForColumn(QMidiMessageModel::Columns::Type, new MidiMessageTypeDelegate(this));
-    m_messageView->setItemDelegateForColumn(QMidiMessageModel::Columns::Input, new MidiInPortDelegate(m_inputPortModel, this));
-    m_messageView->setItemDelegateForColumn(QMidiMessageModel::Columns::Channel, new MidiChannelDelegate(this));
-    m_messageView->setItemDelegateForColumn(QMidiMessageModel::Columns::Timestamp, new MidiTimeDelegate(this));
-    m_messageView->setItemDelegateForColumn(QMidiMessageModel::Columns::Value, new MidiValueDelegate(m_messageModel, m_manufacturerModel, this));
-    m_messageView->setItemDelegateForColumn(QMidiMessageModel::Columns::Data, new MidiDataDelegate(m_messageModel, this));
+    m_messageView->setItemDelegateForColumn(QMidiMessageModel::Columns::Type, new MidiMessageDelegates::MidiMessageTypeDelegate(this));
+    m_messageView->setItemDelegateForColumn(QMidiMessageModel::Columns::Input, new MidiMessageDelegates::MidiInPortDelegate(m_inputPortModel, this));
+    m_messageView->setItemDelegateForColumn(QMidiMessageModel::Columns::Channel, new MidiMessageDelegates::MidiChannelDelegate(this));
+    m_messageView->setItemDelegateForColumn(QMidiMessageModel::Columns::Timestamp, new MidiMessageDelegates::MidiTimeDelegate(this));
+    m_messageView->setItemDelegateForColumn(QMidiMessageModel::Columns::Value, new MidiMessageDelegates::MidiValueDelegate(m_messageModel, m_manufacturerModel, this));
+    m_messageView->setItemDelegateForColumn(QMidiMessageModel::Columns::Data, new MidiMessageDelegates::MidiDataDelegate(m_messageModel, this));
     setCentralWidget(m_messageView);
 
     // Setup MIDI input port view

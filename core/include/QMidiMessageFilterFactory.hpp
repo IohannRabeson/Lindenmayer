@@ -20,7 +20,7 @@ public:
     template <class T>
     void add(QString const& label)
     {
-        add(label, [](QString const& label) { return std::make_shared<T>(label, true); });
+        add(label, [](QString const& label) { return std::make_shared<T>(label); });
     }
 
     void add(QString const& label, Creator&& creator);

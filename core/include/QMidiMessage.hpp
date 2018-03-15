@@ -58,7 +58,7 @@ public:
         Reset
     };
 
-    Q_ENUM(Type);
+    Q_ENUM(Type)
 
     QMidiMessage();
     explicit QMidiMessage(Bytes const& bytes, int port = -1, TimePoint const timestamp = now());

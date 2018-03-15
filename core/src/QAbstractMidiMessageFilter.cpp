@@ -4,9 +4,9 @@
 
 #include "QAbstractMidiMessageFilter.hpp"
 
-QAbstractMidiMessageFilter::QAbstractMidiMessageFilter(QString const& name, bool const enabled)
+QAbstractMidiMessageFilter::QAbstractMidiMessageFilter(QString const& name)
 : m_name(name)
-, m_enabled(enabled)
+, m_enabled(true)
 {
 }
 
@@ -20,11 +20,6 @@ QString const& QAbstractMidiMessageFilter::name() const
     return m_name;
 }
 
-void QAbstractMidiMessageFilter::setupWidget()
-{
-    m_widget = instanciateWidget();
-}
-
 void QAbstractMidiMessageFilter::setEnabled(bool const enabled)
 {
     m_enabled = enabled;
@@ -35,12 +30,4 @@ bool QAbstractMidiMessageFilter::isEnabled() const
     return m_enabled;
 }
 
-std::unique_ptr<QWidget> const& QAbstractMidiMessageFilter::getWidget() const
-{
-    return m_widget;
-}
 
-std::unique_ptr<QWidget> QAbstractMidiMessageFilter::instanciateWidget()
-{
-    return std::unique_ptr<QWidget>{};
-}

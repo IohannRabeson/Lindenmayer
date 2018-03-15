@@ -30,10 +30,7 @@ QVariant QMidiPortModel::data(QModelIndex const& index, int role) const
     {
         auto const node = getNode(index);
 
-        if (index.column() < node->columnCount())
-        {
-            result = node->data(role);
-        }
+        result = node->data(index.column(), role);
     }
     return result;
 }
@@ -43,6 +40,23 @@ void QMidiPortModel::clear()
     beginResetModel();
     m_root->destroyChildren();
     endResetModel();
+}
+
+QVariant QMidiPortModel::headerData(int section, Qt::Orientation orientation, int role) const
+{
+    static QStringList const ColumnLabels =
+    {
+        tr("Name"),
+        tr("Value")
+    };
+
+    QVariant result;
+
+    if (role == Qt::DisplayRole && orientation == Qt::Horizontal)
+    {
+        result = ColumnLabels.value(section);
+    }
+    return result;
 }
 
 void QMidiPortModel::reset(Loader&& loader)
@@ -121,6 +135,14 @@ QModelIndex QMidiPortModel::add(QModelIndex const& portIndex, std::shared_ptr<QA
 
         beginInsertRows(portIndex, newRow, newRow);
         filterNode->setParent(node);
+
+        for (auto i = 0u; i < filterNode->getFilter()->parameterCount(); ++i)
+        {
+            auto const paramNode = std::make_shared<MidiFilterPropertyTreeNode>(filter, i);
+
+            paramNode->setParent(filterNode);
+        }
+
         endInsertRows();
         result = index(newRow, 0, portIndex);
     }
@@ -192,7 +214,7 @@ bool QMidiPortModel::setData(const QModelIndex& index, const QVariant& value, in
     {
         auto const node = getNode(index);
 
-        if (node && index.column() < node->columnCount() && node->setData(value, role))
+        if (node && node->setData(index.column(), value, role))
         {
             emit dataChanged(index, index);
             result = true;

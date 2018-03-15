@@ -4,9 +4,11 @@
 
 #ifndef MIDIMONITOR_QMIDIPORTMODEL_HPP
 #define MIDIMONITOR_QMIDIPORTMODEL_HPP
-#include "QAbstractMidiIn.hpp"
-#include "QAbstractMidiOut.hpp"
 #include <QAbstractItemModel>
+
+class QAbstractMidiIn;
+class QAbstractMidiOut;
+class QAbstractMidiMessageFilter;
 
 class QMidiPortModel : public QAbstractItemModel
 {
@@ -17,20 +19,15 @@ private:
     class MidiInputPortTreeNode;
     class MidiOutputPortTreeNode;
     class MidiFilterTreeNode;
+    class MidiFilterPropertyTreeNode;
 public:
-    enum Roles
-    {
-        Name = Qt::DisplayRole,
-        Index = Qt::UserRole,
-        Checked = Qt::CheckStateRole
-    };
-
     enum class ItemType
     {
         Invalid,
         InputPort,
         OutputPort,
-        Filter
+        Filter,
+        Parameter
     };
 
     using Loader = std::function<void(std::shared_ptr<RootTreeNode>&)>;
@@ -46,6 +43,7 @@ public:
     void remove(QModelIndex const& index);
     void clear();
 
+    QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
     QVariant data(const QModelIndex& index, int role) const override;
     bool setData(const QModelIndex& index, const QVariant& value, int role) override;
     Qt::ItemFlags flags(QModelIndex const& index) const override;
@@ -65,4 +63,4 @@ private:
     std::shared_ptr<RootTreeNode> m_root;
 };
 
-#endif //MIDIMONITOR_QMIDIINLISTMODEL_HPP
+#endif // MIDIMONITOR_QMIDIPORTMODEL_HPP

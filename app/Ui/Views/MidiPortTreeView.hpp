@@ -29,12 +29,22 @@ private:
     void onFilterFactoryRowsInserted(QModelIndex const& parent, int first, int last);
     void onAddFilterActionTriggered(int const filterRow);
     void onRemoveFilterActionTriggered();
+
+    class ValueColumnDelegate;
 private:
     QPointer<QMidiPortModel> m_portModel;
     QPointer<QMidiMessageFilterFactory> m_filterFactory;
     QSignalMapper* const m_filterSelectorSignalMapper;
     QList<QAction*> m_actionAddFilters;
     QAction* const m_actionRemoveFilter;
+};
+
+#include <QStyledItemDelegate>
+
+class MidiPortTreeView::ValueColumnDelegate : public QStyledItemDelegate
+{
+public:
+    using QStyledItemDelegate::QStyledItemDelegate;
 };
 
 #endif //MIDIMONITOR_MIDIPORTTREEVIEW_HPP

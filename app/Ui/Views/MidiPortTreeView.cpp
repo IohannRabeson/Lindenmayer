@@ -45,14 +45,21 @@ MidiPortTreeView::MidiPortTreeView(QMidiPortModel* portModel, QMidiMessageFilter
 , m_filterSelectorSignalMapper(new QSignalMapper(this))
 , m_actionRemoveFilter(new QAction(tr("Remove"), this))
 {
-    CommonUi::standardTreeView(this, false);
+    CommonUi::standardTreeView(this, true);
 
-    setExpandsOnDoubleClick(true);
     setModel(portModel);
+
     connect(m_filterFactory, &QMidiMessageFilterFactory::modelReset, this, &MidiPortTreeView::onFilterFactoryResetted);
     connect(m_filterFactory, &QMidiMessageFilterFactory::rowsInserted, this, &MidiPortTreeView::onFilterFactoryRowsInserted);
     connect(m_filterSelectorSignalMapper, qOverload<int>(&QSignalMapper::mapped), this, &MidiPortTreeView::onAddFilterActionTriggered);
     connect(m_actionRemoveFilter, &QAction::triggered, this, &MidiPortTreeView::onRemoveFilterActionTriggered);
+
+    setRootIsDecorated(true);
+    setExpandsOnDoubleClick(true);
+    setItemDelegateForColumn(1, new ValueColumnDelegate(this));
+    setSelectionMode(QTreeView::SelectionMode::SingleSelection);
+    setSelectionBehavior(QTreeView::SelectionBehavior::SelectRows);
+
     onFilterFactoryResetted();
 }
 
@@ -117,10 +124,11 @@ void MidiPortTreeView::contextMenuEvent(QContextMenuEvent* event)
     // produce a leak repeatedly...
     QMenu menu(this);
     QMenu* const addFilterSubmenu = menu.addMenu(tr("Add filter"));
+    auto const currentCanHaveFilter = getCurrentPortIndex(this, m_portModel).isValid();
 
     updateActions();
 
-    addFilterSubmenu->setEnabled(!m_actionAddFilters.isEmpty());
+    addFilterSubmenu->setEnabled(!m_actionAddFilters.isEmpty() && currentCanHaveFilter);
     addFilterSubmenu->addActions(m_actionAddFilters);
     menu.addAction(m_actionRemoveFilter);
     menu.exec(event->globalPos());

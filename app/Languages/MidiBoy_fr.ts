@@ -98,95 +98,95 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../Ui/MainWindow.cpp" line="92"/>
+        <location filename="../Ui/MainWindow.cpp" line="126"/>
         <source>Quit</source>
         <translation>Quitter</translation>
     </message>
     <message>
-        <location filename="../Ui/MainWindow.cpp" line="93"/>
+        <location filename="../Ui/MainWindow.cpp" line="127"/>
         <source>Clear all</source>
         <translation>Supprimer tout</translation>
     </message>
     <message>
-        <location filename="../Ui/MainWindow.cpp" line="94"/>
+        <location filename="../Ui/MainWindow.cpp" line="128"/>
         <source>About...</source>
         <translation>A propos...</translation>
     </message>
     <message>
-        <location filename="../Ui/MainWindow.cpp" line="95"/>
+        <location filename="../Ui/MainWindow.cpp" line="129"/>
         <source>Auto scrolling</source>
         <translatorcomment>TODO: améliorer cette traduction</translatorcomment>
         <translation>Scrolling automatique</translation>
     </message>
     <message>
-        <location filename="../Ui/MainWindow.cpp" line="96"/>
+        <location filename="../Ui/MainWindow.cpp" line="130"/>
         <source>Show</source>
         <translation>Montrer</translation>
     </message>
     <message>
-        <location filename="../Ui/MainWindow.cpp" line="133"/>
+        <location filename="../Ui/MainWindow.cpp" line="168"/>
         <source>Clear messages</source>
         <translation>Supprimer les messages</translation>
     </message>
     <message>
-        <location filename="../Ui/MainWindow.cpp" line="134"/>
+        <location filename="../Ui/MainWindow.cpp" line="169"/>
         <source>Messages can lost their input port information.
 Are you sure you want to do that?</source>
         <translation>Les messages peuvent perdre les informations a propos des ports d&apos;entrée.
 Etes-vous sûr de vouloir faire ça?</translation>
     </message>
     <message>
-        <location filename="../Ui/MainWindow.cpp" line="177"/>
+        <location filename="../Ui/MainWindow.cpp" line="212"/>
         <source>MIDI Inputs</source>
         <translation>Entrées MIDI</translation>
     </message>
     <message>
-        <location filename="../Ui/MainWindow.cpp" line="183"/>
+        <location filename="../Ui/MainWindow.cpp" line="218"/>
         <source>MIDI Outputs</source>
         <translation>Sorties MIDI</translation>
     </message>
     <message>
-        <location filename="../Ui/MainWindow.cpp" line="186"/>
+        <location filename="../Ui/MainWindow.cpp" line="221"/>
         <source>MIDI Note Trigger</source>
         <translation>Déclencheur de note MIDI</translation>
     </message>
     <message>
-        <location filename="../Ui/MainWindow.cpp" line="189"/>
+        <location filename="../Ui/MainWindow.cpp" line="224"/>
         <source>MIDI Keyboard</source>
         <translation>Clavier MIDI</translation>
     </message>
     <message>
-        <location filename="../Ui/MainWindow.cpp" line="195"/>
+        <location filename="../Ui/MainWindow.cpp" line="230"/>
         <source>MIDI Message Matrix</source>
         <translation>Matrice de message MIDI</translation>
     </message>
     <message>
-        <location filename="../Ui/MainWindow.cpp" line="204"/>
+        <location filename="../Ui/MainWindow.cpp" line="239"/>
         <source>Main</source>
         <translation>Pricipale</translation>
     </message>
     <message>
-        <location filename="../Ui/MainWindow.cpp" line="235"/>
+        <location filename="../Ui/MainWindow.cpp" line="270"/>
         <source>File</source>
         <translation>Fichier</translation>
     </message>
     <message>
-        <location filename="../Ui/MainWindow.cpp" line="236"/>
+        <location filename="../Ui/MainWindow.cpp" line="271"/>
         <source>Edit</source>
         <translation>Edition</translation>
     </message>
     <message>
-        <location filename="../Ui/MainWindow.cpp" line="237"/>
+        <location filename="../Ui/MainWindow.cpp" line="272"/>
         <source>View</source>
         <translation>Vue</translation>
     </message>
     <message>
-        <location filename="../Ui/MainWindow.cpp" line="238"/>
+        <location filename="../Ui/MainWindow.cpp" line="273"/>
         <source>Window</source>
         <translation>Fenêtre</translation>
     </message>
     <message>
-        <location filename="../Ui/MainWindow.cpp" line="239"/>
+        <location filename="../Ui/MainWindow.cpp" line="274"/>
         <source>?</source>
         <translation>?</translation>
     </message>
@@ -228,52 +228,52 @@ Etes-vous sûr de vouloir faire ça?</translation>
 <context>
     <name>MidiMessageTypeDelegate</name>
     <message>
-        <location filename="../Ui/Delegates/MidiDelegates.hpp" line="28"/>
+        <location filename="../Ui/Delegates/MidiDelegates.hpp" line="31"/>
         <source>Note On</source>
         <translation>Note On</translation>
     </message>
     <message>
-        <location filename="../Ui/Delegates/MidiDelegates.hpp" line="29"/>
+        <location filename="../Ui/Delegates/MidiDelegates.hpp" line="32"/>
         <source>Note Off</source>
         <translation>Note Off</translation>
     </message>
     <message>
-        <location filename="../Ui/Delegates/MidiDelegates.hpp" line="30"/>
+        <location filename="../Ui/Delegates/MidiDelegates.hpp" line="33"/>
         <source>Control Change</source>
         <translation>Control Change</translation>
     </message>
     <message>
-        <location filename="../Ui/Delegates/MidiDelegates.hpp" line="31"/>
+        <location filename="../Ui/Delegates/MidiDelegates.hpp" line="34"/>
         <source>Program Change</source>
         <translation>Program Change</translation>
     </message>
     <message>
-        <location filename="../Ui/Delegates/MidiDelegates.hpp" line="32"/>
+        <location filename="../Ui/Delegates/MidiDelegates.hpp" line="35"/>
         <source>Channel Change</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Ui/Delegates/MidiDelegates.hpp" line="33"/>
+        <location filename="../Ui/Delegates/MidiDelegates.hpp" line="36"/>
         <source>Pitch Wheel Change</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Ui/Delegates/MidiDelegates.hpp" line="34"/>
+        <location filename="../Ui/Delegates/MidiDelegates.hpp" line="37"/>
         <source>Song Position</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Ui/Delegates/MidiDelegates.hpp" line="35"/>
+        <location filename="../Ui/Delegates/MidiDelegates.hpp" line="38"/>
         <source>Song Select</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Ui/Delegates/MidiDelegates.hpp" line="36"/>
+        <location filename="../Ui/Delegates/MidiDelegates.hpp" line="39"/>
         <source>Tune Request</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Ui/Delegates/MidiDelegates.hpp" line="37"/>
+        <location filename="../Ui/Delegates/MidiDelegates.hpp" line="40"/>
         <source>End Of Exclusive</source>
         <translation type="unfinished"></translation>
     </message>
@@ -282,7 +282,7 @@ Etes-vous sûr de vouloir faire ça?</translation>
         <translation type="vanished">System Exclusive</translation>
     </message>
     <message>
-        <location filename="../Ui/Delegates/MidiDelegates.hpp" line="38"/>
+        <location filename="../Ui/Delegates/MidiDelegates.hpp" line="41"/>
         <source>Unknown</source>
         <translation>Inconnu</translation>
     </message>
@@ -323,7 +323,7 @@ Etes-vous sûr de vouloir faire ça?</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Ui/Views/MidiPortTreeView.cpp" line="119"/>
+        <location filename="../Ui/Views/MidiPortTreeView.cpp" line="126"/>
         <source>Add filter</source>
         <translation type="unfinished"></translation>
     </message>
@@ -423,6 +423,19 @@ Etes-vous sûr de vouloir faire ça?</translation>
     </message>
 </context>
 <context>
+    <name>QMidiPortModel</name>
+    <message>
+        <location filename="../../core/src/QMidiPortModel.cpp" line="49"/>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../core/src/QMidiPortModel.cpp" line="50"/>
+        <source>Value</source>
+        <translation type="unfinished">Valeur</translation>
+    </message>
+</context>
+<context>
     <name>QObject</name>
     <message>
         <source>Fatal error</source>
@@ -443,6 +456,11 @@ Etes-vous sûr de vouloir faire ça?</translation>
 The application will be closed.</source>
         <translation type="vanished">Erreur fatale: %0
 L&apos;application va être fermée.</translation>
+    </message>
+    <message>
+        <location filename="../Ui/MainWindow.cpp" line="60"/>
+        <source>Message type</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
