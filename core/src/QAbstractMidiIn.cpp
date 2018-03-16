@@ -4,9 +4,10 @@
 
 #include "QAbstractMidiIn.hpp"
 #include "QMidiMessage.hpp"
-#include "ListenerHelpers.hpp"
 
-#include <QtDebug>
+#include "ListenerHelpers.hpp"
+#include "MidiMessageFilterHelpers.hpp"
+#include "VectorHelpers.hpp"
 
 bool QAbstractMidiIn::isPortOpen() const
 {
@@ -25,10 +26,33 @@ void QAbstractMidiIn::addMessageReceivedListener(MessageReceivedCallback&& liste
 
 void QAbstractMidiIn::error(QString const& error)
 {
-    callEachListener(m_errorListeners, error);
+    imp::callEachListener(m_errorListeners, error);
 }
 
 void QAbstractMidiIn::messageReceived(QMidiMessage const& message)
 {
-    callEachListener(m_messageReceivedListeners, message);
+    if (imp::acceptMessage(message, std::cbegin(m_messageFilters), std::cend(m_messageFilters)))
+    {
+        imp::callEachListener(m_messageReceivedListeners, message);
+    }
+}
+
+int QAbstractMidiIn::addFilter(FilterPointer const& filter)
+{
+    return imp::addToVector(m_messageFilters, std::move(filter));
+}
+
+void QAbstractMidiIn::removeFilter(int const filterIndex)
+{
+    imp::removeFromVector(m_messageFilters, filterIndex);
+}
+
+void QAbstractMidiIn::clearFilters()
+{
+    m_messageFilters.clear();
+}
+
+int QAbstractMidiIn::filterCount() const
+{
+    return m_messageFilters.size();
 }

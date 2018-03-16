@@ -32,7 +32,9 @@ void CommonUi::standardTableView(QTableView* const view, bool const showTopHeade
 void CommonUi::standardTreeView(QTreeView* const view, bool const showTopHeader)
 {
     view->setUniformRowHeights(true);
+    view->header()->setCascadingSectionResizes(true);
     view->header()->setStretchLastSection(true);
     view->header()->setVisible(showTopHeader);
-    view->setSelectionBehavior(QTableView::SelectionBehavior::SelectRows);
+    view->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
+    view->setSelectionBehavior(QTreeView::SelectionBehavior::SelectRows);
 }

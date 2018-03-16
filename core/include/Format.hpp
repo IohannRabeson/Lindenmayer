@@ -21,14 +21,14 @@ public:
         QTextStream stream(&buffer);
         auto it = begin;
 
-        stream.setIntegerBase(16);
+        stream.setIntegerBase(base);
         while (it != end)
         {
             if (it != begin)
             {
                 stream << separator;
             }
-            stream << QString::number(*it, 16);
+            stream << QString::number(*it, base);
             ++it;
         }
         stream.flush();

@@ -5,9 +5,20 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fsanitize=address -fno-omit-frame-pointer")
 endif()
 
+set(MOCK_SRC
+    mocks/AbstractMidiInMock.hpp
+    mocks/AbstractMidiMessageFilterMock.hpp
+        mocks/AbstractMidiOutMock.hpp)
+
 set(SRC
+    ${MOCK_SRC}
     gtest.cpp
-        QMidiManufacturerModelTest.cpp QMidiMessageMatrixTest.cpp QMidiMessageTest.cpp QMidiMessageFilterTest.cpp mocks/MidiMessageFilterMock.hpp QMidiMessageFilterModelTest.cpp)
+    QMidiManufacturerModelTest.cpp
+    QMidiMessageMatrixTest.cpp
+    QMidiMessageTest.cpp
+    QMidiMessageFilterTest.cpp
+        QMidiPortModelTest.cpp
+        mocks/AbstractMidiOutMock.hpp)
 
 add_executable(unit_tests ${SRC})
 target_link_libraries(unit_tests PRIVATE QMidi gtest gmock Qt5::Core Qt5::Widgets)

@@ -13,30 +13,32 @@ set_directory_properties(PROPERTIES CLEAN_NO_CUSTOM 1)
 add_subdirectory(Languages)
 
 set(UI_SOURCES
-    Ui/Widgets/Views/MidiMessageListView.cpp
-    Ui/Widgets/Views/MidiMessageListView.hpp
-    MainWindow.cpp
-    MainWindow.hpp
+        Ui/Views/MidiMessageListView.cpp
+        Ui/Views/MidiMessageListView.hpp
+        Ui/MainWindow.cpp
+        Ui/MainWindow.hpp
     Ui/CommonUi.cpp
     Ui/CommonUi.hpp
-    Ui/Widgets/Dialogs/AboutMidiMonitorDialog.hpp
-    Ui/Widgets/Dialogs/AboutMidiMonitorDialog.cpp
-    Ui/Widgets/Dialogs/AboutMidiMonitorDialog.ui
+        Ui/Dialogs/AboutMidiMonitorDialog.hpp
+        Ui/Dialogs/AboutMidiMonitorDialog.cpp
+        Ui/Dialogs/AboutMidiMonitorDialog.ui
     Ui/Delegates/MidiDelegates.cpp
     Ui/Delegates/MidiDelegates.hpp
     Ui/SettingsUtils.hpp
-    Ui/Widgets/Widgets/MidiNoteTriggerWidget.cpp
-    Ui/Widgets/Widgets/MidiNoteTriggerWidget.hpp
-    Ui/Widgets/Widgets/MidiKeyboardWidget.cpp
-    Ui/Widgets/Widgets/MidiKeyboardWidget.hpp
-    Ui/Widgets/Widgets/MidiKeyboardWidget.cpp
-    Ui/Widgets/Widgets/MidiKeyboardWidget.hpp
-    Ui/Widgets/Widgets/MidiMatrixWidget.cpp
-    Ui/Widgets/Widgets/MidiMatrixWidget.hpp)
+        Ui/Widgets/MidiNoteTriggerWidget.cpp
+        Ui/Widgets/MidiNoteTriggerWidget.hpp
+        Ui/Widgets/MidiKeyboardWidget.cpp
+        Ui/Widgets/MidiKeyboardWidget.hpp
+        Ui/Widgets/MidiKeyboardWidget.cpp
+        Ui/Widgets/MidiKeyboardWidget.hpp
+        Ui/Widgets/MidiMatrixWidget.cpp
+        Ui/Widgets/MidiMatrixWidget.hpp
+        Ui/Views/MidiPortTreeView.cpp
+        Ui/Views/MidiPortTreeView.hpp)
 
 set(PLUGINS_SOURCES
     Plugins/Plugins.qrc
-        Plugins/Commons/TextDatabase.cpp
+    Plugins/Commons/TextDatabase.cpp
     Plugins/Commons/TextDatabase.hpp
     Translators/TranslatorManager.cpp
     Translators/TranslatorManager.hpp)

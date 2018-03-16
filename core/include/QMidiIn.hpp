@@ -26,11 +26,9 @@ public:
     int portOpened() const noexcept override;
     QString portName() const noexcept override;
     void setPortEnabled(bool const enabled) noexcept override;
+    bool isPortEnabled() const noexcept override;
 
     int portCount() const noexcept;
-
-    QMidiMessageFilterModel* filterModel() const;
-    QItemSelectionModel* filterSelectionModel() const;
 private:
     QScopedPointer<QMidiInPrivate> d_ptr;
 };

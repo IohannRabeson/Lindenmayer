@@ -5,6 +5,8 @@
 #include "QAbstractMidiOut.hpp"
 
 #include "ListenerHelpers.hpp"
+#include "MidiMessageFilterHelpers.hpp"
+#include "VectorHelpers.hpp"
 
 bool QAbstractMidiOut::isPortOpen() const
 {
@@ -13,12 +15,7 @@ bool QAbstractMidiOut::isPortOpen() const
 
 void QAbstractMidiOut::error(QString const& error)
 {
-    callEachListener(m_errorListeners, error);
-}
-
-void QAbstractMidiOut::messageReceived(QMidiMessage const& message)
-{
-    callEachListener(m_messageReceivedListeners, message);
+    imp::callEachListener(m_errorListeners, error);
 }
 
 void QAbstractMidiOut::addErrorListener(ErrorListener&& listener)
@@ -26,7 +23,30 @@ void QAbstractMidiOut::addErrorListener(ErrorListener&& listener)
     m_errorListeners.emplace_back(std::move(listener));
 }
 
-void QAbstractMidiOut::addMessageReceivedListener(MessageReceivedCallback&& listener)
+int QAbstractMidiOut::addFilter(FilterPointer const& filter)
 {
-    m_messageReceivedListeners.emplace_back(std::move(listener));
+    return imp::addToVector(m_messageFilters, std::move(filter));
+}
+
+void QAbstractMidiOut::removeFilter(int const filterIndex)
+{
+    imp::removeFromVector(m_messageFilters, filterIndex);
+}
+
+void QAbstractMidiOut::clearFilters()
+{
+    m_messageFilters.clear();
+}
+
+int QAbstractMidiOut::filterCount() const
+{
+    return m_messageFilters.size();
+}
+
+void QAbstractMidiOut::sendMessage(QMidiMessage const& message)
+{
+    if (imp::acceptMessage(message, std::cbegin(m_messageFilters), std::cend(m_messageFilters)))
+    {
+        outputMessage(message);
+    }
 }

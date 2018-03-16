@@ -7,6 +7,11 @@
 #include <QAbstractTableModel>
 #include "QMidiMessageMatrix.hpp"
 
+/*!
+ * \brief The QMidiMessageMatrixModel class
+ *
+ * The input ports are the rows of the matrix and the output ports are the columns.
+ */
 class QMidiMessageMatrixModel : public QAbstractTableModel
 {
     Q_OBJECT

@@ -64,7 +64,7 @@ public:
         return m_midiOut->getPortCount();
     }
 
-    void sendMessage(QMidiMessage const& message)
+    void outputMessage(QMidiMessage const& message)
     {
         if (m_enabled)
         {
@@ -89,7 +89,7 @@ QMidiOut::~QMidiOut()
     closePort();
 }
 
-bool QMidiOut::openPort(int const portIndex) noexcept
+bool QMidiOut::openPort(int const portIndex)
 {
     Q_D(QMidiOut);
 
@@ -100,28 +100,28 @@ bool QMidiOut::openPort(int const portIndex) noexcept
     return d->openPort(portIndex);
 }
 
-void QMidiOut::closePort() noexcept
+void QMidiOut::closePort()
 {
     Q_D(QMidiOut);
 
     d->closePort();
 }
 
-int QMidiOut::portCount() const noexcept
+int QMidiOut::portCount() const
 {
     Q_D(const QMidiOut);
 
     return d->portCount();
 }
 
-int QMidiOut::portOpened() const noexcept
+int QMidiOut::portOpened() const
 {
     Q_D(const QMidiOut);
 
     return d->m_portOpened;
 }
 
-void QMidiOut::setEnabled(bool const enabled)
+void QMidiOut::setPortEnabled(bool const enabled)
 {
     Q_D(QMidiOut);
 
@@ -129,16 +129,23 @@ void QMidiOut::setEnabled(bool const enabled)
     qDebug() << "[QMidiOut]" << d->m_portOpened << "enabled:" << d->m_enabled;
 }
 
-void QMidiOut::sendMessage(QMidiMessage const& message)
+void QMidiOut::outputMessage(QMidiMessage const& message)
 {
     Q_D(QMidiOut);
 
-    d->sendMessage(message);
+    d->outputMessage(message);
 }
 
-QString QMidiOut::portName() const noexcept
+QString QMidiOut::portName() const
 {
     Q_D(const QMidiOut);
 
     return d->m_name;
+}
+
+bool QMidiOut::isPortEnabled() const
+{
+    Q_D(const QMidiOut);
+
+    return d->m_enabled;
 }

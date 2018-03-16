@@ -3,17 +3,17 @@
 //
 
 #include <gtest/gtest.h>
-#include <gmock/gmock.h>
 
 #include <QAbstractMidiMessageFilter.hpp>
-#include <QMidiMessageFilterModel.hpp>
 #include <QMidiMessage.hpp>
+
+#include "mocks/AbstractMidiMessageFilterMock.hpp"
 
 class MidiMessageFilterNoteOn : public QAbstractMidiMessageFilter
 {
 public:
     MidiMessageFilterNoteOn()
-    : QAbstractMidiMessageFilter("filter on", true)
+    : QAbstractMidiMessageFilter("filter on")
     {
     }
 
@@ -24,7 +24,7 @@ private:
     }
 };
 
-TEST(QMidiMessageFilterTest, accept_message_test)
+TEST(QMidiMessageFilterTest, accept_message_test_old)
 {
     // Note on
     QMidiMessage noteOnMessage({0x91, 0, 0});
@@ -44,25 +44,27 @@ TEST(QMidiMessageFilterTest, accept_message_test)
     EXPECT_TRUE(filterNoteOn.acceptMessage(noteOffMessage));
 }
 
-TEST(QMidiMessageFilterTestInModel, accept_message_test)
+TEST(QMidiMessageFilterTest, accept_message_test)
 {
-    QMidiMessageFilterModel model;
+    using ::testing::Return;
+    using ::testing::NiceMock;
+    using ::testing::_;
 
-    // Note on
-    QMidiMessage noteOnMessage({0x91, 0, 0});
+    NiceMock<AbstractMidiMessageFilterMock> filter;
 
-    // Note off
-    QMidiMessage noteOffMessage({0x82, 0, 0});
+    EXPECT_CALL(filter, filterMessage(_))
+            .Times(2)
+            .WillOnce(Return(true))
+            .WillOnce(Return(false));
 
-    auto filterModelIndex = model.addFilter(std::make_unique<MidiMessageFilterNoteOn>());
+    QMidiMessage message;
 
-    EXPECT_TRUE(filterModelIndex.isValid());
-    EXPECT_FALSE(model.acceptMessage(noteOnMessage));
-    EXPECT_TRUE(model.acceptMessage(noteOffMessage));
+    EXPECT_FALSE(filter.acceptMessage(message));
+    EXPECT_TRUE(filter.acceptMessage(message));
 
-    model.setFilterEnabled(filterModelIndex, false);
+    filter.setEnabled(false);
 
     // All messages should be accepted by a disabled filter.
-    EXPECT_TRUE(model.acceptMessage(noteOnMessage));
-    EXPECT_TRUE(model.acceptMessage(noteOffMessage));
+    EXPECT_TRUE(filter.acceptMessage(message));
+    EXPECT_TRUE(filter.acceptMessage(message));
 }
