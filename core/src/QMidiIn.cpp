@@ -4,10 +4,12 @@
 
 #include "QMidiIn.hpp"
 #include "QMidiMessage.hpp"
+#include "QAbstractMidiMessageFilter.hpp"
 
 #include <RtMidi.h>
 
 #include <QtDebug>
+#include <QItemSelectionModel>
 
 class QMidiInPrivate
 {
@@ -30,7 +32,7 @@ class QMidiInPrivate
         }
     }
 public:
-    inline QMidiInPrivate(QMidiIn* q)
+    inline explicit QMidiInPrivate(QMidiIn* q)
         : q_ptr(q)
         , m_midiIn(new RtMidiIn)
     {
@@ -96,11 +98,14 @@ public:
         return QString::fromStdString(m_midiIn->getPortName(index));
     }
 private:
+    /*!
+     * \brief Method called for each MIDI message received.
+     */
     void broadcastMessage(QMidiMessage const& message)
     {
         Q_Q(QMidiIn);
 
-        emit q->messageReceived(message);
+        q->messageReceived(message);
     }
 private:
     QString m_name;
@@ -165,4 +170,11 @@ void QMidiIn::setPortEnabled(bool const enabled) noexcept
 
     d->m_enabled = enabled;
     qDebug() << "[QMidiIn]" << d->m_portOpened << "enabled:" << d->m_enabled;
+}
+
+bool QMidiIn::isPortEnabled() const noexcept
+{
+    Q_D(const QMidiIn);
+
+    return d->m_enabled;
 }

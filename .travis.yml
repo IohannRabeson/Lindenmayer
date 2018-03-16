@@ -1,0 +1,13 @@
+language: cpp
+os: osx
+compiler: clang
+before_install:
+  - export CI_TRAVIS_SCRIPT_BASE_PATH="./ci/travis/$TRAVIS_OS_NAME"
+script:
+  - "$CI_TRAVIS_SCRIPT_BASE_PATH/build_and_test.sh"
+
+env:
+  matrix:
+    - TRAVIS_CONFIGURATION_NAME=Debug
+    - TRAVIS_CONFIGURATION_NAME=Release
+    - TRAVIS_CONFIGURATION_NAME=Retail

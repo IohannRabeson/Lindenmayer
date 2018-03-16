@@ -55,7 +55,9 @@ bool QMidiMessageMatrixModel::setData(const QModelIndex& index, const QVariant& 
     return result;
 }
 
-void QMidiMessageMatrixModel::reset(int const columns, int const rows, QMap<int, QString> const& columnNames, QMap<int, QString> const& rowNames)
+void QMidiMessageMatrixModel::reset(int const columns, int const rows,
+                                    QMap<int, QString> const& columnNames,
+                                    QMap<int, QString> const& rowNames)
 {
     beginResetModel();
     m_matrix.resize(columns, rows);
@@ -83,9 +85,8 @@ QVariant QMidiMessageMatrixModel::headerData(int section, Qt::Orientation orient
 {
     QVariant result;
 
-    if (orientation == Qt::Vertical && role == Qt::DisplayRole)
+    if (orientation == Qt::Vertical)
     {
-
         switch (role)
         {
             case Qt::DisplayRole:
@@ -98,7 +99,7 @@ QVariant QMidiMessageMatrixModel::headerData(int section, Qt::Orientation orient
                 break;
         }
     }
-    else if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
+    else if (orientation == Qt::Horizontal)
     {
         switch (role)
         {

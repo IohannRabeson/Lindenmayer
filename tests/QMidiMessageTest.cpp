@@ -122,6 +122,7 @@ TEST(QMidiMessageTest, RandomMessageTest)
 {
     std::mt19937_64 engine;
     std::uniform_int_distribution<std::uint8_t> distribution0_255;
+    // TODO: why I choose to pick bytes count in range [1; 4] ???
     std::uniform_int_distribution<std::size_t> distribution_1_4{1, 4};
 
     for (auto i = 0; i < 200000u; ++i)
@@ -134,6 +135,8 @@ TEST(QMidiMessageTest, RandomMessageTest)
             bytes.push_back(distribution0_255(engine));
         }
 
+        // Check the QMidiMessage's constructor.
+        // It should never crash even if the input buffer is random.
         QMidiMessage const message(bytes);
     }
 }

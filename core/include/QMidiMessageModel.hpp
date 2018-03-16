@@ -5,8 +5,6 @@
 
 #include <QMidiMessage.hpp>
 
-#include "QAbstractMidiTranslator.hpp"
-
 class QMidiMessageModelPrivate;
 
 class QMidiMessageModel : public QAbstractTableModel
@@ -33,8 +31,6 @@ public:
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
     QMidiMessage getMessage(int const row) const;
-
-    void remapInputPorts(QMap<int, int>& portRemappings);
 public slots:
     int append(QMidiMessage const& message);
     void clear();

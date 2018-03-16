@@ -7,3 +7,6 @@
 [submodule "externals/rtmidi"]
 	path = externals/rtmidi
 	url = https://github.com/thestk/rtmidi.git
+[submodule "externals/Qool"]
+	path = externals/Qool
+	url = git@github.com:IohannRabeson/Qool.git

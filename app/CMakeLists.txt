@@ -13,35 +13,35 @@ set_directory_properties(PROPERTIES CLEAN_NO_CUSTOM 1)
 add_subdirectory(Languages)
 
 set(UI_SOURCES
-    Ui/Widgets/Views/MidiMessageListView.cpp
-    Ui/Widgets/Views/MidiMessageListView.hpp
-    MainWindow.cpp
-    MainWindow.hpp
-    Ui/DockWidgetManager.hpp
-    Ui/DockWidgetManager.cpp
-    Ui/ToolBarManager.hpp
-    Ui/ToolBarManager.cpp
+        Ui/Views/MidiMessageListView.cpp
+        Ui/Views/MidiMessageListView.hpp
+        Ui/MainWindow.cpp
+        Ui/MainWindow.hpp
     Ui/CommonUi.cpp
     Ui/CommonUi.hpp
-    Ui/Widgets/Dialogs/AboutMidiMonitorDialog.hpp
-    Ui/Widgets/Dialogs/AboutMidiMonitorDialog.cpp
-    Ui/Widgets/Dialogs/AboutMidiMonitorDialog.ui
+        Ui/Dialogs/AboutMidiMonitorDialog.hpp
+        Ui/Dialogs/AboutMidiMonitorDialog.cpp
+        Ui/Dialogs/AboutMidiMonitorDialog.ui
     Ui/Delegates/MidiDelegates.cpp
     Ui/Delegates/MidiDelegates.hpp
     Ui/SettingsUtils.hpp
-    Ui/Widgets/Widgets/MidiNoteTriggerWidget.cpp
-    Ui/Widgets/Widgets/MidiNoteTriggerWidget.hpp
-    Ui/Widgets/Widgets/MidiKeyboardWidget.cpp
-    Ui/Widgets/Widgets/MidiKeyboardWidget.hpp)
+        Ui/Widgets/MidiNoteTriggerWidget.cpp
+        Ui/Widgets/MidiNoteTriggerWidget.hpp
+        Ui/Widgets/MidiKeyboardWidget.cpp
+        Ui/Widgets/MidiKeyboardWidget.hpp
+        Ui/Widgets/MidiKeyboardWidget.cpp
+        Ui/Widgets/MidiKeyboardWidget.hpp
+        Ui/Widgets/MidiMatrixWidget.cpp
+        Ui/Widgets/MidiMatrixWidget.hpp
+        Ui/Views/MidiPortTreeView.cpp
+        Ui/Views/MidiPortTreeView.hpp)
 
 set(PLUGINS_SOURCES
     Plugins/Plugins.qrc
-    Plugins/Waldorf/Pulse2/Pulse2Translator.cpp
-    Plugins/Waldorf/Pulse2/Pulse2Translator.hpp
     Plugins/Commons/TextDatabase.cpp
     Plugins/Commons/TextDatabase.hpp
-    Ui/Widgets/Widgets/MidiKeyboardWidget.cpp
-    Ui/Widgets/Widgets/MidiKeyboardWidget.hpp Ui/Widgets/Widgets/MidiMatrixWidget.cpp Ui/Widgets/Widgets/MidiMatrixWidget.hpp Translators/TranslatorManager.cpp Translators/TranslatorManager.hpp)
+    Translators/TranslatorManager.cpp
+    Translators/TranslatorManager.hpp)
 
 qt5_add_translation(QM_FILES ${TS_FILES})
 # This works only because QM_FILES is given to add_executable (I guess).
@@ -60,7 +60,7 @@ add_dependencies(MidiMonitor translations_update)
 
 set_target_properties(MidiMonitor PROPERTIES OUTPUT_NAME ${THE_APPLICATION_DISPLAY_NAME})
 target_include_directories(MidiMonitor PRIVATE "${CMAKE_SOURCE_DIR}/app" "${CMAKE_SOURCE_DIR}/externals/Qt-Frameless-Window-DarkStyle")
-target_link_libraries(MidiMonitor PRIVATE QMidi rtmidi Qt5::Core Qt5::Widgets QtFramelessWindowDarkStyle)
+target_link_libraries(MidiMonitor PRIVATE QMidi rtmidi Qool Qt5::Core Qt5::Widgets QtFramelessWindowDarkStyle)
 target_compile_definitions(MidiMonitor PRIVATE
     APPLICATION_VERSION="${APPLICATION_VERSION}"
     APPLICATION_ORGANIZATION="${THE_APPLICATION_ORGANIZATION}"
@@ -76,7 +76,6 @@ endif()
 if (APPLE)
     set(MACOSX_BUNDLE_EXECUTABLE_NAME ${OUTPUT_NAME})
     set_source_files_properties(${THE_APPLICATION_ICON} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
-
     set_target_properties(MidiMonitor
             PROPERTIES
             MACOSX_BUNDLE TRUE

@@ -11,7 +11,6 @@
 #include <QSpinBox>
 #include <QComboBox>
 #include <QLineEdit>
-#include <QEvent>
 #include <QSettings>
 
 #include <QMidiMessageBuilder.hpp>

@@ -9,6 +9,8 @@
 
 class QMidiMessageModel;
 class QMidiDeviceModel;
+class QMidiPortModel;
+class QMidiMessageFilterFactory;
 class QMidiMessage;
 class QMidiIn;
 class QMidiManufacturerModel;
@@ -18,8 +20,12 @@ class MidiMessageListView;
 class MidiNoteTriggerWidget;
 class MidiKeyboardWidget;
 
-class DockWidgetManager;
-class ToolBarManager;
+namespace qool
+{
+
+    class DockWidgetManager;
+    class ToolBarManager;
+}
 
 class QAction;
 class QComboBox;
@@ -54,13 +60,14 @@ protected:
 private:
     QSystemTrayIcon* const m_trayIcon;
     QMidiManager* const m_midiManager;
-    QMidiDeviceModel* const m_inputPortModel;
-    QMidiDeviceModel* const m_outputPortModel;
+    QMidiPortModel* const m_inputPortModel;
+    QMidiPortModel* const m_outputPortModel;
+    QMidiMessageFilterFactory* const m_midiMessageFilterFactory;
     QMidiMessageModel* const m_messageModel;
     QItemSelectionModel* const m_messageSelection;
     MidiMessageListView* const m_messageView;
-    DockWidgetManager* const m_dockWidgets;
-    ToolBarManager* const m_toolbars;
+    qool::DockWidgetManager* const m_dockWidgets;
+    qool::ToolBarManager* const m_toolbars;
     QMidiManufacturerModel* const m_manufacturerModel;
     MidiNoteTriggerWidget* const m_noteWidget;
     MidiKeyboardWidget* const m_keyboardWidget;

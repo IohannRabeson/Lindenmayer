@@ -250,6 +250,7 @@ std::uint8_t QMidiMessage::getProgramChange() const
 std::uint8_t QMidiMessage::getChannel() const
 {
     Q_ASSERT( (byteAt(0u) & MidiStatusMask) == MidiStatusMask ); // Is status byte?
+    Q_ASSERT( data->m_bytes.size() > 0u );
 
     // 0xF == 1111b
     auto const channel = data->m_bytes[0] & 0xF;
@@ -265,6 +266,7 @@ std::uint8_t QMidiMessage::getChecksum() const
 std::uint8_t QMidiMessage::getSong() const
 {
     Q_ASSERT( type() == Type::SongSelect );
+    Q_ASSERT( data->m_bytes.size() > 1u );
 
     return data->m_bytes[1] & 0x7F;
 }
@@ -272,6 +274,7 @@ std::uint8_t QMidiMessage::getSong() const
 std::uint16_t QMidiMessage::getSongPosition() const
 {
     Q_ASSERT( type() == Type::SongPositionPointer );
+    Q_ASSERT( data->m_bytes.size() > 2u );
 
     return data->m_bytes[1u] | data->m_bytes[2u] << 7u;
 }
@@ -279,6 +282,7 @@ std::uint16_t QMidiMessage::getSongPosition() const
 std::uint16_t QMidiMessage::getPitchWheel() const
 {
     Q_ASSERT( type() == Type::PitchWheelChange );
+    Q_ASSERT( data->m_bytes.size() > 2u );
 
     return data->m_bytes[1u] | data->m_bytes[2u] << 7u;
 }
@@ -295,5 +299,3 @@ void QMidiMessage::remapPort(QMap<int, int> const& remappings)
         data->m_port = remappings.value(data->m_port, -1);
     }
 }
-
-

@@ -13,14 +13,13 @@ class QMidiInBase : public QAbstractMidiIn
 public:
     explicit QMidiInBase(QString const& name = QString());
 
-    bool openPort(int const portIndex) noexcept override;
-    void closePort() noexcept override;
-    int portOpened() const noexcept override;
-    QString portName() const noexcept override;
-    void setPortEnabled(bool const enabled) noexcept override;
-
+    bool openPort(int const portIndex) override;
+    void closePort() override;
+    int portOpened() const override;
+    QString portName() const override;
+    void setPortEnabled(bool const enabled) override;
+    bool isPortEnabled() const override;
     void messageReceived(QMidiMessage const& message) override;
-    bool isPortEnabled() const noexcept;
 private:
     QString const m_name;
     int m_portIndex = -1;

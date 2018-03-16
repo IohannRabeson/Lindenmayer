@@ -8,10 +8,12 @@
 #include <memory>
 
 class QMidiDeviceModel;
+class QMidiPortModel;
 class QAbstractMidiIn;
 class QAbstractMidiOut;
 class QMidiMessage;
 class QMidiMessageMatrixModel;
+class QMidiMessageFilterFactory;
 class QMidiManagerPrivate;
 
 class QMidiManager : public QObject
@@ -30,16 +32,6 @@ public:
     void rescanPorts();
 
     /*!
-     * \brief Rescan MIDI ports
-     *
-     * Each ports are destroyed, including ports added using addInputPort() and addOutputPort().
-     *
-     * \param inputRemapping Mapping between the old and the new index of each ports
-     * \param outputRemapping Mapping between the old and the new index of each ports
-     */
-    void rescanPorts(QMap<int, int>& inputRemapping, QMap<int, int>& outputRemapping);
-
-    /*!
      * \brief Add an input port
      * \param midiIn Input port to add
      * Before adding it, this function open the port if it not already opened.
@@ -47,26 +39,24 @@ public:
      * When the input port added will receives a message it will be forwarded through
      * the MIDI message matrix to the outputs ports.
      */
-    int addInputPort(std::unique_ptr<QAbstractMidiIn>&& midiIn);
+    int addInputPort(std::shared_ptr<QAbstractMidiIn>&& midiIn);
 
     /*!
      * \brief Add an output port
      * \param midiIn Output port to add
      * Before adding it, this function open the port if it not already opened.
      */
-    int addOutputPort(std::unique_ptr<QAbstractMidiOut>&& midiOut);
+    int addOutputPort(std::shared_ptr<QAbstractMidiOut>&& midiOut);
 
     /*!
      * \brief Close and destroy each input and output ports.
      */
     void closeAllPorts();
 
-    QMidiDeviceModel* getInputDeviceModel() const;
-    QMidiDeviceModel* getOutputDeviceModel() const;
+    QMidiPortModel* getInputDeviceModel() const;
+    QMidiPortModel* getOutputDeviceModel() const;
     QMidiMessageMatrixModel* getMessageMatrixModel() const;
-
-    void setInputPortEnabled(int const portId, bool const enabled);
-    void setOutputPortEnabled(int const portId, bool const enabled);
+    QMidiMessageFilterFactory* getMessageFilterFactory() const;
 signals:
     void messageReceived(QMidiMessage const& message);
     void messageSent(QMidiMessage const& message);

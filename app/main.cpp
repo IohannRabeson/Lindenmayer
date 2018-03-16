@@ -17,85 +17,17 @@
 #include <QCommandLineParser>
 #include <QtDebug>
 
-#include "MainWindow.hpp"
+#include "Ui/MainWindow.hpp"
 #include "Translators/TranslatorManager.hpp"
+#include <Qool/LogManager.hpp>
+#include <Qool/StyleFactory.hpp>
 
 #include <DarkStyle.h>
 
-#if defined(APPLICATION_RETAIL)
-#include <QMessageBox>
-#endif
-
-QCommandLineOption const DarkThemeOption("dark", QCoreApplication::translate("main", "Enable dark theme (experimental)"));
-QCommandLineOption const TargetDirectoryOption(QStringList() << "language" << "selected-language",
-                                         QCoreApplication::translate("main", "Select language"),
-                                         QCoreApplication::translate("main", "language name"));
-
-namespace Log
-{
-    static char const* formatMessageType(QtMsgType const type)
-    {
-        char const* typeText = nullptr;
-
-        switch (type)
-        {
-            case QtDebugMsg:
-                typeText = "[Debug]";
-                break;
-            case QtInfoMsg:
-                typeText = "[Info]";
-                break;
-            case QtWarningMsg:
-                typeText = "[Warning]";
-                break;
-            case QtCriticalMsg:
-                typeText = "[Critical]";
-                break;
-            case QtFatalMsg:
-                typeText = "[Fatal]";
-                std::abort();
-        }
-        return typeText;
-    }
-}
-
-static void messageHandler(QtMsgType type, QMessageLogContext const& context, QString const& msg)
-{
-    QByteArray const localMsg = msg.toLocal8Bit();
-    auto const messageTypeText = Log::formatMessageType(type);
-
-#if defined(APPLICATION_RETAIL)
-    if (type == QtFatalMsg)
-    {
-        std::fprintf(stderr, "[Fatal]: %s (%s:%u, %s)\n", localMsg.toStdString().c_str(), context.file, context.line, context.function);
-        QMessageBox::warning(QApplication::activeWindow(), QApplication::applicationDisplayName(), QObject::tr("Fatal error: %0\nThe application will be closed.").arg(msg));
-        abort();
-    }
-    else if (type > QtDebugMsg)
-    {
-        std::fprintf(stdout, messageTypeText + ": %s (%s:%u, %s)\n", localMsg.toStdString().c_str(), context.file, context.line, context.function);
-    }
-#else
-    switch (type)
-    {
-        case QtDebugMsg:
-            std::fprintf(stdout, "%s: %s\n", messageTypeText, localMsg.constData());
-            break;
-        case QtInfoMsg:
-            std::fprintf(stdout, "%s: %s\n", messageTypeText, localMsg.constData());
-            break;
-        case QtWarningMsg:
-            std::fprintf(stderr, "%s: %s\n", messageTypeText, localMsg.constData());
-            break;
-        case QtCriticalMsg:
-            std::fprintf(stderr, "%s: %s\n", messageTypeText, localMsg.constData());
-            break;
-        case QtFatalMsg:
-            std::fprintf(stderr, "%s: %s\n", messageTypeText, localMsg.constData());
-            std::abort();
-    }
-#endif
-}
+QCommandLineOption const ThemeOption("theme", QCoreApplication::translate("main", "Select theme"), "theme key");
+QCommandLineOption const TargetDirectoryOption(QStringList() << "language" << "selected-language"
+                                              , QCoreApplication::translate("main", "Select language")
+                                              , QCoreApplication::translate("main", "language name"));
 
 static void setupApplication()
 {
@@ -106,26 +38,48 @@ static void setupApplication()
     QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
-    qInstallMessageHandler(&messageHandler);
+    qool::LogManager::setupLoggers();
+}
+
+static void setupStyleFactory(qool::StyleFactory& styleFactory)
+{
+    styleFactory.addCreator("dark", []() -> QStyle* { return new DarkStyle; });
 }
 
 int main(int argc, char** argv)
 {
     QApplication app(argc, argv);
-    QCommandLineParser commandLineParser;
-
-    commandLineParser.addOption(DarkThemeOption);
-    commandLineParser.addOption(TargetDirectoryOption);
-    commandLineParser.process(app);
-
+    qool::StyleFactory styleFactory;
     TranslatorManager translatorManager;
 
     setupApplication();
+    setupStyleFactory(styleFactory);
 
-    if (commandLineParser.isSet(DarkThemeOption))
+    QCommandLineParser commandLineParser;
+
+    qDebug() << "[CommandLineParser]: arguments:" << QApplication::arguments();
+
+    commandLineParser.addOption(ThemeOption);
+    commandLineParser.addOption(TargetDirectoryOption);
+
+    if (!commandLineParser.parse(app.arguments()))
     {
-        qInfo() << "[CommandLineParser]: Dark theme enabled";
-        QApplication::setStyle(new DarkStyle);
+        qDebug() << commandLineParser.errorText();
+        return 1;
+    }
+
+    if (commandLineParser.isSet(ThemeOption))
+    {
+        QString const themeKey = commandLineParser.value(ThemeOption);
+
+        qInfo() << "[CommandLineParser]: theme selected:" << themeKey;
+
+        QStyle* const style = styleFactory.create(themeKey);
+
+        if (style)
+        {
+            QApplication::setStyle(new DarkStyle);
+        }
     }
 
     if (!commandLineParser.isSet(TargetDirectoryOption)

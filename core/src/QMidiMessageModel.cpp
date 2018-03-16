@@ -1,6 +1,6 @@
 #include "QMidiMessageModel.hpp"
-#include "QDefaultMidiTranslator.hpp"
 
+#include <QCoreApplication>
 #include <QMap>
 #include <QVector>
 #include <QMetaEnum>
@@ -147,18 +147,4 @@ QMidiMessage QMidiMessageModel::getMessage(int const row) const
     Q_D(const QMidiMessageModel);
 
     return d->m_messages.value(row);
-}
-
-void QMidiMessageModel::remapInputPorts(QMap<int, int>& portRemappings)
-{
-    Q_D(QMidiMessageModel);
-
-    for (auto& message : d->m_messages)
-    {
-        message.remapPort(portRemappings);
-    }
-    auto const topIndex = index(0, Columns::Input);
-    auto const bottomIndex = index(d->m_messages.size() - 1, Columns::Input);
-
-    emit dataChanged(topIndex, bottomIndex);
 }
