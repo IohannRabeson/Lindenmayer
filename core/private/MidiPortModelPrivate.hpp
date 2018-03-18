@@ -22,7 +22,12 @@ public:
     using ParentNode = std::weak_ptr<AbstractTreeNode>;
     using Type = QMidiPortModel::ItemType;
 
-    virtual ~AbstractTreeNode() = default;
+    virtual ~AbstractTreeNode()
+    {
+        m_parent.reset();
+        m_children.clear();
+        m_childIndex = -1;
+    }
 
     virtual Type type() const = 0;
     virtual QVariant data(int const column, int const role) const = 0;
@@ -30,7 +35,7 @@ public:
     virtual Qt::ItemFlags flags(int const column) const = 0;
     virtual int columnCount() const = 0;
 
-    void setParent(NodePtr const& parent);
+    int addChild(NodePtr const& node);
     void removeChild(int const index);
     void destroyChildren();
 
@@ -44,13 +49,17 @@ private:
      * \brief Method called just after a new child is added.
      * \param childIndex Index of the new child added.
      */
-    virtual inline void onChildAdded(int const /*childIndex*/) { }
+    virtual inline void onChildAdded(int const childIndex)
+    {
+    }
 
     /*!
      * \brief Method called just before a child is removed.
      * \param childIndex Index of the removed child.
      */
-    virtual inline void onChildRemoved(int const /*childIndex*/) { }
+    virtual inline void onChildRemoved(int const childIndex)
+    {
+    }
 private:
     std::vector<NodePtr> m_children;
     ParentNode m_parent;
@@ -83,6 +92,8 @@ public:
     AbstractTreeNode::Type type() const override { return AbstractTreeNode::Type::InputPort; }
 
     QString portName() const { return m_port->portName(); }
+
+    std::shared_ptr<QAbstractMidiIn> const& port() const { return m_port; }
 
     int columnCount() const override { return 1; }
 
@@ -119,6 +130,8 @@ public:
     {
         return m_port->portName();
     }
+
+    std::shared_ptr<QAbstractMidiOut> const& port() const { return m_port; }
 
     int columnCount() const override { return 1; }
 

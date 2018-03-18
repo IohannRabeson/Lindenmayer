@@ -8,7 +8,7 @@ endif()
 set(MOCK_SRC
     mocks/AbstractMidiInMock.hpp
     mocks/AbstractMidiMessageFilterMock.hpp
-        mocks/AbstractMidiOutMock.hpp)
+    mocks/AbstractMidiOutMock.hpp)
 
 set(SRC
     ${MOCK_SRC}
@@ -17,8 +17,9 @@ set(SRC
     QMidiMessageMatrixTest.cpp
     QMidiMessageTest.cpp
     QMidiMessageFilterTest.cpp
-        QMidiPortModelTest.cpp
-        mocks/AbstractMidiOutMock.hpp)
+    QMidiPortModelTest.cpp
+    QMidiManagerTest.cpp
+    QVirtualMidiInTest.cpp)
 
 add_executable(unit_tests ${SRC})
 target_link_libraries(unit_tests PRIVATE QMidi gtest gmock Qt5::Core Qt5::Widgets)

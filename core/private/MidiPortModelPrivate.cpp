@@ -8,47 +8,27 @@
 // class AbstractTreeNode
 //
 
-void QMidiPortModel::AbstractTreeNode::setParent(NodePtr const& parent)
+int QMidiPortModel::AbstractTreeNode::addChild(NodePtr const& node)
 {
-    if (parent.get() != this && m_parent.lock() != parent)
+    auto const it = std::find(m_children.begin(), m_children.end(), node);
+    int newChildIndex = -1;
+
+    if (it == m_children.end())
     {
-        int newChildIndex = -1;
-
-        auto const oldParentNode = m_parent.lock();
-
-        if (oldParentNode)
+        if (!node->m_parent.expired())
         {
-            oldParentNode->onChildRemoved(m_childIndex);
-
-            auto it = oldParentNode->m_children.erase(oldParentNode->m_children.begin() + m_childIndex);
-
-            // Adjust the child index of the remaining children.
-            while (it != std::end(oldParentNode->m_children))
-            {
-                (*it)->m_childIndex -= 1;
-                 ++it;
-            }
+            node->m_parent.lock()->removeChild(node->m_childIndex);
         }
 
-        if (parent)
-        {
-            auto& newParentChildren = parent->m_children;
-            auto const thisNode = shared_from_this();
+        newChildIndex = static_cast<int>(m_children.size());
 
-            Q_ASSERT (std::find(newParentChildren.begin(), newParentChildren.end(), thisNode) == newParentChildren.end());
-
-            newChildIndex = static_cast<int>(newParentChildren.size());
-            newParentChildren.push_back(thisNode);
-            parent->onChildAdded(newChildIndex);
-        }
-        m_childIndex = newChildIndex;
-        m_parent = parent;
+        node->m_childIndex = newChildIndex;
+        node->m_parent = shared_from_this();
+        m_children.push_back(node);
+        onChildAdded(newChildIndex);
     }
 
-    // Ensure m_childIndex is set to -1 if the parent is null or
-    // ensure m_childIndex is not set to -1 if the parent is not null.
-    Q_ASSERT( (m_parent.lock() == nullptr && m_childIndex == -1) ||
-              (m_parent.lock() != nullptr && m_childIndex > -1 && m_childIndex < m_parent.lock()->childrenCount()) );
+    return newChildIndex;
 }
 
 void QMidiPortModel::AbstractTreeNode::removeChild(int const index)
@@ -57,14 +37,19 @@ void QMidiPortModel::AbstractTreeNode::removeChild(int const index)
     Q_ASSERT( index < static_cast<int>(m_children.size()) );
 
     auto const child = m_children[static_cast<std::size_t>(index)];
+    auto const parent = child->m_parent.lock();
 
-    child->setParent(nullptr);
-
-    imp::removeFromVector(m_children, index);
-
-    for (auto i = 0u; i < m_children.size(); ++i)
+    if (parent)
     {
-        m_children[i]->m_childIndex = static_cast<int>(i);
+        onChildRemoved(index);
+        imp::removeOne(parent->m_children, child);
+        child->m_childIndex = -1;
+        child->m_parent.reset();
+
+        for (auto i = 0u; i < m_children.size(); ++i)
+        {
+            m_children[i]->m_childIndex = static_cast<int>(i);
+        }
     }
 }
 
@@ -72,7 +57,12 @@ void QMidiPortModel::AbstractTreeNode::destroyChildren()
 {
     for (auto const& child : m_children)
     {
-        child->setParent(nullptr);
+        if (child)
+        {
+            imp::removeOne(m_children, child);
+            child->m_parent.reset();
+            child->m_childIndex = -1;
+        }
     }
     m_children.clear();
 }

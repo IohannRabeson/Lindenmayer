@@ -176,8 +176,8 @@ void MainWindow::resetMidiPorts()
     }
 
     m_midiManager->rescanPorts();
-    m_midiManager->addInputPort(std::shared_ptr<QAbstractMidiIn>(m_noteWidget));
-    m_midiManager->addInputPort(std::shared_ptr<QAbstractMidiIn>(m_keyboardWidget));
+    m_midiManager->getInputDeviceModel()->add(m_noteWidget);
+    m_midiManager->getInputDeviceModel()->add(m_keyboardWidget);
 }
 
 void MainWindow::setupActions()
@@ -218,10 +218,10 @@ void MainWindow::setupUi()
     m_dockWidgets->addDockWidget(midiOutputPortView, tr("MIDI Outputs"), "midi_output");
 
     // Setup note widget
-    m_dockWidgets->addDockWidget(m_noteWidget, tr("MIDI Note Trigger"), "midi_note_trigger");
+    m_dockWidgets->addDockWidget(m_noteWidget.get(), tr("MIDI Note Trigger"), "midi_note_trigger");
 
     // Setup keyboard widget
-    m_dockWidgets->addDockWidget(m_keyboardWidget, tr("MIDI Keyboard"), "midi_keyboard");
+    m_dockWidgets->addDockWidget(m_keyboardWidget.get(), tr("MIDI Keyboard"), "midi_keyboard");
 
     // Setup matrix view
     MidiMatrixWidget* messageMatrixView = new MidiMatrixWidget(this);

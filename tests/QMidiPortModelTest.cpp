@@ -364,3 +364,32 @@ TEST(QMidiPortModelTest, remove_invalid)
     ASSERT_EQ( model.rowCount(), 1 );
     ASSERT_EQ( model.rowCount(portIndex), 1 );
 }
+
+
+TEST(QMidiPortModelTest, clear_input)
+{
+    QMidiPortModel model;
+
+    auto const port = std::make_shared<NiceMock<AbstractMidiInMock>>();
+    auto const filter = std::make_shared<NiceMock<AbstractMidiMessageFilterMock>>();
+    auto const portIndex = model.add(port);
+    model.add(portIndex, filter);
+
+    model.clear();
+
+    ASSERT_EQ( model.rowCount(), 0 );
+}
+
+TEST(QMidiPortModelTest, clear_output)
+{
+    QMidiPortModel model;
+
+    auto const port = std::make_shared<NiceMock<AbstractMidiOutMock>>();
+    auto const filter = std::make_shared<NiceMock<AbstractMidiMessageFilterMock>>();
+    auto const portIndex = model.add(port);
+    model.add(portIndex, filter);
+
+    model.clear();
+
+    ASSERT_EQ( model.rowCount(), 0 );
+}

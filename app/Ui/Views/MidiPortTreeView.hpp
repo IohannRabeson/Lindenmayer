@@ -17,7 +17,7 @@ class MidiPortTreeView : public QTreeView
 {
     Q_OBJECT
 public:
-    MidiPortTreeView(QMidiPortModel* model, QMidiMessageFilterFactory* filterFactory, QWidget* parent = nullptr);
+    MidiPortTreeView(QMidiPortModel* portModel, QMidiMessageFilterFactory* filterFactory, QWidget* parent = nullptr);
 protected:
     void contextMenuEvent(QContextMenuEvent *event);
 private:
@@ -29,6 +29,7 @@ private:
     void onFilterFactoryRowsInserted(QModelIndex const& parent, int first, int last);
     void onAddFilterActionTriggered(int const filterRow);
     void onRemoveFilterActionTriggered();
+    void onAddVirtualMidiInputTriggered();
 
     class ValueColumnDelegate;
 private:
@@ -37,6 +38,7 @@ private:
     QSignalMapper* const m_filterSelectorSignalMapper;
     QList<QAction*> m_actionAddFilters;
     QAction* const m_actionRemoveFilter;
+    QAction* const m_actionAddVirtualMidiInput;
 };
 
 #include <QStyledItemDelegate>

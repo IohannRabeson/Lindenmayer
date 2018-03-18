@@ -54,6 +54,8 @@ public:
     ItemType getItemType(QModelIndex const& index) const;
 
     QString getPortName(int const row) const;
+    std::shared_ptr<QAbstractMidiIn> getInputPort(QModelIndex const& index) const;
+    std::shared_ptr<QAbstractMidiOut> getOutputPort(QModelIndex const& index) const;
 private:
     std::shared_ptr<AbstractTreeNode> getNode(QModelIndex const& index) const;
 

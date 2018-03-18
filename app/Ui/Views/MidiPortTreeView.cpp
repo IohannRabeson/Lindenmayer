@@ -3,9 +3,11 @@
 //
 
 #include "MidiPortTreeView.hpp"
-#include "QMidiMessageFilterFactory.hpp"
-#include "QMidiPortModel.hpp"
 #include "Ui/CommonUi.hpp"
+
+#include <QMidiMessageFilterFactory.hpp>
+#include <QMidiPortModel.hpp>
+#include <QVirtualMidiIn.hpp>
 
 #include <QSignalMapper>
 #include <QAction>
@@ -44,6 +46,7 @@ MidiPortTreeView::MidiPortTreeView(QMidiPortModel* portModel, QMidiMessageFilter
 , m_filterFactory(filterFactory)
 , m_filterSelectorSignalMapper(new QSignalMapper(this))
 , m_actionRemoveFilter(new QAction(tr("Remove"), this))
+, m_actionAddVirtualMidiInput(new QAction(this))
 {
     CommonUi::standardTreeView(this, true);
 
@@ -53,6 +56,7 @@ MidiPortTreeView::MidiPortTreeView(QMidiPortModel* portModel, QMidiMessageFilter
     connect(m_filterFactory, &QMidiMessageFilterFactory::rowsInserted, this, &MidiPortTreeView::onFilterFactoryRowsInserted);
     connect(m_filterSelectorSignalMapper, qOverload<int>(&QSignalMapper::mapped), this, &MidiPortTreeView::onAddFilterActionTriggered);
     connect(m_actionRemoveFilter, &QAction::triggered, this, &MidiPortTreeView::onRemoveFilterActionTriggered);
+    connect(m_actionAddVirtualMidiInput, &QAction::triggered, this, &MidiPortTreeView::onAddVirtualMidiInputTriggered);
 
     setRootIsDecorated(true);
     setExpandsOnDoubleClick(true);
@@ -118,11 +122,19 @@ void MidiPortTreeView::onRemoveFilterActionTriggered()
     }
 }
 
+void MidiPortTreeView::onAddVirtualMidiInputTriggered()
+{
+    m_portModel->add(std::make_shared<QVirtualMidiIn>());
+}
+
 void MidiPortTreeView::contextMenuEvent(QContextMenuEvent* event)
 {
     // Produce memory leaks on OSX: it seems the cocoa code behind
     // produce a leak repeatedly...
     QMenu menu(this);
+
+    menu.addAction(m_actionAddVirtualMidiInput);
+
     QMenu* const addFilterSubmenu = menu.addMenu(tr("Add filter"));
     auto const currentCanHaveFilter = getCurrentPortIndex(this, m_portModel).isValid();
 

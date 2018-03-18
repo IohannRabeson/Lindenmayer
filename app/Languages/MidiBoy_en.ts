@@ -317,12 +317,12 @@ Are you sure you want to do that?</translation>
 <context>
     <name>MidiPortTreeView</name>
     <message>
-        <location filename="../Ui/Views/MidiPortTreeView.cpp" line="46"/>
+        <location filename="../Ui/Views/MidiPortTreeView.cpp" line="48"/>
         <source>Remove</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Ui/Views/MidiPortTreeView.cpp" line="126"/>
+        <location filename="../Ui/Views/MidiPortTreeView.cpp" line="138"/>
         <source>Add filter</source>
         <translation type="unfinished"></translation>
     </message>
@@ -455,6 +455,11 @@ The application will be closed.</translation>
     <message>
         <location filename="../Ui/MainWindow.cpp" line="60"/>
         <source>Message type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../core/src/QVirtualMidiIn.cpp" line="15"/>
+        <source>Virtual port %0</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

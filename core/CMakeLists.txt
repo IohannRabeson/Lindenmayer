@@ -41,7 +41,8 @@ set(QMIDIBOY_CORE_SOURCES
     include/QMidiPortModel.hpp
     src/QMidiMessageFilterFactory.cpp
     include/QMidiMessageFilterFactory.hpp
-)
+    src/QVirtualMidiIn.cpp
+    include/QVirtualMidiIn.hpp)
 
 add_library(QMidi
             resources/QMidi.qrc
