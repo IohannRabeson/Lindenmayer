@@ -88,8 +88,6 @@ public:
 
     AbstractTreeNode::Type type() const override { return AbstractTreeNode::Type::InputPort; }
 
-    QString portName() const { return m_port->portName(); }
-
     std::shared_ptr<QAbstractMidiIn> const& port() const { return m_port; }
 
     int columnCount() const override { return 1; }
@@ -123,11 +121,6 @@ public:
     }
 
     AbstractTreeNode::Type type() const override { return AbstractTreeNode::Type::OutputPort; }
-
-    QString portName() const
-    {
-        return m_port->portName();
-    }
 
     std::shared_ptr<QAbstractMidiOut> const& port() const { return m_port; }
 

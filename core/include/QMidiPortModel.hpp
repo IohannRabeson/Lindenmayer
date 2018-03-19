@@ -26,8 +26,6 @@ public:
         Invalid,
         InputPort,
         OutputPort,
-        VirtualInputPort,
-        VirtualOutputPort,
         Filter,
         Parameter
     };
@@ -55,6 +53,8 @@ public:
     QModelIndex index(int row, int column, QModelIndex const& parent = QModelIndex()) const override;
     QModelIndex parent(const QModelIndex& child) const override;
     ItemType getItemType(QModelIndex const& index) const;
+
+    /*! Returns true if the item can be removed using the method remove(QModelIndex const&). */
     bool isRemovable(QModelIndex const& index) const;
 
     QString getPortName(int const row) const;

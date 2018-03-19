@@ -14,24 +14,7 @@
 
 class QMidiInPrivate
 {
-    Q_DECLARE_PUBLIC(QMidiIn);
-
-    static void midiInCallback(double timestamp, std::vector<unsigned char>* bytes, void* userData)
-    {
-        if (bytes->empty())
-        {
-            return;
-        }
-
-        QMidiInPrivate* const midiIn = static_cast<QMidiInPrivate*>(userData);
-
-        if (midiIn->m_enabled)
-        {
-            QMidiMessage midiMessage(*bytes, midiIn->m_portOpened);
-
-            midiIn->broadcastMessage(midiMessage);
-        }
-    }
+    Q_DECLARE_PUBLIC(QMidiIn)
 public:
     inline explicit QMidiInPrivate(QMidiIn* q)
         : q_ptr(q)
@@ -62,7 +45,7 @@ public:
             m_name = QString::fromStdString(m_midiIn->getPortName(portIndex));
 
             // // m_enabled is set to true by the constructor
-            imp::setMidiPortEnabled(m_midiIn, &QMidiInPrivate::midiInCallback, this, true);
+            imp::setMidiPortEnabled(m_midiIn, &imp::midiInCallback<QMidiInPrivate>, this, true);
 
             qDebug() << "[QMidiIn]" << portIndex << "Open MIDI port" << portIndex;
         }
@@ -101,11 +84,14 @@ public:
 
         return QString::fromStdString(m_midiIn->getPortName(index));
     }
-private:
+
+    inline bool isEnabled() const { return m_portEnabled; }
+    inline int portOpened() const { return m_portOpened; }
+
     /*!
      * \brief Method called for each MIDI message received.
      */
-    void broadcastMessage(QMidiMessage const& message)
+    inline void broadcastMessage(QMidiMessage const& message)
     {
         Q_Q(QMidiIn);
 
@@ -116,7 +102,7 @@ private:
     QMidiIn* const q_ptr;
     std::unique_ptr<RtMidiIn> m_midiIn;
     int m_portOpened = -1;
-    bool m_enabled = true;
+    bool m_portEnabled = true;
 };
 
 QMidiIn::QMidiIn()
@@ -172,11 +158,11 @@ void QMidiIn::setPortEnabled(bool const enabled) noexcept
 {
     Q_D(QMidiIn);
 
-    if (d->m_enabled != enabled)
+    if (d->m_portEnabled != enabled)
     {
-        d->m_enabled = enabled;
-        imp::setMidiPortEnabled(d->m_midiIn, &QMidiInPrivate::midiInCallback, this, enabled);
-        qDebug() << "[QMidiIn]" << d->m_portOpened << "enabled:" << d->m_enabled;
+        d->m_portEnabled = enabled;
+        imp::setMidiPortEnabled(d->m_midiIn, &imp::midiInCallback<QMidiInPrivate>, this, enabled);
+        qDebug() << "[QMidiIn]" << d->m_portOpened << "enabled:" << d->m_portEnabled;
     }
 }
 
@@ -184,5 +170,5 @@ bool QMidiIn::isPortEnabled() const noexcept
 {
     Q_D(const QMidiIn);
 
-    return d->m_enabled;
+    return d->m_portEnabled;
 }

@@ -316,7 +316,7 @@ auto QMidiPortModel::getNode(QModelIndex const& index) const -> std::shared_ptr<
 template <class Node>
 QString QMidiPortModel::getPortName(std::shared_ptr<Node> const& node)
 {
-    return node->portName();
+    return node->port()->portName();
 }
 
 QMidiPortModel::ItemType QMidiPortModel::getItemType(QModelIndex const& index) const

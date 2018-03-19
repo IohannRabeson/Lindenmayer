@@ -254,7 +254,7 @@ int QMidiManagerPrivate::addInputPort(const std::shared_ptr<QAbstractMidiIn> &mi
     int const newPortIndex = static_cast<int>(m_midiIns.size());
     int returnedPortIndex = -1;
 
-    if (imp::ifPortIsOpen(midiIn, newPortIndex))
+    if (imp::tryToOpenPort(midiIn, newPortIndex))
     {
         midiIn->addMessageReceivedListener([this, q](QMidiMessage const& message)
         {
@@ -278,7 +278,7 @@ int QMidiManagerPrivate::addOutputPort(std::shared_ptr<QAbstractMidiOut> const& 
     int const newPortIndex = static_cast<int>(m_midiOuts.size());
     int returnedPortIndex = -1;
 
-    if (imp::ifPortIsOpen(midiOut, newPortIndex))
+    if (imp::tryToOpenPort(midiOut, newPortIndex))
     {
         m_midiOuts.emplace_back(midiOut);
         m_matrixModel->reset(static_cast<int>(m_midiOuts.size()),
@@ -353,7 +353,7 @@ void QMidiManagerPrivate::onMidiInputPortReset()
     {
         auto midiIn = m_inputDeviceModel->getInputPort(m_inputDeviceModel->index(i, 0));
 
-        if (midiIn->isPortOpen() || midiIn->openPort(i))
+        if (imp::tryToOpenPort(midiIn, i))
         {
             addInputPort(midiIn);
         }
@@ -373,7 +373,7 @@ void QMidiManagerPrivate::onMidiOutputPortReset()
     {
         auto midiOut = m_outputDeviceModel->getOutputPort(m_outputDeviceModel->index(i, 0));
 
-        if (imp::ifPortIsOpen(midiOut, i))
+        if (imp::tryToOpenPort(midiOut, i))
         {
             addOutputPort(midiOut);
         }

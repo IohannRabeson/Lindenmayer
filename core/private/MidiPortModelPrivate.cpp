@@ -119,7 +119,7 @@ QVariant QMidiPortModel::MidiInputPortTreeNode::data(int const column, int const
         switch (role)
         {
         case Qt::DisplayRole:
-            result = portName();
+            result = m_port->portName();
             break;
         case Qt::UserRole:
             result = m_port->portOpened();

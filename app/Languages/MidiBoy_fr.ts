@@ -473,12 +473,12 @@ L&apos;application va être fermée.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../core/src/QVirtualMidiOut.cpp" line="35"/>
+        <location filename="../../core/src/QVirtualMidiOut.cpp" line="37"/>
         <source>Virtual output port %0</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../core/src/QVirtualMidiIn.cpp" line="71"/>
+        <location filename="../../core/src/QVirtualMidiIn.cpp" line="57"/>
         <source>Virtual input port %0</source>
         <translation type="unfinished"></translation>
     </message>

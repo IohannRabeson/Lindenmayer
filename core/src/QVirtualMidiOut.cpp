@@ -1,6 +1,8 @@
 #include "QVirtualMidiOut.hpp"
 #include <RtMidi.h>
 
+#include <QtDebug>
+
 #include "QMidiMessage.hpp"
 
 class QVirtualMidiOutPrivate
@@ -37,6 +39,8 @@ bool QVirtualMidiOut::openPort(int const portIndex)
         d->m_portOpened = portIndex;
         d->m_port->openVirtualPort(d->m_portName.toStdString());
         result = true;
+
+        qDebug() << "[QVirtualMidiOut]" << d->m_portOpened << "Open MIDI port" << d->m_portName;
     }
 
     return result;
@@ -48,6 +52,8 @@ void QVirtualMidiOut::closePort()
 
     if (isPortOpen())
     {
+        qDebug() << "[QVirtualMidiOut]" << d->m_portOpened << "Close MIDI port" << d->m_portName;
+
         d->m_portOpened = -1;
         d->m_portName.clear();
         d->m_port->closePort();

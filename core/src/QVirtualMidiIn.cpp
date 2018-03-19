@@ -7,39 +7,25 @@
 #include "QMidiMessage.hpp"
 
 #include <QObject>
+#include <QtDebug>
 
 #include <RtMidi.h>
 
 class QVirtualMidiInPrivate
 {
     Q_DECLARE_PUBLIC(QVirtualMidiIn)
-
-    static void midiInCallback(double timestamp, std::vector<unsigned char>* bytes, void* userData)
-    {
-        if (bytes->empty())
-        {
-            return;
-        }
-
-        QVirtualMidiInPrivate* const midiIn = static_cast<QVirtualMidiInPrivate*>(userData);
-
-        if (midiIn->m_portEnabled)
-        {
-            QMidiMessage midiMessage(*bytes, midiIn->m_portOpened);
-
-            midiIn->broadcastMessage(midiMessage);
-        }
-    }
 public:
     explicit QVirtualMidiInPrivate(QVirtualMidiIn* q)
     : m_port(new RtMidiIn)
     , q_ptr(q)
     {
         // m_enabled is set to true by the constructor
-        imp::setMidiPortEnabled(m_port, &QVirtualMidiInPrivate::midiInCallback, this, true);
+        imp::setMidiPortEnabled(m_port, &imp::midiInCallback<QVirtualMidiInPrivate>, this, true);
     }
-private:
-    void broadcastMessage(QMidiMessage const& message)
+
+    inline bool isEnabled() const { return m_portEnabled; }
+    inline int portOpened() const { return m_portOpened; }
+    inline void broadcastMessage(QMidiMessage const& message)
     {
         Q_Q(QVirtualMidiIn);
 
@@ -73,6 +59,8 @@ bool QVirtualMidiIn::openPort(int const portIndex)
         d->m_portOpened = portIndex;
         d->m_port->openVirtualPort(d->m_portName.toStdString());
         result = true;
+
+        qDebug() << "[QVirtualMidiIn]" << d->m_portOpened << "Open MIDI port" << d->m_portName;
     }
 
     return result;
@@ -84,6 +72,8 @@ void QVirtualMidiIn::closePort()
 
     if (isPortOpen())
     {
+        qDebug() << "[QVirtualMidiIn]" << d->m_portOpened << "Close MIDI port" << d->m_portName;
+
         d->m_portOpened = -1;
         d->m_portName.clear();
         d->m_port->closePort();
@@ -111,7 +101,7 @@ void QVirtualMidiIn::setPortEnabled(const bool enabled)
     if (d->m_portEnabled != enabled)
     {
         d->m_portEnabled = enabled;
-        imp::setMidiPortEnabled(d->m_port, &QVirtualMidiInPrivate::midiInCallback, this, enabled);
+        imp::setMidiPortEnabled(d->m_port, &imp::midiInCallback<QVirtualMidiInPrivate>, this, enabled);
     }
 }
 
