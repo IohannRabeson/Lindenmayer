@@ -30,6 +30,9 @@ public:
 
     Qt::ItemFlags flags(const QModelIndex& index) const override;
     QMidiMessageMatrix const& matrix() const;
+
+    void onMidiInputRemoved(QModelIndex const& parent, int first, int last);
+    void onMidiOutputRemoved(QModelIndex const& parent, int first, int last);
 private:
     QMidiMessageMatrix m_matrix;
     QMap<int, QString> m_columnNames;

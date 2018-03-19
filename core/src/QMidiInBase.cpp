@@ -39,14 +39,6 @@ bool QMidiInBase::isPortEnabled() const
 }
 
 QMidiInBase::QMidiInBase(QString const& name)
-        : m_name(name)
+: m_name(name)
 {
-}
-
-void QMidiInBase::messageReceived(QMidiMessage const& message)
-{
-    if (isPortEnabled())
-    {
-        QAbstractMidiIn::messageReceived(message);
-    }
 }

@@ -22,18 +22,14 @@ public:
     using ParentNode = std::weak_ptr<AbstractTreeNode>;
     using Type = QMidiPortModel::ItemType;
 
-    virtual ~AbstractTreeNode()
-    {
-        m_parent.reset();
-        m_children.clear();
-        m_childIndex = -1;
-    }
+    virtual ~AbstractTreeNode();
 
     virtual Type type() const = 0;
     virtual QVariant data(int const column, int const role) const = 0;
     virtual bool setData(int const column, QVariant const& value, int const role) = 0;
     virtual Qt::ItemFlags flags(int const column) const = 0;
     virtual int columnCount() const = 0;
+    virtual bool isRemovable() const = 0;
 
     int addChild(NodePtr const& node);
     void removeChild(int const index);
@@ -78,6 +74,7 @@ public:
     bool setData(int const /*column*/, QVariant const& /*value*/, int const /*role*/) override { return false; }
     Qt::ItemFlags flags(int const /*column*/) const override { return Qt::NoItemFlags; }
     int columnCount() const override { return 2; }
+    bool isRemovable() const override { return false; }
 };
 
 /*!
@@ -104,6 +101,7 @@ public:
 
     QVariant data(int const column, int const role) const override;
     bool setData(int const column, QVariant const& value, int const role) override;
+    bool isRemovable() const override;
 private:
     virtual void onChildAdded(int const childIndex) override;
     virtual void onChildRemoved(int const childIndex) override;
@@ -142,6 +140,7 @@ public:
 
     QVariant data(int const column, int const role) const override;
     bool setData(int const column, QVariant const& value, int const role) override;
+    bool isRemovable() const override;
 private:
     virtual void onChildAdded(int const childIndex) override;
     virtual void onChildRemoved(int const childIndex) override;
@@ -168,6 +167,7 @@ public:
     bool setData(int const column, QVariant const& value, int const role) override;
 
     std::shared_ptr<QAbstractMidiMessageFilter> const& getFilter() const { return m_filter; }
+    bool isRemovable() const override { return false; }
 private:
     std::shared_ptr<QAbstractMidiMessageFilter> const m_filter;
 };
@@ -192,6 +192,7 @@ public:
     bool setData(int const column, const QVariant &value, const int role) override;
     Qt::ItemFlags flags(const int column) const override;
     int columnCount() const override;
+    bool isRemovable() const override { return false; }
 private:
     std::shared_ptr<Parametrable> const m_parametrable;
     std::size_t const m_propertyIndex;

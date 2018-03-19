@@ -2,9 +2,15 @@
 #define MIDIMONITOR_QVIRTUALMIDIIN_HPP
 #include <QAbstractMidiIn.hpp>
 
+class QVirtualMidiInPrivate;
+
 class QVirtualMidiIn : public QAbstractMidiIn
 {
+    Q_DECLARE_PRIVATE(QVirtualMidiIn)
 public:
+    QVirtualMidiIn();
+    ~QVirtualMidiIn();
+
     bool openPort(int const portIndex) override;
     void closePort() override;
     int portOpened() const override;
@@ -12,9 +18,7 @@ public:
     void setPortEnabled(const bool enabled) override;
     bool isPortEnabled() const override;
 private:
-    int m_portOpened = -1;
-    bool m_portEnabled = true;
-    QString m_portName;
+    QScopedPointer<QVirtualMidiInPrivate> d_ptr;
 };
 
 #endif //MIDIMONITOR_QVIRTUALMIDIIN_HPP

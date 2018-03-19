@@ -76,7 +76,6 @@ void QMidiPortModel::reset(std::vector<std::shared_ptr<QAbstractMidiIn>> const& 
                   auto node = std::make_shared<MidiInputPortTreeNode>(midiIns[i]);
 
                   root->addChild(node);
-                  //node->setParent(root);
               };
           });
 }
@@ -90,7 +89,6 @@ void QMidiPortModel::reset(std::vector<std::shared_ptr<QAbstractMidiOut>> const&
                   auto node = std::make_shared<MidiOutputPortTreeNode>(midiOuts[i]);
 
                   root->addChild(node);
-                  //node->setParent(root);
               };
           });
 }
@@ -324,4 +322,9 @@ QString QMidiPortModel::getPortName(std::shared_ptr<Node> const& node)
 QMidiPortModel::ItemType QMidiPortModel::getItemType(QModelIndex const& index) const
 {
     return getNode(index)->type();
+}
+
+bool QMidiPortModel::isRemovable(QModelIndex const& index) const
+{
+    return getNode(index)->isRemovable();
 }

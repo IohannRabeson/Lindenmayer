@@ -9,7 +9,9 @@
 #include "QMidiMessage.hpp"
 #include "QMidiPortModel.hpp"
 #include "QMidiMessageFilterFactory.hpp"
+
 #include "VectorHelpers.hpp"
+#include "RtMidiHelpers.hpp"
 
 #include <QtDebug>
 #include <QSize>
@@ -98,18 +100,19 @@ void QMidiManagerPrivate::resetPhysicalMidiInPorts()
     // This limitation is discused here: https://github.com/thestk/rtmidi/issues/50
     auto firstMidiPort = std::make_shared<QMidiIn>();
     auto const portCount = firstMidiPort->portCount();
+    std::vector<std::shared_ptr<QAbstractMidiIn>> ports;
 
     if (portCount > 0)
     {
-        m_midiIns.emplace_back(std::move(firstMidiPort));
+        ports.emplace_back(std::move(firstMidiPort));
 
         // Instanciate midi other inputs
         for (int i = 0; i < portCount - 1; ++i)
         {
-            m_midiIns.emplace_back(std::make_shared<QMidiIn>());
+            ports.emplace_back(std::make_shared<QMidiIn>());
         }
     }
-    m_inputDeviceModel->reset(m_midiIns);
+    m_inputDeviceModel->reset(ports);
 }
 
 void QMidiManagerPrivate::resetMidiInPorts()
@@ -125,20 +128,6 @@ void QMidiManagerPrivate::resetMidiInPorts()
     if (m_midiIns.empty())
     {
         qWarning() << "[MidiMonitor]: No physical midi inputs detected";
-    }
-    else
-    {
-        // Open midi inputs
-        for (int i = 0u; i < m_midiIns.size(); ++i)
-        {
-            auto const& midiIn = m_midiIns[i];
-
-            midiIn->addMessageReceivedListener([this, q](QMidiMessage const& message)
-                                               {
-                                                   emit q->messageReceived(message);
-                                                   forwardMidiMessage(message);
-                                               });
-        }
     }
 }
 
@@ -162,18 +151,19 @@ void QMidiManagerPrivate::resetPhysicalMidiOutPorts()
     // different thread because ports should share the same MidiApi instance.
     auto firstMidiPort = std::make_shared<QMidiOut>();
     auto const portCount = firstMidiPort->portCount();
+    std::vector<std::shared_ptr<QAbstractMidiOut>> ports;
 
     if (portCount > 0)
     {
-        m_midiOuts.emplace_back(std::move(firstMidiPort));
+        ports.emplace_back(std::move(firstMidiPort));
 
         // Instanciate midi other inputs
         for (int i = 0; i < portCount - 1; ++i)
         {
-            m_midiOuts.emplace_back(std::make_shared<QMidiOut>());
+            ports.emplace_back(std::make_shared<QMidiOut>());
         }
     }
-    m_outputDeviceModel->reset(m_midiOuts);
+    m_outputDeviceModel->reset(ports);
 }
 
 void QMidiManagerPrivate::closeOutputPorts()
@@ -219,8 +209,6 @@ void QMidiManager::rescanPorts()
 
     d->resetMidiInPorts();
     d->resetMidiOutPorts();
-    // TODO: remove m_midiOuts and m_midiIns -> QMidiPortModel is able to provide the same informations!
-    d->m_matrixModel->reset(d->m_midiOuts.size(), d->m_midiIns.size(), extractPortNames(d->m_midiOuts), extractPortNames(d->m_midiIns));
     emit portsRescanned();
 }
 
@@ -266,7 +254,7 @@ int QMidiManagerPrivate::addInputPort(const std::shared_ptr<QAbstractMidiIn> &mi
     int const newPortIndex = static_cast<int>(m_midiIns.size());
     int returnedPortIndex = -1;
 
-    if (midiIn->isPortOpen() || midiIn->openPort(newPortIndex))
+    if (imp::ifPortIsOpen(midiIn, newPortIndex))
     {
         midiIn->addMessageReceivedListener([this, q](QMidiMessage const& message)
         {
@@ -290,7 +278,7 @@ int QMidiManagerPrivate::addOutputPort(std::shared_ptr<QAbstractMidiOut> const& 
     int const newPortIndex = static_cast<int>(m_midiOuts.size());
     int returnedPortIndex = -1;
 
-    if (midiOut->isPortOpen() || midiOut->openPort(newPortIndex))
+    if (imp::ifPortIsOpen(midiOut, newPortIndex))
     {
         m_midiOuts.emplace_back(midiOut);
         m_matrixModel->reset(static_cast<int>(m_midiOuts.size()),
@@ -367,7 +355,7 @@ void QMidiManagerPrivate::onMidiInputPortReset()
 
         if (midiIn->isPortOpen() || midiIn->openPort(i))
         {
-            imp::uniquePushBack(m_midiIns, midiIn);
+            addInputPort(midiIn);
         }
     }
 
@@ -385,9 +373,9 @@ void QMidiManagerPrivate::onMidiOutputPortReset()
     {
         auto midiOut = m_outputDeviceModel->getOutputPort(m_outputDeviceModel->index(i, 0));
 
-        if (midiOut->isPortOpen() || midiOut->openPort(i))
+        if (imp::ifPortIsOpen(midiOut, i))
         {
-            imp::uniquePushBack(m_midiOuts, midiOut);
+            addOutputPort(midiOut);
         }
     }
 
@@ -411,6 +399,7 @@ void QMidiManagerPrivate::onMidiInputPortRowRemoved(const QModelIndex &parent, i
             port->closePort();
         }
     }
+    m_matrixModel->onMidiInputRemoved(parent, first, last);
 }
 
 void QMidiManagerPrivate::onMidiOutputPortRowRemoved(const QModelIndex &parent, int first, int last)
@@ -427,6 +416,7 @@ void QMidiManagerPrivate::onMidiOutputPortRowRemoved(const QModelIndex &parent, 
             port->closePort();
         }
     }
+    m_matrixModel->onMidiOutputRemoved(parent, first, last);
 }
 
 #include "QMidiManager.moc"

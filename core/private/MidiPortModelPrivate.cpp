@@ -4,9 +4,19 @@
 
 #include "MidiPortModelPrivate.hpp"
 
+#include "QVirtualMidiIn.hpp"
+#include "QVirtualMidiOut.hpp"
+
 //
 // class AbstractTreeNode
 //
+
+QMidiPortModel::AbstractTreeNode::~AbstractTreeNode()
+{
+    m_parent.reset();
+    m_children.clear();
+    m_childIndex = -1;
+}
 
 int QMidiPortModel::AbstractTreeNode::addChild(NodePtr const& node)
 {
@@ -151,6 +161,11 @@ bool QMidiPortModel::MidiInputPortTreeNode::setData(int const column, QVariant c
     return result;
 }
 
+bool QMidiPortModel::MidiInputPortTreeNode::isRemovable() const
+{
+    return std::dynamic_pointer_cast<QVirtualMidiIn>(m_port) != nullptr;
+}
+
 void QMidiPortModel::MidiInputPortTreeNode::onChildAdded(int const childIndex)
 {
     auto const nodeAdded = child(childIndex);
@@ -186,7 +201,7 @@ QVariant QMidiPortModel::MidiOutputPortTreeNode::data(int const column, int cons
         switch (role)
         {
         case Qt::DisplayRole:
-            result = portName();
+            result = m_port->portName();
             break;
         case Qt::UserRole:
             result = m_port->portOpened();
@@ -226,6 +241,11 @@ bool QMidiPortModel::MidiOutputPortTreeNode::setData(int const column, QVariant 
     }
 
     return result;
+}
+
+bool QMidiPortModel::MidiOutputPortTreeNode::isRemovable() const
+{
+    return std::dynamic_pointer_cast<QVirtualMidiOut>(m_port) != nullptr;
 }
 
 void QMidiPortModel::MidiOutputPortTreeNode::onChildAdded(int const childIndex)

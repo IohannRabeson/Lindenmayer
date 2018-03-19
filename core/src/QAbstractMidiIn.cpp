@@ -31,7 +31,7 @@ void QAbstractMidiIn::error(QString const& error)
 
 void QAbstractMidiIn::messageReceived(QMidiMessage const& message)
 {
-    if (imp::acceptMessage(message, std::cbegin(m_messageFilters), std::cend(m_messageFilters)))
+    if (isPortEnabled() && imp::acceptMessage(message, std::cbegin(m_messageFilters), std::cend(m_messageFilters)))
     {
         imp::callEachListener(m_messageReceivedListeners, message);
     }

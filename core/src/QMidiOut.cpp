@@ -51,7 +51,7 @@ public:
 
         if (m_portOpened != -1)
         {
-            qDebug() << "[QMidiOut]" << m_portOpened << "Close MIDI port" << m_portOpened;
+            qDebug() << "[QMidiOut]" << m_portOpened << "Close MIDI port" << m_portOpened << m_name;
             m_midiOut->closePort();
             m_portOpened = -1;
         }
@@ -66,7 +66,7 @@ public:
 
     void outputMessage(QMidiMessage const& message)
     {
-        if (m_enabled)
+        if (m_enabled && m_portOpened != -1)
         {
             m_midiOut->sendMessage(&message.bytes());
         }

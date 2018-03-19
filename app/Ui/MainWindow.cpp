@@ -206,13 +206,13 @@ void MainWindow::setupUi()
     setCentralWidget(m_messageView);
 
     // Setup MIDI input port view
-    MidiPortTreeView* midiInputPortView = new MidiPortTreeView(m_inputPortModel, m_midiMessageFilterFactory, this);
+    MidiPortTreeView* midiInputPortView = new MidiPortTreeView(MidiPortTreeView::Mode::In, m_inputPortModel, m_midiMessageFilterFactory, this);
 
     CommonUi::standardTreeView(midiInputPortView, false);
     m_dockWidgets->addDockWidget(midiInputPortView, tr("MIDI Inputs"), "midi_input");
 
     // Setup MIDI output port view
-    MidiPortTreeView* midiOutputPortView = new MidiPortTreeView(m_outputPortModel, m_midiMessageFilterFactory, this);
+    MidiPortTreeView* midiOutputPortView = new MidiPortTreeView(MidiPortTreeView::Mode::Out, m_outputPortModel, m_midiMessageFilterFactory, this);
 
     CommonUi::standardTreeView(midiOutputPortView, false);
     m_dockWidgets->addDockWidget(midiOutputPortView, tr("MIDI Outputs"), "midi_output");

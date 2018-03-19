@@ -8,6 +8,7 @@
 #include <QMidiMessageFilterFactory.hpp>
 #include <QMidiPortModel.hpp>
 #include <QVirtualMidiIn.hpp>
+#include <QVirtualMidiOut.hpp>
 
 #include <QSignalMapper>
 #include <QAction>
@@ -40,13 +41,15 @@ namespace
     }
 }
 
-MidiPortTreeView::MidiPortTreeView(QMidiPortModel* portModel, QMidiMessageFilterFactory* filterFactory, QWidget* parent)
+MidiPortTreeView::MidiPortTreeView(Mode const mode, QMidiPortModel* portModel, QMidiMessageFilterFactory* filterFactory, QWidget* parent)
 : QTreeView(parent)
 , m_portModel(portModel)
 , m_filterFactory(filterFactory)
 , m_filterSelectorSignalMapper(new QSignalMapper(this))
-, m_actionRemoveFilter(new QAction(tr("Remove"), this))
-, m_actionAddVirtualMidiInput(new QAction(this))
+, m_actionRemove(new QAction(tr("Remove"), this))
+, m_actionAddVirtualMidiInput(new QAction(tr("Add virtual MIDI in"), this))
+, m_actionAddVirtualMidiOutput(new QAction(tr("Add virtual MIDI out"), this))
+, m_mode(mode)
 {
     CommonUi::standardTreeView(this, true);
 
@@ -55,8 +58,9 @@ MidiPortTreeView::MidiPortTreeView(QMidiPortModel* portModel, QMidiMessageFilter
     connect(m_filterFactory, &QMidiMessageFilterFactory::modelReset, this, &MidiPortTreeView::onFilterFactoryResetted);
     connect(m_filterFactory, &QMidiMessageFilterFactory::rowsInserted, this, &MidiPortTreeView::onFilterFactoryRowsInserted);
     connect(m_filterSelectorSignalMapper, qOverload<int>(&QSignalMapper::mapped), this, &MidiPortTreeView::onAddFilterActionTriggered);
-    connect(m_actionRemoveFilter, &QAction::triggered, this, &MidiPortTreeView::onRemoveFilterActionTriggered);
+    connect(m_actionRemove, &QAction::triggered, this, &MidiPortTreeView::onRemoveFilterActionTriggered);
     connect(m_actionAddVirtualMidiInput, &QAction::triggered, this, &MidiPortTreeView::onAddVirtualMidiInputTriggered);
+    connect(m_actionAddVirtualMidiOutput, &QAction::triggered, this, &MidiPortTreeView::onAddVirtualMidiOutputTriggered);
 
     setRootIsDecorated(true);
     setExpandsOnDoubleClick(true);
@@ -114,9 +118,9 @@ void MidiPortTreeView::onAddFilterActionTriggered(int const filterRow)
 
 void MidiPortTreeView::onRemoveFilterActionTriggered()
 {
-    auto const currentIndex = getCurrentFilterIndex(this, m_portModel);
+    auto const currentIndex = this->currentIndex();
 
-    if (currentIndex.isValid())
+    if (currentIndex.isValid() && m_portModel->isRemovable(currentIndex))
     {
         m_portModel->remove(currentIndex);
     }
@@ -124,16 +128,34 @@ void MidiPortTreeView::onRemoveFilterActionTriggered()
 
 void MidiPortTreeView::onAddVirtualMidiInputTriggered()
 {
-    m_portModel->add(std::make_shared<QVirtualMidiIn>());
+    auto const newIndex = m_portModel->add(std::make_shared<QVirtualMidiIn>());
+
+    setCurrentIndex(newIndex);
+}
+
+void MidiPortTreeView::onAddVirtualMidiOutputTriggered()
+{
+    auto const newIndex = m_portModel->add(std::make_shared<QVirtualMidiOut>());
+
+    setCurrentIndex(newIndex);
 }
 
 void MidiPortTreeView::contextMenuEvent(QContextMenuEvent* event)
 {
-    // Produce memory leaks on OSX: it seems the cocoa code behind
+    // TODO: Produce memory leaks on OSX: it seems the cocoa code behind
     // produce a leak repeatedly...
+    // 19/03/2018
     QMenu menu(this);
 
-    menu.addAction(m_actionAddVirtualMidiInput);
+    switch (m_mode)
+    {
+    case Mode::In:
+        menu.addAction(m_actionAddVirtualMidiInput);
+        break;
+    case Mode::Out:
+        menu.addAction(m_actionAddVirtualMidiOutput);
+        break;
+    }
 
     QMenu* const addFilterSubmenu = menu.addMenu(tr("Add filter"));
     auto const currentCanHaveFilter = getCurrentPortIndex(this, m_portModel).isValid();
@@ -141,14 +163,14 @@ void MidiPortTreeView::contextMenuEvent(QContextMenuEvent* event)
     updateActions();
 
     addFilterSubmenu->setEnabled(!m_actionAddFilters.isEmpty() && currentCanHaveFilter);
+    addFilterSubmenu->addSeparator();
     addFilterSubmenu->addActions(m_actionAddFilters);
-    menu.addAction(m_actionRemoveFilter);
+    addFilterSubmenu->addSeparator();
+    menu.addAction(m_actionRemove);
     menu.exec(event->globalPos());
 }
 
 void MidiPortTreeView::updateActions()
-{
-    auto const filterSelected = m_portModel->getItemType(currentIndex()) == QMidiPortModel::ItemType::Filter;
-
-    m_actionRemoveFilter->setEnabled(filterSelected);
+{  
+    m_actionRemove->setEnabled(m_portModel->isRemovable(currentIndex()));
 }

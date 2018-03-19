@@ -26,6 +26,8 @@ public:
         Invalid,
         InputPort,
         OutputPort,
+        VirtualInputPort,
+        VirtualOutputPort,
         Filter,
         Parameter
     };
@@ -37,9 +39,10 @@ public:
     void reset(Loader&& loader);
     void reset(std::vector<std::shared_ptr<QAbstractMidiIn>> const& midiIns);
     void reset(std::vector<std::shared_ptr<QAbstractMidiOut>> const& midiOuts);
-    QModelIndex add(std::shared_ptr<QAbstractMidiIn> const& port);
     QModelIndex add(std::shared_ptr<QAbstractMidiOut> const& port);
+    QModelIndex add(std::shared_ptr<QAbstractMidiIn> const& port);
     QModelIndex add(QModelIndex const& portIndex, std::shared_ptr<QAbstractMidiMessageFilter> const& filter);
+
     void remove(QModelIndex const& index);
     void clear();
 
@@ -52,6 +55,7 @@ public:
     QModelIndex index(int row, int column, QModelIndex const& parent = QModelIndex()) const override;
     QModelIndex parent(const QModelIndex& child) const override;
     ItemType getItemType(QModelIndex const& index) const;
+    bool isRemovable(QModelIndex const& index) const;
 
     QString getPortName(int const row) const;
     std::shared_ptr<QAbstractMidiIn> getInputPort(QModelIndex const& index) const;

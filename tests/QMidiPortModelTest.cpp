@@ -247,6 +247,9 @@ TEST(QMidiPortModelTest, add_filter_on_output)
     auto const port = std::make_shared<NiceMock<AbstractMidiOutMock>>();
     auto const filter = std::make_shared<NiceMock<AbstractMidiMessageFilterMock>>();
 
+    ON_CALL(*port, isPortEnabled()).WillByDefault(Return(true));
+    ON_CALL(*port, portOpened()).WillByDefault(Return(0));
+
     EXPECT_CALL(*filter, filterMessage(_))
                 .Times(1);
 
@@ -268,6 +271,9 @@ TEST(QMidiPortModelTest, add_filter_on_input)
     QMidiPortModel model;
     auto const port = std::make_shared<NiceMock<AbstractMidiInMock>>();
     auto const filter = std::make_shared<NiceMock<AbstractMidiMessageFilterMock>>();
+
+    ON_CALL(*port, isPortEnabled()).WillByDefault(Return(true));
+    ON_CALL(*port, portOpened()).WillByDefault(Return(0));
 
     EXPECT_CALL(*filter, filterMessage(_))
                 .Times(1);

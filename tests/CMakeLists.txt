@@ -19,7 +19,9 @@ set(SRC
     QMidiMessageFilterTest.cpp
     QMidiPortModelTest.cpp
     QMidiManagerTest.cpp
-    QVirtualMidiInTest.cpp)
+    QVirtualMidiInTest.cpp
+    QVirtualMidiOutTest.cpp
+)
 
 add_executable(unit_tests ${SRC})
 target_link_libraries(unit_tests PRIVATE QMidi gtest gmock Qt5::Core Qt5::Widgets)

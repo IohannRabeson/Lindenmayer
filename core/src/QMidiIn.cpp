@@ -5,6 +5,7 @@
 #include "QMidiIn.hpp"
 #include "QMidiMessage.hpp"
 #include "QAbstractMidiMessageFilter.hpp"
+#include "RtMidiHelpers.hpp"
 
 #include <RtMidi.h>
 
@@ -39,7 +40,6 @@ public:
         qRegisterMetaType<QMidiMessage>();
 
         m_midiIn->ignoreTypes(false, false, false);
-        m_midiIn->setCallback(&QMidiInPrivate::midiInCallback, this);
     }
 
     ~QMidiInPrivate()
@@ -61,6 +61,9 @@ public:
             m_portOpened = portIndex;
             m_name = QString::fromStdString(m_midiIn->getPortName(portIndex));
 
+            // // m_enabled is set to true by the constructor
+            imp::setMidiPortEnabled(m_midiIn, &QMidiInPrivate::midiInCallback, this, true);
+
             qDebug() << "[QMidiIn]" << portIndex << "Open MIDI port" << portIndex;
         }
         catch (RtMidiError const& e)
@@ -78,8 +81,9 @@ public:
 
         if (m_portOpened != -1)
         {
-            qDebug() << "[QMidiIn]" << m_portOpened << "Close MIDI port" << m_portOpened;
+            qDebug() << "[QMidiIn]" << m_portOpened << "Close MIDI port" << m_portOpened << m_name;
             m_midiIn->closePort();
+            m_name.clear();
             m_portOpened = -1;
         }
     }
@@ -168,8 +172,12 @@ void QMidiIn::setPortEnabled(bool const enabled) noexcept
 {
     Q_D(QMidiIn);
 
-    d->m_enabled = enabled;
-    qDebug() << "[QMidiIn]" << d->m_portOpened << "enabled:" << d->m_enabled;
+    if (d->m_enabled != enabled)
+    {
+        d->m_enabled = enabled;
+        imp::setMidiPortEnabled(d->m_midiIn, &QMidiInPrivate::midiInCallback, this, enabled);
+        qDebug() << "[QMidiIn]" << d->m_portOpened << "enabled:" << d->m_enabled;
+    }
 }
 
 bool QMidiIn::isPortEnabled() const noexcept
