@@ -62,13 +62,11 @@ private:
     QMidiManager* const m_midiManager;
     QMidiPortModel* const m_inputPortModel;
     QMidiPortModel* const m_outputPortModel;
-    QMidiMessageFilterFactory* const m_midiMessageFilterFactory;
     QMidiMessageModel* const m_messageModel;
     QItemSelectionModel* const m_messageSelection;
     MidiMessageListView* const m_messageView;
     qool::DockWidgetManager* const m_dockWidgets;
     qool::ToolBarManager* const m_toolbars;
-    QMidiManufacturerModel* const m_manufacturerModel;
     std::shared_ptr<MidiNoteTriggerWidget> const m_noteWidget;
     std::shared_ptr<MidiKeyboardWidget> const m_keyboardWidget;
 

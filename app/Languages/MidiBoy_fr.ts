@@ -98,38 +98,38 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../Ui/MainWindow.cpp" line="126"/>
+        <location filename="../Ui/MainWindow.cpp" line="124"/>
         <source>Quit</source>
         <translation>Quitter</translation>
     </message>
     <message>
-        <location filename="../Ui/MainWindow.cpp" line="127"/>
+        <location filename="../Ui/MainWindow.cpp" line="125"/>
         <source>Clear all</source>
         <translation>Supprimer tout</translation>
     </message>
     <message>
-        <location filename="../Ui/MainWindow.cpp" line="128"/>
+        <location filename="../Ui/MainWindow.cpp" line="126"/>
         <source>About...</source>
         <translation>A propos...</translation>
     </message>
     <message>
-        <location filename="../Ui/MainWindow.cpp" line="129"/>
+        <location filename="../Ui/MainWindow.cpp" line="127"/>
         <source>Auto scrolling</source>
         <translatorcomment>TODO: améliorer cette traduction</translatorcomment>
         <translation>Scrolling automatique</translation>
     </message>
     <message>
-        <location filename="../Ui/MainWindow.cpp" line="130"/>
+        <location filename="../Ui/MainWindow.cpp" line="128"/>
         <source>Show</source>
         <translation>Montrer</translation>
     </message>
     <message>
-        <location filename="../Ui/MainWindow.cpp" line="168"/>
+        <location filename="../Ui/MainWindow.cpp" line="174"/>
         <source>Clear messages</source>
         <translation>Supprimer les messages</translation>
     </message>
     <message>
-        <location filename="../Ui/MainWindow.cpp" line="169"/>
+        <location filename="../Ui/MainWindow.cpp" line="175"/>
         <source>Messages can lost their input port information.
 Are you sure you want to do that?</source>
         <translation>Les messages peuvent perdre les informations a propos des ports d&apos;entrée.
@@ -318,22 +318,22 @@ Etes-vous sûr de vouloir faire ça?</translation>
 <context>
     <name>MidiPortTreeView</name>
     <message>
-        <location filename="../Ui/Views/MidiPortTreeView.cpp" line="49"/>
+        <location filename="../Ui/Views/MidiPortTreeView.cpp" line="51"/>
         <source>Remove</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Ui/Views/MidiPortTreeView.cpp" line="50"/>
+        <location filename="../Ui/Views/MidiPortTreeView.cpp" line="52"/>
         <source>Add virtual MIDI in</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Ui/Views/MidiPortTreeView.cpp" line="51"/>
+        <location filename="../Ui/Views/MidiPortTreeView.cpp" line="53"/>
         <source>Add virtual MIDI out</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Ui/Views/MidiPortTreeView.cpp" line="161"/>
+        <location filename="../Ui/Views/MidiPortTreeView.cpp" line="163"/>
         <source>Add filter</source>
         <translation type="unfinished"></translation>
     </message>

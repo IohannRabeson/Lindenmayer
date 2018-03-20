@@ -14,6 +14,7 @@ class QAbstractMidiOut;
 class QMidiMessage;
 class QMidiMessageMatrixModel;
 class QMidiMessageFilterFactory;
+class QMidiManufacturerModel;
 class QMidiManagerPrivate;
 
 class QMidiManager : public QObject
@@ -40,6 +41,7 @@ public:
     QMidiPortModel* getOutputDeviceModel() const;
     QMidiMessageMatrixModel* getMessageMatrixModel() const;
     QMidiMessageFilterFactory* getMessageFilterFactory() const;
+    QMidiManufacturerModel* getManufacturerModel() const;
 signals:
     void messageReceived(QMidiMessage const& message);
     void messageSent(QMidiMessage const& message);

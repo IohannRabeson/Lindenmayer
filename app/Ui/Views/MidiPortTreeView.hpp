@@ -7,6 +7,7 @@
 #include <QTreeView>
 #include <QPointer>
 
+class QMidiManager;
 class QMidiMessageFilterFactory;
 class QSignalMapper;
 class QContextMenuEvent;
@@ -23,7 +24,7 @@ public:
         Out
     };
 
-    MidiPortTreeView(Mode const mode, QMidiPortModel* portModel, QMidiMessageFilterFactory* filterFactory, QWidget* parent = nullptr);
+    MidiPortTreeView(Mode const mode, QMidiManager* const manager, QWidget* parent = nullptr);
 protected:
     void contextMenuEvent(QContextMenuEvent *event);
 private:
@@ -40,6 +41,7 @@ private:
 
     class ValueColumnDelegate;
 private:
+    QPointer<QMidiManager> m_midiManager;
     QPointer<QMidiPortModel> m_portModel;
     QPointer<QMidiMessageFilterFactory> m_filterFactory;
     QSignalMapper* const m_filterSelectorSignalMapper;

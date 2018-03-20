@@ -9,6 +9,7 @@
 #include <QMidiPortModel.hpp>
 #include <QVirtualMidiIn.hpp>
 #include <QVirtualMidiOut.hpp>
+#include <QMidiManager.hpp>
 
 #include <QSignalMapper>
 #include <QAction>
@@ -41,10 +42,11 @@ namespace
     }
 }
 
-MidiPortTreeView::MidiPortTreeView(Mode const mode, QMidiPortModel* portModel, QMidiMessageFilterFactory* filterFactory, QWidget* parent)
+MidiPortTreeView::MidiPortTreeView(Mode const mode, QMidiManager* const manager, QWidget* parent)
 : QTreeView(parent)
-, m_portModel(portModel)
-, m_filterFactory(filterFactory)
+, m_midiManager(manager)
+, m_portModel(mode == Mode::In ? manager->getInputDeviceModel() : manager->getOutputDeviceModel())
+, m_filterFactory(manager->getMessageFilterFactory())
 , m_filterSelectorSignalMapper(new QSignalMapper(this))
 , m_actionRemove(new QAction(tr("Remove"), this))
 , m_actionAddVirtualMidiInput(new QAction(tr("Add virtual MIDI in"), this))
@@ -53,7 +55,7 @@ MidiPortTreeView::MidiPortTreeView(Mode const mode, QMidiPortModel* portModel, Q
 {
     CommonUi::standardTreeView(this, true);
 
-    setModel(portModel);
+    setModel(m_portModel);
 
     connect(m_filterFactory, &QMidiMessageFilterFactory::modelReset, this, &MidiPortTreeView::onFilterFactoryResetted);
     connect(m_filterFactory, &QMidiMessageFilterFactory::rowsInserted, this, &MidiPortTreeView::onFilterFactoryRowsInserted);

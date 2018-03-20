@@ -11,8 +11,6 @@
 #include "Ui/Dialogs/AboutMidiMonitorDialog.hpp"
 #include "Ui/SettingsUtils.hpp"
 
-#include "Ui/Delegates/MidiDelegates.hpp"
-
 #include "Ui/Widgets/MidiNoteTriggerWidget.hpp"
 #include "Ui/Widgets/MidiKeyboardWidget.hpp"
 #include "Ui/Widgets/MidiMatrixWidget.hpp"
@@ -25,12 +23,14 @@
 #include <QSystemTrayIcon>
 
 #include <QtDebug>
+#include <QEvent>
 
 #include <QMidiIn.hpp>
 #include <QMidiMessageModel.hpp>
 #include <QMidiMessageMatrixModel.hpp>
 #include <QMidiPortModel.hpp>
 #include <QMidiManager.hpp>
+#include <QMidiManufacturerModel.hpp>
 
 #include <QMetaEnum>
 
@@ -113,13 +113,11 @@ MainWindow::MainWindow(QWidget* parent)
 , m_midiManager(new QMidiManager(this))
 , m_inputPortModel(m_midiManager->getInputDeviceModel())
 , m_outputPortModel(m_midiManager->getOutputDeviceModel())
-, m_midiMessageFilterFactory(m_midiManager->getMessageFilterFactory())
 , m_messageModel(new QMidiMessageModel(this))
 , m_messageSelection(new QItemSelectionModel(m_messageModel, this))
-, m_messageView(new MidiMessageListView(m_messageModel, this))
+, m_messageView(new MidiMessageListView(m_midiManager, this))
 , m_dockWidgets(new qool::DockWidgetManager(this))
 , m_toolbars(new qool::ToolBarManager(this))
-, m_manufacturerModel(new QMidiManufacturerModel(this))
 , m_noteWidget(new MidiNoteTriggerWidget(this))
 , m_keyboardWidget(new MidiKeyboardWidget(this))
 
@@ -130,9 +128,9 @@ MainWindow::MainWindow(QWidget* parent)
 , m_actionRestoreWindow(new QAction(tr("Show"), this))
 {
     // Test - TODO: remove
-    m_midiMessageFilterFactory->add<FilterNoteOn>("Note On");
-    m_midiMessageFilterFactory->add<FilterNoteOff>("Note Off");
-    m_midiMessageFilterFactory->add<FilterByType>("Filter by type");
+    m_midiManager->getMessageFilterFactory()->add<FilterNoteOn>("Note On");
+    m_midiManager->getMessageFilterFactory()->add<FilterNoteOff>("Note Off");
+    m_midiManager->getMessageFilterFactory()->add<FilterByType>("Filter by type");
 
     setupUi();
     setupMIDI();
@@ -153,9 +151,11 @@ MainWindow::~MainWindow()
 void MainWindow::setupMIDI()
 {
     resetMidiPorts();
-    connect(m_midiManager, &QMidiManager::messageReceived, m_messageModel, &QMidiMessageModel::append);
-    connect(m_midiManager, &QMidiManager::messageSent, m_messageModel, &QMidiMessageModel::append);
-    m_manufacturerModel->load(QMidiManufacturerModel::LoadFromCSV(":/Texts/Resources/MIDI_Manufacturers.csv"));
+    connect(m_midiManager, &QMidiManager::messageReceived, [this](QMidiMessage const& message)
+    {
+        m_messageView->append(message);
+    });
+    m_midiManager->getManufacturerModel()->load(QMidiManufacturerModel::LoadFromCSV(":/Texts/Resources/MIDI_Manufacturers.csv"));
 }
 
 void MainWindow::resetMidiPorts()
@@ -195,24 +195,18 @@ void MainWindow::setupActions()
 void MainWindow::setupUi()
 {
     // Setup message view
-    m_messageView->setModel(m_messageModel);
-    m_messageView->setSelectionModel(m_messageSelection);
-    m_messageView->setItemDelegateForColumn(QMidiMessageModel::Columns::Type, new MidiMessageDelegates::MidiMessageTypeDelegate(this));
-    m_messageView->setItemDelegateForColumn(QMidiMessageModel::Columns::Input, new MidiMessageDelegates::MidiInPortDelegate(m_inputPortModel, this));
-    m_messageView->setItemDelegateForColumn(QMidiMessageModel::Columns::Channel, new MidiMessageDelegates::MidiChannelDelegate(this));
-    m_messageView->setItemDelegateForColumn(QMidiMessageModel::Columns::Timestamp, new MidiMessageDelegates::MidiTimeDelegate(this));
-    m_messageView->setItemDelegateForColumn(QMidiMessageModel::Columns::Value, new MidiMessageDelegates::MidiValueDelegate(m_messageModel, m_manufacturerModel, this));
-    m_messageView->setItemDelegateForColumn(QMidiMessageModel::Columns::Data, new MidiMessageDelegates::MidiDataDelegate(m_messageModel, this));
+//    m_messageView->setModel(m_messageModel);
+//    m_messageView->setSelectionModel(m_messageSelection);
     setCentralWidget(m_messageView);
 
     // Setup MIDI input port view
-    MidiPortTreeView* midiInputPortView = new MidiPortTreeView(MidiPortTreeView::Mode::In, m_inputPortModel, m_midiMessageFilterFactory, this);
+    MidiPortTreeView* midiInputPortView = new MidiPortTreeView(MidiPortTreeView::Mode::In, m_midiManager, this);
 
     CommonUi::standardTreeView(midiInputPortView, true);
     m_dockWidgets->addDockWidget(midiInputPortView, tr("MIDI Inputs"), "midi_input");
 
     // Setup MIDI output port view
-    MidiPortTreeView* midiOutputPortView = new MidiPortTreeView(MidiPortTreeView::Mode::Out, m_outputPortModel, m_midiMessageFilterFactory, this);
+    MidiPortTreeView* midiOutputPortView = new MidiPortTreeView(MidiPortTreeView::Mode::Out, m_midiManager, this);
 
     CommonUi::standardTreeView(midiOutputPortView, true);
     m_dockWidgets->addDockWidget(midiOutputPortView, tr("MIDI Outputs"), "midi_output");

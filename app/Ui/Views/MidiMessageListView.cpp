@@ -3,28 +3,45 @@
 //
 
 #include "MidiMessageListView.hpp"
+
 #include "Ui/CommonUi.hpp"
-
-#include <QMidiMessageModel.hpp>
-#include <QHeaderView>
-
+#include "Ui/Delegates/MidiDelegates.hpp"
 #include "Ui/SettingsUtils.hpp"
 
-MidiMessageListView::MidiMessageListView(QMidiMessageModel* model, QWidget* parent)
+#include <QMidiMessageModel.hpp>
+#include <QMidiManager.hpp>
+
+#include <QHeaderView>
+
+MidiMessageListView::MidiMessageListView(QMidiManager* const midiManager, QWidget* parent)
 : QTreeView(parent)
+, m_midiManager(midiManager)
+, m_messageModel(new QMidiMessageModel(this))
 , m_autoScroll(true)
 {
     setUniformRowHeights(true);
-    setModel(model);
+    setModel(m_messageModel);
+    setItemDelegateForColumn(QMidiMessageModel::Columns::Type, new MidiMessageDelegates::MidiMessageTypeDelegate(this));
+    setItemDelegateForColumn(QMidiMessageModel::Columns::Input, new MidiMessageDelegates::MidiInPortDelegate(m_midiManager->getInputDeviceModel(), this));
+    setItemDelegateForColumn(QMidiMessageModel::Columns::Channel, new MidiMessageDelegates::MidiChannelDelegate(this));
+    setItemDelegateForColumn(QMidiMessageModel::Columns::Timestamp, new MidiMessageDelegates::MidiTimeDelegate(this));
+    setItemDelegateForColumn(QMidiMessageModel::Columns::Value, new MidiMessageDelegates::MidiValueDelegate(m_messageModel, m_midiManager->getManufacturerModel(), this));
+    setItemDelegateForColumn(QMidiMessageModel::Columns::Data, new MidiMessageDelegates::MidiDataDelegate(m_messageModel, this));
+
     CommonUi::standardTreeView(this);
 
-    connect(model, &QMidiMessageModel::rowsInserted, [this]()
+    connect(m_messageModel, &QMidiMessageModel::rowsInserted, [this]()
     {
         if (m_autoScroll)
         {
             scrollToBottom();
         }
     });
+}
+
+void MidiMessageListView::append(QMidiMessage const& message)
+{
+    m_messageModel->append(message);
 }
 
 void MidiMessageListView::setAutoScrollToBottomEnabled(bool const enabled)
