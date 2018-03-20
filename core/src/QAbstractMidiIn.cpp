@@ -31,7 +31,7 @@ void QAbstractMidiIn::error(QString const& error)
 
 void QAbstractMidiIn::messageReceived(QMidiMessage const& message)
 {
-    if (imp::acceptMessage(message, std::cbegin(m_messageFilters), std::cend(m_messageFilters)))
+    if (isPortEnabled() && imp::acceptMessage(message, std::cbegin(m_messageFilters), std::cend(m_messageFilters)))
     {
         imp::callEachListener(m_messageReceivedListeners, message);
     }
@@ -39,12 +39,12 @@ void QAbstractMidiIn::messageReceived(QMidiMessage const& message)
 
 int QAbstractMidiIn::addFilter(FilterPointer const& filter)
 {
-    return imp::addToVector(m_messageFilters, std::move(filter));
+    return imp::pushBack(m_messageFilters, filter);
 }
 
 void QAbstractMidiIn::removeFilter(int const filterIndex)
 {
-    imp::removeFromVector(m_messageFilters, filterIndex);
+    imp::removeAt(m_messageFilters, filterIndex);
 }
 
 void QAbstractMidiIn::clearFilters()

@@ -23,6 +23,9 @@ public:
     virtual ~QAbstractMidiIn() = default;
     virtual bool openPort(int const portIndex) = 0;
     virtual void closePort() = 0;
+
+    virtual void messageReceived(QMidiMessage const& message);
+
     /*!
      * \brief Return the index of the opened port or -1 if the port is not open.
      */
@@ -41,7 +44,6 @@ public:
     int filterCount() const;
 protected:
     void error(QString const& error);
-    virtual void messageReceived(QMidiMessage const& message);
 private:
     std::vector<ErrorListener> m_errorListeners;
     std::vector<MessageReceivedCallback> m_messageReceivedListeners;

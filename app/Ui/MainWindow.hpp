@@ -69,8 +69,8 @@ private:
     qool::DockWidgetManager* const m_dockWidgets;
     qool::ToolBarManager* const m_toolbars;
     QMidiManufacturerModel* const m_manufacturerModel;
-    MidiNoteTriggerWidget* const m_noteWidget;
-    MidiKeyboardWidget* const m_keyboardWidget;
+    std::shared_ptr<MidiNoteTriggerWidget> const m_noteWidget;
+    std::shared_ptr<MidiKeyboardWidget> const m_keyboardWidget;
 
     // File actions
     QAction* const m_actionQuit;

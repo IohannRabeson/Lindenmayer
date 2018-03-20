@@ -2,7 +2,10 @@ set(QMIDIBOY_CORE_PRIVATE
     private/MidiMessageFilterHelpers.hpp
     private/VectorHelpers.hpp
     private/ListenerHelpers.hpp
-        private/MidiPortModelPrivate.hpp private/MidiPortModelPrivate.cpp)
+    private/MidiPortModelPrivate.hpp
+    private/MidiPortModelPrivate.cpp
+    private/RtMidiHelpers.hpp
+    private/RtMidiHelpers.cpp)
 
 set(QMIDIBOY_CORE_SOURCES
     src/QMidiIn.cpp
@@ -41,7 +44,11 @@ set(QMIDIBOY_CORE_SOURCES
     include/QMidiPortModel.hpp
     src/QMidiMessageFilterFactory.cpp
     include/QMidiMessageFilterFactory.hpp
-)
+    src/QVirtualMidiIn.cpp
+    include/QVirtualMidiIn.hpp
+    src/QVirtualMidiOut.cpp
+    include/QVirtualMidiOut.hpp
+    )
 
 add_library(QMidi
             resources/QMidi.qrc

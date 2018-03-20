@@ -5,6 +5,30 @@
 #include "QMidiMessageMatrixModel.hpp"
 #include <QSize>
 
+namespace imp
+{
+    QMap<int, QString> removeEntry(QMap<int, QString> const& entries, int first, int last)
+    {
+        QMap<int, QString> newEntries;
+
+        for (auto it = entries.begin(); it != entries.end(); ++it)
+        {
+            if (it.key() < first)
+            {
+                newEntries.insert(it.key(), it.value());
+            }
+            else if (it.key() > last)
+            {
+                auto const sub = last - first + 1;
+
+                newEntries.insert(it.key() - sub, it.value());
+            }
+        }
+
+        return newEntries;
+    }
+}
+
 int QMidiMessageMatrixModel::rowCount(QModelIndex const& parent) const
 {
     return parent.isValid() ? 0 : m_matrix.inputCount();
@@ -79,6 +103,38 @@ Qt::ItemFlags QMidiMessageMatrixModel::flags(const QModelIndex& index) const
 QMidiMessageMatrix const& QMidiMessageMatrixModel::matrix() const
 {
     return m_matrix;
+}
+
+void QMidiMessageMatrixModel::onMidiInputRemoved(QModelIndex const& parent, int first, int last)
+{
+    if (!parent.isValid())
+    {
+        beginRemoveRows(QModelIndex(), first, last);
+        for (int i = first; i <= last; ++i)
+        {
+            m_matrix.removeInput(i);
+        }
+
+        m_rowNames = imp::removeEntry(m_rowNames, first, last);
+
+        endRemoveRows();
+    }
+}
+
+void QMidiMessageMatrixModel::onMidiOutputRemoved(QModelIndex const& parent, int first, int last)
+{
+    if (!parent.isValid())
+    {
+        beginRemoveColumns(QModelIndex(), first, last);
+        for (int i = first; i <= last; ++i)
+        {
+            m_matrix.removeOutput(i);
+        }
+
+        m_columnNames = imp::removeEntry(m_columnNames, first, last);
+
+        endRemoveColumns();
+    }
 }
 
 QVariant QMidiMessageMatrixModel::headerData(int section, Qt::Orientation orientation, int role) const

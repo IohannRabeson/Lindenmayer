@@ -317,12 +317,22 @@ Are you sure you want to do that?</translation>
 <context>
     <name>MidiPortTreeView</name>
     <message>
-        <location filename="../Ui/Views/MidiPortTreeView.cpp" line="46"/>
+        <location filename="../Ui/Views/MidiPortTreeView.cpp" line="49"/>
         <source>Remove</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Ui/Views/MidiPortTreeView.cpp" line="126"/>
+        <location filename="../Ui/Views/MidiPortTreeView.cpp" line="50"/>
+        <source>Add virtual MIDI in</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../Ui/Views/MidiPortTreeView.cpp" line="51"/>
+        <source>Add virtual MIDI out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../Ui/Views/MidiPortTreeView.cpp" line="160"/>
         <source>Add filter</source>
         <translation type="unfinished"></translation>
     </message>
@@ -343,17 +353,17 @@ Are you sure you want to do that?</translation>
 <context>
     <name>QMidiMessageMatrixModel</name>
     <message>
-        <location filename="../../core/src/QMidiMessageMatrixModel.cpp" line="30"/>
+        <location filename="../../core/src/QMidiMessageMatrixModel.cpp" line="54"/>
         <source>Connection from input &apos;%0&apos; to output &apos;%1&apos;</source>
         <translation>Connection from input &apos;%0&apos; to output &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../../core/src/QMidiMessageMatrixModel.cpp" line="96"/>
+        <location filename="../../core/src/QMidiMessageMatrixModel.cpp" line="152"/>
         <source>Input &apos;%0&apos;</source>
         <translation>Input &apos;%0&apos;</translation>
     </message>
     <message>
-        <location filename="../../core/src/QMidiMessageMatrixModel.cpp" line="110"/>
+        <location filename="../../core/src/QMidiMessageMatrixModel.cpp" line="166"/>
         <source>Output &apos;%0&apos;</source>
         <translation>Output &apos;%0&apos;</translation>
     </message>
@@ -455,6 +465,16 @@ The application will be closed.</translation>
     <message>
         <location filename="../Ui/MainWindow.cpp" line="60"/>
         <source>Message type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../core/src/QVirtualMidiOut.cpp" line="37"/>
+        <source>Virtual output port %0</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../core/src/QVirtualMidiIn.cpp" line="57"/>
+        <source>Virtual input port %0</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
