@@ -208,13 +208,13 @@ void MainWindow::setupUi()
     // Setup MIDI input port view
     MidiPortTreeView* midiInputPortView = new MidiPortTreeView(MidiPortTreeView::Mode::In, m_inputPortModel, m_midiMessageFilterFactory, this);
 
-    CommonUi::standardTreeView(midiInputPortView, false);
+    CommonUi::standardTreeView(midiInputPortView, true);
     m_dockWidgets->addDockWidget(midiInputPortView, tr("MIDI Inputs"), "midi_input");
 
     // Setup MIDI output port view
     MidiPortTreeView* midiOutputPortView = new MidiPortTreeView(MidiPortTreeView::Mode::Out, m_outputPortModel, m_midiMessageFilterFactory, this);
 
-    CommonUi::standardTreeView(midiOutputPortView, false);
+    CommonUi::standardTreeView(midiOutputPortView, true);
     m_dockWidgets->addDockWidget(midiOutputPortView, tr("MIDI Outputs"), "midi_output");
 
     // Setup note widget

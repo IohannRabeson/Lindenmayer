@@ -11,6 +11,14 @@
 #include "QAbstractMidiMessageFilter.hpp"
 #include "VectorHelpers.hpp"
 
+namespace imp
+{
+    inline Qt::ItemFlags getFirstColumnIsCheckableFlags(int const column)
+    {
+        return Qt::ItemIsSelectable | Qt::ItemIsEnabled | (column == 0 ? Qt::ItemIsUserCheckable : Qt::NoItemFlags);
+    }
+}
+
 /*!
  * \class QMidiInListModel::AbstractTreeNode
  * \brief Abstract node
@@ -90,12 +98,9 @@ public:
 
     std::shared_ptr<QAbstractMidiIn> const& port() const { return m_port; }
 
-    int columnCount() const override { return 1; }
+    int columnCount() const override { return 2; }
 
-    Qt::ItemFlags flags(int const) const override
-    {
-        return Qt::ItemIsSelectable | Qt::ItemIsUserCheckable | Qt::ItemIsEnabled;
-    }
+    Qt::ItemFlags flags(int const column) const override { return imp::getFirstColumnIsCheckableFlags(column); }
 
     QVariant data(int const column, int const role) const override;
     bool setData(int const column, QVariant const& value, int const role) override;
@@ -124,12 +129,9 @@ public:
 
     std::shared_ptr<QAbstractMidiOut> const& port() const { return m_port; }
 
-    int columnCount() const override { return 1; }
+    int columnCount() const override { return 2; }
 
-    Qt::ItemFlags flags(int const) const override
-    {
-        return Qt::ItemIsSelectable | Qt::ItemIsUserCheckable | Qt::ItemIsEnabled;
-    }
+    Qt::ItemFlags flags(int const column) const override { return imp::getFirstColumnIsCheckableFlags(column); }
 
     QVariant data(int const column, int const role) const override;
     bool setData(int const column, QVariant const& value, int const role) override;
@@ -152,7 +154,7 @@ public:
 
     AbstractTreeNode::Type type() const override { return AbstractTreeNode::Type::Filter; }
 
-    int columnCount() const override { return 1; }
+    int columnCount() const override { return 2; }
 
     Qt::ItemFlags flags(int const column) const override;
 
@@ -174,11 +176,7 @@ class QMidiPortModel::MidiFilterPropertyTreeNode : public AbstractTreeNode
         ColumnCount
     };
 public:
-    MidiFilterPropertyTreeNode(std::shared_ptr<Parametrable> const& parametrable, std::size_t const index)
-    : m_parametrable(parametrable)
-    , m_propertyIndex(index)
-    {
-    }
+    MidiFilterPropertyTreeNode(std::shared_ptr<Parametrable> const& parametrable, std::size_t const index);
 
     Type type() const override;
     QVariant data(int const column, const int role) const override;

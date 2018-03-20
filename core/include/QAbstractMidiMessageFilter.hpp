@@ -11,7 +11,7 @@
 
 class Parametrable
 {
-public:
+public:   
     using Setter = std::function<bool(QVariant const&)>;
     using Getter = std::function<QVariant()>;
     using Index = std::size_t;
@@ -56,6 +56,9 @@ protected:
                       Setter&& setter,
                       Getter&& getter)
     {
+        Q_ASSERT( setter );
+        Q_ASSERT( getter );
+
         m_parameters.emplace_back(ParameterInfo{name, tooltip, std::move(setter), std::move(getter)});
     }
 private:

@@ -67,6 +67,7 @@ MidiPortTreeView::MidiPortTreeView(Mode const mode, QMidiPortModel* portModel, Q
     setItemDelegateForColumn(1, new ValueColumnDelegate(this));
     setSelectionMode(QTreeView::SelectionMode::SingleSelection);
     setSelectionBehavior(QTreeView::SelectionBehavior::SelectRows);
+    setHeaderHidden(false);
 
     onFilterFactoryResetted();
 }

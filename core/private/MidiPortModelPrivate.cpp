@@ -343,6 +343,13 @@ bool QMidiPortModel::MidiFilterTreeNode::setData(int const column, QVariant cons
 // class MidiFilterPropertyTreeNode
 //
 
+QMidiPortModel::MidiFilterPropertyTreeNode::MidiFilterPropertyTreeNode(const std::shared_ptr<Parametrable> &parametrable,
+                                                                       const std::size_t index)
+    : m_parametrable(parametrable)
+    , m_propertyIndex(index)
+{
+}
+
 auto QMidiPortModel::MidiFilterPropertyTreeNode::type() const -> Type
 {
     return Type::Parameter;

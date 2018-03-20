@@ -333,7 +333,7 @@ Etes-vous sûr de vouloir faire ça?</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Ui/Views/MidiPortTreeView.cpp" line="160"/>
+        <location filename="../Ui/Views/MidiPortTreeView.cpp" line="161"/>
         <source>Add filter</source>
         <translation type="unfinished"></translation>
     </message>
