@@ -64,11 +64,11 @@ private:
     QMidiPortModel* const m_outputPortModel;
     QMidiMessageModel* const m_messageModel;
     QItemSelectionModel* const m_messageSelection;
-    MidiMessageListView* const m_messageView;
     qool::DockWidgetManager* const m_dockWidgets;
     qool::ToolBarManager* const m_toolbars;
     std::shared_ptr<MidiNoteTriggerWidget> const m_noteWidget;
     std::shared_ptr<MidiKeyboardWidget> const m_keyboardWidget;
+    std::shared_ptr<MidiMessageListView> const m_messageView;
 
     // File actions
     QAction* const m_actionQuit;

@@ -15,6 +15,7 @@
 
 MidiMessageListView::MidiMessageListView(QMidiManager* const midiManager, QWidget* parent)
 : QTreeView(parent)
+, QMidiOutBase(tr("Midi logger"))
 , m_midiManager(midiManager)
 , m_messageModel(new QMidiMessageModel(this))
 , m_autoScroll(true)
@@ -69,4 +70,13 @@ void MidiMessageListView::saveSettings(QSettings& settings) const
     settings.setValue("state", header()->saveState());
     settings.endGroup();
     settings.endGroup();
+}
+
+
+void MidiMessageListView::outputMessage(const QMidiMessage &message)
+{
+    if (isPortEnabled() && isPortOpen())
+    {
+        m_messageModel->append(message);
+    }
 }

@@ -18,6 +18,7 @@ public:
     using ErrorListener = std::function<void(QString const&)>;
     using FilterPointer = std::shared_ptr<QAbstractMidiMessageFilter>;
 
+    virtual ~QAbstractMidiOut() = default;
     virtual bool openPort(int const portIndex) = 0;
     virtual void closePort() = 0;
     virtual int portOpened() const = 0;

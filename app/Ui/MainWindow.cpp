@@ -115,11 +115,11 @@ MainWindow::MainWindow(QWidget* parent)
 , m_outputPortModel(m_midiManager->getOutputDeviceModel())
 , m_messageModel(new QMidiMessageModel(this))
 , m_messageSelection(new QItemSelectionModel(m_messageModel, this))
-, m_messageView(new MidiMessageListView(m_midiManager, this))
 , m_dockWidgets(new qool::DockWidgetManager(this))
 , m_toolbars(new qool::ToolBarManager(this))
 , m_noteWidget(new MidiNoteTriggerWidget(this))
 , m_keyboardWidget(new MidiKeyboardWidget(this))
+, m_messageView(new MidiMessageListView(m_midiManager, this))
 
 , m_actionQuit(new QAction(tr("Quit"), this))
 , m_actionClearAll(new QAction(QIcon(":/Images/Resources/Icons/Clear.png"), tr("Clear all"), this))
@@ -151,10 +151,6 @@ MainWindow::~MainWindow()
 void MainWindow::setupMIDI()
 {
     resetMidiPorts();
-    connect(m_midiManager, &QMidiManager::messageReceived, [this](QMidiMessage const& message)
-    {
-        m_messageView->append(message);
-    });
     m_midiManager->getManufacturerModel()->load(QMidiManufacturerModel::LoadFromCSV(":/Texts/Resources/MIDI_Manufacturers.csv"));
 }
 
@@ -178,6 +174,7 @@ void MainWindow::resetMidiPorts()
     m_midiManager->rescanPorts();
     m_midiManager->getInputDeviceModel()->add(m_noteWidget);
     m_midiManager->getInputDeviceModel()->add(m_keyboardWidget);
+    m_midiManager->getOutputDeviceModel()->add(m_messageView);
 }
 
 void MainWindow::setupActions()
@@ -189,15 +186,13 @@ void MainWindow::setupActions()
     connect(m_actionClearAll, &QAction::triggered, m_messageModel, &QMidiMessageModel::clear);
     connect(m_actionQuit, &QAction::triggered, this, &QMainWindow::close);
     connect(m_actionAbout, &QAction::triggered, this, &MainWindow::showAbout);
-    connect(m_actionSwitchAutoScrollToBottom, &QAction::triggered, m_messageView, &MidiMessageListView::setAutoScrollToBottomEnabled);
+    connect(m_actionSwitchAutoScrollToBottom, &QAction::triggered, m_messageView.get(), &MidiMessageListView::setAutoScrollToBottomEnabled);
 }
 
 void MainWindow::setupUi()
 {
     // Setup message view
-//    m_messageView->setModel(m_messageModel);
-//    m_messageView->setSelectionModel(m_messageSelection);
-    setCentralWidget(m_messageView);
+    setCentralWidget(m_messageView.get());
 
     // Setup MIDI input port view
     MidiPortTreeView* midiInputPortView = new MidiPortTreeView(MidiPortTreeView::Mode::In, m_midiManager, this);

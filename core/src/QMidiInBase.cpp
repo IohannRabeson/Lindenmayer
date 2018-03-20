@@ -8,7 +8,7 @@
 
 bool QMidiInBase::openPort(int const portIndex)
 {
-    m_portIndex = std::max(portIndex, -1);
+    m_portIndex = portIndex;
     return m_portIndex != -1;
 }
 

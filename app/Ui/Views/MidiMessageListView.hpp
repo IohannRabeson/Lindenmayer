@@ -6,14 +6,17 @@
 #define MIDIMONITOR_MIDIMESSAGELISTVIEW_HPP
 #include <QTreeView>
 
+#include <QMidiOutBase.hpp>
+
 class QMidiManager;
 class QMidiMessageModel;
 class QMidiMessage;
 
 class QSettings;
 
-class MidiMessageListView : public QTreeView
+class MidiMessageListView : public QTreeView, public QMidiOutBase
 {
+    Q_OBJECT
 public:
     explicit MidiMessageListView(QMidiManager* const midiManager, QWidget* parent = nullptr);
 
@@ -21,6 +24,8 @@ public:
     void setAutoScrollToBottomEnabled(bool const enabled);
     void loadSettings(QSettings& settings);
     void saveSettings(QSettings& settings) const;
+private:
+    void outputMessage(const QMidiMessage &message) override;
 private:
     QMidiManager* const m_midiManager;
     QMidiMessageModel* const m_messageModel;
