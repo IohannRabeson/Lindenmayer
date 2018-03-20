@@ -160,7 +160,7 @@ public:
     bool setData(int const column, QVariant const& value, int const role) override;
 
     std::shared_ptr<QAbstractMidiMessageFilter> const& getFilter() const { return m_filter; }
-    bool isRemovable() const override { return false; }
+    bool isRemovable() const override { return true; }
 private:
     std::shared_ptr<QAbstractMidiMessageFilter> const m_filter;
 };
