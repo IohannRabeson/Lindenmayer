@@ -73,8 +73,8 @@ TEST(QMidiPortModelTest, only_input_port_flags)
     // Calling flags() with an invalid index should return only Qt::NoItemFlags
     ASSERT_EQ( model.flags(QModelIndex()), Qt::NoItemFlags );
     ASSERT_EQ( model.flags(model.index(1, 0)), Qt::NoItemFlags );
-    ASSERT_EQ( model.flags(model.index(0, 1)), Qt::NoItemFlags );
-    ASSERT_EQ( model.flags(model.index(0, 1, portIndex)), Qt::NoItemFlags );
+    ASSERT_EQ( model.flags(model.index(0, model.columnCount())), Qt::NoItemFlags );
+    ASSERT_EQ( model.flags(model.index(0, model.columnCount(), portIndex)), Qt::NoItemFlags );
 }
 
 TEST(QMidiPortModelTest, only_output_port_flags)
@@ -90,8 +90,8 @@ TEST(QMidiPortModelTest, only_output_port_flags)
     // Calling flags() with an invalid index should return only Qt::NoItemFlags
     ASSERT_EQ( model.flags(QModelIndex()), Qt::NoItemFlags );
     ASSERT_EQ( model.flags(model.index(1, 0)), Qt::NoItemFlags );
-    ASSERT_EQ( model.flags(model.index(0, 1)), Qt::NoItemFlags );
-    ASSERT_EQ( model.flags(model.index(0, 1, portIndex)), Qt::NoItemFlags );
+    ASSERT_EQ( model.flags(model.index(0, model.columnCount())), Qt::NoItemFlags );
+    ASSERT_EQ( model.flags(model.index(0, model.columnCount(), portIndex)), Qt::NoItemFlags );
 }
 
 TEST(QMidiPortModelTest, get_set_input_port_datas)
