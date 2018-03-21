@@ -4,14 +4,12 @@
 
 #include "MainWindow.hpp"
 
-#include "Ui/Views/MidiMessageListView.hpp"
+#include "Ui/Views/MidiConsoleView.hpp"
 #include "Ui/Views/MidiPortTreeView.hpp"
 
 #include "Ui/CommonUi.hpp"
 #include "Ui/Dialogs/AboutMidiMonitorDialog.hpp"
 #include "Ui/SettingsUtils.hpp"
-
-#include "Ui/Delegates/MidiDelegates.hpp"
 
 #include "Ui/Widgets/MidiNoteTriggerWidget.hpp"
 #include "Ui/Widgets/MidiKeyboardWidget.hpp"
@@ -25,12 +23,14 @@
 #include <QSystemTrayIcon>
 
 #include <QtDebug>
+#include <QEvent>
 
 #include <QMidiIn.hpp>
 #include <QMidiMessageModel.hpp>
 #include <QMidiMessageMatrixModel.hpp>
 #include <QMidiPortModel.hpp>
 #include <QMidiManager.hpp>
+#include <QMidiManufacturerModel.hpp>
 
 #include <QMetaEnum>
 
@@ -107,19 +107,17 @@ public:
     }
 };
 
+#include "Ui/Widgets/MidiConsoleArea.hpp"
+
 MainWindow::MainWindow(QWidget* parent)
 : QMainWindow(parent)
 , m_trayIcon(new QSystemTrayIcon(this))
 , m_midiManager(new QMidiManager(this))
 , m_inputPortModel(m_midiManager->getInputDeviceModel())
 , m_outputPortModel(m_midiManager->getOutputDeviceModel())
-, m_midiMessageFilterFactory(m_midiManager->getMessageFilterFactory())
-, m_messageModel(new QMidiMessageModel(this))
-, m_messageSelection(new QItemSelectionModel(m_messageModel, this))
-, m_messageView(new MidiMessageListView(m_messageModel, this))
 , m_dockWidgets(new qool::DockWidgetManager(this))
 , m_toolbars(new qool::ToolBarManager(this))
-, m_manufacturerModel(new QMidiManufacturerModel(this))
+, m_logWidget(new MidiConsoleArea(this))
 , m_noteWidget(new MidiNoteTriggerWidget(this))
 , m_keyboardWidget(new MidiKeyboardWidget(this))
 
@@ -130,9 +128,9 @@ MainWindow::MainWindow(QWidget* parent)
 , m_actionRestoreWindow(new QAction(tr("Show"), this))
 {
     // Test - TODO: remove
-    m_midiMessageFilterFactory->add<FilterNoteOn>("Note On");
-    m_midiMessageFilterFactory->add<FilterNoteOff>("Note Off");
-    m_midiMessageFilterFactory->add<FilterByType>("Filter by type");
+    m_midiManager->getMessageFilterFactory()->add<FilterNoteOn>("Note On");
+    m_midiManager->getMessageFilterFactory()->add<FilterNoteOff>("Note Off");
+    m_midiManager->getMessageFilterFactory()->add<FilterByType>("Filter by type");
 
     setupUi();
     setupMIDI();
@@ -152,10 +150,12 @@ MainWindow::~MainWindow()
 
 void MainWindow::setupMIDI()
 {
+    m_midiManager->getManufacturerModel()->load(QMidiManufacturerModel::LoadFromCSV(":/Texts/Resources/MIDI_Manufacturers.csv"));
+
+    connect(m_midiManager->getOutputDeviceModel(), &QMidiPortModel::rowsInserted, this, &MainWindow::onOutputPortAdded);
+    connect(m_midiManager->getOutputDeviceModel(), &QMidiPortModel::rowsAboutToBeRemoved, this, &MainWindow::onOutputPortRemoved);
+
     resetMidiPorts();
-    connect(m_midiManager, &QMidiManager::messageReceived, m_messageModel, &QMidiMessageModel::append);
-    connect(m_midiManager, &QMidiManager::messageSent, m_messageModel, &QMidiMessageModel::append);
-    m_manufacturerModel->load(QMidiManufacturerModel::LoadFromCSV(":/Texts/Resources/MIDI_Manufacturers.csv"));
 }
 
 void MainWindow::resetMidiPorts()
@@ -186,33 +186,25 @@ void MainWindow::setupActions()
     m_actionSwitchAutoScrollToBottom->setCheckable(true);
     m_actionSwitchAutoScrollToBottom->setChecked(true);
 
-    connect(m_actionClearAll, &QAction::triggered, m_messageModel, &QMidiMessageModel::clear);
+    // TODO connect(m_actionClearAll, &QAction::triggered, m_logWidget, &MidiLogWidget::clear);
     connect(m_actionQuit, &QAction::triggered, this, &QMainWindow::close);
     connect(m_actionAbout, &QAction::triggered, this, &MainWindow::showAbout);
-    connect(m_actionSwitchAutoScrollToBottom, &QAction::triggered, m_messageView, &MidiMessageListView::setAutoScrollToBottomEnabled);
 }
 
 void MainWindow::setupUi()
 {
     // Setup message view
-    m_messageView->setModel(m_messageModel);
-    m_messageView->setSelectionModel(m_messageSelection);
-    m_messageView->setItemDelegateForColumn(QMidiMessageModel::Columns::Type, new MidiMessageDelegates::MidiMessageTypeDelegate(this));
-    m_messageView->setItemDelegateForColumn(QMidiMessageModel::Columns::Input, new MidiMessageDelegates::MidiInPortDelegate(m_inputPortModel, this));
-    m_messageView->setItemDelegateForColumn(QMidiMessageModel::Columns::Channel, new MidiMessageDelegates::MidiChannelDelegate(this));
-    m_messageView->setItemDelegateForColumn(QMidiMessageModel::Columns::Timestamp, new MidiMessageDelegates::MidiTimeDelegate(this));
-    m_messageView->setItemDelegateForColumn(QMidiMessageModel::Columns::Value, new MidiMessageDelegates::MidiValueDelegate(m_messageModel, m_manufacturerModel, this));
-    m_messageView->setItemDelegateForColumn(QMidiMessageModel::Columns::Data, new MidiMessageDelegates::MidiDataDelegate(m_messageModel, this));
-    setCentralWidget(m_messageView);
+    setCentralWidget(m_logWidget);
+
 
     // Setup MIDI input port view
-    MidiPortTreeView* midiInputPortView = new MidiPortTreeView(MidiPortTreeView::Mode::In, m_inputPortModel, m_midiMessageFilterFactory, this);
+    MidiPortTreeView* midiInputPortView = new MidiPortTreeView(MidiPortTreeView::Mode::In, m_midiManager, this);
 
     CommonUi::standardTreeView(midiInputPortView, true);
     m_dockWidgets->addDockWidget(midiInputPortView, tr("MIDI Inputs"), "midi_input");
 
     // Setup MIDI output port view
-    MidiPortTreeView* midiOutputPortView = new MidiPortTreeView(MidiPortTreeView::Mode::Out, m_outputPortModel, m_midiMessageFilterFactory, this);
+    MidiPortTreeView* midiOutputPortView = new MidiPortTreeView(MidiPortTreeView::Mode::Out, m_midiManager, this);
 
     CommonUi::standardTreeView(midiOutputPortView, true);
     m_dockWidgets->addDockWidget(midiOutputPortView, tr("MIDI Outputs"), "midi_output");
@@ -295,7 +287,6 @@ void MainWindow::saveSettings() const
     settings.setValue("state", saveState());
     settings.endGroup();
 
-    m_messageView->saveSettings(settings);
     m_noteWidget->saveSettings(settings);
     m_keyboardWidget->saveSettings(settings);
 }
@@ -317,7 +308,6 @@ void MainWindow::loadSettings()
     }
     settings.endGroup();
 
-    m_messageView->loadSettings(settings);
     m_noteWidget->loadSettings(settings);
     m_keyboardWidget->loadSettings(settings);
 }
@@ -347,4 +337,39 @@ void MainWindow::changeEvent(QEvent* event)
         updateActions();
     }
     QWidget::changeEvent(event);
+}
+
+void MainWindow::onOutputPortAdded(QModelIndex const& parent, int first, int last)
+{
+    auto* const model = m_midiManager->getOutputDeviceModel();
+
+    for (auto i = first; i <= last; ++i)
+    {
+        auto const portIndex = model->index(i, 0, parent);
+        auto const port = model->getOutputPort(portIndex);
+        auto const messageView = std::dynamic_pointer_cast<MidiConsoleView>(port);
+
+        if (messageView)
+        {
+            m_logWidget->add(messageView);
+            m_midiManager->getMessageMatrixModel()->connectOutputToInputs(i, true);
+        }
+    }
+}
+
+void MainWindow::onOutputPortRemoved(QModelIndex const& parent, int first, int last)
+{
+    auto* const model = m_midiManager->getOutputDeviceModel();
+
+    for (auto i = first; i <= last; ++i)
+    {
+        auto const portIndex = model->index(i, 0, parent);
+        auto const port = model->getOutputPort(portIndex);
+        auto const messageView = std::dynamic_pointer_cast<MidiConsoleView>(port);
+
+        if (messageView)
+        {
+            m_logWidget->remove(messageView);
+        }
+    }
 }

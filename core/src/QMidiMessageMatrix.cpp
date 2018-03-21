@@ -261,3 +261,30 @@ void QMidiMessageMatrix::forachInput(int const inputPortIndex, std::function<voi
         }
     }
 }
+
+void QMidiMessageMatrix::forachOutput(int const outputPortIndex, std::function<void(int const, int const)> const&& f) const
+{
+    for (auto y = 0; y < outputCount(); ++y)
+    {
+        if (get(outputPortIndex, y))
+        {
+            f(outputPortIndex, y);
+        }
+    }
+}
+
+void QMidiMessageMatrix::connectInputToOutputs(int const inputPortIndex, bool const value)
+{
+    for (auto x = 0; x < outputCount(); ++x)
+    {
+        set(x, inputPortIndex, value);
+    }
+}
+
+void QMidiMessageMatrix::connectOutputToInputs(int const outputPortIndex, bool const value)
+{
+    for (auto y = 0; y < inputCount(); ++y)
+    {
+        set(outputPortIndex, y, value);
+    }
+}

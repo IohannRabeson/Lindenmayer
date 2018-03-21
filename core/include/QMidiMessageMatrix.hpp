@@ -10,6 +10,8 @@
 #include <set>
 #include <utility>
 
+class QMidiMessageMatrix;
+
 class QMidiMessageMatrix
 {
     using Iterator = bool*;
@@ -45,8 +47,11 @@ public:
     void removeInput(int const input);
     void removeOutput(int const output);
     void forachInput(int const inputPortIndex, std::function<void(int const, int const)> const&& f) const;
+    void forachOutput(int const outputPortIndex, std::function<void(int const, int const)> const&& f) const;
     void foreach(std::function<void(int const, int const, bool const)> const&& f) const;
     void foreach(std::function<void(int const, int const, bool&)> const&& f);
+    void connectInputToOutputs(int const inputPortIndex, bool const value);
+    void connectOutputToInputs(int const outputPortIndex, bool const value);
 private:
     Values collectValues(bool const valueToCollect) const;
     void restoreValues(Values const& values);

@@ -9,6 +9,7 @@
 #include "QMidiMessage.hpp"
 #include "QMidiPortModel.hpp"
 #include "QMidiMessageFilterFactory.hpp"
+#include "QMidiManufacturerModel.hpp"
 
 #include "VectorHelpers.hpp"
 #include "RtMidiHelpers.hpp"
@@ -45,6 +46,7 @@ public:
     , m_outputDeviceModel(new QMidiPortModel(q))
     , m_matrixModel(new QMidiMessageMatrixModel(q))
     , m_messageFilterFactory(new QMidiMessageFilterFactory(q))
+    , m_manufacturerModel(new QMidiManufacturerModel(q))
     {
         connect(m_inputDeviceModel, &QMidiPortModel::rowsInserted, this, &QMidiManagerPrivate::onMidiInputPortRowInserted);
         connect(m_inputDeviceModel, &QMidiPortModel::modelReset, this, &QMidiManagerPrivate::onMidiInputPortReset);
@@ -90,6 +92,7 @@ private:
     QPointer<QMidiPortModel> const m_outputDeviceModel;
     QMidiMessageMatrixModel* const m_matrixModel;
     QMidiMessageFilterFactory* const m_messageFilterFactory;
+    QMidiManufacturerModel* const m_manufacturerModel;
     std::vector<std::shared_ptr<QAbstractMidiIn>> m_midiIns;
     std::vector<std::shared_ptr<QAbstractMidiOut>> m_midiOuts;
 };
@@ -233,6 +236,13 @@ QMidiMessageFilterFactory* QMidiManager::getMessageFilterFactory() const
     Q_D(const QMidiManager);
 
     return d->m_messageFilterFactory;
+}
+
+QMidiManufacturerModel *QMidiManager::getManufacturerModel() const
+{
+    Q_D(const QMidiManager);
+
+    return d->m_manufacturerModel;
 }
 
 void QMidiManagerPrivate::forwardMidiMessage(QMidiMessage const& message)

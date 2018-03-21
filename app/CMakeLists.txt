@@ -13,18 +13,21 @@ set_directory_properties(PROPERTIES CLEAN_NO_CUSTOM 1)
 add_subdirectory(Languages)
 
 set(UI_SOURCES
-        Ui/Views/MidiMessageListView.cpp
-        Ui/Views/MidiMessageListView.hpp
+        Ui/Views/MidiConsoleView.cpp
+        Ui/Views/MidiConsoleView.hpp
+        Ui/Views/MidiPortTreeView.cpp
+        Ui/Views/MidiPortTreeView.hpp
+
         Ui/MainWindow.cpp
         Ui/MainWindow.hpp
-    Ui/CommonUi.cpp
-    Ui/CommonUi.hpp
+        Ui/CommonUi.cpp
+        Ui/CommonUi.hpp
         Ui/Dialogs/AboutMidiMonitorDialog.hpp
         Ui/Dialogs/AboutMidiMonitorDialog.cpp
         Ui/Dialogs/AboutMidiMonitorDialog.ui
-    Ui/Delegates/MidiDelegates.cpp
-    Ui/Delegates/MidiDelegates.hpp
-    Ui/SettingsUtils.hpp
+        Ui/Delegates/MidiDelegates.cpp
+        Ui/Delegates/MidiDelegates.hpp
+        Ui/SettingsUtils.hpp
         Ui/Widgets/MidiNoteTriggerWidget.cpp
         Ui/Widgets/MidiNoteTriggerWidget.hpp
         Ui/Widgets/MidiKeyboardWidget.cpp
@@ -33,8 +36,9 @@ set(UI_SOURCES
         Ui/Widgets/MidiKeyboardWidget.hpp
         Ui/Widgets/MidiMatrixWidget.cpp
         Ui/Widgets/MidiMatrixWidget.hpp
-        Ui/Views/MidiPortTreeView.cpp
-        Ui/Views/MidiPortTreeView.hpp)
+        Ui/Widgets/MidiConsoleArea.cpp
+        Ui/Widgets/MidiConsoleArea.hpp
+        )
 
 set(PLUGINS_SOURCES
     Plugins/Plugins.qrc

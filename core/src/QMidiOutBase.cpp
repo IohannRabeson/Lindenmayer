@@ -9,14 +9,12 @@ QMidiOutBase::QMidiOutBase(QString const& name)
 
 bool QMidiOutBase::openPort(int const portIndex)
 {
-    m_portEnabled = true;
     m_portIndex = portIndex;
-    return true;
+    return m_portIndex != -1;
 }
 
 void QMidiOutBase::closePort()
 {
-    m_portEnabled = false;
     m_portIndex = -1;
     m_portName.clear();
 }

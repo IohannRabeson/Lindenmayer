@@ -4,11 +4,13 @@
 
 #include "MidiPortTreeView.hpp"
 #include "Ui/CommonUi.hpp"
+#include "Ui/Views/MidiConsoleView.hpp"
 
 #include <QMidiMessageFilterFactory.hpp>
 #include <QMidiPortModel.hpp>
 #include <QVirtualMidiIn.hpp>
 #include <QVirtualMidiOut.hpp>
+#include <QMidiManager.hpp>
 
 #include <QSignalMapper>
 #include <QAction>
@@ -41,19 +43,21 @@ namespace
     }
 }
 
-MidiPortTreeView::MidiPortTreeView(Mode const mode, QMidiPortModel* portModel, QMidiMessageFilterFactory* filterFactory, QWidget* parent)
+MidiPortTreeView::MidiPortTreeView(Mode const mode, QMidiManager* const manager, QWidget* parent)
 : QTreeView(parent)
-, m_portModel(portModel)
-, m_filterFactory(filterFactory)
+, m_midiManager(manager)
+, m_portModel(mode == Mode::In ? manager->getInputDeviceModel() : manager->getOutputDeviceModel())
+, m_filterFactory(manager->getMessageFilterFactory())
 , m_filterSelectorSignalMapper(new QSignalMapper(this))
 , m_actionRemove(new QAction(tr("Remove"), this))
 , m_actionAddVirtualMidiInput(new QAction(tr("Add virtual MIDI in"), this))
 , m_actionAddVirtualMidiOutput(new QAction(tr("Add virtual MIDI out"), this))
+, m_actionAddMidiConsole(new QAction(tr("Add MIDI console"), this))
 , m_mode(mode)
 {
     CommonUi::standardTreeView(this, true);
 
-    setModel(portModel);
+    setModel(m_portModel);
 
     connect(m_filterFactory, &QMidiMessageFilterFactory::modelReset, this, &MidiPortTreeView::onFilterFactoryResetted);
     connect(m_filterFactory, &QMidiMessageFilterFactory::rowsInserted, this, &MidiPortTreeView::onFilterFactoryRowsInserted);
@@ -61,6 +65,7 @@ MidiPortTreeView::MidiPortTreeView(Mode const mode, QMidiPortModel* portModel, Q
     connect(m_actionRemove, &QAction::triggered, this, &MidiPortTreeView::onRemoveFilterActionTriggered);
     connect(m_actionAddVirtualMidiInput, &QAction::triggered, this, &MidiPortTreeView::onAddVirtualMidiInputTriggered);
     connect(m_actionAddVirtualMidiOutput, &QAction::triggered, this, &MidiPortTreeView::onAddVirtualMidiOutputTriggered);
+    connect(m_actionAddMidiConsole, &QAction::triggered, this, &MidiPortTreeView::onAddOutputLoggerTriggered);
 
     setRootIsDecorated(true);
     setExpandsOnDoubleClick(true);
@@ -141,6 +146,11 @@ void MidiPortTreeView::onAddVirtualMidiOutputTriggered()
     setCurrentIndex(newIndex);
 }
 
+void MidiPortTreeView::onAddOutputLoggerTriggered()
+{
+    m_midiManager->getOutputDeviceModel()->add(std::make_shared<MidiConsoleView>(m_midiManager));
+}
+
 void MidiPortTreeView::contextMenuEvent(QContextMenuEvent* event)
 {
     // TODO: Produce memory leaks on OSX: it seems the cocoa code behind
@@ -155,6 +165,7 @@ void MidiPortTreeView::contextMenuEvent(QContextMenuEvent* event)
         break;
     case Mode::Out:
         menu.addAction(m_actionAddVirtualMidiOutput);
+        menu.addAction(m_actionAddMidiConsole);
         break;
     }
 
