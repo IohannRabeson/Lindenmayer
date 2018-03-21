@@ -124,71 +124,79 @@
         <translation>Montrer</translation>
     </message>
     <message>
-        <location filename="../Ui/MainWindow.cpp" line="164"/>
+        <location filename="../Ui/MainWindow.cpp" line="168"/>
         <source>Clear messages</source>
         <translation>Supprimer les messages</translation>
     </message>
     <message>
-        <location filename="../Ui/MainWindow.cpp" line="165"/>
+        <location filename="../Ui/MainWindow.cpp" line="169"/>
         <source>Messages can lost their input port information.
 Are you sure you want to do that?</source>
         <translation>Les messages peuvent perdre les informations a propos des ports d&apos;entrée.
 Etes-vous sûr de vouloir faire ça?</translation>
     </message>
     <message>
-        <location filename="../Ui/MainWindow.cpp" line="203"/>
+        <location filename="../Ui/MainWindow.cpp" line="204"/>
         <source>MIDI Inputs</source>
         <translation>Entrées MIDI</translation>
     </message>
     <message>
-        <location filename="../Ui/MainWindow.cpp" line="209"/>
+        <location filename="../Ui/MainWindow.cpp" line="210"/>
         <source>MIDI Outputs</source>
         <translation>Sorties MIDI</translation>
     </message>
     <message>
-        <location filename="../Ui/MainWindow.cpp" line="212"/>
+        <location filename="../Ui/MainWindow.cpp" line="213"/>
         <source>MIDI Note Trigger</source>
         <translation>Déclencheur de note MIDI</translation>
     </message>
     <message>
-        <location filename="../Ui/MainWindow.cpp" line="215"/>
+        <location filename="../Ui/MainWindow.cpp" line="216"/>
         <source>MIDI Keyboard</source>
         <translation>Clavier MIDI</translation>
     </message>
     <message>
-        <location filename="../Ui/MainWindow.cpp" line="221"/>
+        <location filename="../Ui/MainWindow.cpp" line="222"/>
         <source>MIDI Message Matrix</source>
         <translation>Matrice de message MIDI</translation>
     </message>
     <message>
-        <location filename="../Ui/MainWindow.cpp" line="230"/>
+        <location filename="../Ui/MainWindow.cpp" line="231"/>
         <source>Main</source>
         <translation>Pricipale</translation>
     </message>
     <message>
-        <location filename="../Ui/MainWindow.cpp" line="261"/>
+        <location filename="../Ui/MainWindow.cpp" line="262"/>
         <source>File</source>
         <translation>Fichier</translation>
     </message>
     <message>
-        <location filename="../Ui/MainWindow.cpp" line="262"/>
+        <location filename="../Ui/MainWindow.cpp" line="263"/>
         <source>Edit</source>
         <translation>Edition</translation>
     </message>
     <message>
-        <location filename="../Ui/MainWindow.cpp" line="263"/>
+        <location filename="../Ui/MainWindow.cpp" line="264"/>
         <source>View</source>
         <translation>Vue</translation>
     </message>
     <message>
-        <location filename="../Ui/MainWindow.cpp" line="264"/>
+        <location filename="../Ui/MainWindow.cpp" line="265"/>
         <source>Window</source>
         <translation>Fenêtre</translation>
     </message>
     <message>
-        <location filename="../Ui/MainWindow.cpp" line="265"/>
+        <location filename="../Ui/MainWindow.cpp" line="266"/>
         <source>?</source>
         <translation>?</translation>
+    </message>
+</context>
+<context>
+    <name>MidiConsoleView</name>
+    <message>
+        <location filename="../Ui/Views/MidiConsoleView.cpp" line="20"/>
+        <source>Midi console %0</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -223,14 +231,6 @@ Etes-vous sûr de vouloir faire ça?</translation>
         <location filename="../Ui/Widgets/MidiKeyboardWidget.cpp" line="443"/>
         <source>Velocity:</source>
         <translation>Vélocité:</translation>
-    </message>
-</context>
-<context>
-    <name>MidiMessageListView</name>
-    <message>
-        <location filename="../Ui/Views/MidiMessageListView.cpp" line="18"/>
-        <source>Midi logger</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -326,22 +326,27 @@ Etes-vous sûr de vouloir faire ça?</translation>
 <context>
     <name>MidiPortTreeView</name>
     <message>
-        <location filename="../Ui/Views/MidiPortTreeView.cpp" line="51"/>
+        <location filename="../Ui/Views/MidiPortTreeView.cpp" line="52"/>
         <source>Remove</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Ui/Views/MidiPortTreeView.cpp" line="52"/>
+        <location filename="../Ui/Views/MidiPortTreeView.cpp" line="53"/>
         <source>Add virtual MIDI in</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Ui/Views/MidiPortTreeView.cpp" line="53"/>
+        <location filename="../Ui/Views/MidiPortTreeView.cpp" line="54"/>
         <source>Add virtual MIDI out</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Ui/Views/MidiPortTreeView.cpp" line="163"/>
+        <location filename="../Ui/Views/MidiPortTreeView.cpp" line="55"/>
+        <source>Add MIDI console</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../Ui/Views/MidiPortTreeView.cpp" line="172"/>
         <source>Add filter</source>
         <translation type="unfinished"></translation>
     </message>
@@ -367,12 +372,12 @@ Etes-vous sûr de vouloir faire ça?</translation>
         <translation>Connection depuis l&apos;entrée &apos;%0&apos; vers la sortie &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../../core/src/QMidiMessageMatrixModel.cpp" line="152"/>
+        <location filename="../../core/src/QMidiMessageMatrixModel.cpp" line="164"/>
         <source>Input &apos;%0&apos;</source>
         <translation>Entrée &apos;%0&apos;</translation>
     </message>
     <message>
-        <location filename="../../core/src/QMidiMessageMatrixModel.cpp" line="166"/>
+        <location filename="../../core/src/QMidiMessageMatrixModel.cpp" line="178"/>
         <source>Output &apos;%0&apos;</source>
         <translation>Sortie &apos;%0&apos;</translation>
     </message>

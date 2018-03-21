@@ -4,7 +4,7 @@
 
 #include "MainWindow.hpp"
 
-#include "Ui/Views/MidiMessageListView.hpp"
+#include "Ui/Views/MidiConsoleView.hpp"
 #include "Ui/Views/MidiPortTreeView.hpp"
 
 #include "Ui/CommonUi.hpp"
@@ -107,19 +107,19 @@ public:
     }
 };
 
+#include "Ui/Widgets/MidiConsoleArea.hpp"
+
 MainWindow::MainWindow(QWidget* parent)
 : QMainWindow(parent)
 , m_trayIcon(new QSystemTrayIcon(this))
 , m_midiManager(new QMidiManager(this))
 , m_inputPortModel(m_midiManager->getInputDeviceModel())
 , m_outputPortModel(m_midiManager->getOutputDeviceModel())
-, m_messageModel(new QMidiMessageModel(this))
-, m_messageSelection(new QItemSelectionModel(m_messageModel, this))
 , m_dockWidgets(new qool::DockWidgetManager(this))
 , m_toolbars(new qool::ToolBarManager(this))
+, m_logWidget(new MidiConsoleArea(this))
 , m_noteWidget(new MidiNoteTriggerWidget(this))
 , m_keyboardWidget(new MidiKeyboardWidget(this))
-, m_messageView(new MidiMessageListView(m_midiManager, this))
 
 , m_actionQuit(new QAction(tr("Quit"), this))
 , m_actionClearAll(new QAction(QIcon(":/Images/Resources/Icons/Clear.png"), tr("Clear all"), this))
@@ -150,8 +150,12 @@ MainWindow::~MainWindow()
 
 void MainWindow::setupMIDI()
 {
-    resetMidiPorts();
     m_midiManager->getManufacturerModel()->load(QMidiManufacturerModel::LoadFromCSV(":/Texts/Resources/MIDI_Manufacturers.csv"));
+
+    connect(m_midiManager->getOutputDeviceModel(), &QMidiPortModel::rowsInserted, this, &MainWindow::onOutputPortAdded);
+    connect(m_midiManager->getOutputDeviceModel(), &QMidiPortModel::rowsAboutToBeRemoved, this, &MainWindow::onOutputPortRemoved);
+
+    resetMidiPorts();
 }
 
 void MainWindow::resetMidiPorts()
@@ -174,7 +178,6 @@ void MainWindow::resetMidiPorts()
     m_midiManager->rescanPorts();
     m_midiManager->getInputDeviceModel()->add(m_noteWidget);
     m_midiManager->getInputDeviceModel()->add(m_keyboardWidget);
-    m_midiManager->getOutputDeviceModel()->add(m_messageView);
 }
 
 void MainWindow::setupActions()
@@ -183,16 +186,16 @@ void MainWindow::setupActions()
     m_actionSwitchAutoScrollToBottom->setCheckable(true);
     m_actionSwitchAutoScrollToBottom->setChecked(true);
 
-    connect(m_actionClearAll, &QAction::triggered, m_messageModel, &QMidiMessageModel::clear);
+    // TODO connect(m_actionClearAll, &QAction::triggered, m_logWidget, &MidiLogWidget::clear);
     connect(m_actionQuit, &QAction::triggered, this, &QMainWindow::close);
     connect(m_actionAbout, &QAction::triggered, this, &MainWindow::showAbout);
-    connect(m_actionSwitchAutoScrollToBottom, &QAction::triggered, m_messageView.get(), &MidiMessageListView::setAutoScrollToBottomEnabled);
 }
 
 void MainWindow::setupUi()
 {
     // Setup message view
-    setCentralWidget(m_messageView.get());
+    setCentralWidget(m_logWidget);
+
 
     // Setup MIDI input port view
     MidiPortTreeView* midiInputPortView = new MidiPortTreeView(MidiPortTreeView::Mode::In, m_midiManager, this);
@@ -284,7 +287,6 @@ void MainWindow::saveSettings() const
     settings.setValue("state", saveState());
     settings.endGroup();
 
-    m_messageView->saveSettings(settings);
     m_noteWidget->saveSettings(settings);
     m_keyboardWidget->saveSettings(settings);
 }
@@ -306,7 +308,6 @@ void MainWindow::loadSettings()
     }
     settings.endGroup();
 
-    m_messageView->loadSettings(settings);
     m_noteWidget->loadSettings(settings);
     m_keyboardWidget->loadSettings(settings);
 }
@@ -336,4 +337,39 @@ void MainWindow::changeEvent(QEvent* event)
         updateActions();
     }
     QWidget::changeEvent(event);
+}
+
+void MainWindow::onOutputPortAdded(QModelIndex const& parent, int first, int last)
+{
+    auto* const model = m_midiManager->getOutputDeviceModel();
+
+    for (auto i = first; i <= last; ++i)
+    {
+        auto const portIndex = model->index(i, 0, parent);
+        auto const port = model->getOutputPort(portIndex);
+        auto const messageView = std::dynamic_pointer_cast<MidiConsoleView>(port);
+
+        if (messageView)
+        {
+            m_logWidget->add(messageView);
+            m_midiManager->getMessageMatrixModel()->connectOutputToInputs(i, true);
+        }
+    }
+}
+
+void MainWindow::onOutputPortRemoved(QModelIndex const& parent, int first, int last)
+{
+    auto* const model = m_midiManager->getOutputDeviceModel();
+
+    for (auto i = first; i <= last; ++i)
+    {
+        auto const portIndex = model->index(i, 0, parent);
+        auto const port = model->getOutputPort(portIndex);
+        auto const messageView = std::dynamic_pointer_cast<MidiConsoleView>(port);
+
+        if (messageView)
+        {
+            m_logWidget->remove(messageView);
+        }
+    }
 }

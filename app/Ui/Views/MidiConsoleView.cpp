@@ -2,7 +2,7 @@
 // Created by Io on 31/12/2017.
 //
 
-#include "MidiMessageListView.hpp"
+#include "MidiConsoleView.hpp"
 
 #include "Ui/CommonUi.hpp"
 #include "Ui/Delegates/MidiDelegates.hpp"
@@ -13,9 +13,11 @@
 
 #include <QHeaderView>
 
-MidiMessageListView::MidiMessageListView(QMidiManager* const midiManager, QWidget* parent)
+unsigned int MidiConsoleView::s_midiConsoleInstances = 0u;
+
+MidiConsoleView::MidiConsoleView(QMidiManager* const midiManager, QWidget* parent)
 : QTreeView(parent)
-, QMidiOutBase(tr("Midi logger"))
+, QMidiOutBase(tr("Midi console %0").arg(++s_midiConsoleInstances))
 , m_midiManager(midiManager)
 , m_messageModel(new QMidiMessageModel(this))
 , m_autoScroll(true)
@@ -31,26 +33,15 @@ MidiMessageListView::MidiMessageListView(QMidiManager* const midiManager, QWidge
 
     CommonUi::standardTreeView(this);
 
-    connect(m_messageModel, &QMidiMessageModel::rowsInserted, [this]()
-    {
-        if (m_autoScroll)
-        {
-            scrollToBottom();
-        }
-    });
+    connect(m_messageModel, &QMidiMessageModel::rowsInserted, this, &MidiConsoleView::onNewMessage);
 }
 
-void MidiMessageListView::append(QMidiMessage const& message)
-{
-    m_messageModel->append(message);
-}
-
-void MidiMessageListView::setAutoScrollToBottomEnabled(bool const enabled)
+void MidiConsoleView::setAutoScrollToBottomEnabled(bool const enabled)
 {
     m_autoScroll = enabled;
 }
 
-void MidiMessageListView::loadSettings(QSettings& settings)
+void MidiConsoleView::loadSettings(QSettings& settings)
 {
     settings.beginGroup("message_view");
     restoreGeometry(restoreFrom<QByteArray>(settings, "geometry"));
@@ -61,7 +52,7 @@ void MidiMessageListView::loadSettings(QSettings& settings)
     settings.endGroup();
 }
 
-void MidiMessageListView::saveSettings(QSettings& settings) const
+void MidiConsoleView::saveSettings(QSettings& settings) const
 {
     settings.beginGroup("message_view");
     settings.setValue("geometry", saveGeometry());
@@ -73,10 +64,18 @@ void MidiMessageListView::saveSettings(QSettings& settings) const
 }
 
 
-void MidiMessageListView::outputMessage(const QMidiMessage &message)
+void MidiConsoleView::outputMessage(const QMidiMessage &message)
 {
     if (isPortEnabled() && isPortOpen())
     {
         m_messageModel->append(message);
+    }
+}
+
+void MidiConsoleView::onNewMessage()
+{
+    if (m_autoScroll)
+    {
+        scrollToBottom();
     }
 }

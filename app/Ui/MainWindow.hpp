@@ -16,9 +16,10 @@ class QMidiIn;
 class QMidiManufacturerModel;
 class QMidiManager;
 
-class MidiMessageListView;
+class MidiConsoleView;
 class MidiNoteTriggerWidget;
 class MidiKeyboardWidget;
+class MidiConsoleArea;
 
 namespace qool
 {
@@ -55,6 +56,9 @@ private:
     void loadSettings();
 
     void showAbout();
+
+    void onOutputPortAdded(QModelIndex const& parent, int first, int last);
+    void onOutputPortRemoved(QModelIndex const& parent, int first, int last);
 protected:
     void changeEvent(QEvent* event) override;
 private:
@@ -62,13 +66,12 @@ private:
     QMidiManager* const m_midiManager;
     QMidiPortModel* const m_inputPortModel;
     QMidiPortModel* const m_outputPortModel;
-    QMidiMessageModel* const m_messageModel;
-    QItemSelectionModel* const m_messageSelection;
     qool::DockWidgetManager* const m_dockWidgets;
     qool::ToolBarManager* const m_toolbars;
+    MidiConsoleArea* const m_logWidget;
+
     std::shared_ptr<MidiNoteTriggerWidget> const m_noteWidget;
     std::shared_ptr<MidiKeyboardWidget> const m_keyboardWidget;
-    std::shared_ptr<MidiMessageListView> const m_messageView;
 
     // File actions
     QAction* const m_actionQuit;

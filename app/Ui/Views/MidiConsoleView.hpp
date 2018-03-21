@@ -2,8 +2,8 @@
 // Created by Io on 31/12/2017.
 //
 
-#ifndef MIDIMONITOR_MIDIMESSAGELISTVIEW_HPP
-#define MIDIMONITOR_MIDIMESSAGELISTVIEW_HPP
+#ifndef MIDIMONITOR_MIDICONSOLEVIEW_HPP
+#define MIDIMONITOR_MIDICONSOLEVIEW_HPP
 #include <QTreeView>
 
 #include <QMidiOutBase.hpp>
@@ -14,22 +14,25 @@ class QMidiMessage;
 
 class QSettings;
 
-class MidiMessageListView : public QTreeView, public QMidiOutBase
+class MidiConsoleView : public QTreeView, public QMidiOutBase
 {
     Q_OBJECT
-public:
-    explicit MidiMessageListView(QMidiManager* const midiManager, QWidget* parent = nullptr);
 
-    void append(QMidiMessage const& message);
+    static unsigned int s_midiConsoleInstances;
+public:
+    explicit MidiConsoleView(QMidiManager* const midiManager, QWidget* parent = nullptr);
+
     void setAutoScrollToBottomEnabled(bool const enabled);
     void loadSettings(QSettings& settings);
     void saveSettings(QSettings& settings) const;
 private:
     void outputMessage(const QMidiMessage &message) override;
+
+    void onNewMessage();
 private:
     QMidiManager* const m_midiManager;
     QMidiMessageModel* const m_messageModel;
     bool m_autoScroll;
 };
 
-#endif //MIDIMONITOR_MIDIMESSAGELISTVIEW_HPP
+#endif //MIDIMONITOR_MIDICONSOLEVIEW_HPP

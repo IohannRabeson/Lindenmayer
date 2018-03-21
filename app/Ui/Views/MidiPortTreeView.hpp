@@ -38,6 +38,7 @@ private:
     void onRemoveFilterActionTriggered();
     void onAddVirtualMidiInputTriggered();
     void onAddVirtualMidiOutputTriggered();
+    void onAddOutputLoggerTriggered();
 
     class ValueColumnDelegate;
 private:
@@ -49,6 +50,8 @@ private:
     QAction* const m_actionRemove;
     QAction* const m_actionAddVirtualMidiInput;
     QAction* const m_actionAddVirtualMidiOutput;
+    QAction* const m_actionAddMidiConsole;
+
     Mode const m_mode;
 };
 
