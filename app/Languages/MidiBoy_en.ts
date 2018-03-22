@@ -345,7 +345,7 @@ Are you sure you want to do that?</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Ui/Views/MidiPortTreeView.cpp" line="172"/>
+        <location filename="../Ui/Views/MidiPortTreeView.cpp" line="162"/>
         <source>Add filter</source>
         <translation type="unfinished"></translation>
     </message>

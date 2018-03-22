@@ -33,6 +33,8 @@ public:
     virtual QString portName() const = 0;
     virtual void setPortEnabled(bool const enabled) = 0;
     virtual bool isPortEnabled() const = 0;
+    virtual bool isPortRemovable() const = 0;
+
     bool isPortOpen() const;
 
     void addErrorListener(ErrorListener&& listener);

@@ -24,6 +24,7 @@ public:
     QString portName() const override;
     void setPortEnabled(bool const enabled) override;
     bool isPortEnabled() const override;
+    bool isPortRemovable() const override;
 
     int portCount() const;
 private:

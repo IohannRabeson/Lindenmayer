@@ -352,7 +352,6 @@ void MainWindow::onOutputPortAdded(QModelIndex const& parent, int first, int las
         if (messageView)
         {
             m_logWidget->add(messageView);
-            m_midiManager->getMessageMatrixModel()->connectOutputToInputs(i, true);
         }
     }
 }
@@ -365,6 +364,7 @@ void MainWindow::onOutputPortRemoved(QModelIndex const& parent, int first, int l
     {
         auto const portIndex = model->index(i, 0, parent);
         auto const port = model->getOutputPort(portIndex);
+
         auto const messageView = std::dynamic_pointer_cast<MidiConsoleView>(port);
 
         if (messageView)

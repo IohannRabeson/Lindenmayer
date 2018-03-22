@@ -3,14 +3,14 @@
 //
 
 #include "QMidiMessageMatrix.hpp"
-#include <cassert>
+#include <QtGlobal>
 #include <utility>
 
 namespace imp
 {
     inline int computeIndex(int const x, int const y, int const output)
     {
-        assert( x < output );
+        Q_ASSERT( x < output );
 
         return x + (y * output);
     }
@@ -88,7 +88,7 @@ auto QMidiMessageMatrix::end() const -> ConstIterator
     return begin() + m_outputCount * m_inputCount;
 }
 
-void QMidiMessageMatrix::foreach(std::function<void(int const x, int const y, bool const value)> const&& f) const
+void QMidiMessageMatrix::foreach(std::function<void(int const outputIndex, int const inputIndex, bool const value)> const&& f) const
 {
     int x = 0u;
     int y = 0u;
@@ -140,19 +140,22 @@ void QMidiMessageMatrix::setInputCount(int const input)
     resize(m_outputCount, input);
 }
 
-void QMidiMessageMatrix::resize(int const output, int const input)
+void QMidiMessageMatrix::resize(int const outputCount, int const inputCount)
 {
+    Q_ASSERT(outputCount > -1);
+    Q_ASSERT(inputCount > -1);
+
     Values trueValues = collectValues(true);
 
-    m_connections = std::make_unique<bool[]>(output * input);
-    m_outputCount = output;
-    m_inputCount = input;
+    m_connections = std::make_unique<bool[]>(static_cast<std::size_t>(outputCount * inputCount));
+    m_outputCount = outputCount;
+    m_inputCount = inputCount;
 
     std::fill(begin(), end(), false);
 
     for (auto const& truePair : trueValues)
     {
-        if (truePair.first < outputCount() && truePair.second < inputCount())
+        if (truePair.first < this->outputCount() && truePair.second < this->inputCount())
         {
             set(truePair.first, truePair.second, true);
         }
@@ -163,7 +166,7 @@ void QMidiMessageMatrix::set(int const x, int const y, bool const value)
 {
     auto const i = imp::computeIndex(x, y, m_outputCount);
 
-    assert( i < m_outputCount * m_inputCount );
+    Q_ASSERT( i < m_outputCount * m_inputCount );
 
     m_connections[i] = value;
 }
@@ -172,7 +175,7 @@ bool QMidiMessageMatrix::get(int const x, int const y) const
 {
     auto const i = imp::computeIndex(x, y, m_outputCount);
 
-    assert( i < m_outputCount * m_inputCount );
+    Q_ASSERT( i < m_outputCount * m_inputCount );
 
     return m_connections[i];
 }

@@ -25,6 +25,7 @@ public:
     virtual QString portName() const = 0;
     virtual void setPortEnabled(bool const enabled) = 0;
     virtual bool isPortEnabled() const = 0;
+    virtual bool isPortRemovable() const = 0;
 
     void sendMessage(QMidiMessage const& message);
     bool isPortOpen() const;

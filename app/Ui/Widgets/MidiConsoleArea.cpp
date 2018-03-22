@@ -12,13 +12,14 @@ MidiConsoleArea::MidiConsoleArea(QWidget* parent)
     setViewMode(QMdiArea::ViewMode::TabbedView);
     setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
     setTabsClosable(false);
+    setDocumentMode(true);
 }
 
 void MidiConsoleArea::add(std::shared_ptr<MidiConsoleView> const& messageView)
 {
     auto* const newWindow = addSubWindow(messageView.get());
 
-    m_logViews.push_back(messageView);
+    m_logViews.emplace(messageView, newWindow);
     newWindow->setWindowTitle(messageView->portName());
     newWindow->showMaximized();
     newWindow->setWindowFlags(Qt::CustomizeWindowHint | Qt::WindowMinMaxButtonsHint);
@@ -26,6 +27,11 @@ void MidiConsoleArea::add(std::shared_ptr<MidiConsoleView> const& messageView)
 
 void MidiConsoleArea::remove(std::shared_ptr<MidiConsoleView> const& messageView)
 {
-    removeSubWindow(messageView.get());
-    m_logViews.erase(std::remove(m_logViews.begin(), m_logViews.end(), messageView), m_logViews.end());
+    auto it = m_logViews.find(messageView);
+
+    if (it != m_logViews.end())
+    {
+        removeSubWindow(it->second);
+        m_logViews.erase(it);
+    }
 }

@@ -88,6 +88,11 @@ bool QVirtualMidiOut::isPortEnabled() const
     return d->m_portEnabled;
 }
 
+bool QVirtualMidiOut::isPortRemovable() const
+{
+    return true;
+}
+
 void QVirtualMidiOut::outputMessage(QMidiMessage const& message)
 {
     Q_D(const QVirtualMidiOut);

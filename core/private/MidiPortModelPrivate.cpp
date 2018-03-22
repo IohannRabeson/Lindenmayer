@@ -163,7 +163,7 @@ bool QMidiPortModel::MidiInputPortTreeNode::setData(int const column, QVariant c
 
 bool QMidiPortModel::MidiInputPortTreeNode::isRemovable() const
 {
-    return std::dynamic_pointer_cast<QVirtualMidiIn>(m_port) != nullptr;
+    return m_port->isPortRemovable();
 }
 
 void QMidiPortModel::MidiInputPortTreeNode::onChildAdded(int const childIndex)
@@ -245,7 +245,7 @@ bool QMidiPortModel::MidiOutputPortTreeNode::setData(int const column, QVariant 
 
 bool QMidiPortModel::MidiOutputPortTreeNode::isRemovable() const
 {
-    return std::dynamic_pointer_cast<QVirtualMidiOut>(m_port) != nullptr;
+    return m_port->isPortRemovable();
 }
 
 void QMidiPortModel::MidiOutputPortTreeNode::onChildAdded(int const childIndex)

@@ -63,6 +63,10 @@ void MidiConsoleView::saveSettings(QSettings& settings) const
     settings.endGroup();
 }
 
+bool MidiConsoleView::isPortRemovable() const
+{
+    return true;
+}
 
 void MidiConsoleView::outputMessage(const QMidiMessage &message)
 {

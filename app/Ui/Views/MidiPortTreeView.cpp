@@ -148,7 +148,9 @@ void MidiPortTreeView::onAddVirtualMidiOutputTriggered()
 
 void MidiPortTreeView::onAddOutputLoggerTriggered()
 {
-    m_midiManager->getOutputDeviceModel()->add(std::make_shared<MidiConsoleView>(m_midiManager));
+    auto const newIndex = m_midiManager->getOutputDeviceModel()->add(std::make_shared<MidiConsoleView>(m_midiManager));
+
+    setCurrentIndex(newIndex);
 }
 
 void MidiPortTreeView::contextMenuEvent(QContextMenuEvent* event)
@@ -157,6 +159,11 @@ void MidiPortTreeView::contextMenuEvent(QContextMenuEvent* event)
     // produce a leak repeatedly...
     // 19/03/2018
     QMenu menu(this);
+    QMenu addFilterSubmenu(tr("Add filter"));
+
+    auto const currentCanHaveFilter = getCurrentPortIndex(this, m_portModel).isValid();
+
+    addFilterSubmenu.setEnabled(!m_actionAddFilters.isEmpty() && currentCanHaveFilter);
 
     switch (m_mode)
     {
@@ -168,17 +175,16 @@ void MidiPortTreeView::contextMenuEvent(QContextMenuEvent* event)
         menu.addAction(m_actionAddMidiConsole);
         break;
     }
+    menu.addMenu(&addFilterSubmenu);
+    menu.addSeparator();
+    menu.addAction(m_actionRemove);
 
-    QMenu* const addFilterSubmenu = menu.addMenu(tr("Add filter"));
-    auto const currentCanHaveFilter = getCurrentPortIndex(this, m_portModel).isValid();
+    addFilterSubmenu.addSeparator();
+    addFilterSubmenu.addActions(m_actionAddFilters);
+    addFilterSubmenu.addSeparator();
 
     updateActions();
 
-    addFilterSubmenu->setEnabled(!m_actionAddFilters.isEmpty() && currentCanHaveFilter);
-    addFilterSubmenu->addSeparator();
-    addFilterSubmenu->addActions(m_actionAddFilters);
-    addFilterSubmenu->addSeparator();
-    menu.addAction(m_actionRemove);
     menu.exec(event->globalPos());
 }
 

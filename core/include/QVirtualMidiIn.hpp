@@ -17,6 +17,7 @@ public:
     QString portName() const override;
     void setPortEnabled(const bool enabled) override;
     bool isPortEnabled() const override;
+    bool isPortRemovable() const override;
 private:
     QScopedPointer<QVirtualMidiInPrivate> d_ptr;
 };

@@ -41,7 +41,7 @@ public:
 
     void setOutputCount(int const output);
     void setInputCount(int const input);
-    void resize(int const output, int const input);
+    void resize(int const outputCount, int const inputCount);
     void set(int const x, int const y, bool const value);
     bool get(int const x, int const y) const;
     void removeInput(int const input);

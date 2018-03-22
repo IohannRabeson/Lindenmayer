@@ -522,6 +522,11 @@ void MidiKeyboardWidget::loadSettings(QSettings& settings)
     settings.endGroup();
 }
 
+bool MidiKeyboardWidget::isPortRemovable() const
+{
+    return true;
+}
+
 void MidiKeyboardWidget::setChordEditionEnabled(bool const enabled)
 {
     m_scene->setChordEditionEnabled(enabled);

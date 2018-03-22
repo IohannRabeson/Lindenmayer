@@ -25,6 +25,7 @@ public:
     void setAutoScrollToBottomEnabled(bool const enabled);
     void loadSettings(QSettings& settings);
     void saveSettings(QSettings& settings) const;
+    bool isPortRemovable() const override;
 private:
     void outputMessage(const QMidiMessage &message) override;
 

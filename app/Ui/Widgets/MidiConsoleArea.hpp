@@ -13,7 +13,7 @@ public:
     void add(std::shared_ptr<MidiConsoleView> const& messageView);
     void remove(std::shared_ptr<MidiConsoleView> const& messageView);
 private:
-    std::vector<std::shared_ptr<MidiConsoleView>> m_logViews;
+    std::map<std::shared_ptr<MidiConsoleView>, QMdiSubWindow*> m_logViews;
 };
 
 #endif // MIDILOGWIDGET_HPP
