@@ -149,3 +149,8 @@ bool QMidiOut::isPortEnabled() const
 
     return d->m_enabled;
 }
+
+bool QMidiOut::isPortRemovable() const
+{
+    return false;
+}

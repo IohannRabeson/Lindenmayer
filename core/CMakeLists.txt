@@ -38,6 +38,8 @@ set(QMIDIBOY_CORE_SOURCES
     include/QAbstractMidiOut.hpp
     include/QMidiInBase.hpp
     src/QMidiInBase.cpp
+    include/QMidiOutBase.hpp
+    src/QMidiOutBase.cpp
     src/QAbstractMidiMessageFilter.cpp
     include/QAbstractMidiMessageFilter.hpp
     src/QMidiPortModel.cpp

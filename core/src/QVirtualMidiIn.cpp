@@ -111,3 +111,8 @@ bool QVirtualMidiIn::isPortEnabled() const
 
     return d->m_portEnabled;
 }
+
+bool QVirtualMidiIn::isPortRemovable() const
+{
+    return true;
+}

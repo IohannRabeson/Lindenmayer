@@ -21,6 +21,7 @@ public:
     MOCK_METHOD1( setPortEnabled, void(bool const) );
     MOCK_CONST_METHOD0( isPortEnabled, bool() );
     MOCK_METHOD1( outputMessage, void(QMidiMessage const&) );
+    MOCK_CONST_METHOD0( isPortRemovable, bool() );
 };
 
 #endif //MIDIMONITOR_ABSTRACTMIDIOUTMOCK_HPP

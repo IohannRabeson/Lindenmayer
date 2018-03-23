@@ -23,6 +23,7 @@ public:
 
     void saveSettings(QSettings& settings) const;
     void loadSettings(QSettings& settings);
+    bool isPortRemovable() const override;
 private:
     bool eventFilter(QObject *object, QEvent *event) override;
     void onPressed();

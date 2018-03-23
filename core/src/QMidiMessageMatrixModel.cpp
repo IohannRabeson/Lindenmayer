@@ -90,6 +90,18 @@ void QMidiMessageMatrixModel::reset(int const columns, int const rows,
     endResetModel();
 }
 
+void QMidiMessageMatrixModel::connectInputToOutputs(int const row, bool const connected)
+{
+    m_matrix.connectInputToOutputs(row, connected);
+    emit dataChanged(index(row, 0), index(row, columnCount() - 1));
+}
+
+void QMidiMessageMatrixModel::connectOutputToInputs(int const column, bool const connected)
+{
+    m_matrix.connectOutputToInputs(column, connected);
+    emit dataChanged(index(0, column), index(rowCount() - 1, column));
+}
+
 void QMidiMessageMatrixModel::clear()
 {
     reset(0, 0, {}, {});
@@ -97,7 +109,7 @@ void QMidiMessageMatrixModel::clear()
 
 Qt::ItemFlags QMidiMessageMatrixModel::flags(const QModelIndex& index) const
 {
-    return QAbstractTableModel::flags(index) | Qt::ItemIsUserCheckable;
+    return index.isValid() ? Qt::ItemIsEnabled | Qt::ItemIsUserCheckable : Qt::NoItemFlags;
 }
 
 QMidiMessageMatrix const& QMidiMessageMatrixModel::matrix() const

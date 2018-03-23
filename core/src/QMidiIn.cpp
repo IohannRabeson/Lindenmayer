@@ -172,3 +172,8 @@ bool QMidiIn::isPortEnabled() const noexcept
 
     return d->m_portEnabled;
 }
+
+bool QMidiIn::isPortRemovable() const
+{
+    return false;
+}
