@@ -125,7 +125,7 @@ QVariant QMidiPortModel::MidiInputPortTreeNode::data(int const column, int const
             result = m_port->portOpened();
             break;
         case Qt::CheckStateRole:
-            result = m_port->isPortEnabled() ? Qt::Checked : Qt::Unchecked;
+            result = static_cast<uint>(m_port->isPortEnabled() ? Qt::Checked : Qt::Unchecked);
             break;
         default:
             break;
@@ -145,7 +145,7 @@ bool QMidiPortModel::MidiInputPortTreeNode::setData(int const column, QVariant c
         {
         case Qt::CheckStateRole:
             {
-                auto const checked = (value.value<Qt::CheckState>() == Qt::Checked);
+                auto const checked = (value.value<uint>() == Qt::Checked);
 
                 if (checked != m_port->isPortEnabled())
                 {
@@ -227,7 +227,7 @@ bool QMidiPortModel::MidiOutputPortTreeNode::setData(int const column, QVariant 
         {
         case Qt::CheckStateRole:
         {
-            auto const checked = (value.value<Qt::CheckState>() == Qt::Checked);
+            auto const checked = (value.value<uint>() == Qt::Checked);
 
             if (checked != m_port->isPortEnabled())
             {
@@ -323,7 +323,7 @@ bool QMidiPortModel::MidiFilterTreeNode::setData(int const column, QVariant cons
         {
         case Qt::CheckStateRole:
         {
-            auto const checked = (value.value<Qt::CheckState>() == Qt::Checked);
+            auto const checked = (value.value<uint>() == Qt::Checked);
 
             if (checked != m_filter->isEnabled())
             {
