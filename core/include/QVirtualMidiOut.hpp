@@ -1,22 +1,16 @@
-//
-// Created by Io on 06/01/2018.
-//
-
-#ifndef MIDIMONITOR_QMIDIOUT_HPP
-#define MIDIMONITOR_QMIDIOUT_HPP
-
-#include "QAbstractMidiOut.hpp"
+#ifndef QVIRTUALMIDIOUT_HPP
+#define QVIRTUALMIDIOUT_HPP
+#include <QAbstractMidiOut.hpp>
 #include <QScopedPointer>
 
-class QMidiMessage;
-class QMidiOutPrivate;
+class QVirtualMidiOutPrivate;
 
-class QMidiOut : public QAbstractMidiOut
+class QVirtualMidiOut : public QAbstractMidiOut
 {
-    Q_DECLARE_PRIVATE(QMidiOut)
+    Q_DECLARE_PRIVATE(QVirtualMidiOut)
 public:
-    explicit QMidiOut();
-    ~QMidiOut();
+    QVirtualMidiOut();
+    ~QVirtualMidiOut();
 
     bool openPort(int const portIndex) override;
     void closePort() override;
@@ -25,12 +19,10 @@ public:
     void setPortEnabled(bool const enabled) override;
     bool isPortEnabled() const override;
     bool isPortRemovable() const override;
-
-    int portCount() const;
 private:
     void outputMessage(QMidiMessage const& message) override;
 private:
-    QScopedPointer<QMidiOutPrivate> d_ptr;
+    QScopedPointer<QVirtualMidiOutPrivate> d_ptr;
 };
 
-#endif //MIDIMONITOR_QMIDIOUT_HPP
+#endif // QVIRTUALMIDIOUT_HPP

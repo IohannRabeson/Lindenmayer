@@ -27,6 +27,7 @@ public:
     QString portName() const noexcept override;
     void setPortEnabled(bool const enabled) noexcept override;
     bool isPortEnabled() const noexcept override;
+    bool isPortRemovable() const override;
 
     int portCount() const noexcept;
 private:

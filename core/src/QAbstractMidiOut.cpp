@@ -25,12 +25,12 @@ void QAbstractMidiOut::addErrorListener(ErrorListener&& listener)
 
 int QAbstractMidiOut::addFilter(FilterPointer const& filter)
 {
-    return imp::addToVector(m_messageFilters, std::move(filter));
+    return imp::pushBack(m_messageFilters, filter);
 }
 
 void QAbstractMidiOut::removeFilter(int const filterIndex)
 {
-    imp::removeFromVector(m_messageFilters, filterIndex);
+    imp::removeAt(m_messageFilters, filterIndex);
 }
 
 void QAbstractMidiOut::clearFilters()

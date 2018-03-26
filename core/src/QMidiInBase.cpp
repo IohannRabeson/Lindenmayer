@@ -8,7 +8,7 @@
 
 bool QMidiInBase::openPort(int const portIndex)
 {
-    m_portIndex = std::max(portIndex, -1);
+    m_portIndex = portIndex;
     return m_portIndex != -1;
 }
 
@@ -39,14 +39,6 @@ bool QMidiInBase::isPortEnabled() const
 }
 
 QMidiInBase::QMidiInBase(QString const& name)
-        : m_name(name)
+: m_name(name)
 {
-}
-
-void QMidiInBase::messageReceived(QMidiMessage const& message)
-{
-    if (isPortEnabled())
-    {
-        QAbstractMidiIn::messageReceived(message);
-    }
 }

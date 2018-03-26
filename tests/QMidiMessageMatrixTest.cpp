@@ -85,3 +85,35 @@ TEST(QMidiMessageMatrixTest, change_height)
     EXPECT_EQ( 2u, std::count(mat.begin(), mat.end(), true) );
     EXPECT_EQ( 4u * 3u - 2u, std::count(mat.begin(), mat.end(), false) );
 }
+
+TEST(QMidiMessageMatrixTest, remove_output)
+{
+    QMidiMessageMatrix mat(3u, 1u);
+
+    mat.set(0u, 0u, true);
+    mat.set(2u, 0u, true);
+
+    mat.removeOutput(1u);
+
+    EXPECT_EQ( 2u, mat.outputCount() );
+    EXPECT_EQ( 1u, mat.inputCount() );
+
+    EXPECT_TRUE( mat.get(0u, 0u) );
+    EXPECT_TRUE( mat.get(1u, 0u) );
+}
+
+TEST(QMidiMessageMatrixTest, remove_input)
+{
+    QMidiMessageMatrix mat(1u, 3u);
+
+    mat.set(0u, 0u, true);
+    mat.set(0u, 2u, true);
+
+    mat.removeInput(1u);
+
+    EXPECT_EQ( 1u, mat.outputCount() );
+    EXPECT_EQ( 2u, mat.inputCount() );
+
+    EXPECT_TRUE( mat.get(0u, 0u) );
+    EXPECT_TRUE( mat.get(0u, 1u) );
+}

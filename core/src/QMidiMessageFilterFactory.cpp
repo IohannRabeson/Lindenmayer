@@ -7,7 +7,7 @@
 
 int QMidiMessageFilterFactory::rowCount(QModelIndex const& parent) const
 {
-    return m_creators.size();
+    return parent.isValid() ? 0 : static_cast<int>(m_creators.size());
 }
 
 QVariant QMidiMessageFilterFactory::data(const QModelIndex& index, int role) const
@@ -16,7 +16,7 @@ QVariant QMidiMessageFilterFactory::data(const QModelIndex& index, int role) con
 
     if (index.isValid() && role == Qt::DisplayRole)
     {
-        result = m_creators[index.row()].label;
+        result = getCreator(index.row()).label;
     }
     return result;
 }
@@ -47,7 +47,7 @@ QMidiMessageFilterFactory::Pointer QMidiMessageFilterFactory::create(QModelIndex
 
     if (index.isValid())
     {
-        auto const& entry = m_creators[index.row()];
+        auto const& entry = getCreator(index.row());
 
         result = entry.creator(entry.label);
     }
@@ -60,7 +60,7 @@ QString QMidiMessageFilterFactory::getLabel(QModelIndex const& index) const
 
     if (index.isValid())
     {
-        auto const& entry = m_creators[index.row()];
+        auto const& entry = getCreator(index.row());
 
         result = entry.label;
     }

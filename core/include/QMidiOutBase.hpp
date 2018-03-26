@@ -1,17 +1,11 @@
-//
-// Created by Io on 25/01/2018.
-//
+#ifndef QMIDIOUTBASE_HPP
+#define QMIDIOUTBASE_HPP
+#include <QAbstractMidiOut.hpp>
 
-#ifndef MIDIMONITOR_QMIDIINBASE_HPP
-#define MIDIMONITOR_QMIDIINBASE_HPP
-
-#include "QAbstractMidiIn.hpp"
-#include <QString>
-
-class QMidiInBase : public QAbstractMidiIn
+class QMidiOutBase : public QAbstractMidiOut
 {
 public:
-    explicit QMidiInBase(QString const& name = QString());
+    explicit QMidiOutBase(QString const& name);
 
     bool openPort(int const portIndex) override;
     void closePort() override;
@@ -20,9 +14,9 @@ public:
     void setPortEnabled(bool const enabled) override;
     bool isPortEnabled() const override;
 private:
-    QString const m_name;
+    QString m_portName;
     int m_portIndex = -1;
     bool m_portEnabled = true;
 };
 
-#endif //MIDIMONITOR_QMIDIINBASE_HPP
+#endif // QMIDIOUTBASE_HPP

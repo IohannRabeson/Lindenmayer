@@ -4,32 +4,9 @@
 <context>
     <name>AboutMidiMonitorDialog</name>
     <message>
-        <source>About MIDI monitor</source>
-        <translation type="vanished">About MIDI Boy</translation>
-    </message>
-    <message>
-        <source>Version:</source>
-        <translation type="vanished">Version:</translation>
-    </message>
-    <message>
-        <source>About</source>
-        <translation type="vanished">About</translation>
-    </message>
-    <message>
-        <source>Licences</source>
-        <translation type="vanished">Licences</translation>
-    </message>
-    <message>
         <location filename="../Ui/Dialogs/AboutMidiMonitorDialog.cpp" line="33"/>
         <source>About %0</source>
-        <translation>About %0</translation>
-    </message>
-</context>
-<context>
-    <name>DockWidgetManager</name>
-    <message>
-        <source>Dockable widgets</source>
-        <translation type="vanished">Dockable widgets</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -37,157 +14,164 @@
     <message>
         <location filename="../../core/src/Format.cpp" line="14"/>
         <source>C</source>
-        <translation>C</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../core/src/Format.cpp" line="15"/>
         <source>C#</source>
-        <translation>C#</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../core/src/Format.cpp" line="16"/>
         <source>D</source>
-        <translation>D</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../core/src/Format.cpp" line="17"/>
         <source>D#</source>
-        <translation>D#</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../core/src/Format.cpp" line="18"/>
         <source>E</source>
-        <translation>E</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../core/src/Format.cpp" line="19"/>
         <source>F</source>
-        <translation>F</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../core/src/Format.cpp" line="20"/>
         <source>F#</source>
-        <translation>F#</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../core/src/Format.cpp" line="21"/>
         <source>G</source>
-        <translation>G</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../core/src/Format.cpp" line="22"/>
         <source>G#</source>
-        <translation>G#</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../core/src/Format.cpp" line="23"/>
         <source>A</source>
-        <translation>A</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../core/src/Format.cpp" line="24"/>
         <source>A#</source>
-        <translation>A#</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../core/src/Format.cpp" line="25"/>
         <source>B</source>
-        <translation>B</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../Ui/MainWindow.cpp" line="126"/>
+        <location filename="../Ui/MainWindow.cpp" line="124"/>
         <source>Quit</source>
-        <translation>Quit</translation>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../Ui/MainWindow.cpp" line="126"/>
+        <source>Clear all</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../Ui/MainWindow.cpp" line="125"/>
+        <source>About...</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../Ui/MainWindow.cpp" line="127"/>
-        <source>Clear all</source>
-        <translation>Clear all</translation>
+        <source>Auto scrolling</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../Ui/MainWindow.cpp" line="128"/>
-        <source>About...</source>
-        <translation>About...</translation>
-    </message>
-    <message>
-        <location filename="../Ui/MainWindow.cpp" line="129"/>
-        <source>Auto scrolling</source>
-        <translation>Auto scrolling</translation>
-    </message>
-    <message>
-        <location filename="../Ui/MainWindow.cpp" line="130"/>
         <source>Show</source>
-        <translation>Show</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../Ui/MainWindow.cpp" line="168"/>
         <source>Clear messages</source>
-        <translation>Clear messages</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../Ui/MainWindow.cpp" line="169"/>
         <source>Messages can lost their input port information.
 Are you sure you want to do that?</source>
-        <translation>Messages can lost their input port information.
-Are you sure you want to do that?</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Ui/MainWindow.cpp" line="212"/>
+        <location filename="../Ui/MainWindow.cpp" line="204"/>
         <source>MIDI Inputs</source>
-        <translation>MIDI Inputs</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Ui/MainWindow.cpp" line="218"/>
+        <location filename="../Ui/MainWindow.cpp" line="210"/>
         <source>MIDI Outputs</source>
-        <translation>MIDI Outputs</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Ui/MainWindow.cpp" line="221"/>
+        <location filename="../Ui/MainWindow.cpp" line="213"/>
         <source>MIDI Note Trigger</source>
-        <translation>MIDI Note Trigger</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Ui/MainWindow.cpp" line="224"/>
+        <location filename="../Ui/MainWindow.cpp" line="216"/>
         <source>MIDI Keyboard</source>
-        <translation>MIDI Keyboard</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Ui/MainWindow.cpp" line="230"/>
+        <location filename="../Ui/MainWindow.cpp" line="222"/>
         <source>MIDI Message Matrix</source>
-        <translation>MIDI Message Matrix</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Ui/MainWindow.cpp" line="239"/>
+        <location filename="../Ui/MainWindow.cpp" line="231"/>
         <source>Main</source>
-        <translation>Main</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Ui/MainWindow.cpp" line="270"/>
+        <location filename="../Ui/MainWindow.cpp" line="262"/>
         <source>File</source>
-        <translation>File</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Ui/MainWindow.cpp" line="271"/>
+        <location filename="../Ui/MainWindow.cpp" line="263"/>
         <source>Edit</source>
-        <translation>Edit</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Ui/MainWindow.cpp" line="272"/>
+        <location filename="../Ui/MainWindow.cpp" line="264"/>
         <source>View</source>
-        <translation>View</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Ui/MainWindow.cpp" line="273"/>
+        <location filename="../Ui/MainWindow.cpp" line="265"/>
         <source>Window</source>
-        <translation>Window</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Ui/MainWindow.cpp" line="274"/>
+        <location filename="../Ui/MainWindow.cpp" line="266"/>
         <source>?</source>
-        <translation>?</translation>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>MidiConsoleView</name>
+    <message>
+        <location filename="../Ui/Views/MidiConsoleView.cpp" line="20"/>
+        <source>Midi console %0</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -195,33 +179,33 @@ Are you sure you want to do that?</translation>
     <message>
         <location filename="../Ui/Widgets/MidiKeyboardWidget.cpp" line="421"/>
         <source>Keyboard</source>
-        <translation>Keyboard</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../Ui/Widgets/MidiKeyboardWidget.cpp" line="426"/>
         <source>Edit chord</source>
-        <translation>Edit chord</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../Ui/Widgets/MidiKeyboardWidget.cpp" line="427"/>
         <source>Clear chord</source>
-        <translation>Clear chord</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../Ui/Widgets/MidiKeyboardWidget.cpp" line="428"/>
         <location filename="../Ui/Widgets/MidiKeyboardWidget.cpp" line="447"/>
         <source>Chord</source>
-        <translation>Chord</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../Ui/Widgets/MidiKeyboardWidget.cpp" line="442"/>
         <source>Channel:</source>
-        <translation>Channel:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../Ui/Widgets/MidiKeyboardWidget.cpp" line="443"/>
         <source>Velocity:</source>
-        <translation>Velocity:</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -229,22 +213,22 @@ Are you sure you want to do that?</translation>
     <message>
         <location filename="../Ui/Delegates/MidiDelegates.hpp" line="31"/>
         <source>Note On</source>
-        <translation>Note On</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../Ui/Delegates/MidiDelegates.hpp" line="32"/>
         <source>Note Off</source>
-        <translation>Note Off</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../Ui/Delegates/MidiDelegates.hpp" line="33"/>
         <source>Control Change</source>
-        <translation>Control Change</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../Ui/Delegates/MidiDelegates.hpp" line="34"/>
         <source>Program Change</source>
-        <translation>Program Change</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../Ui/Delegates/MidiDelegates.hpp" line="35"/>
@@ -277,13 +261,9 @@ Are you sure you want to do that?</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>System Exclusive</source>
-        <translation type="vanished">System Exclusive</translation>
-    </message>
-    <message>
         <location filename="../Ui/Delegates/MidiDelegates.hpp" line="41"/>
         <source>Unknown</source>
-        <translation>Unknown</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -291,71 +271,73 @@ Are you sure you want to do that?</translation>
     <message>
         <location filename="../Ui/Widgets/MidiNoteTriggerWidget.cpp" line="26"/>
         <source>Note trigger</source>
-        <translation>Note trigger</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../Ui/Widgets/MidiNoteTriggerWidget.cpp" line="27"/>
         <source>Trigger</source>
-        <translation>Trigger</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../Ui/Widgets/MidiNoteTriggerWidget.cpp" line="45"/>
         <source>Note:</source>
-        <translation>Note:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../Ui/Widgets/MidiNoteTriggerWidget.cpp" line="46"/>
         <source>Velocity:</source>
-        <translation>Velocity:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../Ui/Widgets/MidiNoteTriggerWidget.cpp" line="47"/>
         <source>Channel:</source>
-        <translation>Channel:</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>MidiPortTreeView</name>
     <message>
-        <location filename="../Ui/Views/MidiPortTreeView.cpp" line="46"/>
+        <location filename="../Ui/Views/MidiPortTreeView.cpp" line="40"/>
         <source>Remove</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Ui/Views/MidiPortTreeView.cpp" line="126"/>
+        <location filename="../Ui/Views/MidiPortTreeView.cpp" line="41"/>
+        <source>Add virtual MIDI in</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../Ui/Views/MidiPortTreeView.cpp" line="42"/>
+        <source>Add virtual MIDI out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../Ui/Views/MidiPortTreeView.cpp" line="43"/>
+        <source>Add MIDI console</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../Ui/Views/MidiPortTreeView.cpp" line="152"/>
         <source>Add filter</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
-    <name>QDefaultMidiTranslator</name>
-    <message>
-        <source>Default</source>
-        <extracomment>Default midi translator</extracomment>
-        <translation type="vanished">Default</translation>
-    </message>
-    <message>
-        <source>[CC%0]</source>
-        <extracomment>Format control change name</extracomment>
-        <translation type="vanished">[CC%0]</translation>
-    </message>
-</context>
-<context>
     <name>QMidiMessageMatrixModel</name>
     <message>
-        <location filename="../../core/src/QMidiMessageMatrixModel.cpp" line="30"/>
+        <location filename="../../core/src/QMidiMessageMatrixModel.cpp" line="54"/>
         <source>Connection from input &apos;%0&apos; to output &apos;%1&apos;</source>
-        <translation>Connection from input &apos;%0&apos; to output &apos;%1&apos;</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../core/src/QMidiMessageMatrixModel.cpp" line="96"/>
+        <location filename="../../core/src/QMidiMessageMatrixModel.cpp" line="164"/>
         <source>Input &apos;%0&apos;</source>
-        <translation>Input &apos;%0&apos;</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../core/src/QMidiMessageMatrixModel.cpp" line="110"/>
+        <location filename="../../core/src/QMidiMessageMatrixModel.cpp" line="178"/>
         <source>Output &apos;%0&apos;</source>
-        <translation>Output &apos;%0&apos;</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -363,62 +345,62 @@ Are you sure you want to do that?</translation>
     <message>
         <location filename="../../core/src/QMidiMessageModel.cpp" line="22"/>
         <source>Type</source>
-        <translation>Type</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../core/src/QMidiMessageModel.cpp" line="23"/>
         <source>Timestamp</source>
-        <translation>Timestamp</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../core/src/QMidiMessageModel.cpp" line="24"/>
         <source>Channel</source>
-        <translation>Channel</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../core/src/QMidiMessageModel.cpp" line="25"/>
         <source>Value</source>
-        <translation>Value</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../core/src/QMidiMessageModel.cpp" line="26"/>
         <source>Data</source>
-        <translation>Data</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../core/src/QMidiMessageModel.cpp" line="27"/>
         <source>Input</source>
-        <translation>Input</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../core/src/QMidiMessageModel.cpp" line="32"/>
         <source>Note On</source>
-        <translation>Note On</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../core/src/QMidiMessageModel.cpp" line="33"/>
         <source>Note Off</source>
-        <translation>Note Off</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../core/src/QMidiMessageModel.cpp" line="34"/>
         <source>CC</source>
-        <translation>CC</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../core/src/QMidiMessageModel.cpp" line="35"/>
         <source>PC</source>
-        <translation>PC</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../core/src/QMidiMessageModel.cpp" line="36"/>
         <source>SysEx</source>
-        <translation>SysEx</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../core/src/QMidiMessageModel.cpp" line="37"/>
         <source>Undefined</source>
-        <translation>Undefined</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -431,26 +413,20 @@ Are you sure you want to do that?</translation>
     <message>
         <location filename="../../core/src/QMidiPortModel.cpp" line="50"/>
         <source>Value</source>
-        <translation type="unfinished">Value</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>QObject</name>
     <message>
-        <source>Default</source>
-        <extracomment>Default midi translator</extracomment>
-        <translation type="vanished">Default</translation>
+        <location filename="../../core/src/QVirtualMidiOut.cpp" line="37"/>
+        <source>Virtual output port %0</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>%0: %1</source>
-        <extracomment>Format for control change display text</extracomment>
-        <translation type="vanished">%0: %1</translation>
-    </message>
-    <message>
-        <source>Fatal error: %0
-The application will be closed.</source>
-        <translation type="vanished">Fatal error: %0
-The application will be closed.</translation>
+        <location filename="../../core/src/QVirtualMidiIn.cpp" line="57"/>
+        <source>Virtual input port %0</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../Ui/MainWindow.cpp" line="60"/>
@@ -459,18 +435,7 @@ The application will be closed.</translation>
     </message>
 </context>
 <context>
-    <name>ToolBarManager</name>
-    <message>
-        <source>Toolbars</source>
-        <translation type="vanished">Toolbars</translation>
-    </message>
-</context>
-<context>
     <name>main</name>
-    <message>
-        <source>Enable dark theme (experimental)</source>
-        <translation type="vanished">Enable dark theme (experimental)</translation>
-    </message>
     <message>
         <location filename="../main.cpp" line="27"/>
         <source>Select theme</source>
@@ -479,12 +444,12 @@ The application will be closed.</translation>
     <message>
         <location filename="../main.cpp" line="29"/>
         <source>Select language</source>
-        <translation>Select language</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../main.cpp" line="30"/>
         <source>language name</source>
-        <translation>language name</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

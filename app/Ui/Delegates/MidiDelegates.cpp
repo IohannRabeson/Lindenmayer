@@ -50,7 +50,7 @@ namespace MidiMessageDelegates
         return QString::number(value.toInt());
     }
 
-    QString MidiTimeDelegate::displayText(const QVariant &value, const QLocale &locale) const
+    QString MidiTimeDelegate::displayText(const QVariant &value, const QLocale &) const
     {
         return value.toDateTime().time().toString("HH:mm:ss");
     }

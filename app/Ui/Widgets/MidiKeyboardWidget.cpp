@@ -52,7 +52,7 @@ public:
         QGraphicsRectItem::paint(painter, option, widget);
 
         constexpr static qreal const TextPadding = 8;
-        QFontMetrics metrics(painter->font());
+        QFontMetrics metrics(m_font);
 
         painter->drawText(TextPadding, boundingRect().bottom() - metrics.lineSpacing(), m_text);
     }
@@ -491,10 +491,10 @@ void MidiKeyboardWidget::saveSettings(QSettings& settings) const
     auto const& chord = m_scene->chord();
     auto chordIt = chord.begin();
 
-    settings.beginWriteArray("chord", chord.size());
-    for (auto i = 0; i < chord.size(); ++i)
+    settings.beginWriteArray("chord", static_cast<int>(chord.size()));
+    for (auto i = 0u; i < chord.size(); ++i)
     {
-        settings.setArrayIndex(i);
+        settings.setArrayIndex(static_cast<int>(i));
         settings.setValue("note", *chordIt);
         ++chordIt;
     }
@@ -520,6 +520,11 @@ void MidiKeyboardWidget::loadSettings(QSettings& settings)
     m_scene->setChord(chord);
     settings.endArray();
     settings.endGroup();
+}
+
+bool MidiKeyboardWidget::isPortRemovable() const
+{
+    return true;
 }
 
 void MidiKeyboardWidget::setChordEditionEnabled(bool const enabled)
@@ -570,6 +575,7 @@ void MidiMessageSender::setChannel(unsigned char const value)
 
 KeyGraphicsItem::KeyGraphicsItem(QColor const& color, int const width, int const height, QFont const& font, QGraphicsItem* parent)
 : QGraphicsRectItem(parent)
+, m_font(font)
 , m_rectangle(new QGraphicsRectItem(this))
 , m_hovered(false)
 , m_clicked(false)

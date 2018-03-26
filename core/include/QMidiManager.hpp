@@ -14,6 +14,7 @@ class QAbstractMidiOut;
 class QMidiMessage;
 class QMidiMessageMatrixModel;
 class QMidiMessageFilterFactory;
+class QMidiManufacturerModel;
 class QMidiManagerPrivate;
 
 class QMidiManager : public QObject
@@ -32,23 +33,6 @@ public:
     void rescanPorts();
 
     /*!
-     * \brief Add an input port
-     * \param midiIn Input port to add
-     * Before adding it, this function open the port if it not already opened.
-     *
-     * When the input port added will receives a message it will be forwarded through
-     * the MIDI message matrix to the outputs ports.
-     */
-    int addInputPort(std::shared_ptr<QAbstractMidiIn>&& midiIn);
-
-    /*!
-     * \brief Add an output port
-     * \param midiIn Output port to add
-     * Before adding it, this function open the port if it not already opened.
-     */
-    int addOutputPort(std::shared_ptr<QAbstractMidiOut>&& midiOut);
-
-    /*!
      * \brief Close and destroy each input and output ports.
      */
     void closeAllPorts();
@@ -57,6 +41,7 @@ public:
     QMidiPortModel* getOutputDeviceModel() const;
     QMidiMessageMatrixModel* getMessageMatrixModel() const;
     QMidiMessageFilterFactory* getMessageFilterFactory() const;
+    QMidiManufacturerModel* getManufacturerModel() const;
 signals:
     void messageReceived(QMidiMessage const& message);
     void messageSent(QMidiMessage const& message);

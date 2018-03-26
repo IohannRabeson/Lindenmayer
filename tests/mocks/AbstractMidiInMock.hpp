@@ -20,6 +20,7 @@ public:
     MOCK_CONST_METHOD0( portName, QString() );
     MOCK_METHOD1( setPortEnabled, void(bool const) );
     MOCK_CONST_METHOD0( isPortEnabled, bool() );
+    MOCK_CONST_METHOD0( isPortRemovable, bool() );
 
     void sendMessageThrough(QMidiMessage const& message)
     {

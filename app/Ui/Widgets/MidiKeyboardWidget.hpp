@@ -33,14 +33,15 @@ public:
 
     void saveSettings(QSettings& settings) const;
     void loadSettings(QSettings& settings);
+    bool isPortRemovable() const override;
 private:
     void setChordEditionEnabled(bool const enabled);
     void setChordEnabled(bool const enabled);
     bool isChordEnabled() const;
     void clearChord();
 protected:
-    void showEvent(QShowEvent* e);
-    void resizeEvent(QResizeEvent* e);
+    void showEvent(QShowEvent* e) override;
+    void resizeEvent(QResizeEvent* e) override;
 private:
     KeyboardGraphicsScene* const m_scene;
     KeyboardGraphicsView* const m_view;

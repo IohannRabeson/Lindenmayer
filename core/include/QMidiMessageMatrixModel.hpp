@@ -19,17 +19,23 @@ public:
     using QAbstractTableModel::QAbstractTableModel;
 
     void reset(int const columns, int const rows, QMap<int, QString> const& columnNames, QMap<int, QString> const& rowNames);
+    void connectInputToOutputs(int const row, bool const connected);
+    void connectOutputToInputs(int const column, bool const connected);
+
     void clear();
 
     QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
     QVariant data(const QModelIndex& index, int role) const override;
 
-    int rowCount(QModelIndex const& parent) const override;
-    int columnCount(QModelIndex const& parent) const override;
+    int rowCount(QModelIndex const& parent = QModelIndex()) const override;
+    int columnCount(QModelIndex const& parent = QModelIndex()) const override;
     bool setData(const QModelIndex& index, const QVariant& value, int role) override;
 
     Qt::ItemFlags flags(const QModelIndex& index) const override;
     QMidiMessageMatrix const& matrix() const;
+
+    void onMidiInputRemoved(QModelIndex const& parent, int first, int last);
+    void onMidiOutputRemoved(QModelIndex const& parent, int first, int last);
 private:
     QMidiMessageMatrix m_matrix;
     QMap<int, QString> m_columnNames;

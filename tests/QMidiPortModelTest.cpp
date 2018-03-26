@@ -73,8 +73,8 @@ TEST(QMidiPortModelTest, only_input_port_flags)
     // Calling flags() with an invalid index should return only Qt::NoItemFlags
     ASSERT_EQ( model.flags(QModelIndex()), Qt::NoItemFlags );
     ASSERT_EQ( model.flags(model.index(1, 0)), Qt::NoItemFlags );
-    ASSERT_EQ( model.flags(model.index(0, 1)), Qt::NoItemFlags );
-    ASSERT_EQ( model.flags(model.index(0, 1, portIndex)), Qt::NoItemFlags );
+    ASSERT_EQ( model.flags(model.index(0, model.columnCount())), Qt::NoItemFlags );
+    ASSERT_EQ( model.flags(model.index(0, model.columnCount(), portIndex)), Qt::NoItemFlags );
 }
 
 TEST(QMidiPortModelTest, only_output_port_flags)
@@ -90,8 +90,8 @@ TEST(QMidiPortModelTest, only_output_port_flags)
     // Calling flags() with an invalid index should return only Qt::NoItemFlags
     ASSERT_EQ( model.flags(QModelIndex()), Qt::NoItemFlags );
     ASSERT_EQ( model.flags(model.index(1, 0)), Qt::NoItemFlags );
-    ASSERT_EQ( model.flags(model.index(0, 1)), Qt::NoItemFlags );
-    ASSERT_EQ( model.flags(model.index(0, 1, portIndex)), Qt::NoItemFlags );
+    ASSERT_EQ( model.flags(model.index(0, model.columnCount())), Qt::NoItemFlags );
+    ASSERT_EQ( model.flags(model.index(0, model.columnCount(), portIndex)), Qt::NoItemFlags );
 }
 
 TEST(QMidiPortModelTest, get_set_input_port_datas)
@@ -247,6 +247,9 @@ TEST(QMidiPortModelTest, add_filter_on_output)
     auto const port = std::make_shared<NiceMock<AbstractMidiOutMock>>();
     auto const filter = std::make_shared<NiceMock<AbstractMidiMessageFilterMock>>();
 
+    ON_CALL(*port, isPortEnabled()).WillByDefault(Return(true));
+    ON_CALL(*port, portOpened()).WillByDefault(Return(0));
+
     EXPECT_CALL(*filter, filterMessage(_))
                 .Times(1);
 
@@ -268,6 +271,9 @@ TEST(QMidiPortModelTest, add_filter_on_input)
     QMidiPortModel model;
     auto const port = std::make_shared<NiceMock<AbstractMidiInMock>>();
     auto const filter = std::make_shared<NiceMock<AbstractMidiMessageFilterMock>>();
+
+    ON_CALL(*port, isPortEnabled()).WillByDefault(Return(true));
+    ON_CALL(*port, portOpened()).WillByDefault(Return(0));
 
     EXPECT_CALL(*filter, filterMessage(_))
                 .Times(1);
@@ -363,4 +369,33 @@ TEST(QMidiPortModelTest, remove_invalid)
 
     ASSERT_EQ( model.rowCount(), 1 );
     ASSERT_EQ( model.rowCount(portIndex), 1 );
+}
+
+
+TEST(QMidiPortModelTest, clear_input)
+{
+    QMidiPortModel model;
+
+    auto const port = std::make_shared<NiceMock<AbstractMidiInMock>>();
+    auto const filter = std::make_shared<NiceMock<AbstractMidiMessageFilterMock>>();
+    auto const portIndex = model.add(port);
+    model.add(portIndex, filter);
+
+    model.clear();
+
+    ASSERT_EQ( model.rowCount(), 0 );
+}
+
+TEST(QMidiPortModelTest, clear_output)
+{
+    QMidiPortModel model;
+
+    auto const port = std::make_shared<NiceMock<AbstractMidiOutMock>>();
+    auto const filter = std::make_shared<NiceMock<AbstractMidiMessageFilterMock>>();
+    auto const portIndex = model.add(port);
+    model.add(portIndex, filter);
+
+    model.clear();
+
+    ASSERT_EQ( model.rowCount(), 0 );
 }

@@ -18,12 +18,14 @@ public:
     using ErrorListener = std::function<void(QString const&)>;
     using FilterPointer = std::shared_ptr<QAbstractMidiMessageFilter>;
 
+    virtual ~QAbstractMidiOut() = default;
     virtual bool openPort(int const portIndex) = 0;
     virtual void closePort() = 0;
     virtual int portOpened() const = 0;
     virtual QString portName() const = 0;
     virtual void setPortEnabled(bool const enabled) = 0;
     virtual bool isPortEnabled() const = 0;
+    virtual bool isPortRemovable() const = 0;
 
     void sendMessage(QMidiMessage const& message);
     bool isPortOpen() const;

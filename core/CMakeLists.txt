@@ -2,7 +2,10 @@ set(QMIDIBOY_CORE_PRIVATE
     private/MidiMessageFilterHelpers.hpp
     private/VectorHelpers.hpp
     private/ListenerHelpers.hpp
-        private/MidiPortModelPrivate.hpp private/MidiPortModelPrivate.cpp)
+    private/MidiPortModelPrivate.hpp
+    private/MidiPortModelPrivate.cpp
+    private/RtMidiHelpers.hpp
+    private/RtMidiHelpers.cpp)
 
 set(QMIDIBOY_CORE_SOURCES
     src/QMidiIn.cpp
@@ -35,13 +38,23 @@ set(QMIDIBOY_CORE_SOURCES
     include/QAbstractMidiOut.hpp
     include/QMidiInBase.hpp
     src/QMidiInBase.cpp
+    include/QMidiOutBase.hpp
+    src/QMidiOutBase.cpp
     src/QAbstractMidiMessageFilter.cpp
     include/QAbstractMidiMessageFilter.hpp
     src/QMidiPortModel.cpp
     include/QMidiPortModel.hpp
     src/QMidiMessageFilterFactory.cpp
     include/QMidiMessageFilterFactory.hpp
-)
+    src/QVirtualMidiIn.cpp
+    include/QVirtualMidiIn.hpp
+    src/QVirtualMidiOut.cpp
+    include/QVirtualMidiOut.hpp
+    )
+
+if (CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror -fno-omit-frame-pointer")
+endif()
 
 add_library(QMidi
             resources/QMidi.qrc

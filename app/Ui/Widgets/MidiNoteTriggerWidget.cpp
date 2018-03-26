@@ -103,6 +103,11 @@ void MidiNoteTriggerWidget::loadSettings(QSettings& settings)
     settings.endGroup();
 }
 
+bool MidiNoteTriggerWidget::isPortRemovable() const
+{
+    return true;
+}
+
 void MidiNoteTriggerWidget::onPressed()
 {
     messageReceived(QMidiMessageBuilder::note(note(), velocity(), channel(), portOpened(), true));
