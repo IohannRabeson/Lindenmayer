@@ -103,12 +103,12 @@
         <translation>Quit</translation>
     </message>
     <message>
-        <location filename="../Ui/MainWindow.cpp" line="125"/>
+        <location filename="../Ui/MainWindow.cpp" line="126"/>
         <source>Clear all</source>
         <translation>Clear all</translation>
     </message>
     <message>
-        <location filename="../Ui/MainWindow.cpp" line="126"/>
+        <location filename="../Ui/MainWindow.cpp" line="125"/>
         <source>About...</source>
         <translation>About...</translation>
     </message>
@@ -325,27 +325,27 @@ Are you sure you want to do that?</translation>
 <context>
     <name>MidiPortTreeView</name>
     <message>
-        <location filename="../Ui/Views/MidiPortTreeView.cpp" line="52"/>
+        <location filename="../Ui/Views/MidiPortTreeView.cpp" line="40"/>
         <source>Remove</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Ui/Views/MidiPortTreeView.cpp" line="53"/>
+        <location filename="../Ui/Views/MidiPortTreeView.cpp" line="41"/>
         <source>Add virtual MIDI in</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Ui/Views/MidiPortTreeView.cpp" line="54"/>
+        <location filename="../Ui/Views/MidiPortTreeView.cpp" line="42"/>
         <source>Add virtual MIDI out</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Ui/Views/MidiPortTreeView.cpp" line="55"/>
+        <location filename="../Ui/Views/MidiPortTreeView.cpp" line="43"/>
         <source>Add MIDI console</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Ui/Views/MidiPortTreeView.cpp" line="162"/>
+        <location filename="../Ui/Views/MidiPortTreeView.cpp" line="152"/>
         <source>Add filter</source>
         <translation type="unfinished"></translation>
     </message>

@@ -122,8 +122,8 @@ MainWindow::MainWindow(QWidget* parent)
 , m_keyboardWidget(new MidiKeyboardWidget(this))
 
 , m_actionQuit(new QAction(tr("Quit"), this))
-, m_actionClearAll(new QAction(QIcon(":/Images/Resources/Icons/Clear.png"), tr("Clear all"), this))
 , m_actionAbout(new QAction(tr("About..."), this))
+, m_actionClearAll(new QAction(QIcon(":/Images/Resources/Icons/Clear.png"), tr("Clear all"), this))
 , m_actionSwitchAutoScrollToBottom(new QAction(QIcon(":/Images/Resources/Icons/ScrollDown.png"), tr("Auto scrolling"), this))
 , m_actionRestoreWindow(new QAction(tr("Show"), this))
 {

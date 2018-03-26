@@ -51,6 +51,10 @@ qt5_add_translation(QM_FILES ${TS_FILES})
 # This works only because QM_FILES is given to add_executable (I guess).
 set_property(SOURCE ${QM_FILES} PROPERTY MACOSX_PACKAGE_LOCATION "Resources/translations")
 
+if (CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror -fno-omit-frame-pointer")
+endif()
+
 add_executable(MidiMonitor
     MACOSX_BUNDLE ${THE_APPLICATION_ICON}
     main.cpp
