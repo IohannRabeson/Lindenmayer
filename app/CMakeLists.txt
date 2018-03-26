@@ -55,21 +55,21 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror -fno-omit-frame-pointer")
 endif()
 
-add_executable(MidiMonitor
+add_executable(Midi-boy
     MACOSX_BUNDLE ${THE_APPLICATION_ICON}
     main.cpp
     ${UI_SOURCES}
     ${PLUGINS_SOURCES}
-    MidiMonitor.qrc
+    Midi-boy.qrc
     ${QM_FILES}
 )
 
-add_dependencies(MidiMonitor translations_update)
+add_dependencies(Midi-boy translations_update)
 
-set_target_properties(MidiMonitor PROPERTIES OUTPUT_NAME ${THE_APPLICATION_DISPLAY_NAME})
-target_include_directories(MidiMonitor PRIVATE "${CMAKE_SOURCE_DIR}/app" "${CMAKE_SOURCE_DIR}/externals/Qt-Frameless-Window-DarkStyle")
-target_link_libraries(MidiMonitor PRIVATE QMidi rtmidi Qool Qt5::Core Qt5::Widgets QtFramelessWindowDarkStyle)
-target_compile_definitions(MidiMonitor PRIVATE
+set_target_properties(Midi-boy PROPERTIES OUTPUT_NAME ${THE_APPLICATION_DISPLAY_NAME})
+target_include_directories(Midi-boy PRIVATE "${CMAKE_SOURCE_DIR}/app" "${CMAKE_SOURCE_DIR}/externals/Qt-Frameless-Window-DarkStyle")
+target_link_libraries(Midi-boy PRIVATE QMidi rtmidi Qool Qt5::Core Qt5::Widgets QtFramelessWindowDarkStyle)
+target_compile_definitions(Midi-boy PRIVATE
     APPLICATION_VERSION="${APPLICATION_VERSION}"
     APPLICATION_ORGANIZATION="${THE_APPLICATION_ORGANIZATION}"
     APPLICATION_DISPLAY_NAME="${THE_APPLICATION_DISPLAY_NAME}"
@@ -78,13 +78,13 @@ target_compile_definitions(MidiMonitor PRIVATE
 )
 
 if (RETAIL_MODE)
-    target_compile_definitions(MidiMonitor PRIVATE APPLICATION_RETAIL)
+    target_compile_definitions(Midi-boy PRIVATE APPLICATION_RETAIL)
 endif()
 
 if (APPLE)
     set(MACOSX_BUNDLE_EXECUTABLE_NAME ${OUTPUT_NAME})
     set_source_files_properties(${THE_APPLICATION_ICON} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
-    set_target_properties(MidiMonitor
+    set_target_properties(Midi-boy
             PROPERTIES
             MACOSX_BUNDLE TRUE
             MACOSX_BUNDLE_BUNDLE_NAME "${THE_APPLICATION_DISPLAY_NAME}"

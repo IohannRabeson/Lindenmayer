@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.9)
-project(MIDIMonitor)
+project(Midi-boy)
 
 set(CMAKE_CXX_FLAGS_RETAIL "${CMAKE_CXX_FLAGS_RELEASE}")
 
