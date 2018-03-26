@@ -1,6 +1,6 @@
 set -e
 
-pwd 
+pwd
 
 mkdir builds
 cd builds
