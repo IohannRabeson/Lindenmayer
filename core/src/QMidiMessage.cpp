@@ -197,9 +197,10 @@ QMidiMessage::~QMidiMessage()
 
 std::uint8_t QMidiMessage::byteAt(int pos) const
 {
-    Q_ASSERT( pos < data->m_bytes.size() );
+    Q_ASSERT( pos < byteCount() );
+    Q_ASSERT( pos > -1 );
 
-    return data->m_bytes[pos];
+    return data->m_bytes[static_cast<std::size_t>(pos)];
 }
 
 QMidiMessage::Type QMidiMessage::type() const
@@ -209,7 +210,7 @@ QMidiMessage::Type QMidiMessage::type() const
 
 int QMidiMessage::byteCount() const
 {
-    return data->m_bytes.size();
+    return static_cast<int>(data->m_bytes.size());
 }
 
 typename QMidiMessage::Bytes const& QMidiMessage::bytes() const

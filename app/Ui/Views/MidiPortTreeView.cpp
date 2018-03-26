@@ -29,18 +29,6 @@ namespace
         }
         return currentIndex;
     }
-
-    QModelIndex getCurrentFilterIndex(QTreeView const* const view, QMidiPortModel const* const portModel)
-    {
-        auto currentIndex = view->currentIndex();
-        QModelIndex result;
-
-        if (portModel->getItemType(currentIndex) == QMidiPortModel::ItemType::Filter)
-        {
-            result = currentIndex;
-        }
-        return result;
-    }
 }
 
 MidiPortTreeView::MidiPortTreeView(Mode const mode, QMidiManager* const manager, QWidget* parent)
@@ -101,6 +89,8 @@ void MidiPortTreeView::onFilterFactoryResetted()
 
 void MidiPortTreeView::onFilterFactoryRowsInserted(QModelIndex const& parent, int first, int last)
 {
+    Q_UNUSED(parent);
+
     for (int i = first; i <= last; ++i)
     {
         addCreateFilterAction(i);

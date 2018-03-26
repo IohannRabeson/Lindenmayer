@@ -120,8 +120,6 @@ void QMidiManagerPrivate::resetPhysicalMidiInPorts()
 
 void QMidiManagerPrivate::resetMidiInPorts()
 {
-    Q_Q(QMidiManager);
-
     // Remove all inputs
     closeInputPorts();
 
@@ -250,9 +248,12 @@ void QMidiManagerPrivate::forwardMidiMessage(QMidiMessage const& message)
     auto const& matrix = m_matrixModel->matrix();
 
     matrix.forachInput(message.port(),
-                         [this, &message](auto out, auto in)
+                         [this, &message](auto out, auto)
                          {
-                             m_midiOuts.at(out)->sendMessage(message);
+                             Q_ASSERT( out > -1 );
+                             Q_ASSERT( static_cast<std::size_t>(out) < m_midiOuts.size() );
+
+                             m_midiOuts[static_cast<std::size_t>(out)]->sendMessage(message);
                          });
 }
 

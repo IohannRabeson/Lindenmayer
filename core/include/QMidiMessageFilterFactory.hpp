@@ -38,6 +38,14 @@ private:
         QString label;
     };
 
+    inline CreatorEntry const& getCreator(int const index) const
+    {
+        Q_ASSERT( index > -1 );
+        Q_ASSERT( index < static_cast<int>(m_creators.size()) );
+
+        return m_creators[static_cast<std::size_t>(index)];
+    }
+private:
     std::vector<CreatorEntry> m_creators;
 };
 

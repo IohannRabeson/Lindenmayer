@@ -30,7 +30,10 @@ namespace imp
     template <class T>
     inline void removeAt(std::vector<T>& vector, int const index)
     {
-        if (index < vector.size())
+        Q_ASSERT( index > -1 );
+        Q_ASSERT( static_cast<std::size_t>(index) < vector.size() );
+
+        if (static_cast<std::size_t>(index) < vector.size())
         {
             vector.erase(cbegin(vector) + index);
         }

@@ -210,9 +210,11 @@ int QMidiManufacturerModel::findCode(QMidiMessage const& message) const
 
     QVector<unsigned char> code;
 
-    code.reserve(bytes.size() - 1);
+    Q_ASSERT( bytes.size() > 0u );
 
-    for (auto i = 1; i < bytes.size(); ++i)
+    code.reserve(static_cast<int>(bytes.size()) - 1);
+
+    for (auto i = 1u; i < bytes.size(); ++i)
     {
         code.append(bytes[i]);
     }

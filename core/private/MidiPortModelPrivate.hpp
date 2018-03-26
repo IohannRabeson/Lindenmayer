@@ -55,6 +55,7 @@ private:
      */
     virtual inline void onChildAdded(int const childIndex)
     {
+        Q_UNUSED( childIndex );
     }
 
     /*!
@@ -63,6 +64,7 @@ private:
      */
     virtual inline void onChildRemoved(int const childIndex)
     {
+        Q_UNUSED( childIndex );
     }
 private:
     std::vector<NodePtr> m_children;
