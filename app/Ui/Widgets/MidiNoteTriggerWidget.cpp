@@ -105,7 +105,7 @@ void MidiNoteTriggerWidget::loadSettings(QSettings& settings)
 
 bool MidiNoteTriggerWidget::isPortRemovable() const
 {
-    return true;
+    return false;
 }
 
 void MidiNoteTriggerWidget::onPressed()
