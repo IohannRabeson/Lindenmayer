@@ -1,3 +1,3 @@
 pwd
 
-./tests/unit_tests
+./builds/tests/unit_tests
