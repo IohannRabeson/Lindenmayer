@@ -5,6 +5,9 @@
 #ifndef MIDIMONITOR_QMIDIPORTMODEL_HPP
 #define MIDIMONITOR_QMIDIPORTMODEL_HPP
 #include <QAbstractItemModel>
+#include <functional>
+#include <memory>
+#include <vector>
 
 class QAbstractMidiIn;
 class QAbstractMidiOut;

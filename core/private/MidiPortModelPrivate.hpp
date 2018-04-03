@@ -11,6 +11,8 @@
 #include "QAbstractMidiMessageFilter.hpp"
 #include "VectorHelpers.hpp"
 
+#include <memory>
+
 namespace imp
 {
     inline Qt::ItemFlags getFirstColumnIsCheckableFlags(int const column)

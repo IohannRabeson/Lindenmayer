@@ -5,6 +5,7 @@
 #ifndef MIDIMONITOR_QABSTRACTMIDIMESSAGEFILTER_HPP
 #define MIDIMONITOR_QABSTRACTMIDIMESSAGEFILTER_HPP
 #include <memory>
+#include <functional>
 
 #include <QWidget>
 #include <QVariant>
