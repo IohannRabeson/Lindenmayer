@@ -3,6 +3,9 @@
 #include <QWidget>
 #include <QMdiArea>
 
+#include <map>
+#include <memory>
+
 class MidiConsoleView;
 
 class MidiConsoleArea : public QMdiArea

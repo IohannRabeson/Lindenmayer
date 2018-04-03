@@ -1,12 +1,13 @@
 sudo: required
 language: cpp
-os: osx
 
 before_install:
   - export CI_TRAVIS_SCRIPT_BASE_PATH="./ci/travis/$TRAVIS_OS_NAME"
   - eval "${SETUP_COMPILERS}"
 script:
-  - "$CI_TRAVIS_SCRIPT_BASE_PATH/build_and_test.sh"
+  - "$CI_TRAVIS_SCRIPT_BASE_PATH/build.sh"
+after_script:
+  - "$CI_TRAVIS_SCRIPT_BASE_PATH/run_unit_tests.sh"
 
 matrix:
   include:
@@ -21,8 +22,6 @@ matrix:
             - g++-7
             - libasound2-dev
             - build-essential
-            - qt5-default
-            - qttools5-dev
       env: SETUP_COMPILERS="CC=gcc-7 && CXX=g++-7" TRAVIS_CONFIGURATION_NAME=Debug
     - os: linux
       addons:

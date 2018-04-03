@@ -6,6 +6,7 @@
 #define MIDIMONITOR_MAINWINDOW_HPP
 #include <QMainWindow>
 #include <QModelIndex>
+#include <memory>
 
 class QMidiMessageModel;
 class QMidiDeviceModel;

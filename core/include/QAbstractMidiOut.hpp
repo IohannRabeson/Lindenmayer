@@ -6,6 +6,7 @@
 #define MIDIMONITOR_QABSTRACTMIDIOUT_HPP
 #include <vector>
 #include <functional>
+#include <memory>
 
 #include <QString>
 #include "QAbstractMidiMessageFilter.hpp"
