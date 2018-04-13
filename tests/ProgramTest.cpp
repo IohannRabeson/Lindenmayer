@@ -6,6 +6,17 @@
 
 #include <Program.hpp>
 
+#include <iostream>
+
+std::vector<lcode::Program::Error> const& printErrors(std::vector<lcode::Program::Error> const& errors)
+{
+    for (auto const& error : errors)
+    {
+        std::cout << " - Error: " << error.message << "\n";
+    }
+    return errors;
+}
+
 TEST(Program, program_empty)
 {
     lcode::Program program;
@@ -37,7 +48,7 @@ TEST_F(TestProgram, axiom_single)
 {
     lcode::Program program;
 
-    EXPECT_TRUE( program.loadFromLCode("axiom: F;", moduleTable).empty() );
+    EXPECT_TRUE( printErrors(program.loadFromLCode("axiom: F;", moduleTable)).empty() );
     ASSERT_FALSE( program.content().axiom.empty() );
     ASSERT_EQ( program.content().axiom.front(), moduleTable.createModule("F") );
     ASSERT_TRUE( program.content().rewriteRules.empty() );
@@ -51,7 +62,7 @@ TEST_F(TestProgram, axiom_multiple)
 {
     lcode::Program program;
 
-    EXPECT_TRUE( program.loadFromLCode("axiom: F f [ ];", moduleTable).empty() );
+    EXPECT_TRUE( printErrors(program.loadFromLCode("axiom: F f [ ];", moduleTable)).empty() );
 
     ASSERT_EQ( program.content().axiom.size(), 4u );
     ASSERT_EQ( program.content().axiom.at(0u), moduleTable.createModule("F") );
@@ -69,9 +80,9 @@ TEST_F(TestProgram, axiom_multiple_iterations)
 {
     lcode::Program program;
 
-    EXPECT_TRUE( program.loadFromLCode("axiom: F f [ ];"
+    EXPECT_TRUE( printErrors(program.loadFromLCode("axiom: F f [ ];"
                                        "iterations: 9;",
-                                       moduleTable).empty() );
+                                       moduleTable)).empty() );
     ASSERT_EQ( program.content().axiom.size(), 4u );
     ASSERT_EQ( program.content().axiom.at(0u), moduleTable.createModule("F") );
     ASSERT_EQ( program.content().axiom.at(1u), moduleTable.createModule("f") );
@@ -91,9 +102,9 @@ TEST_F(TestProgram, axiom_multiple_distance)
 {
     lcode::Program program;
 
-    ASSERT_TRUE( program.loadFromLCode("axiom: F f [ ];"
+    ASSERT_TRUE( printErrors(program.loadFromLCode("axiom: F f [ ];"
                                        "distance: 3.14;",
-                                       moduleTable).empty() );
+                                       moduleTable)).empty() );
     ASSERT_EQ( program.content().axiom.size(), 4u );
     ASSERT_EQ( program.content().axiom.at(0u), moduleTable.createModule("F") );
     ASSERT_EQ( program.content().axiom.at(1u), moduleTable.createModule("f") );
@@ -113,9 +124,9 @@ TEST_F(TestProgram, axiom_multiple_angle)
 {
     lcode::Program program;
 
-    EXPECT_TRUE( program.loadFromLCode("axiom: F f [ ];"
+    EXPECT_TRUE( printErrors(program.loadFromLCode("axiom: F f [ ];"
                                        "angle: 63.14;",
-                                       moduleTable).empty() );
+                                       moduleTable)).empty() );
     ASSERT_EQ( program.content().axiom.size(), 4u );
     ASSERT_EQ( program.content().axiom.at(0u), moduleTable.createModule("F") );
     ASSERT_EQ( program.content().axiom.at(1u), moduleTable.createModule("f") );
@@ -133,10 +144,10 @@ TEST_F(TestProgram, axiom_multiple_iteration_distance_angle)
 {
     lcode::Program program;
 
-    EXPECT_TRUE( program.loadFromLCode("axiom: F f [ ];"
+    EXPECT_TRUE( printErrors(program.loadFromLCode("axiom: F f [ ];"
                                        "iterations: 9;"
                                        "distance: 3.14;"
-                                       "angle: 63.14;", moduleTable).empty() );
+                                       "angle: 63.14;", moduleTable)).empty() );
 
     ASSERT_EQ( program.content().axiom.size(), 4u );
     ASSERT_EQ( program.content().axiom.at(0u), moduleTable.createModule("F") );

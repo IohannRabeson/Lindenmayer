@@ -12,9 +12,9 @@
 class  LSystemLexer : public antlr4::Lexer {
 public:
   enum {
-    T__0 = 1, T__1 = 2, T__2 = 3, T__3 = 4, T__4 = 5, UnsignedInteger = 6, 
-    Integer = 7, UnsignedFloat = 8, Float = 9, Boolean = 10, TransformOperator = 11, 
-    Identifier = 12, EndOfLine = 13, Newline = 14, Whitespace = 15
+    T__0 = 1, T__1 = 2, T__2 = 3, T__3 = 4, T__4 = 5, Integer = 6, Float = 7, 
+    Boolean = 8, TransformOperator = 9, Identifier = 10, EndOfLine = 11, 
+    Newline = 12, Whitespace = 13
   };
 
   LSystemLexer(antlr4::CharStream *input);

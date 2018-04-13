@@ -12,11 +12,27 @@
 #include <QTextStream>
 #include <QMenuBar>
 #include <QMenu>
+#include <QFileDialog>
+#include <QStatusBar>
+#include <QPlainTextEdit>
+#include <QSpinBox>
+#include <QDoubleSpinBox>
+#include <QGraphicsScene>
+#include <QGraphicsView>
 
 #include <QtDebug>
 
 MainWindow::MainWindow()
-: m_turtle(m_graphicsScene)
+: m_dockWidgets(new qool::DockWidgetManager(this))
+, m_statusBar(new QStatusBar(this))
+, m_programTextEdit(new QPlainTextEdit(this))
+, m_errorOutputTextEdit(new QPlainTextEdit(this))
+, m_iterationSelector(new QSpinBox(this))
+, m_distanceSelector(new QDoubleSpinBox(this))
+, m_angleSelector(new QDoubleSpinBox(this))
+, m_graphicsScene(new QGraphicsScene(this))
+, m_graphicsView(new QGraphicsView(m_graphicsScene, this))
+, m_turtle(m_graphicsScene)
 {
     m_moduleTable.registerModule("F", [this](){ m_turtle.advance(getDistance(), true); });
     m_moduleTable.registerModule("f", [this](){ m_turtle.advance(getDistance(), false); });
@@ -87,6 +103,7 @@ void MainWindow::setupWidgets()
     m_distanceSelector->setRange(1, 1024);
     m_angleSelector->setRange(-360, 360);
     setCentralWidget(m_graphicsView);
+    setStatusBar(m_statusBar);
 }
 
 void MainWindow::setupActions()
@@ -129,6 +146,33 @@ void MainWindow::setupActions()
         }
 
         m_modules = program.rewrite(getIterations());
+
+        updateActions();
+    });
+
+    connect(m_actionExportImage, &QAction::triggered, [this]()
+    {
+        auto filePath = QFileDialog::getSaveFileName(this, tr("Export image"), m_imageExportDirectory.path(), "Images (*.png *.jpg)");
+        QRect sceneRect = m_graphicsScene->itemsBoundingRect().adjusted(-4, -4, 4, 4).toRect();
+        QImage image(sceneRect.width(), sceneRect.height(), QImage::Format_ARGB32);
+        QPainter painter(&image);
+
+        // TODO: allow to see a preview and allow to change background -> AKA image export dialog
+        image.fill(Qt::white);
+        m_graphicsScene->render(&painter);
+
+        if (image.save(filePath))
+        {
+            m_imageExportDirectory = QFileInfo(filePath).dir();
+        }
+        else
+        {
+            m_statusBar->showMessage(tr("Unable to export image '%0'").arg(filePath));
+        }
+
+        m_imageExportDirectory = QFileInfo(filePath).dir();
+
+        updateActions();
     });
 
     connect(m_actionDraw, &QAction::triggered, [this]()
@@ -138,23 +182,26 @@ void MainWindow::setupActions()
         m_turtle.reset();
         m_moduleTable.execute(m_modules);
         m_graphicsView->ensureVisible(m_graphicsScene->itemsBoundingRect().adjusted(-4, -4, 4, 4));
+        updateActions();
     });
 
     connect(m_actionClearErrors, &QAction::triggered, [this]()
     {
         m_errorOutputTextEdit->clear();
+        updateActions();
     });
 
-    connect(m_saveProgram, &QAction::triggered, this, &MainWindow::saveInput);
-    connect(m_loadProgram, &QAction::triggered, this, &MainWindow::loadInput);
+    connect(m_actionSaveProgram, &QAction::triggered, this, &MainWindow::saveInput);
+    connect(m_actionLoadProgram, &QAction::triggered, this, &MainWindow::loadInput);
 }
 
 void MainWindow::setupMenus()
 {
     QMenu* const fileMenu = menuBar()->addMenu(tr("File"));
 
-    fileMenu->addAction(m_loadProgram);
-    fileMenu->addAction(m_saveProgram);
+    fileMenu->addAction(m_actionLoadProgram);
+    fileMenu->addAction(m_actionSaveProgram);
+    fileMenu->addAction(m_actionExportImage);
 }
 
 void MainWindow::setupToolbars()

@@ -28,6 +28,7 @@ namespace lcode
             return *this;
         }
 
+        void assign(T const& value) { m_value = value; m_isValid = true; }
         bool isValid() const { return m_isValid; }
         T getValue() const { return m_value; }
     private:

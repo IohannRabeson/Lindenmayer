@@ -5,18 +5,22 @@
 #ifndef LINDENMAYER_MAINWINDOW_HPP
 #define LINDENMAYER_MAINWINDOW_HPP
 #include <QMainWindow>
-#include <QPlainTextEdit>
-#include <QSpinBox>
-#include <QDoubleSpinBox>
-#include <QGraphicsScene>
-#include <QGraphicsView>
 #include <QAction>
+#include <QDir>
 
 #include <Qool/DockWidgetManager.hpp>
 
 #include <ModuleTable.hpp>
 
 #include "GraphicsSceneTurtle2D.hpp"
+
+class QStatusBar;
+class QAction;
+class QPlainTextEdit;
+class QSpinBox;
+class QDoubleSpinBox;
+class QGraphicsScene;
+class QGraphicsView;
 
 class MainWindow : public QMainWindow
 {
@@ -38,18 +42,19 @@ private:
     qreal getDistance() const;
     qreal getAngle() const;
 private:
-    qool::DockWidgetManager* const m_dockWidgets = new qool::DockWidgetManager(this);
-    QPlainTextEdit* const m_programTextEdit = new QPlainTextEdit(this);
-    QPlainTextEdit* const m_errorOutputTextEdit = new QPlainTextEdit(this);
-    QSpinBox* const m_iterationSelector = new QSpinBox(this);
-    QDoubleSpinBox* const m_distanceSelector = new QDoubleSpinBox(this);
-    QDoubleSpinBox* const m_angleSelector = new QDoubleSpinBox(this);
+    qool::DockWidgetManager* const m_dockWidgets;
+    QStatusBar* const m_statusBar;
+    QPlainTextEdit* const m_programTextEdit;
+    QPlainTextEdit* const m_errorOutputTextEdit;
+    QSpinBox* const m_iterationSelector;
+    QDoubleSpinBox* const m_distanceSelector;
+    QDoubleSpinBox* const m_angleSelector;
+    QGraphicsScene* const m_graphicsScene;
+    QGraphicsView* const m_graphicsView;
 
-    QGraphicsScene* const m_graphicsScene = new QGraphicsScene(this);
-    QGraphicsView* const m_graphicsView = new QGraphicsView(m_graphicsScene, this);
-
-    QAction* const m_saveProgram = new QAction(tr("Save..."), this);
-    QAction* const m_loadProgram = new QAction(tr("Open..."), this);
+    QAction* const m_actionSaveProgram = new QAction(tr("Save..."), this);
+    QAction* const m_actionLoadProgram = new QAction(tr("Open..."), this);
+    QAction* const m_actionExportImage = new QAction(tr("Export..."), this);
     QAction* const m_actionBuild = new QAction(tr("Build"), this);
     QAction* const m_actionDraw = new QAction(tr("Draw"), this);
     QAction* const m_actionClearErrors = new QAction(tr("Clear errors"), this);
@@ -57,6 +62,9 @@ private:
     lcode::ModuleTable m_moduleTable;
     GraphicsSceneTurtle2D m_turtle;
     lcode::Modules m_modules;
+
+    QDir m_imageExportDirectory;
+    QDir m_saveDirectory;
 };
 
 
