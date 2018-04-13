@@ -1,2 +1,4 @@
-F R F R F R F;
+axiom: F R F R F R F;
+iterations: 4;
+
 F = F R F L F L F F R F R F L F;

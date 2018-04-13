@@ -6,18 +6,30 @@ fragment TRUE : 'true' ;
 fragment FALSE : 'false' ;
 fragment NEWLINE   : '\r' '\n' | '\n' | '\r';
 
-program 		  : axiom transformation*;
-axiom   		  : Identifier+ ';';
-transformation    : Identifier Assign Identifier+ EndOfLine;
-constant_def      : 'const' Identifier '=' expression EndOfLine;
-expression        : Integer | Float | Boolean;
+program 		                : axiom EndOfLine (iterations ';')? (distance ';')? (angle ';')? transformation*;
+//global_variable_declarations    : axiom iterations? distance? angle? initialAngle?;
+axiom                           : 'axiom:' Identifier+;
+iterations                      : 'iterations:' UnsignedInteger;
+distance                        : 'distance:' UnsignedFloat;
+angle                           : 'angle:' Float;
+initial_angle                   : 'initialAngle:' Float;
+
+transformation              : Identifier TransformOperator Identifier+ EndOfLine;
+
+UnsignedInteger
+    : DIGIT19 DIGIT09*
+    ;
 
 Integer
-    : [-|+] ? DIGIT09+
+    : [-|+]? DIGIT09+
+    ;
+
+UnsignedFloat
+    : DIGIT19 DIGIT09* '.' ? DIGIT09*
     ;
 
 Float
-    : [-|+]? DIGIT19 DIGIT09* '.' ? DIGIT09*
+    : ('-' | '+')? UnsignedFloat
     ;
 
 Boolean
@@ -25,7 +37,7 @@ Boolean
     | FALSE
     ;
 
-Assign
+TransformOperator
 	: '='
 	;
 

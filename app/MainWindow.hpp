@@ -32,6 +32,8 @@ private:
     void setupToolbars();
     void setupMenus();
 
+    void updateActions();
+
     unsigned int getIterations() const;
     qreal getDistance() const;
     qreal getAngle() const;
@@ -49,10 +51,12 @@ private:
     QAction* const m_saveProgram = new QAction(tr("Save..."), this);
     QAction* const m_loadProgram = new QAction(tr("Open..."), this);
     QAction* const m_actionBuild = new QAction(tr("Build"), this);
+    QAction* const m_actionDraw = new QAction(tr("Draw"), this);
     QAction* const m_actionClearErrors = new QAction(tr("Clear errors"), this);
 
     lcode::ModuleTable m_moduleTable;
     GraphicsSceneTurtle2D m_turtle;
+    lcode::Modules m_modules;
 };
 
 

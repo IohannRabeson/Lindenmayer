@@ -20,14 +20,20 @@ public:
   virtual void enterAxiom(LSystemParser::AxiomContext *ctx) = 0;
   virtual void exitAxiom(LSystemParser::AxiomContext *ctx) = 0;
 
+  virtual void enterIterations(LSystemParser::IterationsContext *ctx) = 0;
+  virtual void exitIterations(LSystemParser::IterationsContext *ctx) = 0;
+
+  virtual void enterDistance(LSystemParser::DistanceContext *ctx) = 0;
+  virtual void exitDistance(LSystemParser::DistanceContext *ctx) = 0;
+
+  virtual void enterAngle(LSystemParser::AngleContext *ctx) = 0;
+  virtual void exitAngle(LSystemParser::AngleContext *ctx) = 0;
+
+  virtual void enterInitial_angle(LSystemParser::Initial_angleContext *ctx) = 0;
+  virtual void exitInitial_angle(LSystemParser::Initial_angleContext *ctx) = 0;
+
   virtual void enterTransformation(LSystemParser::TransformationContext *ctx) = 0;
   virtual void exitTransformation(LSystemParser::TransformationContext *ctx) = 0;
-
-  virtual void enterConstant_def(LSystemParser::Constant_defContext *ctx) = 0;
-  virtual void exitConstant_def(LSystemParser::Constant_defContext *ctx) = 0;
-
-  virtual void enterExpression(LSystemParser::ExpressionContext *ctx) = 0;
-  virtual void exitExpression(LSystemParser::ExpressionContext *ctx) = 0;
 
 
 };

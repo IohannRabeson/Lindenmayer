@@ -10,7 +10,7 @@ set(MOCK_SRC
 
 set(SRC
     ${MOCK_SRC}
-    gtest.cpp RewriteTest.cpp)
+    gtest.cpp RewriteTest.cpp ProgramTest.cpp)
 
 add_executable(unit_tests ${SRC})
 target_link_libraries(unit_tests PRIVATE LindenmayerHeart gtest gmock Qt5::Core Qt5::Widgets)

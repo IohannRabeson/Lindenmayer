@@ -12,13 +12,14 @@
 class  LSystemParser : public antlr4::Parser {
 public:
   enum {
-    T__0 = 1, Integer = 2, Float = 3, Boolean = 4, Assign = 5, Identifier = 6, 
-    EndOfLine = 7, Newline = 8, Whitespace = 9
+    T__0 = 1, T__1 = 2, T__2 = 3, T__3 = 4, T__4 = 5, UnsignedInteger = 6, 
+    Integer = 7, UnsignedFloat = 8, Float = 9, Boolean = 10, TransformOperator = 11, 
+    Identifier = 12, EndOfLine = 13, Newline = 14, Whitespace = 15
   };
 
   enum {
-    RuleProgram = 0, RuleAxiom = 1, RuleTransformation = 2, RuleConstant_def = 3, 
-    RuleExpression = 4
+    RuleProgram = 0, RuleAxiom = 1, RuleIterations = 2, RuleDistance = 3, 
+    RuleAngle = 4, RuleInitial_angle = 5, RuleTransformation = 6
   };
 
   LSystemParser(antlr4::TokenStream *input);
@@ -33,15 +34,21 @@ public:
 
   class ProgramContext;
   class AxiomContext;
-  class TransformationContext;
-  class Constant_defContext;
-  class ExpressionContext; 
+  class IterationsContext;
+  class DistanceContext;
+  class AngleContext;
+  class Initial_angleContext;
+  class TransformationContext; 
 
   class  ProgramContext : public antlr4::ParserRuleContext {
   public:
     ProgramContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     AxiomContext *axiom();
+    antlr4::tree::TerminalNode *EndOfLine();
+    IterationsContext *iterations();
+    DistanceContext *distance();
+    AngleContext *angle();
     std::vector<TransformationContext *> transformation();
     TransformationContext* transformation(size_t i);
 
@@ -66,13 +73,65 @@ public:
 
   AxiomContext* axiom();
 
+  class  IterationsContext : public antlr4::ParserRuleContext {
+  public:
+    IterationsContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *UnsignedInteger();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+   
+  };
+
+  IterationsContext* iterations();
+
+  class  DistanceContext : public antlr4::ParserRuleContext {
+  public:
+    DistanceContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *UnsignedFloat();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+   
+  };
+
+  DistanceContext* distance();
+
+  class  AngleContext : public antlr4::ParserRuleContext {
+  public:
+    AngleContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *Float();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+   
+  };
+
+  AngleContext* angle();
+
+  class  Initial_angleContext : public antlr4::ParserRuleContext {
+  public:
+    Initial_angleContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *Float();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+   
+  };
+
+  Initial_angleContext* initial_angle();
+
   class  TransformationContext : public antlr4::ParserRuleContext {
   public:
     TransformationContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     std::vector<antlr4::tree::TerminalNode *> Identifier();
     antlr4::tree::TerminalNode* Identifier(size_t i);
-    antlr4::tree::TerminalNode *Assign();
+    antlr4::tree::TerminalNode *TransformOperator();
     antlr4::tree::TerminalNode *EndOfLine();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -81,36 +140,6 @@ public:
   };
 
   TransformationContext* transformation();
-
-  class  Constant_defContext : public antlr4::ParserRuleContext {
-  public:
-    Constant_defContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-    virtual size_t getRuleIndex() const override;
-    antlr4::tree::TerminalNode *Identifier();
-    ExpressionContext *expression();
-    antlr4::tree::TerminalNode *EndOfLine();
-
-    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
-    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
-   
-  };
-
-  Constant_defContext* constant_def();
-
-  class  ExpressionContext : public antlr4::ParserRuleContext {
-  public:
-    ExpressionContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-    virtual size_t getRuleIndex() const override;
-    antlr4::tree::TerminalNode *Integer();
-    antlr4::tree::TerminalNode *Float();
-    antlr4::tree::TerminalNode *Boolean();
-
-    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
-    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
-   
-  };
-
-  ExpressionContext* expression();
 
 
 private:

@@ -12,7 +12,13 @@ namespace lcode
 
         m_identifierTable.emplace(identifier, module);
         m_actionTable.emplace(module, std::move(action));
-        ++m_nextIdentifier;
+    }
+
+    void ModuleTable::registerModule(std::string const& identifier)
+    {
+        auto module = createNextModule();
+
+        m_identifierTable.emplace(identifier, module);
     }
 
     Module ModuleTable::createNextModule()

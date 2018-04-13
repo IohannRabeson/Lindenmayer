@@ -22,14 +22,20 @@ public:
   virtual void enterAxiom(LSystemParser::AxiomContext * /*ctx*/) override { }
   virtual void exitAxiom(LSystemParser::AxiomContext * /*ctx*/) override { }
 
+  virtual void enterIterations(LSystemParser::IterationsContext * /*ctx*/) override { }
+  virtual void exitIterations(LSystemParser::IterationsContext * /*ctx*/) override { }
+
+  virtual void enterDistance(LSystemParser::DistanceContext * /*ctx*/) override { }
+  virtual void exitDistance(LSystemParser::DistanceContext * /*ctx*/) override { }
+
+  virtual void enterAngle(LSystemParser::AngleContext * /*ctx*/) override { }
+  virtual void exitAngle(LSystemParser::AngleContext * /*ctx*/) override { }
+
+  virtual void enterInitial_angle(LSystemParser::Initial_angleContext * /*ctx*/) override { }
+  virtual void exitInitial_angle(LSystemParser::Initial_angleContext * /*ctx*/) override { }
+
   virtual void enterTransformation(LSystemParser::TransformationContext * /*ctx*/) override { }
   virtual void exitTransformation(LSystemParser::TransformationContext * /*ctx*/) override { }
-
-  virtual void enterConstant_def(LSystemParser::Constant_defContext * /*ctx*/) override { }
-  virtual void exitConstant_def(LSystemParser::Constant_defContext * /*ctx*/) override { }
-
-  virtual void enterExpression(LSystemParser::ExpressionContext * /*ctx*/) override { }
-  virtual void exitExpression(LSystemParser::ExpressionContext * /*ctx*/) override { }
 
 
   virtual void enterEveryRule(antlr4::ParserRuleContext * /*ctx*/) override { }

@@ -14,12 +14,31 @@ namespace lcode
 {
     class ProgramPrivate;
 
+    // TODO: remove that when we can use std::optional
+    template <class T>
+    class Optional
+    {
+    public:
+        Optional() : m_isValid(false) {}
+        template <class U = T> Optional(U&& value): m_value(std::forward<U>(value)), m_isValid(true) {}
+        template <class U = T> Optional<T>& operator = (U&& value)
+        {
+            m_value = std::forward<U>(value);
+            m_isValid = true;
+            return *this;
+        }
+
+        bool isValid() const { return m_isValid; }
+        T getValue() const { return m_value; }
+    private:
+        T m_value;
+        bool m_isValid = false;
+    };
+
     class Program
     {
         class LoadFromLCode;
     public:
-        class ALoader;
-
         struct Error
         {
             std::string message;
@@ -27,26 +46,32 @@ namespace lcode
             std::size_t charIndex;
         };
 
+        struct Content
+        {
+            RewriteRules rewriteRules;
+            Modules axiom;
+            Optional<unsigned int> iterations;
+            Optional<float> distance;
+            Optional<float> angle;
+            Optional<float> initialAngle;
+            std::vector<Error> errors;
+        };
+
+        class ALoader;
+
         std::vector<Error> load(ALoader&& loader);
         std::vector<Error> loadFromLCode(std::string const& lcode, ModuleTable const& table);
+        Content const& content() const { return m_content; }
         Modules rewrite(unsigned int const iterations) const;
     private:
-        RewriteRules m_rewriteRules;
-        Modules m_axiom;
+        Content m_content;
     };
 
     class Program::ALoader
     {
     public:
-        struct ParseResult
-        {
-            RewriteRules rewriteRules;
-            Modules axiom;
-            std::vector<Error> errors;
-        };
-
         virtual ~ALoader();
-        virtual ParseResult load() = 0;
+        virtual Content load() = 0;
     };
 }
 

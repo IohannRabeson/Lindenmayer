@@ -18,6 +18,7 @@ namespace lcode
         using Action = std::function<void()>;
 
         void registerModule(std::string const& identifier, Action&& action);
+        void registerModule(std::string const& identifier);
 
         Module createModule(std::string const& identifier) const;
         Modules createModules(std::vector<std::string> const& identifiers) const;

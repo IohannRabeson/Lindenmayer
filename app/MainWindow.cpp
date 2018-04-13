@@ -13,6 +13,8 @@
 #include <QMenuBar>
 #include <QMenu>
 
+#include <QtDebug>
+
 MainWindow::MainWindow()
 : m_turtle(m_graphicsScene)
 {
@@ -32,17 +34,22 @@ MainWindow::MainWindow()
 bool MainWindow::saveInput()
 {
     auto result = false;
-    auto const filePath = QFileDialog::getSaveFileName(this, tr("Save L-Code program"));
+    auto const filePath = QFileDialog::getSaveFileName(this, tr("Save L-Code program")).trimmed();
 
     if (!filePath.trimmed().isEmpty())
     {
         QFile file(filePath);
 
-        if (file.open(QFile::OpenModeFlag::WriteOnly | QFile::OpenModeFlag::Text | QFile::OpenModeFlag::Truncate))
+        if (file.open(QIODevice::WriteOnly | QIODevice::Text))
         {
             QTextStream stream(&file);
 
             stream << m_programTextEdit->toPlainText();
+            qDebug() << "Write file:" << filePath;
+        }
+        else
+        {
+            qWarning() << "MainWindow::saveInput: failed to save " << filePath << file.isOpen() << file.errorString();
         }
     }
     return result;
@@ -63,6 +70,8 @@ bool MainWindow::loadInput()
             QString const text = stream.readAll();
 
             m_programTextEdit->setPlainText(text);
+            m_modules.clear();
+            m_turtle.reset();
             result = true;
         }
     }
@@ -84,30 +93,51 @@ void MainWindow::setupActions()
 {
     connect(m_actionBuild, &QAction::triggered, [this]()
     {
+        // Convert text to program content using ANTLR
         auto const text = m_programTextEdit->toPlainText().toUtf8().toStdString();
 
         lcode::Program program;
 
         auto const errors = program.loadFromLCode(text, m_moduleTable);
 
+        // Print potential errors
         m_errorOutputTextEdit->clear();
 
-        for (auto const error : errors)
+        if (!errors.empty())
         {
-            m_errorOutputTextEdit->appendPlainText(tr(" - Error [%0;%1]: %2").arg(error.line).arg(error.charIndex).arg(QString::fromStdString(error.message)));
+            for (auto const error : errors)
+            {
+                m_errorOutputTextEdit->appendPlainText(tr(" - Error [%0;%1]: %2").arg(error.line).arg(error.charIndex).arg(QString::fromStdString(error.message)));
+            }
+
+            return;
         }
 
+        auto const& content = program.content();
+
+        if (content.iterations.isValid())
+        {
+            m_iterationSelector->setValue(static_cast<int>(content.iterations.getValue()));
+        }
+        if (content.distance.isValid())
+        {
+            m_distanceSelector->setValue(content.distance.getValue());
+        }
+        if (content.angle.isValid())
+        {
+            m_angleSelector->setValue(content.angle.getValue());
+        }
+
+        m_modules = program.rewrite(getIterations());
+    });
+
+    connect(m_actionDraw, &QAction::triggered, [this]()
+    {
+        // Execute turtle orders
         m_graphicsScene->clear();
         m_turtle.reset();
-
-        if (errors.empty())
-        {
-            auto const modules = program.rewrite(getIterations());
-
-            m_moduleTable.execute(modules);
-
-            m_graphicsView->ensureVisible(m_graphicsScene->itemsBoundingRect().adjusted(-4, -4, 4, 4));
-        }
+        m_moduleTable.execute(m_modules);
+        m_graphicsView->ensureVisible(m_graphicsScene->itemsBoundingRect().adjusted(-4, -4, 4, 4));
     });
 
     connect(m_actionClearErrors, &QAction::triggered, [this]()
@@ -136,6 +166,16 @@ void MainWindow::setupToolbars()
     toolbar->addWidget(m_angleSelector);
     toolbar->addSeparator();
     toolbar->addAction(m_actionBuild);
+    toolbar->addAction(m_actionDraw);
+}
+
+void MainWindow::updateActions()
+{
+    auto const haveModules = !m_modules.empty();
+    auto const haveProgram = m_programTextEdit->toPlainText().trimmed().size() > 0;
+
+    m_actionBuild->setEnabled(haveProgram);
+    m_actionDraw->setEnabled(haveProgram && haveModules);
 }
 
 unsigned int MainWindow::getIterations() const

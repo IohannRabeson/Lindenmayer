@@ -7,7 +7,7 @@
 #include <Module.hpp>
 #include <Rewrite.hpp>
 
-TEST(QMidiManagerTest, rewrite_empty)
+TEST(Rewrite, rewrite_empty)
 {
     lcode::Modules axiom = lcode::makeModules({0, 1});
     lcode::RewriteRules rules;
@@ -18,7 +18,7 @@ TEST(QMidiManagerTest, rewrite_empty)
     ASSERT_EQ( axiomCopy, axiom );
 }
 
-TEST(QMidiManagerTest, rewrite_test_simple_D0L)
+TEST(Rewrite, rewrite_test_simple_D0L)
 {
     lcode::Modules axiom = lcode::makeModules({1});
     lcode::RewriteRules rules;

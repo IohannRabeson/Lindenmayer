@@ -40,11 +40,9 @@ namespace lcode
 
     std::vector<Program::Error> Program::load(ALoader&& loader)
     {
-        auto result = loader.load();
+        m_content = loader.load();
 
-        m_axiom = std::move(result.axiom);
-        m_rewriteRules = std::move(result.rewriteRules);
-        return result.errors;
+        return m_content.errors;
     }
 
     Program::ALoader::~ALoader() = default;
@@ -55,9 +53,7 @@ namespace lcode
     {
         std::string const& m_lcode;
         ModuleTable const& m_table;
-        Modules m_axiom;
-        RewriteRules m_rules;
-        std::vector<Error> m_errors;
+        Content m_parseResult;
     public:
         LoadFromLCode(std::string const& lcode, ModuleTable const& table)
         : m_lcode(lcode)
@@ -65,7 +61,7 @@ namespace lcode
         {
         }
 
-        ParseResult load() override
+        Content load() override
         {
             antlr4::ANTLRInputStream inputStream(m_lcode);
             LSystemLexer lexer(&inputStream);
@@ -84,12 +80,7 @@ namespace lcode
 
             treeWalker.walk(this, tree);
 
-            ParseResult result;
-
-            result.axiom = std::move(m_axiom);
-            result.rewriteRules = std::move(m_rules);
-            result.errors = std::move(m_errors);
-            return result;
+            return m_parseResult;
         }
 
         void enterAxiom(LSystemParser::AxiomContext* context) override
@@ -108,11 +99,11 @@ namespace lcode
                     error.message = "Unknown module identifier '" + tokenText + "'";
                     error.charIndex = token->getSymbol()->getCharPositionInLine();
                     error.line = token->getSymbol()->getLine();
-                    m_errors.emplace_back(error);
+                    m_parseResult.errors.emplace_back(error);
                 }
                 else
                 {
-                    m_axiom.emplace_back(std::move(module));
+                    m_parseResult.axiom.emplace_back(std::move(module));
                 }
             }
         }
@@ -132,7 +123,51 @@ namespace lcode
                 auto replacedIdentifier = m_table.createModule(tokens.front()->getText());
                 auto replacementIdentifiers = m_table.createModules(antlr::getTokenIdentifiers(tokens.begin() + 1, tokens.end()));
 
-                m_rules.emplace(std::move(replacedIdentifier), std::move(replacementIdentifiers));
+                m_parseResult.rewriteRules.emplace(std::move(replacedIdentifier), std::move(replacementIdentifiers));
+            }
+        }
+
+        void enterIterations(LSystemParser::IterationsContext* context) override
+        {
+            auto const tokens = context->getTokens(LSystemParser::UnsignedInteger);
+
+            // TODO: resolve expression here instead of just parsing a simple number
+            if (tokens.size() == 1u)
+            {
+                m_parseResult.iterations = std::stoul(tokens.front()->getText());
+            }
+        }
+
+        void enterDistance(LSystemParser::DistanceContext* context) override
+        {
+            auto const tokens = context->getTokens(LSystemParser::UnsignedFloat);
+
+            // TODO: resolve expression here instead of just parsing a simple number
+            if (tokens.size() == 1u)
+            {
+                m_parseResult.distance = std::stof(tokens.front()->getText());
+            }
+        }
+
+        void enterAngle(LSystemParser::AngleContext* context) override
+        {
+            auto const tokens = context->getTokens(LSystemParser::Float);
+
+            // TODO: resolve expression here instead of just parsing a simple number
+            if (tokens.size() == 1u)
+            {
+                m_parseResult.angle = std::stof(tokens.front()->getText());
+            }
+        }
+
+        void enterInitial_angle(LSystemParser::Initial_angleContext* context) override
+        {
+            auto const tokens = context->getTokens(LSystemParser::Float);
+
+            // TODO: resolve expression here instead of just parsing a simple number
+            if (tokens.size() == 1u)
+            {
+                m_parseResult.initialAngle = std::stof(tokens.front()->getText());
             }
         }
 
@@ -144,7 +179,7 @@ namespace lcode
             error.charIndex = charPositionInLine;
             error.line = line;
             error.message = msg;
-            m_errors.emplace_back(std::move(error));
+            m_parseResult.errors.emplace_back(std::move(error));
         }
 
         void
@@ -173,6 +208,6 @@ namespace lcode
 
     Modules Program::rewrite(unsigned int const iterations) const
     {
-        return rewrited(m_rewriteRules, m_axiom, iterations);
+        return rewrited(m_content.rewriteRules, m_content.axiom, iterations);
     }
 }
