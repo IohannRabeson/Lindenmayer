@@ -4,9 +4,9 @@
 [submodule "externals/Qt-Frameless-Window-DarkStyle"]
 	path = externals/Qt-Frameless-Window-DarkStyle
 	url = git@github.com:IohannRabeson/Qt-Frameless-Window-DarkStyle.git
-[submodule "externals/rtmidi"]
-	path = externals/rtmidi
-	url = https://github.com/thestk/rtmidi.git
 [submodule "externals/Qool"]
 	path = externals/Qool
 	url = git@github.com:IohannRabeson/Qool.git
+[submodule "externals/antlr4"]
+	path = externals/antlr4
+	url = https://github.com/antlr/antlr4.git

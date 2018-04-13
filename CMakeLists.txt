@@ -13,6 +13,8 @@ endif()
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/")
 
 include("${CMAKE_SOURCE_DIR}/cmake/GitInfo.cmake")
+#include("${CMAKE_SOURCE_DIR}/cmake/Antlr.cmake")
+# TODO remove this line and the corresponding directory also
 
 if (NOT APPLICATION_VERSION)
     set(APPLICATION_VERSION "${GIT_BRANCH}-${GIT_SHORT_COMMIT}")

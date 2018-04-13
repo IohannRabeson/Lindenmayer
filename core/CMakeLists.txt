@@ -1,7 +1,8 @@
+add_subdirectory(private)
+
 set(LINDENMAYER_CORE_SOURCES
-    include/Format.hpp
-    src/Format.cpp
-        )
+        src/Symbol.cpp
+    include/Symbol.hpp src/Module.cpp include/Module.hpp src/Rewrite.cpp include/Rewrite.hpp src/Program.cpp include/Program.hpp src/ModuleTable.cpp include/ModuleTable.hpp src/ATurtle2D.cpp include/ATurtle2D.hpp)
 
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror -fno-omit-frame-pointer")
@@ -14,7 +15,7 @@ endif()
 add_library(LindenmayerHeart
             ${LINDENMAYER_CORE_SOURCES})
 
-target_link_libraries(LindenmayerHeart PRIVATE Qt5::Core Qt5::Widgets)
+target_link_libraries(LindenmayerHeart PUBLIC antlr4_static lindenmayer-langage Qt5::Core Qt5::Widgets)
 
 # It's necessary to use QT_NO_FOREACH to avoid problems with QMidiMessageMatrix::foreach
 target_compile_definitions(LindenmayerHeart PUBLIC QT_NO_FOREACH)

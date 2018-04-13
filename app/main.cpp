@@ -3,13 +3,14 @@
 //
 
 #include <QApplication>
-#include <QWidget>
+
+#include "MainWindow.hpp"
 
 int main(int argc, char** argv)
 {
     QApplication app(argc, argv);
-    QWidget widget;
+    MainWindow window;
 
-    widget.show();
+    window.show();
     return app.exec();
 }

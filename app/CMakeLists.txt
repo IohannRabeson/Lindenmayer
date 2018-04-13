@@ -5,7 +5,7 @@ set(THE_APPLICATION_COPYRIGHT "Copyright 2018 - ${THE_APPLICATION_ORGANIZATION}"
 set(THE_APPLICATION_BRIEF "Lindenmayer System utility")
 set(THE_APPLICATION_VERSION "${APPLICATION_VERSION}")
 set(THE_APPLICATION_GUI_IDENTIFIER "com.dead.devs.society.lindenmayer")
-set(THE_APPLICATION_ICON ${CMAKE_SOURCE_DIR}/configurations/macos/Application.icns)
+set(THE_APPLICATION_ICON ${CMAKE_SOURCE_DIR}/configurations/macos/Application.icns GraphicsSceneTurtle2D.cpp GraphicsSceneTurtle2D.hpp MainWindow.cpp MainWindow.hpp)
 
 qt5_add_translation(QM_FILES ${TS_FILES})
 # This works only because QM_FILES is given to add_executable (I guess).
@@ -26,8 +26,8 @@ add_executable(Lindenmayer
 )
 
 set_target_properties(Lindenmayer PROPERTIES OUTPUT_NAME ${THE_APPLICATION_DISPLAY_NAME})
-target_include_directories(Lindenmayer PRIVATE "${CMAKE_SOURCE_DIR}/app" "${CMAKE_SOURCE_DIR}/externals/Qt-Frameless-Window-DarkStyle")
-target_link_libraries(Lindenmayer PRIVATE LindenmayerHeart Qt5::Core Qt5::Widgets)
+target_include_directories(Lindenmayer PRIVATE "${CMAKE_SOURCE_DIR}/app" "${CMAKE_SOURCE_DIR}/core" "${CMAKE_SOURCE_DIR}/externals/Qt-Frameless-Window-DarkStyle")
+target_link_libraries(Lindenmayer PRIVATE LindenmayerHeart Qool Qt5::Core Qt5::Widgets)
 target_compile_definitions(Lindenmayer PRIVATE
     APPLICATION_VERSION="${APPLICATION_VERSION}"
     APPLICATION_ORGANIZATION="${THE_APPLICATION_ORGANIZATION}"
