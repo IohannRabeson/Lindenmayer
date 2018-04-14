@@ -29,7 +29,8 @@ namespace lcode
                     moduleIt = modules.erase(moduleIt);
                     moduleIt = modules.insert(moduleIt, rule->second.begin(), rule->second.end());
                     moduleIt += rule->second.size();
-                } else
+                }
+                else
                 {
                     ++moduleIt;
                 }

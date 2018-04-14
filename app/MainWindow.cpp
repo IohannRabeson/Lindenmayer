@@ -70,31 +70,7 @@ void MainWindow::setupActions()
     connect(m_actionBuild, &QAction::triggered, this, &MainWindow::build);
 
     connect(m_actionDraw, &QAction::triggered, this, &MainWindow::draw);
-
-    connect(m_actionExportImage, &QAction::triggered, [this]()
-    {
-        auto filePath = QFileDialog::getSaveFileName(this, tr("Export image"), m_imageExportDirectory.path(), "Images (*.png *.jpg)");
-        QRect sceneRect = m_graphicsScene->itemsBoundingRect().adjusted(-4, -4, 4, 4).toRect();
-        QImage image(sceneRect.width(), sceneRect.height(), QImage::Format_ARGB32);
-        QPainter painter(&image);
-
-        // TODO: allow to see a preview and allow to change background -> AKA image export dialog
-        image.fill(Qt::white);
-        m_graphicsScene->render(&painter);
-
-        if (image.save(filePath))
-        {
-            m_imageExportDirectory = QFileInfo(filePath).dir();
-        }
-        else
-        {
-            m_statusBar->showMessage(tr("Unable to export image '%0'").arg(filePath));
-        }
-
-        m_imageExportDirectory = QFileInfo(filePath).dir();
-
-        updateActions();
-    });
+    connect(m_actionExportImage, &QAction::triggered, this, &MainWindow::exportImage);
 
     connect(m_actionClearErrors, &QAction::triggered, [this]()
     {
@@ -104,6 +80,8 @@ void MainWindow::setupActions()
 
     connect(m_actionSaveProgram, &QAction::triggered, this, &MainWindow::saveInput);
     connect(m_actionLoadProgram, &QAction::triggered, this, &MainWindow::loadInput);
+    connect(m_actionZoomToFit, &QAction::triggered, this, &MainWindow::zoomToFit);
+    connect(m_actionZoomReset, &QAction::triggered, this, &MainWindow::zoomReset);
 }
 
 void MainWindow::setupMenus()
@@ -125,8 +103,10 @@ void MainWindow::setupToolbars()
     toolbar->addSeparator();
     toolbar->addAction(m_actionBuild);
     toolbar->addAction(m_actionDraw);
+    toolbar->addSeparator();
+    toolbar->addAction(m_actionZoomReset);
+    toolbar->addAction(m_actionZoomToFit);
 }
-
 
 bool MainWindow::saveInput()
 {
@@ -239,15 +219,31 @@ void MainWindow::build()
     {
         m_iterationSelector->setValue(static_cast<int>(content.iterations.getValue()));
     }
+
     if (content.distance.isValid())
     {
         m_distanceSelector->setValue(content.distance.getValue());
     }
+
     if (content.angle.isValid())
     {
         m_angleSelector->setValue(content.angle.getValue());
     }
 
+    m_graphicsView->fitInView(m_graphicsScene->itemsBoundingRect(), Qt::KeepAspectRatio);
+
+    updateActions();
+}
+
+void MainWindow::zoomToFit()
+{
+    m_graphicsView->fitInView(m_graphicsScene->itemsBoundingRect(), Qt::KeepAspectRatio);
+    updateActions();
+}
+
+void MainWindow::zoomReset()
+{
+    m_graphicsView->resetMatrix();
     updateActions();
 }
 

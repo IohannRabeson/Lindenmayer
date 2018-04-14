@@ -2,6 +2,6 @@ axiom: F;
 angle: 60.;
 alias G = F;
 distance: 30.;
-iterations: 10;
+iterations: 7;
 F = G R F R G;
 G = F L G L F;

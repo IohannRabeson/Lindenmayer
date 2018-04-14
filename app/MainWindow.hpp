@@ -33,6 +33,8 @@ public:
     void exportImage();
     void draw();
     void build();
+    void zoomToFit();
+    void zoomReset();
 private:
     void setupWidgets();
     void setupActions();
@@ -61,6 +63,8 @@ private:
     QAction* const m_actionBuild = new QAction(tr("Build"), this);
     QAction* const m_actionDraw = new QAction(tr("Draw"), this);
     QAction* const m_actionClearErrors = new QAction(tr("Clear errors"), this);
+    QAction* const m_actionZoomToFit = new QAction(tr("Zoom to fit"), this);
+    QAction* const m_actionZoomReset = new QAction(tr("Zoor reset"), this);
 
     lcode::ModuleTable m_moduleTable;
     GraphicsSceneTurtle2D m_turtle;

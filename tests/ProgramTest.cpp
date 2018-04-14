@@ -182,6 +182,29 @@ TEST_F(ProgramNoActionFixture, axiom_multiple_iteration_distance_angle)
     ASSERT_EQ( program.content().iterations.getValue(), 9u );
 }
 
+TEST(Program, execute_twice)
+{
+    using ::testing::_;
+
+    lcode::Program program;
+    lcode::ModuleTable moduleTable;
+    Turtle2DMock turtle;
+
+    EXPECT_CALL(turtle, drawLine(_))
+            .Times(4);
+
+    moduleTable.registerModule("F", [&turtle](){ turtle.advance(1., true); });
+
+    ASSERT_TRUE( printErrors(program.loadFromLCode("axiom: F;"
+                                                   "iterations: 2;"
+                                                   "F = F F;"
+                                                   , moduleTable)).empty() );
+
+    // F will be transformed into F F, so 2 calls, twice, 4 calls.
+    program.execute(1u);
+    program.execute(1u);
+}
+
 TEST(Program, turtle_advance)
 {
     using ::testing::_;
