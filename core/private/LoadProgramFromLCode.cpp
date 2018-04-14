@@ -67,6 +67,32 @@ namespace lcode
         return m_parseResult;
     }
 
+    void
+    Program::LoadFromLCode::syntaxError(antlr4::Recognizer*, antlr4::Token*, size_t line, size_t charPositionInLine, const std::string& msg, std::exception_ptr)
+    {
+        Error error;
+
+        error.charIndex = charPositionInLine;
+        error.line = line;
+        error.message = msg;
+        m_parseResult.errors.emplace_back(std::move(error));
+    }
+
+    void
+    Program::LoadFromLCode::reportAmbiguity(antlr4::Parser*, antlr4::dfa::DFA const&, size_t, size_t, bool, const antlrcpp::BitSet&, antlr4::atn::ATNConfigSet*)
+    {
+    }
+
+    void
+    Program::LoadFromLCode::reportAttemptingFullContext(antlr4::Parser*, antlr4::dfa::DFA const&, size_t, size_t, const antlrcpp::BitSet&, antlr4::atn::ATNConfigSet*)
+    {
+    }
+
+    void
+    Program::LoadFromLCode::reportContextSensitivity(antlr4::Parser*, antlr4::dfa::DFA const&, size_t, size_t, size_t, antlr4::atn::ATNConfigSet*)
+    {
+    }
+
     template <class T, class F>
     Optional<T> Program::LoadFromLCode::toT(antlr4::Token* const token, std::vector<Error>& errors, F f)
     {
@@ -97,7 +123,7 @@ namespace lcode
         for (auto* const token : tokens)
         {
             auto const tokenText = token->getText();
-            auto const module = m_table.createModule(tokenText);
+            auto const module = m_parseResult.moduleTable.createModule(tokenText);
 
             if (module.isNull())
             {
@@ -124,8 +150,8 @@ namespace lcode
         // the number of tokens we skip all the process if this condition is not meet.
         if (tokens.size() > 1u)
         {
-            auto replacedIdentifier = m_table.createModule(tokens.front()->getText());
-            auto replacementIdentifiers = m_table.createModules(antlr::getTokenIdentifiers(
+            auto replacedIdentifier = m_parseResult.moduleTable.createModule(tokens.front()->getText());
+            auto replacementIdentifiers = m_parseResult.moduleTable.createModules(antlr::getTokenIdentifiers(
                     tokens.begin() + 1, tokens.end()));
 
             m_parseResult.rewriteRules.emplace(std::move(replacedIdentifier), std::move(replacementIdentifiers));
@@ -188,29 +214,26 @@ namespace lcode
         }
     }
 
-    void
-    Program::LoadFromLCode::syntaxError(antlr4::Recognizer*, antlr4::Token*, size_t line, size_t charPositionInLine, const std::string& msg, std::exception_ptr)
+    void Program::LoadFromLCode::enterAlias(LSystemParser::AliasContext* context)
     {
-        Error error;
+        auto const tokens = context->getTokens(LSystemParser::Identifier);
 
-        error.charIndex = charPositionInLine;
-        error.line = line;
-        error.message = msg;
-        m_parseResult.errors.emplace_back(std::move(error));
-    }
+        if (tokens.size() != 2u)
+        {
+            Program::Error error = antlr::errorFromToken(context->getStart(), "Invalid alias");
 
-    void
-    Program::LoadFromLCode::reportAmbiguity(antlr4::Parser*, antlr4::dfa::DFA const&, size_t, size_t, bool, const antlrcpp::BitSet&, antlr4::atn::ATNConfigSet*)
-    {
-    }
+            m_parseResult.errors.emplace_back(std::move(error));
+            return;
+        }
 
-    void
-    Program::LoadFromLCode::reportAttemptingFullContext(antlr4::Parser*, antlr4::dfa::DFA const&, size_t, size_t, const antlrcpp::BitSet&, antlr4::atn::ATNConfigSet*)
-    {
-    }
+        auto const aliasIdentifier = tokens[0u]->getText();
+        auto const aliasedIdentifier = tokens[1u]->getText();
 
-    void
-    Program::LoadFromLCode::reportContextSensitivity(antlr4::Parser*, antlr4::dfa::DFA const&, size_t, size_t, size_t, antlr4::atn::ATNConfigSet*)
-    {
+        if (!m_parseResult.moduleTable.createAlias(aliasIdentifier, aliasedIdentifier))
+        {
+            Program::Error error = antlr::errorFromToken(context->getStart(), "Can't alias undefined identifier '" + aliasedIdentifier + "'");
+
+            m_parseResult.errors.emplace_back(std::move(error));
+        }
     }
 }

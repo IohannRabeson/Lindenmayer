@@ -32,6 +32,9 @@ public:
   virtual void enterInitial_angle(LSystemParser::Initial_angleContext *ctx) = 0;
   virtual void exitInitial_angle(LSystemParser::Initial_angleContext *ctx) = 0;
 
+  virtual void enterAlias(LSystemParser::AliasContext *ctx) = 0;
+  virtual void exitAlias(LSystemParser::AliasContext *ctx) = 0;
+
   virtual void enterTransformation(LSystemParser::TransformationContext *ctx) = 0;
   virtual void exitTransformation(LSystemParser::TransformationContext *ctx) = 0;
 

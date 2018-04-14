@@ -56,6 +56,7 @@ namespace lcode
             Optional<float> angle;
             Optional<float> initialAngle;
             std::vector<Error> errors;
+            ModuleTable moduleTable;
         };
 
         class ALoader;
@@ -64,8 +65,11 @@ namespace lcode
         std::vector<Error> loadFromLCode(std::string const& lcode, ModuleTable const& table);
         Content const& content() const { return m_content; }
         Modules rewrite(unsigned int const iterations) const;
+        void execute(unsigned int const iterations);
+        bool loaded() const { return m_loaded; }
     private:
         Content m_content;
+        bool m_loaded = false;
     };
 
     class Program::ALoader

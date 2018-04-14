@@ -34,6 +34,9 @@ public:
   virtual void enterInitial_angle(LSystemParser::Initial_angleContext * /*ctx*/) override { }
   virtual void exitInitial_angle(LSystemParser::Initial_angleContext * /*ctx*/) override { }
 
+  virtual void enterAlias(LSystemParser::AliasContext * /*ctx*/) override { }
+  virtual void exitAlias(LSystemParser::AliasContext * /*ctx*/) override { }
+
   virtual void enterTransformation(LSystemParser::TransformationContext * /*ctx*/) override { }
   virtual void exitTransformation(LSystemParser::TransformationContext * /*ctx*/) override { }
 

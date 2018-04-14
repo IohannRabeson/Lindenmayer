@@ -47,55 +47,14 @@ MainWindow::MainWindow()
     setupMenus();
 }
 
-bool MainWindow::saveInput()
-{
-    auto result = false;
-    auto const filePath = QFileDialog::getSaveFileName(this, tr("Save L-Code program")).trimmed();
-
-    if (!filePath.trimmed().isEmpty())
-    {
-        QFile file(filePath);
-
-        if (file.open(QIODevice::WriteOnly | QIODevice::Text))
-        {
-            QTextStream stream(&file);
-
-            stream << m_programTextEdit->toPlainText();
-            qDebug() << "Write file:" << filePath;
-        }
-        else
-        {
-            qWarning() << "MainWindow::saveInput: failed to save " << filePath << file.isOpen() << file.errorString();
-        }
-    }
-    return result;
-}
-
-bool MainWindow::loadInput()
-{
-    auto result = false;
-    auto const filePath = QFileDialog::getOpenFileName(this, tr("Load L-Code program"));
-
-    if (!filePath.trimmed().isEmpty())
-    {
-        QFile file(filePath);
-
-        if (file.open(QFile::OpenModeFlag::ReadOnly))
-        {
-            QTextStream stream(&file);
-            QString const text = stream.readAll();
-
-            m_programTextEdit->setPlainText(text);
-            m_modules.clear();
-            m_turtle.reset();
-            result = true;
-        }
-    }
-    return result;
-}
-
 void MainWindow::setupWidgets()
 {
+    auto const fontId = QFontDatabase::addApplicationFont("://Resources/Menlo-Regular.ttf");
+    QString const family = QFontDatabase::applicationFontFamilies(fontId).front();
+    QFont const monospaced(family);
+
+    m_programTextEdit->setFont(monospaced);
+    m_errorOutputTextEdit->setFont(monospaced);
     m_errorOutputTextEdit->setReadOnly(true);
     m_dockWidgets->addDockWidget(m_programTextEdit, tr("Program"), "program_input");
     m_dockWidgets->addDockWidget(m_errorOutputTextEdit, tr("Errors"), "errors_output");
@@ -108,47 +67,9 @@ void MainWindow::setupWidgets()
 
 void MainWindow::setupActions()
 {
-    connect(m_actionBuild, &QAction::triggered, [this]()
-    {
-        // Convert text to program content using ANTLR
-        auto const text = m_programTextEdit->toPlainText().toUtf8().toStdString();
+    connect(m_actionBuild, &QAction::triggered, this, &MainWindow::build);
 
-        lcode::Program program;
-
-        auto const errors = program.loadFromLCode(text, m_moduleTable);
-
-        // Print potential errors
-        m_errorOutputTextEdit->clear();
-
-        if (!errors.empty())
-        {
-            for (auto const error : errors)
-            {
-                m_errorOutputTextEdit->appendPlainText(tr(" - Error [%0;%1]: %2").arg(error.line).arg(error.charIndex).arg(QString::fromStdString(error.message)));
-            }
-
-            return;
-        }
-
-        auto const& content = program.content();
-
-        if (content.iterations.isValid())
-        {
-            m_iterationSelector->setValue(static_cast<int>(content.iterations.getValue()));
-        }
-        if (content.distance.isValid())
-        {
-            m_distanceSelector->setValue(content.distance.getValue());
-        }
-        if (content.angle.isValid())
-        {
-            m_angleSelector->setValue(content.angle.getValue());
-        }
-
-        m_modules = program.rewrite(getIterations());
-
-        updateActions();
-    });
+    connect(m_actionDraw, &QAction::triggered, this, &MainWindow::draw);
 
     connect(m_actionExportImage, &QAction::triggered, [this]()
     {
@@ -172,16 +93,6 @@ void MainWindow::setupActions()
 
         m_imageExportDirectory = QFileInfo(filePath).dir();
 
-        updateActions();
-    });
-
-    connect(m_actionDraw, &QAction::triggered, [this]()
-    {
-        // Execute turtle orders
-        m_graphicsScene->clear();
-        m_turtle.reset();
-        m_moduleTable.execute(m_modules);
-        m_graphicsView->ensureVisible(m_graphicsScene->itemsBoundingRect().adjusted(-4, -4, 4, 4));
         updateActions();
     });
 
@@ -216,9 +127,133 @@ void MainWindow::setupToolbars()
     toolbar->addAction(m_actionDraw);
 }
 
+
+bool MainWindow::saveInput()
+{
+    auto result = false;
+    auto const filePath = QFileDialog::getSaveFileName(this, tr("Save L-Code program"), m_saveDirectory.path()).trimmed();
+
+    if (!filePath.trimmed().isEmpty())
+    {
+        QFile file(filePath);
+
+        if (file.open(QIODevice::WriteOnly | QIODevice::Text))
+        {
+            QTextStream stream(&file);
+
+            stream << m_programTextEdit->toPlainText();
+            m_saveDirectory = QFileInfo(filePath).dir();
+            qDebug() << "Write file:" << filePath;
+        }
+        else
+        {
+            qWarning() << "MainWindow::saveInput: failed to save " << filePath << file.isOpen() << file.errorString();
+        }
+    }
+    updateActions();
+    return result;
+}
+
+bool MainWindow::loadInput()
+{
+    auto result = false;
+    auto const filePath = QFileDialog::getOpenFileName(this, tr("Load L-Code program"));
+
+    if (!filePath.trimmed().isEmpty())
+    {
+        QFile file(filePath);
+
+        if (file.open(QFile::OpenModeFlag::ReadOnly))
+        {
+            QTextStream stream(&file);
+            QString const text = stream.readAll();
+
+            m_programTextEdit->setPlainText(text);
+            m_turtle.reset();
+            result = true;
+        }
+    }
+    updateActions();
+    return result;
+}
+
+void MainWindow::exportImage()
+{
+    auto filePath = QFileDialog::getSaveFileName(this, tr("Export image"), m_imageExportDirectory.path(), "Images (*.png *.jpg)");
+    QRect sceneRect = m_graphicsScene->itemsBoundingRect().adjusted(-4, -4, 4, 4).toRect();
+    QImage image(sceneRect.width(), sceneRect.height(), QImage::Format_ARGB32);
+    QPainter painter(&image);
+
+    // TODO: allow to see a preview and allow to change background -> AKA custom image export dialog
+    image.fill(Qt::white);
+    m_graphicsScene->render(&painter);
+
+    if (image.save(filePath))
+    {
+        m_imageExportDirectory = QFileInfo(filePath).dir();
+    }
+    else
+    {
+        m_statusBar->showMessage(tr("Unable to export image '%0'").arg(filePath));
+    }
+
+    m_imageExportDirectory = QFileInfo(filePath).dir();
+
+    updateActions();
+}
+
+void MainWindow::draw()
+{
+    // Execute turtle orders
+    m_graphicsScene->clear();
+    m_turtle.reset();
+    m_program.execute(getIterations());
+    m_graphicsView->ensureVisible(m_graphicsScene->itemsBoundingRect().adjusted(-4, -4, 4, 4));
+    updateActions();
+}
+
+void MainWindow::build()
+{
+    // Convert text to program content using ANTLR
+    auto const text = m_programTextEdit->toPlainText().toUtf8().toStdString();
+
+    auto const errors = m_program.loadFromLCode(text, m_moduleTable);
+
+    // Print potential errors
+    m_errorOutputTextEdit->clear();
+
+    if (!errors.empty())
+    {
+        for (auto const error : errors)
+        {
+            m_errorOutputTextEdit->appendPlainText(tr(" - Error [%0;%1]: %2").arg(error.line).arg(error.charIndex).arg(QString::fromStdString(error.message)));
+        }
+
+        return;
+    }
+
+    // Update global variables
+    auto const& content = m_program.content();
+
+    if (content.iterations.isValid())
+    {
+        m_iterationSelector->setValue(static_cast<int>(content.iterations.getValue()));
+    }
+    if (content.distance.isValid())
+    {
+        m_distanceSelector->setValue(content.distance.getValue());
+    }
+    if (content.angle.isValid())
+    {
+        m_angleSelector->setValue(content.angle.getValue());
+    }
+
+    updateActions();
+}
+
 void MainWindow::updateActions()
 {
-    auto const haveModules = !m_modules.empty();
+    auto const haveModules = m_program.loaded();
     auto const haveProgram = m_programTextEdit->toPlainText().trimmed().size() > 0;
 
     m_actionBuild->setEnabled(haveProgram);

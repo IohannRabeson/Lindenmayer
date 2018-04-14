@@ -6,12 +6,13 @@ fragment TRUE : 'true' ;
 fragment FALSE : 'false' ;
 fragment NEWLINE   : '\r' '\n' | '\n' | '\r';
 
-program 		                : axiom (iterations | distance |  angle | initial_angle)* transformation*;
+program 		                : axiom (iterations | distance |  angle | initial_angle | alias)* transformation*;
 axiom                           : 'axiom:' Identifier+ EndOfLine;
 iterations                      : 'iterations:' Integer EndOfLine;
 distance                        : 'distance:' Float EndOfLine;
 angle                           : 'angle:' Float EndOfLine;
 initial_angle                   : 'initialAngle:' Float EndOfLine;
+alias                           : 'alias' Identifier '=' Identifier EndOfLine;
 
 transformation              : Identifier TransformOperator Identifier+ EndOfLine;
 

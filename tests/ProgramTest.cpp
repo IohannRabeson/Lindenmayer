@@ -3,10 +3,13 @@
 //
 
 #include <gtest/gtest.h>
+#include <gmock/gmock.h>
 
 #include <Program.hpp>
 
 #include <iostream>
+
+#include "Mocks/Turtle2DMock.hpp"
 
 std::vector<lcode::Program::Error> const& printErrors(std::vector<lcode::Program::Error> const& errors)
 {
@@ -29,9 +32,9 @@ TEST(Program, program_empty)
     ASSERT_FALSE( program.content().iterations.isValid() );
 }
 
-struct TestProgram : public ::testing::Test
+struct ProgramNoActionFixture : public ::testing::Test
 {
-    TestProgram()
+    ProgramNoActionFixture()
     {
         moduleTable.registerModule("F");
         moduleTable.registerModule("f");
@@ -44,7 +47,22 @@ struct TestProgram : public ::testing::Test
     lcode::ModuleTable moduleTable;
 };
 
-TEST_F(TestProgram, axiom_single)
+struct ProgramTurtleMockActionFixture : public ::testing::Test
+{
+    ProgramTurtleMockActionFixture()
+    {
+        moduleTable.registerModule("F");
+        moduleTable.registerModule("f");
+        moduleTable.registerModule("L");
+        moduleTable.registerModule("R");
+        moduleTable.registerModule("[");
+        moduleTable.registerModule("]");
+    }
+
+    lcode::ModuleTable moduleTable;
+};
+
+TEST_F(ProgramNoActionFixture, axiom_single)
 {
     lcode::Program program;
 
@@ -58,7 +76,7 @@ TEST_F(TestProgram, axiom_single)
     ASSERT_FALSE( program.content().iterations.isValid() );
 }
 
-TEST_F(TestProgram, axiom_multiple)
+TEST_F(ProgramNoActionFixture, axiom_multiple)
 {
     lcode::Program program;
 
@@ -76,7 +94,7 @@ TEST_F(TestProgram, axiom_multiple)
     ASSERT_FALSE( program.content().iterations.isValid() );
 }
 
-TEST_F(TestProgram, axiom_multiple_iterations)
+TEST_F(ProgramNoActionFixture, axiom_multiple_iterations)
 {
     lcode::Program program;
 
@@ -98,7 +116,7 @@ TEST_F(TestProgram, axiom_multiple_iterations)
     ASSERT_EQ( program.content().iterations.getValue(), 9u );
 }
 
-TEST_F(TestProgram, axiom_multiple_distance)
+TEST_F(ProgramNoActionFixture, axiom_multiple_distance)
 {
     lcode::Program program;
 
@@ -120,7 +138,7 @@ TEST_F(TestProgram, axiom_multiple_distance)
     ASSERT_FALSE( program.content().iterations.isValid() );
 }
 
-TEST_F(TestProgram, axiom_multiple_angle)
+TEST_F(ProgramNoActionFixture, axiom_multiple_angle)
 {
     lcode::Program program;
 
@@ -140,7 +158,7 @@ TEST_F(TestProgram, axiom_multiple_angle)
     ASSERT_FALSE( program.content().iterations.isValid() );
 }
 
-TEST_F(TestProgram, axiom_multiple_iteration_distance_angle)
+TEST_F(ProgramNoActionFixture, axiom_multiple_iteration_distance_angle)
 {
     lcode::Program program;
 
@@ -162,4 +180,60 @@ TEST_F(TestProgram, axiom_multiple_iteration_distance_angle)
     ASSERT_NEAR( program.content().distance.getValue(), 3.14, 0.0001 );
     ASSERT_TRUE( program.content().iterations.isValid() );
     ASSERT_EQ( program.content().iterations.getValue(), 9u );
+}
+
+TEST(Program, turtle_advance)
+{
+    using ::testing::_;
+
+    lcode::Program program;
+    lcode::ModuleTable moduleTable;
+    Turtle2DMock turtle;
+
+    EXPECT_CALL(turtle, drawLine(_))
+            .Times(1);
+
+    moduleTable.registerModule("F", [&turtle](){ turtle.advance(1., true); });
+    moduleTable.registerModule("f");
+    moduleTable.registerModule("L");
+    moduleTable.registerModule("R");
+    moduleTable.registerModule("[");
+    moduleTable.registerModule("]");
+
+    ASSERT_TRUE( printErrors(program.loadFromLCode("axiom: F;"
+                                                   "iterations: 9;"
+                                                   "distance: 3.14;"
+                                                   "angle: 63.14;"
+            , moduleTable)).empty() );
+
+    moduleTable.execute(program.rewrite(0u));
+}
+
+TEST(Program, alias)
+{
+    using ::testing::_;
+
+    lcode::Program program;
+    lcode::ModuleTable moduleTable;
+    Turtle2DMock turtle;
+
+    EXPECT_CALL(turtle, drawLine(_))
+    .Times(1);
+
+    moduleTable.registerModule("F", [&turtle](){ turtle.advance(1., true); });
+    moduleTable.registerModule("f");
+    moduleTable.registerModule("L");
+    moduleTable.registerModule("R");
+    moduleTable.registerModule("[");
+    moduleTable.registerModule("]");
+
+    ASSERT_TRUE( printErrors(program.loadFromLCode("axiom: F;"
+                                                   "iterations: 9;"
+                                                   "distance: 3.14;"
+                                                   "angle: 63.14;"
+                                                   "alias G = F;"
+                                                   "F = G;"
+                                                   , moduleTable)).empty() );
+
+    program.execute(1u);
 }

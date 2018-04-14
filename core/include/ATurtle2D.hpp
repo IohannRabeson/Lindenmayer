@@ -13,12 +13,12 @@ namespace lcode
     {
         struct State
         {
-            qreal x;
-            qreal y;
+            qreal x = 0;
+            qreal y = 0;
             /*!
              * \brief Direction angle in radians
              */
-            qreal direction;
+            qreal direction = 0;
         };
     public:
         ATurtle2D();
@@ -31,11 +31,12 @@ namespace lcode
         void rotate(qreal const degrees);
         void push();
         void pop();
-    private:
-        virtual void drawLine(QLineF const& line) = 0;
 
         State const& getCurrentState() const;
+    private:
         State& getCurrentState();
+
+        virtual void drawLine(QLineF const& line) = 0;
     private:
         std::stack<State> m_states;
     };

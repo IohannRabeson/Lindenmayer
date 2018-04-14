@@ -68,4 +68,25 @@ namespace lcode
 
         return result;
     }
+
+    bool ModuleTable::createAlias(std::string const& alias, std::string const& aliased)
+    {
+        auto const moduleIt = m_identifierTable.find(aliased);
+        bool result = false;
+
+        if (moduleIt != m_identifierTable.end())
+        {
+            auto const actionIt = m_actionTable.find(moduleIt->second);
+
+            if (actionIt != m_actionTable.end())
+            {
+                Action action = actionIt->second;
+
+                registerModule(alias, std::move(action));
+                result = true;
+            }
+        }
+
+        return result;
+    }
 }

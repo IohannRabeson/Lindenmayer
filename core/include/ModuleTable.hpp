@@ -20,6 +20,7 @@ namespace lcode
         void registerModule(std::string const& identifier, Action&& action);
         void registerModule(std::string const& identifier);
 
+        bool createAlias(std::string const& alias, std::string const& aliased);
         Module createModule(std::string const& identifier) const;
         Modules createModules(std::vector<std::string> const& identifiers) const;
 

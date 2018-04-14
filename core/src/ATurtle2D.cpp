@@ -7,8 +7,20 @@
 #include <cmath>
 #include <cassert>
 
-template<class T>
-constexpr T Pi = T(3.1415926535897932385L);
+namespace
+{
+    template<class T>
+    constexpr T Pi = T(3.1415926535897932385L);
+
+    template<class T>
+    constexpr T Deg2Rad = Pi<T> / 180;
+
+    template <class T>
+    T deg2rad(T const degrees)
+    {
+        return degrees * Deg2Rad<T>;
+    }
+}
 
 namespace lcode
 {
@@ -29,17 +41,16 @@ namespace lcode
 
     void ATurtle2D::setRotation(qreal const degrees)
     {
-        m_states.top().direction = degrees * (Pi<qreal> / 180.0);
+        m_states.top().direction = degrees * Deg2Rad<qreal>;
     }
 
     void ATurtle2D::advance(qreal const distance, bool const trace)
     {
         auto& current = getCurrentState();
         auto const old = current;
-        auto const direction = m_states.top().direction;
 
-        current.x += std::cos(direction) * distance;
-        current.y += std::sin(direction) * distance;
+        current.x += std::cos(current.direction) * distance;
+        current.y += std::sin(current.direction) * distance;
 
         if (trace)
         {
@@ -49,7 +60,7 @@ namespace lcode
 
     void ATurtle2D::rotate(qreal const degrees)
     {
-        m_states.top().direction += degrees * (Pi<qreal> / 180.0);
+        getCurrentState().direction += degrees * Deg2Rad<qreal>;
     }
 
     void ATurtle2D::push()
@@ -61,6 +72,8 @@ namespace lcode
 
     void ATurtle2D::pop()
     {
+        assert( !m_states.empty() );
+
         m_states.pop();
     }
 

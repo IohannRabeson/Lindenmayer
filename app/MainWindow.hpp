@@ -10,7 +10,7 @@
 
 #include <Qool/DockWidgetManager.hpp>
 
-#include <ModuleTable.hpp>
+#include <Program.hpp>
 
 #include "GraphicsSceneTurtle2D.hpp"
 
@@ -30,6 +30,9 @@ public:
 
     bool saveInput();
     bool loadInput();
+    void exportImage();
+    void draw();
+    void build();
 private:
     void setupWidgets();
     void setupActions();
@@ -61,7 +64,7 @@ private:
 
     lcode::ModuleTable m_moduleTable;
     GraphicsSceneTurtle2D m_turtle;
-    lcode::Modules m_modules;
+    lcode::Program m_program;
 
     QDir m_imageExportDirectory;
     QDir m_saveDirectory;

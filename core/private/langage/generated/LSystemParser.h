@@ -12,14 +12,14 @@
 class  LSystemParser : public antlr4::Parser {
 public:
   enum {
-    T__0 = 1, T__1 = 2, T__2 = 3, T__3 = 4, T__4 = 5, Integer = 6, Float = 7, 
-    Boolean = 8, TransformOperator = 9, Identifier = 10, EndOfLine = 11, 
-    Newline = 12, Whitespace = 13
+    T__0 = 1, T__1 = 2, T__2 = 3, T__3 = 4, T__4 = 5, T__5 = 6, Integer = 7, 
+    Float = 8, Boolean = 9, TransformOperator = 10, Identifier = 11, EndOfLine = 12, 
+    Newline = 13, Whitespace = 14
   };
 
   enum {
     RuleProgram = 0, RuleAxiom = 1, RuleIterations = 2, RuleDistance = 3, 
-    RuleAngle = 4, RuleInitial_angle = 5, RuleTransformation = 6
+    RuleAngle = 4, RuleInitial_angle = 5, RuleAlias = 6, RuleTransformation = 7
   };
 
   LSystemParser(antlr4::TokenStream *input);
@@ -38,6 +38,7 @@ public:
   class DistanceContext;
   class AngleContext;
   class Initial_angleContext;
+  class AliasContext;
   class TransformationContext; 
 
   class  ProgramContext : public antlr4::ParserRuleContext {
@@ -53,6 +54,8 @@ public:
     AngleContext* angle(size_t i);
     std::vector<Initial_angleContext *> initial_angle();
     Initial_angleContext* initial_angle(size_t i);
+    std::vector<AliasContext *> alias();
+    AliasContext* alias(size_t i);
     std::vector<TransformationContext *> transformation();
     TransformationContext* transformation(size_t i);
 
@@ -133,6 +136,21 @@ public:
   };
 
   Initial_angleContext* initial_angle();
+
+  class  AliasContext : public antlr4::ParserRuleContext {
+  public:
+    AliasContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    std::vector<antlr4::tree::TerminalNode *> Identifier();
+    antlr4::tree::TerminalNode* Identifier(size_t i);
+    antlr4::tree::TerminalNode *EndOfLine();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+   
+  };
+
+  AliasContext* alias();
 
   class  TransformationContext : public antlr4::ParserRuleContext {
   public:

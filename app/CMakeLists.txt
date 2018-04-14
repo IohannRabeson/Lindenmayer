@@ -22,6 +22,7 @@ endif()
 add_executable(Lindenmayer
     MACOSX_BUNDLE ${THE_APPLICATION_ICON}
     main.cpp
+    Lindenmayer.qrc
     ${QM_FILES}
 )
 

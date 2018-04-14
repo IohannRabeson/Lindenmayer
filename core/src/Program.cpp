@@ -19,7 +19,7 @@ namespace lcode
     std::vector<Program::Error> Program::load(ALoader&& loader)
     {
         m_content = loader.load();
-
+        m_loaded = m_content.errors.empty();
         return m_content.errors;
     }
 
@@ -33,5 +33,12 @@ namespace lcode
     Modules Program::rewrite(unsigned int const iterations) const
     {
         return rewrited(m_content.rewriteRules, m_content.axiom, iterations);
+    }
+
+    void Program::execute(unsigned int const iterations)
+    {
+        Modules modules = rewrite(iterations);
+
+        content().moduleTable.execute(modules);
     }
 }
