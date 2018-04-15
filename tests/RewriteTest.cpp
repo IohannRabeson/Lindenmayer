@@ -26,10 +26,10 @@ TEST(Rewrite, rewrite_test_simple_D0L)
     rules.emplace(lcode::Module(lcode::Symbol(0)), lcode::makeModules({0, 1}));
     rules.emplace(lcode::Module(lcode::Symbol(1)), lcode::makeModules({0}));
 
-    ASSERT_EQ( lcode::rewrited(rules, axiom, 0u), lcode::makeModules({1}) );
-    ASSERT_EQ( lcode::rewrited(rules, axiom, 1u), lcode::makeModules({0}) );
-    ASSERT_EQ( lcode::rewrited(rules, axiom, 2u), lcode::makeModules({0, 1}) );
-    ASSERT_EQ( lcode::rewrited(rules, axiom, 3u), lcode::makeModules({0, 1, 0}) );
-    ASSERT_EQ( lcode::rewrited(rules, axiom, 4u), lcode::makeModules({0, 1, 0, 0, 1}) );
-    ASSERT_EQ( lcode::rewrited(rules, axiom, 5u), lcode::makeModules({0, 1, 0, 0, 1, 0, 1, 0}) );
+    ASSERT_EQ(lcode::rewrote(rules, axiom, 0u), lcode::makeModules({1}) );
+    ASSERT_EQ(lcode::rewrote(rules, axiom, 1u), lcode::makeModules({0}) );
+    ASSERT_EQ(lcode::rewrote(rules, axiom, 2u), lcode::makeModules({0, 1}) );
+    ASSERT_EQ(lcode::rewrote(rules, axiom, 3u), lcode::makeModules({0, 1, 0}) );
+    ASSERT_EQ(lcode::rewrote(rules, axiom, 4u), lcode::makeModules({0, 1, 0, 0, 1}) );
+    ASSERT_EQ(lcode::rewrote(rules, axiom, 5u), lcode::makeModules({0, 1, 0, 0, 1, 0, 1, 0}) );
 }

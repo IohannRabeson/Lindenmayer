@@ -14,7 +14,7 @@ namespace lcode
     using RewriteRule = RewriteRules::value_type;
 
     void rewrite(RewriteRules const& rules, Modules& modules, unsigned int const iterations);
-    Modules rewrited(RewriteRules const& rules, Modules const& modules, unsigned int const iterations);
+    Modules rewrote(RewriteRules const& rules, Modules const& modules, unsigned int const iterations);
 }
 
 #endif //LINDENMAYER_REWRITE_HPP

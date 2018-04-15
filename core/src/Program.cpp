@@ -32,7 +32,7 @@ namespace lcode
 
     Modules Program::rewrite(unsigned int const iterations) const
     {
-        return rewrited(m_content.rewriteRules, m_content.axiom, iterations);
+        return rewrote(m_content.rewriteRules, m_content.axiom, iterations);
     }
 
     void Program::execute(unsigned int const iterations)

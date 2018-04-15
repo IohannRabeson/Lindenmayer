@@ -38,7 +38,7 @@ namespace lcode
         }
     }
 
-    Modules rewrited(RewriteRules const& rules, Modules const& modules, unsigned int const iterations)
+    Modules rewrote(RewriteRules const& rules, Modules const& modules, unsigned int const iterations)
     {
         Modules rewrited = modules;
 

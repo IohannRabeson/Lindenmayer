@@ -1,0 +1,4 @@
+axiom: -F;
+iterations: 4;
+angle: 90.;
+F = F+F-F-F+F;
