@@ -14,3 +14,8 @@ void GraphicsSceneTurtle2D::drawLine(QLineF const& line)
 {
     m_scene->addLine(line, m_pen);
 }
+
+void GraphicsSceneTurtle2D::setPen(QPen const& pen)
+{
+    m_pen = pen;
+}

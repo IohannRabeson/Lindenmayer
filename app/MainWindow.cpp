@@ -36,8 +36,8 @@ MainWindow::MainWindow()
 {
     m_moduleTable.registerModule("F", [this](){ m_turtle.advance(getDistance(), true); });
     m_moduleTable.registerModule("f", [this](){ m_turtle.advance(getDistance(), false); });
-    m_moduleTable.registerModule("L", [this](){ m_turtle.rotate(-getAngle()); });
-    m_moduleTable.registerModule("R", [this](){ m_turtle.rotate(getAngle()); });
+    m_moduleTable.registerModule("-", [this](){ m_turtle.rotate(-getAngle()); });
+    m_moduleTable.registerModule("+", [this](){ m_turtle.rotate(getAngle()); });
     m_moduleTable.registerModule("[", [this](){ m_turtle.push(); });
     m_moduleTable.registerModule("]", [this](){ m_turtle.pop(); });
 
@@ -45,6 +45,7 @@ MainWindow::MainWindow()
     setupActions();
     setupToolbars();
     setupMenus();
+    updateActions();
 }
 
 void MainWindow::setupWidgets()
@@ -70,7 +71,7 @@ void MainWindow::setupActions()
     connect(m_actionBuild, &QAction::triggered, this, &MainWindow::build);
 
     connect(m_actionDraw, &QAction::triggered, this, &MainWindow::draw);
-    connect(m_actionExportImage, &QAction::triggered, this, &MainWindow::exportImage);
+    connect(m_actionExportImage, &QAction::triggered, this, qOverload<>(&MainWindow::exportImage));
 
     connect(m_actionClearErrors, &QAction::triggered, [this]()
     {
@@ -79,7 +80,7 @@ void MainWindow::setupActions()
     });
 
     connect(m_actionSaveProgram, &QAction::triggered, this, &MainWindow::saveInput);
-    connect(m_actionLoadProgram, &QAction::triggered, this, &MainWindow::loadInput);
+    connect(m_actionLoadProgram, &QAction::triggered, this, qOverload<>(&MainWindow::loadProgram));
     connect(m_actionZoomToFit, &QAction::triggered, this, &MainWindow::zoomToFit);
     connect(m_actionZoomReset, &QAction::triggered, this, &MainWindow::zoomReset);
 }
@@ -134,12 +135,18 @@ bool MainWindow::saveInput()
     return result;
 }
 
-bool MainWindow::loadInput()
+bool MainWindow::loadProgram()
 {
-    auto result = false;
     auto const filePath = QFileDialog::getOpenFileName(this, tr("Load L-Code program"));
 
-    if (!filePath.trimmed().isEmpty())
+    return loadProgram(filePath);
+}
+
+bool MainWindow::loadProgram(QString const& filePath)
+{
+    bool result = false;
+
+    if (!filePath.isEmpty())
     {
         QFile file(filePath);
 
@@ -160,13 +167,28 @@ bool MainWindow::loadInput()
 void MainWindow::exportImage()
 {
     auto filePath = QFileDialog::getSaveFileName(this, tr("Export image"), m_imageExportDirectory.path(), "Images (*.png *.jpg)");
-    QRect sceneRect = m_graphicsScene->itemsBoundingRect().adjusted(-4, -4, 4, 4).toRect();
-    QImage image(sceneRect.width(), sceneRect.height(), QImage::Format_ARGB32);
+
+    exportImage(filePath);
+}
+
+void MainWindow::exportImage(QString const& filePath)
+{
+    if (filePath.isEmpty())
+    {
+        return;
+    }
+
+    QRect const itemBoundingRect = getBoundingRectangle().toRect();
+    QRect const targetRect(0, 0, itemBoundingRect.width(), itemBoundingRect.height());
+
+    QImage image(targetRect.width(), targetRect.height(), QImage::Format_RGB32);
     QPainter painter(&image);
 
     // TODO: allow to see a preview and allow to change background -> AKA custom image export dialog
+    // With a custom dialog, it's worth to implement something to choose the image format too.
     image.fill(Qt::white);
-    m_graphicsScene->render(&painter);
+
+    m_graphicsScene->render(&painter, targetRect, itemBoundingRect);
 
     if (image.save(filePath))
     {
@@ -187,12 +209,13 @@ void MainWindow::draw()
     // Execute turtle orders
     m_graphicsScene->clear();
     m_turtle.reset();
+    m_turtle.setPen(QPen(Qt::black, 2.));
     m_program.execute(getIterations());
-    m_graphicsView->ensureVisible(m_graphicsScene->itemsBoundingRect().adjusted(-4, -4, 4, 4));
+    m_graphicsView->ensureVisible(getBoundingRectangle());
     updateActions();
 }
 
-void MainWindow::build()
+bool MainWindow::build()
 {
     // Convert text to program content using ANTLR
     auto const text = m_programTextEdit->toPlainText().toUtf8().toStdString();
@@ -209,7 +232,7 @@ void MainWindow::build()
             m_errorOutputTextEdit->appendPlainText(tr(" - Error [%0;%1]: %2").arg(error.line).arg(error.charIndex).arg(QString::fromStdString(error.message)));
         }
 
-        return;
+        return false;
     }
 
     // Update global variables
@@ -233,6 +256,8 @@ void MainWindow::build()
     m_graphicsView->fitInView(m_graphicsScene->itemsBoundingRect(), Qt::KeepAspectRatio);
 
     updateActions();
+
+    return true;
 }
 
 void MainWindow::zoomToFit()
@@ -269,4 +294,9 @@ qreal MainWindow::getDistance() const
 qreal MainWindow::getAngle() const
 {
     return m_angleSelector->value();
+}
+
+QRectF MainWindow::getBoundingRectangle() const
+{
+    return m_graphicsScene->itemsBoundingRect().adjusted(-4, -4, 4, 4).toRect();
 }

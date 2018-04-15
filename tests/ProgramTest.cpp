@@ -94,6 +94,24 @@ TEST_F(ProgramNoActionFixture, axiom_multiple)
     ASSERT_FALSE( program.content().iterations.isValid() );
 }
 
+TEST_F(ProgramNoActionFixture, axiom_multiple_no_spaces)
+{
+    lcode::Program program;
+
+    EXPECT_TRUE( printErrors(program.loadFromLCode("axiom:Ff[];", moduleTable)).empty() );
+
+    ASSERT_EQ( program.content().axiom.size(), 4u );
+    ASSERT_EQ( program.content().axiom.at(0u), moduleTable.createModule("F") );
+    ASSERT_EQ( program.content().axiom.at(1u), moduleTable.createModule("f") );
+    ASSERT_EQ( program.content().axiom.at(2u), moduleTable.createModule("[") );
+    ASSERT_EQ( program.content().axiom.at(3u), moduleTable.createModule("]") );
+    ASSERT_TRUE( program.content().rewriteRules.empty() );
+    ASSERT_FALSE( program.content().angle.isValid() );
+    ASSERT_FALSE( program.content().initialAngle.isValid() );
+    ASSERT_FALSE( program.content().distance.isValid() );
+    ASSERT_FALSE( program.content().iterations.isValid() );
+}
+
 TEST_F(ProgramNoActionFixture, axiom_multiple_iterations)
 {
     lcode::Program program;

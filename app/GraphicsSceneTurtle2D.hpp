@@ -13,6 +13,8 @@ class GraphicsSceneTurtle2D : public lcode::ATurtle2D
 {
 public:
     explicit GraphicsSceneTurtle2D(QGraphicsScene* scene, QPen const& pen = QPen(Qt::SolidLine));
+
+    void setPen(QPen const& pen);
 private:
     void drawLine(QLineF const& line);
 private:

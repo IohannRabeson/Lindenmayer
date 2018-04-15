@@ -29,10 +29,12 @@ public:
     MainWindow();
 
     bool saveInput();
-    bool loadInput();
+    bool loadProgram();
+    bool loadProgram(QString const& filePath);
     void exportImage();
+    void exportImage(QString const& filePath);
     void draw();
-    void build();
+    bool build();
     void zoomToFit();
     void zoomReset();
 private:
@@ -46,6 +48,8 @@ private:
     unsigned int getIterations() const;
     qreal getDistance() const;
     qreal getAngle() const;
+
+    QRectF getBoundingRectangle() const;
 private:
     qool::DockWidgetManager* const m_dockWidgets;
     QStatusBar* const m_statusBar;
@@ -64,7 +68,7 @@ private:
     QAction* const m_actionDraw = new QAction(tr("Draw"), this);
     QAction* const m_actionClearErrors = new QAction(tr("Clear errors"), this);
     QAction* const m_actionZoomToFit = new QAction(tr("Zoom to fit"), this);
-    QAction* const m_actionZoomReset = new QAction(tr("Zoor reset"), this);
+    QAction* const m_actionZoomReset = new QAction(tr("Zoom reset"), this);
 
     lcode::ModuleTable m_moduleTable;
     GraphicsSceneTurtle2D m_turtle;
