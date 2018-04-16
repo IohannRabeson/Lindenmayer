@@ -110,7 +110,7 @@ namespace lcode
         }
         else
         {
-            result.assign(tempResult);
+            result.emplace(std::move(tempResult));
         }
 
         return result;

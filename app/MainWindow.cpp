@@ -238,21 +238,9 @@ bool MainWindow::build()
     // Update global variables
     auto const& content = m_program.content();
 
-    if (content.iterations.isValid())
-    {
-        m_iterationSelector->setValue(static_cast<int>(content.iterations.getValue()));
-    }
-
-    if (content.distance.isValid())
-    {
-        m_distanceSelector->setValue(content.distance.getValue());
-    }
-
-    if (content.angle.isValid())
-    {
-        m_angleSelector->setValue(content.angle.getValue());
-    }
-
+    m_iterationSelector->setValue(static_cast<int>(content.iterations.value_or(1u)));
+    m_distanceSelector->setValue(content.distance.value_or(1.f));
+    m_angleSelector->setValue(content.angle.value_or(90.f));
     m_graphicsView->fitInView(m_graphicsScene->itemsBoundingRect(), Qt::KeepAspectRatio);
 
     updateActions();

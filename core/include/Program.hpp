@@ -7,34 +7,13 @@
 #include "Module.hpp"
 #include "Rewrite.hpp"
 #include "ModuleTable.hpp"
+#include "Optional.hpp"
 
 #include <vector>
 
 namespace lcode
 {
     class ProgramPrivate;
-
-    // TODO: remove that when we can use std::optional
-    template <class T>
-    class Optional
-    {
-    public:
-        Optional() : m_isValid(false) {}
-        template <class U = T> Optional(U&& value): m_value(std::forward<U>(value)), m_isValid(true) {}
-        template <class U = T> Optional<T>& operator = (U&& value)
-        {
-            m_value = std::forward<U>(value);
-            m_isValid = true;
-            return *this;
-        }
-
-        void assign(T const& value) { m_value = value; m_isValid = true; }
-        bool isValid() const { return m_isValid; }
-        T getValue() const { return m_value; }
-    private:
-        T m_value;
-        bool m_isValid = false;
-    };
 
     class Program
     {

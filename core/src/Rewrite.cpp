@@ -6,14 +6,6 @@
 
 namespace lcode
 {
-    namespace
-    {
-        RewriteRules::const_iterator selectRule(Module const& module, RewriteRules const& rules)
-        {
-            return rules.find(module);
-        }
-    }
-
     void rewrite(RewriteRules const& rules, Modules& modules, unsigned int const iterations)
     {
         for (auto i = 0u; i < iterations; ++i)
@@ -22,13 +14,15 @@ namespace lcode
 
             while (moduleIt != modules.end())
             {
-                auto rule = selectRule(*moduleIt, rules);
+                auto replacement = rules.getModules(*moduleIt);
 
-                if (rule != rules.end())
+                if (replacement)
                 {
+                    auto const& replacementModules = replacement.value();
+
                     moduleIt = modules.erase(moduleIt);
-                    moduleIt = modules.insert(moduleIt, rule->second.begin(), rule->second.end());
-                    moduleIt += rule->second.size();
+                    moduleIt = modules.insert(moduleIt, replacementModules.begin(), replacementModules.end());
+                    moduleIt += replacementModules.size();
                 }
                 else
                 {
@@ -40,10 +34,15 @@ namespace lcode
 
     Modules rewrote(RewriteRules const& rules, Modules const& modules, unsigned int const iterations)
     {
-        Modules rewrited = modules;
+        Modules rewroteModules = modules;
 
-        rewrite(rules, rewrited, iterations);
+        rewrite(rules, rewroteModules, iterations);
 
-        return rewrited;
+        return rewroteModules;
+    }
+
+    RewriteRule makeRule(Symbol::Integer const origin, std::initializer_list<Symbol::Integer>&& replacement)
+    {
+        return RewriteRule{lcode::Module(lcode::Symbol(origin)), lcode::makeModules(std::move(replacement))};
     }
 }
