@@ -3,7 +3,7 @@
 set -e
 
 brew update
-brew install qt ninja boost
+brew install qt ninja
 
 QT_PATH="/usr/local/opt/qt"
 

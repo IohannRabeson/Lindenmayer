@@ -8,19 +8,52 @@
 #include "Optional.hpp"
 
 #include <map>
+#include <random>
+#include <iterator>
 
 namespace lcode
 {
     class RewriteRules
     {
+        struct RewriteInfo
+        {
+            Modules modules;
+            float probability;
+        };
+
+        using Rules = std::multimap<Module, RewriteInfo>;
+        using Iterator = Rules::const_iterator;
+        using Distribution = std::uniform_int_distribution<std::iterator_traits<Iterator>::difference_type>;
     public:
         using Rule = std::pair<Module, Modules>;
-        using Iterator = std::map<Module, Modules>::const_iterator;
 
-        template <class ... A>
-        void emplace(A&& ... args)
+        void emplace(Rule&& rule, bool const equalizeProbabilities = true)
         {
-            m_rules.emplace(std::forward<A>(args)...);
+            emplace(rule.first, std::move(rule.second), equalizeProbabilities);
+        }
+
+        void emplace(Module const module, Modules&& replacement, bool const equalizeProbabilities = true)
+        {
+            RewriteInfo info;
+
+            info.modules = std::move(replacement);
+            info.probability = 1.f;
+
+            auto const result = m_rules.insert(std::make_pair(module, std::move(info)));
+
+            if (equalizeProbabilities && result != m_rules.end())
+            {
+                updateProbabities(result->first);
+            }
+        }
+
+        void emplace(Module const module, Modules&& replacement, float const probability)
+        {
+            RewriteInfo info;
+
+            info.modules = std::move(replacement);
+            info.probability = probability;
+            m_rules.insert(std::make_pair(module, std::move(info)));
         }
 
         lcode::Optional<Modules const&> getModules(Module const module) const
@@ -30,22 +63,35 @@ namespace lcode
 
             if (it != end())
             {
-                result.emplace(it->second);
+                result.emplace(it->second.modules);
             }
 
             return result;
         }
 
-
         bool empty() const
         {
             return m_rules.empty();
         }
-
     private:
         Iterator find(Module const module) const
         {
-            return m_rules.find(module);
+            auto const range = m_rules.equal_range(module);
+            auto const size = std::distance(range.first, range.second);
+            auto result = range.first;
+
+            if (size > 1)
+            {
+                m_distribution.param(std::uniform_int_distribution<long>::param_type{0u, size - 1});
+
+                auto const index = m_distribution(m_random);
+
+                result = range.first;
+
+                std::advance(result, index);
+            }
+
+            return result;
         }
 
         Iterator end() const
@@ -53,8 +99,21 @@ namespace lcode
             return m_rules.end();
         }
 
+        void updateProbabities(Module const module)
+        {
+            auto const range = m_rules.equal_range(module);
+            auto const total = static_cast<float>(std::distance(range.first, range.second));
+            auto const equalDistribution = 1.f / total;
+
+            for (auto it = range.first; it != range.second; ++it)
+            {
+                it->second.probability = equalDistribution;
+            }
+        }
     private:
-        std::map<Module, Modules> m_rules;
+        Rules m_rules;
+        mutable std::mt19937_64 m_random;
+        mutable Distribution m_distribution;
     };
 
     using RewriteRule = RewriteRules::Rule;
