@@ -23,7 +23,7 @@ namespace lcode
 
         using Rules = std::multimap<Module, RewriteInfo>;
         using Iterator = Rules::const_iterator;
-        using Distribution = std::uniform_int_distribution<std::iterator_traits<Iterator>::difference_type>;
+        using Distribution = std::discrete_distribution<float>;
     public:
         using Rule = std::pair<Module, Modules>;
 
@@ -82,9 +82,19 @@ namespace lcode
 
             if (size > 1)
             {
-                m_distribution.param(std::uniform_int_distribution<long>::param_type{0u, size - 1});
+                std::vector<double> weights;
+
+                for (auto it = range.first; it != range.second; ++it)
+                {
+                    weights.emplace_back(it->second.probability);
+                }
+
+                m_distribution = Distribution(weights.begin(), weights.end());
+                m_distribution.param(Distribution::param_type{weights.begin(), weights.end()});
 
                 auto const index = m_distribution(m_random);
+
+                assert( index < weights.size() );
 
                 result = range.first;
 

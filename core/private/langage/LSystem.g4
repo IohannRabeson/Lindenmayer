@@ -29,8 +29,12 @@ Boolean
     | FALSE
     ;
 
+AssignOperator
+    : '='
+    ;
+
 TransformOperator
-	: '='
+	: '->'
 	;
 
 Identifier

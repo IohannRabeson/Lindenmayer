@@ -62,12 +62,6 @@ struct ProgramTurtleMockActionFixture : public ::testing::Test
     lcode::ModuleTable moduleTable;
 };
 
-//template <class T>
-//static T makeGTestHappyWithOptional(std::optional<T> const& opt)
-//{
-//    return opt.value();
-//}
-
 TEST_F(ProgramNoActionFixture, axiom_single)
 {
     lcode::Program program;
@@ -221,7 +215,7 @@ TEST(Program, execute_twice)
 
     ASSERT_TRUE( printErrors(program.loadFromLCode("axiom: F;"
                                                    "iterations: 2;"
-                                                   "F = F F;"
+                                                   "F -> F F;"
                                                    , moduleTable)).empty() );
 
     // F will be transformed into F F, so 2 calls, twice, 4 calls.
@@ -279,7 +273,7 @@ TEST(Program, alias)
                                                    "distance: 3.14;"
                                                    "angle: 63.14;"
                                                    "alias G = F;"
-                                                   "F = G;"
+                                                   "F -> G;"
                                                    , moduleTable)).empty() );
 
     program.execute(1u);
