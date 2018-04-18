@@ -91,7 +91,7 @@ namespace lcode
             auto const text = terminalNode->getText();
             auto result = 0.f;
 
-            if (!text.empty())
+            if (!text.empty() && dynamic_cast<antlr4::tree::ErrorNode*>(terminalNode) == nullptr)
             {
                 result = std::stof(text);
             }

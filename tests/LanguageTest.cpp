@@ -60,4 +60,6 @@ TEST_F(LanguageNoActionFixture, transformations)
     lcode::Program program;
 
     ASSERT_FALSE( program.loadFromLCode("axiom: F; F -> () Ff;", moduleTable).empty() );
+    // Float should have a '.' after
+    ASSERT_FALSE(program.loadFromLCode("axiom: F; F -> (1) Ff;", moduleTable).empty());
 }
