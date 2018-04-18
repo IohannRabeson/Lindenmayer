@@ -23,7 +23,7 @@ namespace lcode
 
         using Rules = std::multimap<Module, RewriteInfo>;
         using Iterator = Rules::const_iterator;
-        using Distribution = std::discrete_distribution<float>;
+        using Distribution = std::discrete_distribution<std::size_t>;
     public:
         using Rule = Rules::value_type;
 

@@ -19,6 +19,7 @@
 #include <QDoubleSpinBox>
 #include <QGraphicsScene>
 #include <QGraphicsView>
+#include <QtGlobal>
 
 #include <QtDebug>
 
@@ -65,14 +66,14 @@ void MainWindow::setupWidgets()
     setCentralWidget(m_graphicsView);
     setStatusBar(m_statusBar);
 }
-
+// Instead of using qOverload<> I prefer to use lambdas because they are
+// working with MSVC. qOverload does not compile with MSVC...
 void MainWindow::setupActions()
 {
     connect(m_actionBuild, &QAction::triggered, this, &MainWindow::build);
 
     connect(m_actionDraw, &QAction::triggered, this, &MainWindow::draw);
-    connect(m_actionExportImage, &QAction::triggered, this, qOverload<>(&MainWindow::exportImage));
-
+    connect(m_actionExportImage, &QAction::triggered, [this]() { exportImage(); });
     connect(m_actionClearErrors, &QAction::triggered, [this]()
     {
         m_errorOutputTextEdit->clear();
@@ -80,7 +81,7 @@ void MainWindow::setupActions()
     });
 
     connect(m_actionSaveProgram, &QAction::triggered, this, &MainWindow::saveInput);
-    connect(m_actionLoadProgram, &QAction::triggered, this, qOverload<>(&MainWindow::loadProgram));
+    connect(m_actionLoadProgram, &QAction::triggered, this, [this]() { loadProgram(); });
     connect(m_actionZoomToFit, &QAction::triggered, this, &MainWindow::zoomToFit);
     connect(m_actionZoomReset, &QAction::triggered, this, &MainWindow::zoomReset);
 }

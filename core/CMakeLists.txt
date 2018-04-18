@@ -35,4 +35,5 @@ target_compile_definitions(LindenmayerHeart PUBLIC QT_NO_FOREACH)
 
 target_include_directories(LindenmayerHeart PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-        PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src ${CMAKE_CURRENT_SOURCE_DIR}/private)
+        PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src ${CMAKE_CURRENT_SOURCE_DIR}/private
+		PUBLIC ${Boost_INCLUDE_DIRS})
