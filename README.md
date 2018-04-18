@@ -15,7 +15,10 @@ Require Qt 5 installed on your system.
 Also a C++ compiler with support for C++17 is required.
 For now I'm using `clang-900.0.39.2` on OSX.
 
+Boost is required, at least 1.66.0.
+
 Qt directory should be added to `CMAKE_PREFIX_PATH`.
+
 ```bash
 cmake <project_dir> -G <generator> -DCMAKE_PREFIX_PATH="$(brew --prefix qt)"
 ```

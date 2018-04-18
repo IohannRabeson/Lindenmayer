@@ -10,27 +10,7 @@
 #include <iostream>
 
 #include "Mocks/Turtle2DMock.hpp"
-
-std::vector<lcode::Program::Error> const& printErrors(std::vector<lcode::Program::Error> const& errors)
-{
-    for (auto const& error : errors)
-    {
-        std::cout << " - Error: " << error.message << "\n";
-    }
-    return errors;
-}
-
-TEST(Program, program_empty)
-{
-    lcode::Program program;
-
-    EXPECT_TRUE( program.content().axiom.empty() );
-    ASSERT_TRUE( program.content().rewriteRules.empty() );
-    ASSERT_FALSE( program.content().angle );
-    ASSERT_FALSE( program.content().initialAngle );
-    ASSERT_FALSE( program.content().distance );
-    ASSERT_FALSE( program.content().iterations );
-}
+#include "Utility/ProgramError.hpp"
 
 struct ProgramNoActionFixture : public ::testing::Test
 {
@@ -46,6 +26,18 @@ struct ProgramNoActionFixture : public ::testing::Test
 
     lcode::ModuleTable moduleTable;
 };
+
+TEST(Program, program_empty)
+{
+    lcode::Program program;
+
+    EXPECT_TRUE( program.content().axiom.empty() );
+    ASSERT_TRUE( program.content().rewriteRules.empty() );
+    ASSERT_FALSE( program.content().angle );
+    ASSERT_FALSE( program.content().initialAngle );
+    ASSERT_FALSE( program.content().distance );
+    ASSERT_FALSE( program.content().iterations );
+}
 
 struct ProgramTurtleMockActionFixture : public ::testing::Test
 {
@@ -125,7 +117,6 @@ TEST_F(ProgramNoActionFixture, axiom_multiple_iterations)
     ASSERT_EQ( program.content().axiom.at(2u), moduleTable.createModule("[") );
     ASSERT_EQ( program.content().axiom.at(3u), moduleTable.createModule("]") );
 
-
     ASSERT_TRUE( program.content().rewriteRules.empty() );
     ASSERT_FALSE( program.content().angle );
     ASSERT_FALSE( program.content().initialAngle );
@@ -146,7 +137,6 @@ TEST_F(ProgramNoActionFixture, axiom_multiple_distance)
     ASSERT_EQ( program.content().axiom.at(1u), moduleTable.createModule("f") );
     ASSERT_EQ( program.content().axiom.at(2u), moduleTable.createModule("[") );
     ASSERT_EQ( program.content().axiom.at(3u), moduleTable.createModule("]") );
-
 
     ASSERT_TRUE( program.content().rewriteRules.empty() );
     ASSERT_FALSE( program.content().angle );

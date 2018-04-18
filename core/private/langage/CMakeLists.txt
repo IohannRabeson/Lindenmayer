@@ -22,7 +22,7 @@ endforeach()
 
 set(LANGAGE_SRC
     ${GENERATED_SRC}
-    )
+)
 
 set(ANTLR4CPP_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/externals/antlr4/runtime/Cpp/runtime/src")
 set(ANTLR4CPP_LIBS antlr4_static)
@@ -48,4 +48,5 @@ add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/generated/LSystemBaseList
         "${CMAKE_CURRENT_BINARY_DIR}/generated/LSystemParser.h"
         COMMAND "${Java_JAVA_EXECUTABLE}" -jar "${PROJECT_SOURCE_DIR}/externals/antlr-4.7.1-complete.jar"
         -Dlanguage=Cpp "${CMAKE_CURRENT_SOURCE_DIR}/LSystem.g4" -o "${CMAKE_CURRENT_BINARY_DIR}/generated"
-        DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/LSystem.g4")
+        DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/LSystem.g4"
+        COMMENT "Generate LSystem Language")

@@ -18,108 +18,32 @@ namespace lcode
         struct RewriteInfo
         {
             Modules modules;
-            float probability;
+            float probability = 1.f;
         };
 
         using Rules = std::multimap<Module, RewriteInfo>;
         using Iterator = Rules::const_iterator;
         using Distribution = std::discrete_distribution<float>;
     public:
-        using Rule = std::pair<Module, Modules>;
+        using Rule = Rules::value_type;
 
-        void emplace(Rule&& rule, bool const equalizeProbabilities = true)
-        {
-            emplace(rule.first, std::move(rule.second), equalizeProbabilities);
-        }
+        void emplace(Rule&& rule, bool const equalizeProbabilities = true);
 
-        void emplace(Module const module, Modules&& replacement, bool const equalizeProbabilities = true)
-        {
-            RewriteInfo info;
+        void emplace(Module const module, Modules&& replacement, bool const equalizeProbabilities = true);
 
-            info.modules = std::move(replacement);
-            info.probability = 1.f;
+        void emplace(Module const module, Modules&& replacement, float const probability);
 
-            auto const result = m_rules.insert(std::make_pair(module, std::move(info)));
+        lcode::Optional<Modules const&> getModules(Module const module) const;
 
-            if (equalizeProbabilities && result != m_rules.end())
-            {
-                updateProbabities(result->first);
-            }
-        }
-
-        void emplace(Module const module, Modules&& replacement, float const probability)
-        {
-            RewriteInfo info;
-
-            info.modules = std::move(replacement);
-            info.probability = probability;
-            m_rules.insert(std::make_pair(module, std::move(info)));
-        }
-
-        lcode::Optional<Modules const&> getModules(Module const module) const
-        {
-            lcode::Optional<Modules const&> result;
-            auto it = find(module);
-
-            if (it != end())
-            {
-                result.emplace(it->second.modules);
-            }
-
-            return result;
-        }
-
-        bool empty() const
-        {
-            return m_rules.empty();
-        }
+        bool empty() const;
     private:
-        Iterator find(Module const module) const
-        {
-            auto const range = m_rules.equal_range(module);
-            auto const size = std::distance(range.first, range.second);
-            auto result = range.first;
+        Iterator find(Module const module) const;
 
-            if (size > 1)
-            {
-                std::vector<double> weights;
+        Iterator end() const;
 
-                for (auto it = range.first; it != range.second; ++it)
-                {
-                    weights.emplace_back(it->second.probability);
-                }
+        void updateProbabities(Module const module);
 
-                m_distribution = Distribution(weights.begin(), weights.end());
-                m_distribution.param(Distribution::param_type{weights.begin(), weights.end()});
-
-                auto const index = m_distribution(m_random);
-
-                assert( index < weights.size() );
-
-                result = range.first;
-
-                std::advance(result, index);
-            }
-
-            return result;
-        }
-
-        Iterator end() const
-        {
-            return m_rules.end();
-        }
-
-        void updateProbabities(Module const module)
-        {
-            auto const range = m_rules.equal_range(module);
-            auto const total = static_cast<float>(std::distance(range.first, range.second));
-            auto const equalDistribution = 1.f / total;
-
-            for (auto it = range.first; it != range.second; ++it)
-            {
-                it->second.probability = equalDistribution;
-            }
-        }
+        friend Rule makeRule(Symbol::Integer const origin, std::initializer_list<Symbol::Integer>&& replacement);
     private:
         Rules m_rules;
         mutable std::mt19937_64 m_random;
@@ -128,8 +52,7 @@ namespace lcode
 
     using RewriteRule = RewriteRules::Rule;
 
-    RewriteRule makeRule(Symbol::Integer const origin, std::initializer_list<Symbol::Integer>&& replacement);
-
+    RewriteRules::Rule makeRule(Symbol::Integer const origin, std::initializer_list<Symbol::Integer>&& replacement);
     void rewrite(RewriteRules const& rules, Modules& modules, unsigned int const iterations);
     Modules rewrote(RewriteRules const& rules, Modules const& modules, unsigned int const iterations);
 }

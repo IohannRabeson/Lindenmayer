@@ -6,22 +6,26 @@ fragment TRUE : 'true' ;
 fragment FALSE : 'false' ;
 fragment NEWLINE   : '\r' '\n' | '\n' | '\r';
 
-program 		                : axiom (iterations | distance |  angle | initial_angle | alias)* transformation*;
-axiom                           : 'axiom:' Identifier+ EndOfLine;
-iterations                      : 'iterations:' Integer EndOfLine;
-distance                        : 'distance:' Float EndOfLine;
-angle                           : 'angle:' Float EndOfLine;
-initial_angle                   : 'initialAngle:' Float EndOfLine;
-alias                           : 'alias' Identifier '=' Identifier EndOfLine;
-
-transformation              : Identifier TransformOperator Identifier+ EndOfLine;
+program 	   : axiom (iterations | distance |  angle | initial_angle | alias)* transformation*;
+axiom          : 'axiom:' module+ EndOfLine;
+iterations     : 'iterations:' Integer EndOfLine;
+distance       : 'distance:' Float EndOfLine;
+angle          : 'angle:' Float EndOfLine;
+initial_angle  : 'initialAngle:' Float EndOfLine;
+alias          : 'alias' Identifier '=' Identifier EndOfLine;
+transformation : module TransformOperator probability? module+ EndOfLine;
+probability    : '(' Float ')';
+module         : Identifier parameter_pack?;
+parameter_pack : ('(' parameter ( ',' parameter )* ')') | '(' ')';
+parameter      : expression;
+expression     : Float | Integer | Boolean;
 
 Integer
     : ( '-' | '+' ) ? DIGIT09+
     ;
 
 Float
-    : ( '-' | '+' ) ? DIGIT19 DIGIT09* '.' ? DIGIT09*
+    : ( '-' | '+' ) ? DIGIT09+ '.' ? DIGIT09*
     ;
 
 Boolean

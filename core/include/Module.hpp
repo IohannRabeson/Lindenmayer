@@ -17,6 +17,10 @@ namespace lcode
     public:
         Module() = default;
         explicit Module(Symbol const symbol);
+        Module(Module&&) = default;
+        Module& operator = (Module&&) = default;
+        Module(Module const&) = default;
+        Module& operator = (Module const&) = default;
 
         bool isNull() const;
         friend std::string toString(Module const&);

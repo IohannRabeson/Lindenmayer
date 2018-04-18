@@ -10,7 +10,7 @@ set(MOCK_SRC
 
 set(SRC
     ${MOCK_SRC}
-    gtest.cpp RewriteTest.cpp ProgramTest.cpp Mocks/Turtle2DMock.hpp)
+    gtest.cpp RewriteTest.cpp ProgramTest.cpp Mocks/Turtle2DMock.hpp LanguageTest.cpp Fixtures/ProgramNoActionFixture.hpp Utility/ProgramError.hpp Utility/ProgramError.cpp)
 
 add_executable(unit_tests ${SRC})
 target_link_libraries(unit_tests PRIVATE LindenmayerHeart gtest gmock Qt5::Core Qt5::Widgets)
