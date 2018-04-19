@@ -84,22 +84,21 @@ namespace lcode
             return modules;
         }
 
-        float getFloat(antlr4::tree::TerminalNode* const terminalNode, std::vector<Program::Error>& errors)
+        bool isError(antlr4::tree::TerminalNode* const node)
+        {
+            return dynamic_cast<antlr4::tree::ErrorNode*>(node) != nullptr;
+        }
+
+        Optional<float> getFloat(antlr4::tree::TerminalNode* const terminalNode)
         {
             assert(terminalNode != nullptr);
 
+            Optional<float> result;
             auto const text = terminalNode->getText();
-            auto result = 0.f;
 
-            if (!text.empty())
+            if (!text.empty() && !isError(terminalNode))
             {
-                result = std::stof(text);
-            }
-            else
-            {
-                auto error = antlr::errorFromToken(terminalNode->getSymbol(), "invalid probability");
-
-                errors.emplace_back(std::move(error));
+                result.emplace(std::stof(text));
             }
             return result;
         }
@@ -115,11 +114,13 @@ namespace lcode
             Module assignedModule = ContextHelper::getModule(moduleContexts.front(), m_parseResult.moduleTable);
             auto replacementModules = ContextHelper::getModules(moduleContexts.begin() + 1, moduleContexts.end(), m_parseResult.moduleTable);
 
-            if (probabilityContext)
+            if (probabilityContext && probabilityContext->Float() && !ContextHelper::isError(probabilityContext->Float()))
             {
-                auto probabilityValue = ContextHelper::getFloat(probabilityContext->Float(), m_parseResult.errors);
+                auto probabilityValue = ContextHelper::getFloat(probabilityContext->Float());
 
-                m_parseResult.rewriteRules.emplace(std::move(assignedModule), std::move(replacementModules), probabilityValue);
+                assert( probabilityValue );
+
+                m_parseResult.rewriteRules.emplace(std::move(assignedModule), std::move(replacementModules), probabilityValue.value());
             }
             else
             {
@@ -224,12 +225,13 @@ namespace lcode
         // TODO: resolve expression here instead of just parsing a simple number
         if (tokens.size() == 1u)
         {
-            auto const value = ContextHelper::getFloat(context->Float(), m_parseResult.errors);
+            auto const value = ContextHelper::getFloat(context->Float()).value();
 
             if (value >= 0)
             {
                 m_parseResult.distance = value;
-            } else
+            }
+            else
             {
                 auto const text = tokens.front()->getText();
                 Program::Error error = antlr::errorFromToken(tokens.front()->getSymbol(),
@@ -253,7 +255,7 @@ namespace lcode
 
     void Program::LoadFromLCode::enterInitial_angle(LSystemParser::Initial_angleContext* context)
     {
-        m_parseResult.initialAngle = ContextHelper::getFloat(context->Float(), m_parseResult.errors);
+        m_parseResult.initialAngle = ContextHelper::getFloat(context->Float());
     }
 
     void Program::LoadFromLCode::enterAlias(LSystemParser::AliasContext* context)

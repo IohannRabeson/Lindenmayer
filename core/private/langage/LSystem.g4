@@ -25,7 +25,7 @@ Integer
     ;
 
 Float
-    : ( '-' | '+' ) ? DIGIT09+ '.' ? DIGIT09*
+    : ( '-' | '+' ) ? DIGIT09+ '.' DIGIT09*
     ;
 
 Boolean

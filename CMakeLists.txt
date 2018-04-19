@@ -28,6 +28,12 @@ if (RETAIL_MODE)
     set(BUILD_INFOS "${BUILD_INFOS} (retail)")
 endif()
 
+# Google Test is builded with the flag /MT
+if (MSVC)
+	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
+	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
+endif()
+
 message(${BUILD_INFOS})
 
 set(CMAKE_CXX_STANDARD 17)
