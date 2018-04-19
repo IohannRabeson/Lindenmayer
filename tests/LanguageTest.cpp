@@ -26,7 +26,8 @@ inline void testAxiomModules(std::string const& text, lcode::Modules&& modules, 
     EXPECT_EQ( program.content().axiom, modules );
 }
 
-inline void testTransformation(std::string const& text, lcode::Module const& replaced, lcode::Modules const& replacement, lcode::ModuleTable const& moduleTable)
+inline void testTransformation(std::string const& text, lcode::Module const& replaced,
+        lcode::Modules const& replacement, lcode::ModuleTable const& moduleTable)
 {
     lcode::Program program;
 
@@ -35,6 +36,7 @@ inline void testTransformation(std::string const& text, lcode::Module const& rep
     auto const replacementReal = program.content().rewriteRules.getModules(replaced);
 
     ASSERT_TRUE( replacementReal );
+
     EXPECT_EQ( replacementReal.value(), replacement );
 }
 
@@ -54,12 +56,15 @@ TEST_F(LanguageNoActionFixture, axiom)
 
 TEST_F(LanguageNoActionFixture, transformations)
 {
+    // I can't test the probability values with the current API...
     testTransformation("axiom: F; F -> Ff;", moduleTable.createModule("F"), moduleTable.createModules({"F", "f"}), moduleTable);
     testTransformation("axiom: F; F -> (0.5) Ff;", moduleTable.createModule("F"), moduleTable.createModules({"F", "f"}), moduleTable);
+    testTransformation("axiom: F; F -> (1.) Ff;", moduleTable.createModule("F"), moduleTable.createModules({"F", "f"}), moduleTable);
 
     lcode::Program program;
 
     ASSERT_FALSE( program.loadFromLCode("axiom: F; F -> () Ff;", moduleTable).empty() );
-    // Float should have a '.' after
-    ASSERT_FALSE(program.loadFromLCode("axiom: F; F -> (1) Ff;", moduleTable).empty());
+    // Floats must have a dot, otherwise it's an integer
+    ASSERT_FALSE( program.loadFromLCode("axiom: F; F -> (1) Ff;", moduleTable).empty() );
+    ASSERT_FALSE( program.loadFromLCode("axiom: F; F -> () Ff;", moduleTable).empty() );
 }

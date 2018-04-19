@@ -46,7 +46,7 @@ add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/generated/LSystemBaseList
         "${CMAKE_CURRENT_BINARY_DIR}/generated/LSystemListener.h"
         "${CMAKE_CURRENT_BINARY_DIR}/generated/LSystemParser.cpp"
         "${CMAKE_CURRENT_BINARY_DIR}/generated/LSystemParser.h"
-        COMMAND "${Java_JAVA_EXECUTABLE}" -jar "${PROJECT_SOURCE_DIR}/externals/antlr-4.7.1-complete.jar"
+        COMMAND "${Java_JAVA_EXECUTABLE}" -cp "${PROJECT_SOURCE_DIR}/externals/antlr-4.7.1-complete.jar" org.antlr.v4.Tool
         -Dlanguage=Cpp "${CMAKE_CURRENT_SOURCE_DIR}/LSystem.g4" -o "${CMAKE_CURRENT_BINARY_DIR}/generated"
         DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/LSystem.g4"
         COMMENT "Generate LSystem Language")
