@@ -115,7 +115,7 @@ namespace lcode
             Module assignedModule = ContextHelper::getModule(moduleContexts.front(), m_parseResult.moduleTable);
             auto replacementModules = ContextHelper::getModules(moduleContexts.begin() + 1, moduleContexts.end(), m_parseResult.moduleTable);
 
-            if (probabilityContext)
+            if (probabilityContext && probabilityContext->Float())
             {
                 auto probabilityValue = ContextHelper::getFloat(probabilityContext->Float(), m_parseResult.errors);
 
