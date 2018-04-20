@@ -66,7 +66,7 @@ namespace lcode
 
         if (equalizeProbabilities && result != m_rules.end())
         {
-            updateProbabities(result->first);
+            updateProbabilities(result->first);
         }
     }
 
@@ -75,7 +75,7 @@ namespace lcode
         RewriteInfo info;
 
         info.modules = std::move(replacement);
-        info.probability = probability;
+        info.probability.emplace(probability);
         m_rules.insert(std::make_pair(module, std::move(info)));
     }
 
@@ -92,19 +92,24 @@ namespace lcode
         return result;
     }
 
+    bool RewriteRules::haveProbability(RewriteRules::Rules::value_type const& rule)
+    {
+        return rule.second.probability.is_initialized();
+    }
+
     RewriteRules::Iterator RewriteRules::find(Module const module) const
     {
         auto const range = m_rules.equal_range(module);
         auto const size = std::distance(range.first, range.second);
         auto result = range.first;
 
-        if (size > 1)
+        if (size > 1 && std::all_of(range.first, range.second, haveProbability))
         {
             std::vector<double> weights;
 
             for (auto it = range.first; it != range.second; ++it)
             {
-                weights.emplace_back(it->second.probability);
+                weights.emplace_back(it->second.probability.value());
             }
 
             m_distribution = Distribution(weights.begin(), weights.end());
@@ -127,7 +132,7 @@ namespace lcode
         return m_rules.end();
     }
 
-    void RewriteRules::updateProbabities(Module const module)
+    void RewriteRules::updateProbabilities(Module const module)
     {
         auto const range = m_rules.equal_range(module);
         auto const total = static_cast<float>(std::distance(range.first, range.second));
