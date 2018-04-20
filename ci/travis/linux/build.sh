@@ -2,10 +2,10 @@ set -e
 
 # install more recent Qt 5.
 sudo apt-add-repository --yes ppa:beineri/opt-qt-5.10.1-trusty
+sudo apt-add-repository --yes ppa:nschloe/boost-nightly
 sudo apt-get -qq update
-sudo apt-get --yes install qt510-meta-minimal qt510tools qt510location libboost-all-dev
+sudo apt-get --yes install qt510-meta-minimal qt510tools qt510location boost1.66
 sudo /opt/qt510/bin/qt510-env.sh
-
 
 mkdir builds
 cd builds

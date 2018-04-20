@@ -21,7 +21,6 @@ if (NOT APPLICATION_VERSION)
     endif()
 endif()
 
-
 set(BUILD_INFOS "-- Build version: ${APPLICATION_VERSION}")
 
 if (RETAIL_MODE)
