@@ -9,4 +9,4 @@
 	url = git@github.com:IohannRabeson/Qool.git
 [submodule "externals/antlr4"]
 	path = externals/antlr4
-	url = https://github.com/antlr/antlr4.git
+	url = https://github.com/IohannRabeson/antlr4.git
