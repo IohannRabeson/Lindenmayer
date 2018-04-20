@@ -8,8 +8,12 @@ checkout and clone using `--recursive`.
 
 ## Install dependencies
 ```bash
-brew install qt boost
+brew install qt
 ```
+
+### Note
+boost::optional (1.67.0) is directly embedded using bcp.
+
 ## Build
 
 Require Qt 5 installed on your system.
