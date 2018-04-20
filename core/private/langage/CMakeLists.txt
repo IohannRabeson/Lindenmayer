@@ -34,6 +34,9 @@ target_link_libraries(lindenmayer-langage PUBLIC "${ANTLR4CPP_LIBS}")
 message(STATUS "ANTLR4CPP_INCLUDE_DIRS=${ANTLR4CPP_INCLUDE_DIRS}")
 message(STATUS "ANTLR4CPP_LIBS=${ANTLR4CPP_LIBS}")
 
+set(LOCAL_ANTLR_GENERATOR_JAR "${CMAKE_CURRENT_BINARY_DIR}/antlr-complete-4.7.1.jar")
+file(DOWNLOAD "http://www.antlr.org/download/antlr-4.7.1-complete.jar" "${LOCAL_ANTLR_GENERATOR_JAR}")
+
 # Call antlr to generate C++ files into the "generated" directory.
 # Doc here: https://github.com/antlr/antlr4/blob/master/doc/cpp-target.md
 add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/generated/LSystemBaseListener.cpp"
@@ -46,7 +49,7 @@ add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/generated/LSystemBaseList
         "${CMAKE_CURRENT_BINARY_DIR}/generated/LSystemListener.h"
         "${CMAKE_CURRENT_BINARY_DIR}/generated/LSystemParser.cpp"
         "${CMAKE_CURRENT_BINARY_DIR}/generated/LSystemParser.h"
-        COMMAND "${Java_JAVA_EXECUTABLE}" -cp "${PROJECT_SOURCE_DIR}/externals/antlr-4.7.1-complete.jar" org.antlr.v4.Tool
+        COMMAND "${Java_JAVA_EXECUTABLE}" -cp "${LOCAL_ANTLR_GENERATOR_JAR}" org.antlr.v4.Tool
         -Dlanguage=Cpp "${CMAKE_CURRENT_SOURCE_DIR}/LSystem.g4" -o "${CMAKE_CURRENT_BINARY_DIR}/generated"
         DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/LSystem.g4"
         COMMENT "Generate LSystem Language")
