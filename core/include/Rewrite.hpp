@@ -18,7 +18,7 @@ namespace lcode
         struct RewriteInfo
         {
             Modules modules;
-            float probability = 1.f;
+            lcode::Optional<float> probability;
         };
 
         using Rules = std::multimap<Module, RewriteInfo>;
@@ -28,9 +28,7 @@ namespace lcode
         using Rule = Rules::value_type;
 
         void emplace(Rule&& rule, bool const equalizeProbabilities = true);
-
         void emplace(Module const module, Modules&& replacement, bool const equalizeProbabilities = true);
-
         void emplace(Module const module, Modules&& replacement, float const probability);
 
         lcode::Optional<Modules const&> getModules(Module const module) const;
@@ -38,12 +36,13 @@ namespace lcode
         bool empty() const;
     private:
         Iterator find(Module const module) const;
-
         Iterator end() const;
 
-        void updateProbabities(Module const module);
+        void updateProbabilities(Module const module);
 
         friend Rule makeRule(Symbol::Integer const origin, std::initializer_list<Symbol::Integer>&& replacement);
+
+        static bool haveProbability(RewriteRules::Rules::value_type const& rule);
     private:
         Rules m_rules;
         mutable std::mt19937_64 m_random;
