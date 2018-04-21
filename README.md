@@ -6,6 +6,10 @@ Provide a tool with a dedicated language to describe and visualize Lindenmayer s
 We use git submodules. Keep in mind to update submodules after
 checkout and clone using `--recursive`.
 
+```
+git clone --recursive git@github.com:IohannRabeson/Lindenmayer.git
+```
+
 ## Install dependencies
 ```bash
 brew install qt boost
