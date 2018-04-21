@@ -10,6 +10,8 @@
 #include "Program.hpp"
 #include "ModuleTable.hpp"
 
+#include <vector>
+
 namespace lcode
 {
     class Program::LoadFromLCode : public ALoader,
@@ -61,7 +63,6 @@ namespace lcode
         void enterInitial_angle(LSystemParser::Initial_angleContext* context) override;
 
         void enterAlias(LSystemParser::AliasContext* context) override;
-
     };
 }
 

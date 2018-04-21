@@ -9,6 +9,7 @@
 #include <functional>
 #include <string>
 #include <map>
+#include <initializer_list>
 
 namespace lcode
 {
@@ -22,6 +23,7 @@ namespace lcode
 
         bool createAlias(std::string const& alias, std::string const& aliased);
         Module createModule(std::string const& identifier) const;
+        Modules createModules(std::initializer_list<std::string> const& identifiers) const;
         Modules createModules(std::vector<std::string> const& identifiers) const;
 
         void execute(Modules const& modules) const;

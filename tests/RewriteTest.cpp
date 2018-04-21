@@ -23,8 +23,8 @@ TEST(Rewrite, rewrite_test_simple_D0L)
     lcode::Modules axiom = lcode::makeModules({1});
     lcode::RewriteRules rules;
 
-    rules.emplace(lcode::Module(lcode::Symbol(0)), lcode::makeModules({0, 1}));
-    rules.emplace(lcode::Module(lcode::Symbol(1)), lcode::makeModules({0}));
+    rules.emplace(lcode::makeRule(0, {0, 1}));
+    rules.emplace(lcode::makeRule(1, {0}));
 
     ASSERT_EQ(lcode::rewrote(rules, axiom, 0u), lcode::makeModules({1}) );
     ASSERT_EQ(lcode::rewrote(rules, axiom, 1u), lcode::makeModules({0}) );

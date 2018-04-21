@@ -10,27 +10,7 @@
 #include <iostream>
 
 #include "Mocks/Turtle2DMock.hpp"
-
-std::vector<lcode::Program::Error> const& printErrors(std::vector<lcode::Program::Error> const& errors)
-{
-    for (auto const& error : errors)
-    {
-        std::cout << " - Error: " << error.message << "\n";
-    }
-    return errors;
-}
-
-TEST(Program, program_empty)
-{
-    lcode::Program program;
-
-    EXPECT_TRUE( program.content().axiom.empty() );
-    ASSERT_TRUE( program.content().rewriteRules.empty() );
-    ASSERT_FALSE( program.content().angle.isValid() );
-    ASSERT_FALSE( program.content().initialAngle.isValid() );
-    ASSERT_FALSE( program.content().distance.isValid() );
-    ASSERT_FALSE( program.content().iterations.isValid() );
-}
+#include "Utility/ProgramError.hpp"
 
 struct ProgramNoActionFixture : public ::testing::Test
 {
@@ -46,6 +26,18 @@ struct ProgramNoActionFixture : public ::testing::Test
 
     lcode::ModuleTable moduleTable;
 };
+
+TEST(Program, program_empty)
+{
+    lcode::Program program;
+
+    EXPECT_TRUE( program.content().axiom.empty() );
+    ASSERT_TRUE( program.content().rewriteRules.empty() );
+    ASSERT_FALSE( program.content().angle );
+    ASSERT_FALSE( program.content().initialAngle );
+    ASSERT_FALSE( program.content().distance );
+    ASSERT_FALSE( program.content().iterations );
+}
 
 struct ProgramTurtleMockActionFixture : public ::testing::Test
 {
@@ -70,10 +62,10 @@ TEST_F(ProgramNoActionFixture, axiom_single)
     ASSERT_FALSE( program.content().axiom.empty() );
     ASSERT_EQ( program.content().axiom.front(), moduleTable.createModule("F") );
     ASSERT_TRUE( program.content().rewriteRules.empty() );
-    ASSERT_FALSE( program.content().angle.isValid() );
-    ASSERT_FALSE( program.content().initialAngle.isValid() );
-    ASSERT_FALSE( program.content().distance.isValid() );
-    ASSERT_FALSE( program.content().iterations.isValid() );
+    ASSERT_FALSE( program.content().angle );
+    ASSERT_FALSE( program.content().initialAngle );
+    ASSERT_FALSE( program.content().distance );
+    ASSERT_FALSE( program.content().iterations );
 }
 
 TEST_F(ProgramNoActionFixture, axiom_multiple)
@@ -88,10 +80,10 @@ TEST_F(ProgramNoActionFixture, axiom_multiple)
     ASSERT_EQ( program.content().axiom.at(2u), moduleTable.createModule("[") );
     ASSERT_EQ( program.content().axiom.at(3u), moduleTable.createModule("]") );
     ASSERT_TRUE( program.content().rewriteRules.empty() );
-    ASSERT_FALSE( program.content().angle.isValid() );
-    ASSERT_FALSE( program.content().initialAngle.isValid() );
-    ASSERT_FALSE( program.content().distance.isValid() );
-    ASSERT_FALSE( program.content().iterations.isValid() );
+    ASSERT_FALSE( program.content().angle );
+    ASSERT_FALSE( program.content().initialAngle );
+    ASSERT_FALSE( program.content().distance );
+    ASSERT_FALSE( program.content().iterations );
 }
 
 TEST_F(ProgramNoActionFixture, axiom_multiple_no_spaces)
@@ -106,10 +98,10 @@ TEST_F(ProgramNoActionFixture, axiom_multiple_no_spaces)
     ASSERT_EQ( program.content().axiom.at(2u), moduleTable.createModule("[") );
     ASSERT_EQ( program.content().axiom.at(3u), moduleTable.createModule("]") );
     ASSERT_TRUE( program.content().rewriteRules.empty() );
-    ASSERT_FALSE( program.content().angle.isValid() );
-    ASSERT_FALSE( program.content().initialAngle.isValid() );
-    ASSERT_FALSE( program.content().distance.isValid() );
-    ASSERT_FALSE( program.content().iterations.isValid() );
+    ASSERT_FALSE( program.content().angle );
+    ASSERT_FALSE( program.content().initialAngle );
+    ASSERT_FALSE( program.content().distance );
+    ASSERT_FALSE( program.content().iterations );
 }
 
 TEST_F(ProgramNoActionFixture, axiom_multiple_iterations)
@@ -125,13 +117,12 @@ TEST_F(ProgramNoActionFixture, axiom_multiple_iterations)
     ASSERT_EQ( program.content().axiom.at(2u), moduleTable.createModule("[") );
     ASSERT_EQ( program.content().axiom.at(3u), moduleTable.createModule("]") );
 
-
     ASSERT_TRUE( program.content().rewriteRules.empty() );
-    ASSERT_FALSE( program.content().angle.isValid() );
-    ASSERT_FALSE( program.content().initialAngle.isValid() );
-    ASSERT_FALSE( program.content().distance.isValid() );
-    ASSERT_TRUE( program.content().iterations.isValid() );
-    ASSERT_EQ( program.content().iterations.getValue(), 9u );
+    ASSERT_FALSE( program.content().angle );
+    ASSERT_FALSE( program.content().initialAngle );
+    ASSERT_FALSE( program.content().distance );
+    ASSERT_TRUE( program.content().iterations );
+    ASSERT_EQ( program.content().iterations, 9u );
 }
 
 TEST_F(ProgramNoActionFixture, axiom_multiple_distance)
@@ -147,13 +138,12 @@ TEST_F(ProgramNoActionFixture, axiom_multiple_distance)
     ASSERT_EQ( program.content().axiom.at(2u), moduleTable.createModule("[") );
     ASSERT_EQ( program.content().axiom.at(3u), moduleTable.createModule("]") );
 
-
     ASSERT_TRUE( program.content().rewriteRules.empty() );
-    ASSERT_FALSE( program.content().angle.isValid() );
-    ASSERT_FALSE( program.content().initialAngle.isValid() );
-    ASSERT_TRUE( program.content().distance.isValid() );
-    ASSERT_NEAR( program.content().distance.getValue(), 3.14, 0.0001 );
-    ASSERT_FALSE( program.content().iterations.isValid() );
+    ASSERT_FALSE( program.content().angle );
+    ASSERT_FALSE( program.content().initialAngle );
+    ASSERT_TRUE( program.content().distance );
+    ASSERT_FLOAT_EQ( program.content().distance.value(), 3.14f );
+    ASSERT_FALSE( program.content().iterations );
 }
 
 TEST_F(ProgramNoActionFixture, axiom_multiple_angle)
@@ -169,11 +159,11 @@ TEST_F(ProgramNoActionFixture, axiom_multiple_angle)
     ASSERT_EQ( program.content().axiom.at(2u), moduleTable.createModule("[") );
     ASSERT_EQ( program.content().axiom.at(3u), moduleTable.createModule("]") );
     ASSERT_TRUE( program.content().rewriteRules.empty() );
-    ASSERT_TRUE( program.content().angle.isValid() );
-    ASSERT_NEAR( program.content().angle.getValue(), 63.14, 0.0001 );
-    ASSERT_FALSE( program.content().initialAngle.isValid() );
-    ASSERT_FALSE( program.content().distance.isValid() );
-    ASSERT_FALSE( program.content().iterations.isValid() );
+    ASSERT_TRUE( program.content().angle );
+    ASSERT_FLOAT_EQ( program.content().angle.value(), 63.14f );
+    ASSERT_FALSE( program.content().initialAngle );
+    ASSERT_FALSE( program.content().distance );
+    ASSERT_FALSE( program.content().iterations );
 }
 
 TEST_F(ProgramNoActionFixture, axiom_multiple_iteration_distance_angle)
@@ -191,13 +181,13 @@ TEST_F(ProgramNoActionFixture, axiom_multiple_iteration_distance_angle)
     ASSERT_EQ( program.content().axiom.at(2u), moduleTable.createModule("[") );
     ASSERT_EQ( program.content().axiom.at(3u), moduleTable.createModule("]") );
     ASSERT_TRUE( program.content().rewriteRules.empty() );
-    ASSERT_TRUE( program.content().angle.isValid() );
-    ASSERT_NEAR( program.content().angle.getValue(), 63.14, 0.0001 );
-    ASSERT_FALSE( program.content().initialAngle.isValid() );
-    ASSERT_TRUE( program.content().distance.isValid() );
-    ASSERT_NEAR( program.content().distance.getValue(), 3.14, 0.0001 );
-    ASSERT_TRUE( program.content().iterations.isValid() );
-    ASSERT_EQ( program.content().iterations.getValue(), 9u );
+    ASSERT_TRUE( program.content().angle );
+    ASSERT_NEAR( program.content().angle.value(), 63.14, 0.0001 );
+    ASSERT_FALSE( program.content().initialAngle );
+    ASSERT_TRUE( program.content().distance );
+    ASSERT_NEAR( program.content().distance.value(), 3.14f, 0.0001f );
+    ASSERT_TRUE( program.content().iterations );
+    ASSERT_EQ( program.content().iterations, 9u );
 }
 
 TEST(Program, execute_twice)
@@ -215,7 +205,7 @@ TEST(Program, execute_twice)
 
     ASSERT_TRUE( printErrors(program.loadFromLCode("axiom: F;"
                                                    "iterations: 2;"
-                                                   "F = F F;"
+                                                   "F -> F F;"
                                                    , moduleTable)).empty() );
 
     // F will be transformed into F F, so 2 calls, twice, 4 calls.
@@ -273,7 +263,7 @@ TEST(Program, alias)
                                                    "distance: 3.14;"
                                                    "angle: 63.14;"
                                                    "alias G = F;"
-                                                   "F = G;"
+                                                   "F -> G;"
                                                    , moduleTable)).empty() );
 
     program.execute(1u);

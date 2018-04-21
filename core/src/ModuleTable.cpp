@@ -44,6 +44,18 @@ namespace lcode
         }
     }
 
+    Modules ModuleTable::createModules(std::initializer_list<std::string> const& identifiers) const
+    {
+        Modules results;
+
+        for (auto const& identifier : identifiers)
+        {
+            results.emplace_back(createModule(identifier));
+        }
+
+        return results;
+    }
+
     Modules ModuleTable::createModules(std::vector<std::string> const& identifiers) const
     {
         Modules results;

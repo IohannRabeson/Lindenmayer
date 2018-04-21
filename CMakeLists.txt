@@ -13,8 +13,6 @@ endif()
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/")
 
 include("${CMAKE_SOURCE_DIR}/cmake/GitInfo.cmake")
-#include("${CMAKE_SOURCE_DIR}/cmake/Antlr.cmake")
-# TODO remove this line and the corresponding directory also
 
 if (NOT APPLICATION_VERSION)
     set(APPLICATION_VERSION "${GIT_BRANCH}-${GIT_SHORT_COMMIT}")
@@ -30,6 +28,12 @@ if (RETAIL_MODE)
     set(BUILD_INFOS "${BUILD_INFOS} (retail)")
 endif()
 
+# Google Test is builded with the flag /MT
+if (MSVC)
+	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
+	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
+endif()
+
 message(${BUILD_INFOS})
 
 set(CMAKE_CXX_STANDARD 17)
@@ -41,6 +45,7 @@ set(CMAKE_AUTOUIC ON)
 find_package(Qt5Core)
 find_package(Qt5Widgets)
 find_package(Qt5LinguistTools)
+find_package(Boost)
 
 add_subdirectory(externals)
 add_subdirectory(app)

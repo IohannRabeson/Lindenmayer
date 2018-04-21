@@ -1,4 +1,5 @@
 axiom: -F;
 iterations: 4;
+distance: 10.;
 angle: 90.;
-F = F+F-F-F+F;
+F -> F+F-F-F+F;

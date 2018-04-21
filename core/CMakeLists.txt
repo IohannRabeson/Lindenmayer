@@ -1,8 +1,21 @@
 add_subdirectory(private)
 
 set(LINDENMAYER_CORE_SOURCES
-        src/Symbol.cpp
-    include/Symbol.hpp src/Module.cpp include/Module.hpp src/Rewrite.cpp include/Rewrite.hpp src/Program.cpp include/Program.hpp src/ModuleTable.cpp include/ModuleTable.hpp src/ATurtle2D.cpp include/ATurtle2D.hpp private/LoadProgramFromLCode.hpp private/LoadProgramFromLCode.cpp)
+    src/Symbol.cpp
+    include/Symbol.hpp
+    src/Module.cpp
+    include/Module.hpp
+    src/Rewrite.cpp
+    include/Rewrite.hpp
+    src/Program.cpp
+    include/Program.hpp
+    src/ModuleTable.cpp
+    include/ModuleTable.hpp
+    src/ATurtle2D.cpp
+    include/ATurtle2D.hpp
+    private/LoadProgramFromLCode.hpp
+    private/LoadProgramFromLCode.cpp
+    include/Optional.hpp)
 
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror -fno-omit-frame-pointer")
@@ -22,4 +35,5 @@ target_compile_definitions(LindenmayerHeart PUBLIC QT_NO_FOREACH)
 
 target_include_directories(LindenmayerHeart PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-        PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src ${CMAKE_CURRENT_SOURCE_DIR}/private)
+        PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src ${CMAKE_CURRENT_SOURCE_DIR}/private
+		PUBLIC ${Boost_INCLUDE_DIRS})
