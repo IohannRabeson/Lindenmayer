@@ -21,7 +21,6 @@ if (NOT APPLICATION_VERSION)
     endif()
 endif()
 
-
 set(BUILD_INFOS "-- Build version: ${APPLICATION_VERSION}")
 
 if (RETAIL_MODE)
@@ -45,7 +44,6 @@ set(CMAKE_AUTOUIC ON)
 find_package(Qt5Core)
 find_package(Qt5Widgets)
 find_package(Qt5LinguistTools)
-find_package(Boost)
 
 add_subdirectory(externals)
 add_subdirectory(app)
