@@ -86,7 +86,7 @@ namespace lcode
 
         bool isError(antlr4::tree::TerminalNode* const node)
         {
-            return dynamic_cast<antlr4::tree::ErrorNode*>(node) != nullptr;
+            return node == nullptr || dynamic_cast<antlr4::tree::ErrorNode*>(node) != nullptr;
         }
 
         Optional<float> getFloat(antlr4::tree::TerminalNode* const terminalNode)
@@ -114,7 +114,7 @@ namespace lcode
             Module assignedModule = ContextHelper::getModule(moduleContexts.front(), m_parseResult.moduleTable);
             auto replacementModules = ContextHelper::getModules(moduleContexts.begin() + 1, moduleContexts.end(), m_parseResult.moduleTable);
 
-            if (probabilityContext && probabilityContext->Float() && !ContextHelper::isError(probabilityContext->Float()))
+            if (probabilityContext && !ContextHelper::isError(probabilityContext->Float()))
             {
                 auto probabilityValue = ContextHelper::getFloat(probabilityContext->Float());
 
@@ -275,7 +275,7 @@ namespace lcode
 
         if (!m_parseResult.moduleTable.createAlias(aliasIdentifier, aliasedIdentifier))
         {
-            Program::Error error = antlr::errorFromToken(context->getStart(), "Can't alias undefined identifier '" + aliasedIdentifier + "'");
+            Program::Error error = antlr::errorFromToken(context->getStart(), "Can't create alias '" + aliasIdentifier + "'");
 
             m_parseResult.errors.emplace_back(std::move(error));
         }

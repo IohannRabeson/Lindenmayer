@@ -6,7 +6,7 @@ fragment TRUE : 'true' ;
 fragment FALSE : 'false' ;
 fragment NEWLINE   : '\r' '\n' | '\n' | '\r';
 
-program 	   : axiom (iterations | distance |  angle | initial_angle | alias)* transformation*;
+program 	   : (axiom | iterations | distance |  angle | initial_angle | alias)* transformation*;
 axiom          : 'axiom:' module+ EndOfLine;
 iterations     : 'iterations:' Integer EndOfLine;
 distance       : 'distance:' Float EndOfLine;

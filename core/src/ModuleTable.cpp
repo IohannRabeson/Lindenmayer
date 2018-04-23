@@ -4,21 +4,40 @@
 
 #include "ModuleTable.hpp"
 
+#include <cassert>
+#include <iostream>
+
 namespace lcode
 {
-    void ModuleTable::registerModule(std::string const& identifier, Action&& action)
+    bool ModuleTable::registerModule(std::string const& identifier, Action&& action)
     {
-        auto module = createNextModule();
+        if (!isFreeIdentifier(identifier))
+        {
+            return false;
+        }
 
-        m_identifierTable.emplace(identifier, module);
-        m_actionTable.emplace(module, std::move(action));
+        auto module = createNextModule();
+        bool result = false;
+
+        if (m_identifierTable.emplace(identifier, module).second)
+        {
+            result = m_actionTable.emplace(module, std::move(action)).second;
+        }
+        return result;
     }
 
-    void ModuleTable::registerModule(std::string const& identifier)
+    bool ModuleTable::registerModule(std::string const& identifier)
     {
+        if (!isFreeIdentifier(identifier))
+        {
+            return false;
+        }
+
         auto module = createNextModule();
 
         m_identifierTable.emplace(identifier, module);
+
+        return true;
     }
 
     Module ModuleTable::createNextModule()
@@ -36,10 +55,12 @@ namespace lcode
 
     void ModuleTable::execute(Module const& module) const
     {
-        auto const actionIt = m_actionTable.find(module);
+        std::map<Module, Action>::const_iterator actionIt = m_actionTable.find(module);
 
         if (actionIt != m_actionTable.end())
         {
+            assert( actionIt->second );
+
             actionIt->second();
         }
     }
@@ -77,28 +98,25 @@ namespace lcode
         {
             result = it->second;
         }
-
+        else
+        {
+            assert(false);
+        }
         return result;
     }
 
-    bool ModuleTable::createAlias(std::string const& alias, std::string const& aliased)
+    bool ModuleTable::createAlias(std::string const& alias, std::string const&)
     {
-        auto const moduleIt = m_identifierTable.find(aliased);
-        bool result = false;
+        return registerModule(alias);
+//        auto const aliasedModuleIt = m_identifierTable.find(aliased);
+//
+//        Action action = [module = aliasedModuleIt->second, this](){execute(module);};
+//
+//        return registerModule(alias, std::move(action));
+    }
 
-        if (moduleIt != m_identifierTable.end())
-        {
-            auto const actionIt = m_actionTable.find(moduleIt->second);
-
-            if (actionIt != m_actionTable.end())
-            {
-                Action action = actionIt->second;
-
-                registerModule(alias, std::move(action));
-                result = true;
-            }
-        }
-
-        return result;
+    bool ModuleTable::isFreeIdentifier(std::string const& identifier) const
+    {
+        return m_identifierTable.find(identifier) == m_identifierTable.end();
     }
 }

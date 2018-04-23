@@ -1,0 +1,5 @@
+axiom: F;
+iterations: 7;
+angle: 20.;
+distance: 20.;
+F -> F[-F]F[+F][F];

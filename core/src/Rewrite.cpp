@@ -3,9 +3,22 @@
 //
 
 #include "Rewrite.hpp"
+#include <iostream>
 
 namespace lcode
 {
+    void printModules(std::string const& label, Modules const& modules)
+    {
+        std::cout << label << ": ";
+
+        for (auto const module : modules)
+        {
+            std::cout << toString(module);
+        }
+
+        std::cout << std::endl;
+    }
+
     void rewrite(RewriteRules const& rules, Modules& modules, unsigned int const iterations)
     {
         for (auto i = 0u; i < iterations; ++i)

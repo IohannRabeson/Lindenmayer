@@ -3,5 +3,5 @@ angle: 60.;
 alias G = F;
 distance: 30.;
 iterations: 7;
-F -> G-F-G;
-G -> F+G+F;
+F -> G+F+G;
+G -> F-G-F;

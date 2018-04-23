@@ -18,8 +18,8 @@ namespace lcode
     public:
         using Action = std::function<void()>;
 
-        void registerModule(std::string const& identifier, Action&& action);
-        void registerModule(std::string const& identifier);
+        bool registerModule(std::string const& identifier, Action&& action);
+        bool registerModule(std::string const& identifier);
 
         bool createAlias(std::string const& alias, std::string const& aliased);
         Module createModule(std::string const& identifier) const;
@@ -30,6 +30,7 @@ namespace lcode
     private:
         void execute(Module const& module) const;
         Module createNextModule();
+        bool isFreeIdentifier(std::string const& identifier) const;
     private:
         std::map<std::string, Module> m_identifierTable;
         std::map<Module, Action> m_actionTable;
