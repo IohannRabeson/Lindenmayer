@@ -30,7 +30,7 @@ set(ANTLR4CPP_LIBS antlr4_static)
 add_library(lindenmayer-langage ${LANGAGE_SRC})
 target_include_directories(lindenmayer-langage PUBLIC "${CMAKE_CURRENT_BINARY_DIR}" "${ANTLR4CPP_INCLUDE_DIRS}")
 target_link_libraries(lindenmayer-langage PUBLIC "${ANTLR4CPP_LIBS}")
-
+target_compile_definitions(lindenmayer-langage PUBLIC ANTLR4CPP_STATIC)
 message(STATUS "ANTLR4CPP_INCLUDE_DIRS=${ANTLR4CPP_INCLUDE_DIRS}")
 message(STATUS "ANTLR4CPP_LIBS=${ANTLR4CPP_LIBS}")
 

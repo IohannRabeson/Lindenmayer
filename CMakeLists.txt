@@ -43,7 +43,6 @@ set(CMAKE_AUTOUIC ON)
 
 find_package(Qt5Core)
 find_package(Qt5Widgets)
-find_package(Qt5LinguistTools)
 
 add_subdirectory(externals)
 add_subdirectory(app)
