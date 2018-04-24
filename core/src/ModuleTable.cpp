@@ -57,6 +57,13 @@ namespace lcode
     {
         std::map<Module, Action>::const_iterator actionIt = m_actionTable.find(module);
 
+        if (actionIt == m_actionTable.end())
+        {
+            auto const alias = m_aliasTable.find(module);
+
+            actionIt = m_actionTable.find(alias->second);
+        }
+
         if (actionIt != m_actionTable.end())
         {
             assert( actionIt->second );
@@ -102,17 +109,23 @@ namespace lcode
         {
             assert(false);
         }
+
         return result;
     }
 
-    bool ModuleTable::createAlias(std::string const& alias, std::string const&)
+    bool ModuleTable::createAlias(std::string const& alias, std::string const& aliased)
     {
-        return registerModule(alias);
-//        auto const aliasedModuleIt = m_identifierTable.find(aliased);
-//
-//        Action action = [module = aliasedModuleIt->second, this](){execute(module);};
-//
-//        return registerModule(alias, std::move(action));
+        bool result = false;
+
+        if (registerModule(alias))
+        {
+            auto const aliasModuleIt = m_identifierTable.find(alias);
+            auto const aliasedModuleIt = m_identifierTable.find(aliased);
+
+            m_aliasTable.emplace(aliasModuleIt->second, aliasedModuleIt->second);
+            result = true;
+        }
+        return result;
     }
 
     bool ModuleTable::isFreeIdentifier(std::string const& identifier) const

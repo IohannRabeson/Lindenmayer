@@ -34,6 +34,7 @@ namespace lcode
     private:
         std::map<std::string, Module> m_identifierTable;
         std::map<Module, Action> m_actionTable;
+        std::map<Module, Module> m_aliasTable;
 
         std::uint16_t m_nextIdentifier = 0u;
     };
