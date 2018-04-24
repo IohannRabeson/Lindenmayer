@@ -21,9 +21,8 @@ boost::optional (1.67.0) is directly embedded using bcp.
 ## Build
 
 Require Qt 5 installed on your system.
-Also a C++ compiler with support for C++17 is required.
-For now I'm using `clang-900.0.39.2` on OSX.
-Boost is required, at least 1.66.0.
+Qt tool are also required.
+Also a C++ compiler with sparse support for C++17 is required.
 
 Qt directory should be added to `CMAKE_PREFIX_PATH`.
 
@@ -35,9 +34,10 @@ Tested generators:
  - GNU Make
  - Ninja
  - Xcode
+ - MSVC 2015
  
 ### Windows with MSVC
-On Windows you should add Boost directory too and don't forget to select a x64 generator.
+On Windows don't forget to select a x64 generator, default or x86 will not works.
 Also you will have some missing Qt DLL, so you have to update your PATH in Visual Studio:
 Right click on the project "Lindenmayer" > Properties > Debugging > Environment then add a new entry like that:
 PATH=$(PATH);$(QTDIR)\bin;
