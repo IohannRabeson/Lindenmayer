@@ -5,8 +5,8 @@ set(LINDENMAYER_CORE_SOURCES
     include/Symbol.hpp
     src/Module.cpp
     include/Module.hpp
-        src/RewriteRules.cpp
-        include/RewriteRules.hpp
+    src/RewriteRules.cpp
+    include/RewriteRules.hpp
     src/Program.cpp
     include/Program.hpp
     src/ModuleTable.cpp

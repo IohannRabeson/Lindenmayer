@@ -34,8 +34,9 @@ target_compile_definitions(lindenmayer-langage PUBLIC ANTLR4CPP_STATIC)
 message(STATUS "ANTLR4CPP_INCLUDE_DIRS=${ANTLR4CPP_INCLUDE_DIRS}")
 message(STATUS "ANTLR4CPP_LIBS=${ANTLR4CPP_LIBS}")
 
-set(LOCAL_ANTLR_GENERATOR_JAR "${CMAKE_CURRENT_BINARY_DIR}/antlr-complete-4.7.1.jar")
-file(DOWNLOAD "http://www.antlr.org/download/antlr-4.7.1-complete.jar" "${LOCAL_ANTLR_GENERATOR_JAR}")
+set(ANTLR_VERSION 4.7.1)
+set(LOCAL_ANTLR_GENERATOR_JAR "${CMAKE_CURRENT_BINARY_DIR}/antlr-complete-${ANTLR_VERSION}.jar")
+file(DOWNLOAD "http://www.antlr.org/download/antlr-${ANTLR_VERSION}-complete.jar" "${LOCAL_ANTLR_GENERATOR_JAR}")
 
 # Call antlr to generate C++ files into the "generated" directory.
 # Doc here: https://github.com/antlr/antlr4/blob/master/doc/cpp-target.md
