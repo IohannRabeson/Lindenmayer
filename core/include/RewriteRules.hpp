@@ -10,6 +10,7 @@
 #include <map>
 #include <random>
 #include <iterator>
+#include <functional>
 
 namespace lcode
 {
@@ -21,28 +22,27 @@ namespace lcode
             lcode::Optional<float> probability;
         };
 
-        using Rules = std::multimap<Module, RewriteInfo>;
+    public:
+        using Rule = std::pair<Module, RewriteInfo>;
+    private:
+        using Rules = std::vector<Rule>;
         using Iterator = Rules::const_iterator;
         using Distribution = std::discrete_distribution<std::size_t>;
     public:
-        using Rule = Rules::value_type;
-
-        void emplace(Rule&& rule, bool const equalizeProbabilities = true);
-        void emplace(Module const module, Modules&& replacement, bool const equalizeProbabilities = true);
+        void emplace(Rule&& rule);
+        void emplace(Module const module, Modules&& replacement);
         void emplace(Module const module, Modules&& replacement, float const probability);
 
-        lcode::Optional<Modules const&> getModules(Module const module) const;
+        bool matchRules(Module const module, std::function<void(Rule const&)> const& f) const;
 
         bool empty() const;
     private:
         Iterator find(Module const module) const;
         Iterator end() const;
-
-        void updateProbabilities(Module const module);
-
+        std::vector<std::reference_wrapper<RewriteRules::Rule const>> equalRange(Module const module) const;
         friend Rule makeRule(Symbol::Integer const origin, std::initializer_list<Symbol::Integer>&& replacement);
 
-        static bool haveProbability(RewriteRules::Rules::value_type const& rule);
+        void setupDistribution(std::vector<std::reference_wrapper<RewriteRules::Rule const>> const& rules) const;
     private:
         Rules m_rules;
         mutable std::mt19937_64 m_random;

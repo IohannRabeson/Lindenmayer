@@ -5,7 +5,7 @@
 #ifndef LINDENMAYER_PROGRAM_HPP
 #define LINDENMAYER_PROGRAM_HPP
 #include "Module.hpp"
-#include "Rewrite.hpp"
+#include "RewriteRules.hpp"
 #include "ModuleTable.hpp"
 #include "Optional.hpp"
 

@@ -1,6 +1,10 @@
 set(GTEST_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/externals/googletest/googletest/include/")
 
-if (ENABLE_SANITIZERS)
+if (ENABLE_MSAN)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=memory -fno-omit-frame-pointer")
+endif()
+
+if (ENABLE_ASAN)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -fno-omit-frame-pointer")
 endif()
 
@@ -10,7 +14,7 @@ set(MOCK_SRC
 
 set(SRC
     ${MOCK_SRC}
-    gtest.cpp RewriteTest.cpp ProgramTest.cpp Mocks/Turtle2DMock.hpp LanguageTest.cpp Fixtures/ProgramNoActionFixture.hpp Utility/ProgramError.hpp Utility/ProgramError.cpp)
+    gtest.cpp RewriteTest.cpp ProgramTest.cpp Mocks/Turtle2DMock.hpp LanguageTest.cpp Fixtures/ProgramNoActionFixture.hpp Utility/ProgramError.hpp Utility/ProgramError.cpp Utility/Printers.hpp)
 
 add_executable(unit_tests ${SRC})
 target_link_libraries(unit_tests PRIVATE LindenmayerHeart gtest gmock Qt5::Core Qt5::Widgets)

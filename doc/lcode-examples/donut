@@ -1,0 +1,8 @@
+axiom: FffFffFffFff;
+iterations: 4;
+angle: 25.;
+distance: 5.;
+alias G = F;
+alias H = F;
+F -> fGf+fGf--fGf++fGf;
+G -> Ff--Ff++Ff++Ff-Ff;

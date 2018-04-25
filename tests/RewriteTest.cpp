@@ -5,7 +5,7 @@
 #include <gtest/gtest.h>
 
 #include <Module.hpp>
-#include <Rewrite.hpp>
+#include <RewriteRules.hpp>
 
 TEST(Rewrite, rewrite_empty)
 {
