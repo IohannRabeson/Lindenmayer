@@ -9,7 +9,9 @@
 #include <QDir>
 
 #include <Qool/DockWidgetManager.hpp>
+#include <Qool/DocumentOnDisk.hpp>
 
+#include <ModuleTable.hpp>
 #include <Program.hpp>
 
 #include "GraphicsSceneTurtle2D.hpp"
@@ -28,11 +30,16 @@ class MainWindow : public QMainWindow
 public:
     MainWindow();
 
-    bool saveInput();
+    void newProgram();
+    bool saveProgram();
+    bool saveProgramAs(QString const& filePath);
+    bool saveProgramAs();
     bool loadProgram();
     bool loadProgram(QString const& filePath);
+
     void exportImage();
     void exportImage(QString const& filePath);
+
     void draw();
     bool build();
     void zoomToFit();
@@ -43,6 +50,9 @@ private:
     void setupToolbars();
     void setupMenus();
 
+    bool writeProgram(QString const& filePath);
+    bool maybeSave();
+
     void updateActions();
 
     unsigned int getIterations() const;
@@ -50,6 +60,10 @@ private:
     qreal getAngle() const;
 
     QRectF getBoundingRectangle() const;
+
+protected:
+    void closeEvent(QCloseEvent* event) override;
+
 private:
     qool::DockWidgetManager* const m_dockWidgets;
     QStatusBar* const m_statusBar;
@@ -61,7 +75,9 @@ private:
     QGraphicsScene* const m_graphicsScene;
     QGraphicsView* const m_graphicsView;
 
-    QAction* const m_actionSaveProgram = new QAction(tr("Save..."), this);
+    QAction* const m_actionNewProgram = new QAction(tr("New"), this);
+    QAction* const m_actionSaveProgram = new QAction(tr("Save"), this);
+    QAction* const m_actionSaveProgramAs = new QAction(tr("Save as..."), this);
     QAction* const m_actionLoadProgram = new QAction(tr("Open..."), this);
     QAction* const m_actionExportImage = new QAction(tr("Export..."), this);
     QAction* const m_actionBuild = new QAction(tr("Build"), this);
@@ -73,9 +89,9 @@ private:
     lcode::ModuleTable m_moduleTable;
     GraphicsSceneTurtle2D m_turtle;
     lcode::Program m_program;
+    qool::DocumentOnDisk m_documentOnDisk;
 
     QDir m_imageExportDirectory;
-    QDir m_saveDirectory;
 };
 
 

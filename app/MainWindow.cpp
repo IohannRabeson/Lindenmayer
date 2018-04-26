@@ -4,8 +4,6 @@
 
 #include "MainWindow.hpp"
 
-#include <Program.hpp>
-
 #include <QToolBar>
 #include <QFileDialog>
 #include <QFile>
@@ -20,6 +18,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #include <QtGlobal>
+#include <QMessageBox>
 
 #include <QtDebug>
 
@@ -34,6 +33,7 @@ MainWindow::MainWindow()
 , m_graphicsScene(new QGraphicsScene(this))
 , m_graphicsView(new QGraphicsView(m_graphicsScene, this))
 , m_turtle(m_graphicsScene)
+, m_documentOnDisk(tr("Untitled %0"))
 {
     m_moduleTable.registerModule("F", [this](){ m_turtle.advance(getDistance(), true); });
     m_moduleTable.registerModule("f", [this](){ m_turtle.advance(getDistance(), false); });
@@ -47,6 +47,11 @@ MainWindow::MainWindow()
     setupToolbars();
     setupMenus();
     updateActions();
+
+    connect(&m_documentOnDisk, &qool::DocumentOnDisk::filePathChanged, this, &QMainWindow::setWindowFilePath);
+    connect(&m_documentOnDisk, &qool::DocumentOnDisk::modifiedChanged, this, &QMainWindow::setWindowModified);
+    connect(m_programTextEdit, &QPlainTextEdit::textChanged, &m_documentOnDisk, &qool::DocumentOnDisk::modified);
+    newProgram();
 }
 
 void MainWindow::setupWidgets()
@@ -80,7 +85,9 @@ void MainWindow::setupActions()
         updateActions();
     });
 
-    connect(m_actionSaveProgram, &QAction::triggered, this, &MainWindow::saveInput);
+    connect(m_actionNewProgram, &QAction::triggered, this, &MainWindow::newProgram);
+    connect(m_actionSaveProgram, &QAction::triggered, this, &MainWindow::saveProgram);
+    connect(m_actionSaveProgramAs, &QAction::triggered, this, [this]() { saveProgramAs(); });
     connect(m_actionLoadProgram, &QAction::triggered, this, [this]() { loadProgram(); });
     connect(m_actionZoomToFit, &QAction::triggered, this, &MainWindow::zoomToFit);
     connect(m_actionZoomReset, &QAction::triggered, this, &MainWindow::zoomReset);
@@ -90,8 +97,10 @@ void MainWindow::setupMenus()
 {
     QMenu* const fileMenu = menuBar()->addMenu(tr("File"));
 
+    fileMenu->addAction(m_actionNewProgram);
     fileMenu->addAction(m_actionLoadProgram);
     fileMenu->addAction(m_actionSaveProgram);
+    fileMenu->addAction(m_actionSaveProgramAs);
     fileMenu->addAction(m_actionExportImage);
 }
 
@@ -110,44 +119,35 @@ void MainWindow::setupToolbars()
     toolbar->addAction(m_actionZoomToFit);
 }
 
-bool MainWindow::saveInput()
+void MainWindow::newProgram()
 {
-    auto result = false;
-    auto const filePath = QFileDialog::getSaveFileName(this, tr("Save L-Code program"), m_saveDirectory.path()).trimmed();
-
-    if (!filePath.trimmed().isEmpty())
+    if (maybeSave())
     {
-        QFile file(filePath);
-
-        if (file.open(QIODevice::WriteOnly | QIODevice::Text))
-        {
-            QTextStream stream(&file);
-
-            stream << m_programTextEdit->toPlainText();
-            m_saveDirectory = QFileInfo(filePath).dir();
-            qDebug() << "Write file:" << filePath;
-        }
-        else
-        {
-            qWarning() << "MainWindow::saveInput: failed to save " << filePath << file.isOpen() << file.errorString();
-        }
+        m_programTextEdit->clear();
+        m_documentOnDisk.newDocument();
+        updateActions();
     }
-    updateActions();
-    return result;
 }
 
 bool MainWindow::loadProgram()
 {
-    auto const filePath = QFileDialog::getOpenFileName(this, tr("Load L-Code program"));
+    bool result = false;
 
-    return loadProgram(filePath);
+    if (maybeSave())
+    {
+        auto const filePath = QFileDialog::getOpenFileName(this, tr("Load L-Code program"));
+
+        result = loadProgram(filePath);
+    }
+
+    return result;
 }
 
 bool MainWindow::loadProgram(QString const& filePath)
 {
     bool result = false;
 
-    if (!filePath.isEmpty())
+    if (maybeSave() && !filePath.isEmpty())
     {
         QFile file(filePath);
 
@@ -158,10 +158,49 @@ bool MainWindow::loadProgram(QString const& filePath)
 
             m_programTextEdit->setPlainText(text);
             m_turtle.reset();
+            m_documentOnDisk.opened(file.fileName());
+            updateActions();
             result = true;
         }
     }
-    updateActions();
+    return result;
+}
+
+bool MainWindow::saveProgram()
+{
+    bool result = false;
+
+    if (m_documentOnDisk.isOnDisk())
+    {
+        result = writeProgram(m_documentOnDisk.absoluteFilePath());
+    }
+    else
+    {
+        result = saveProgramAs();
+    }
+
+    return result;
+}
+
+bool MainWindow::saveProgramAs()
+{
+    auto const filePath = QFileDialog::getSaveFileName(this, tr("Save L-Code program"), m_documentOnDisk.directory().path());
+
+    return saveProgramAs(filePath);
+}
+
+bool MainWindow::saveProgramAs(QString const& filePath)
+{
+    auto result = false;
+
+    if (!filePath.trimmed().isEmpty())
+    {
+        if (writeProgram(filePath))
+        {
+            m_documentOnDisk.savedAs(filePath);
+            result = true;
+        }
+    }
     return result;
 }
 
@@ -268,6 +307,8 @@ void MainWindow::updateActions()
 
     m_actionBuild->setEnabled(haveProgram);
     m_actionDraw->setEnabled(haveProgram && haveModules);
+    m_actionSaveProgram->setEnabled(m_documentOnDisk.isModified() && m_documentOnDisk.isOnDisk());
+    m_actionSaveProgramAs->setEnabled(m_documentOnDisk.isModified() && !m_documentOnDisk.isOnDisk());
 }
 
 unsigned int MainWindow::getIterations() const
@@ -288,4 +329,69 @@ qreal MainWindow::getAngle() const
 QRectF MainWindow::getBoundingRectangle() const
 {
     return m_graphicsScene->itemsBoundingRect().adjusted(-4, -4, 4, 4).toRect();
+}
+
+bool MainWindow::writeProgram(QString const& filePath)
+{
+    bool result = false;
+
+    if (!filePath.trimmed().isEmpty())
+    {
+        QFile file(filePath);
+
+        if (file.open(QIODevice::WriteOnly | QIODevice::Text))
+        {
+            QTextStream stream(&file);
+
+            stream << m_programTextEdit->toPlainText();
+            qDebug() << "Write file:" << filePath;
+            result = true;
+        }
+        else
+        {
+            qWarning() << "MainWindow::saveProgram: failed to save " << filePath << file.isOpen() << file.errorString();
+        }
+        updateActions();
+    }
+
+    return result;
+}
+
+bool MainWindow::maybeSave()
+{
+    bool result = false;
+
+    if (m_documentOnDisk.isModified())
+    {
+        QMessageBox message;
+
+        message.setText(QObject::tr("The document '%0' has been modified.\n"
+                                     "Do you want to save your changes?").arg(m_documentOnDisk.documentName()));
+        message.setStandardButtons(QMessageBox::Save | QMessageBox::No | QMessageBox::Cancel);
+        switch (message.exec())
+        {
+            case QMessageBox::Save:
+                result = saveProgram();
+                break;
+            case QMessageBox::No:
+                result = true;
+                break;
+            case QMessageBox::Cancel:
+                result = false;
+                break;
+            default:
+                break;
+        }
+    }
+    else
+    {
+        result = true;
+    }
+
+    return result;
+}
+
+void MainWindow::closeEvent(QCloseEvent* event)
+{
+    event->setAccepted(maybeSave());
 }

@@ -4,7 +4,7 @@
 
 #ifndef LINDENMAYER_PROGRAMERROR_HPP
 #define LINDENMAYER_PROGRAMERROR_HPP
-#include <Program.hpp>
+#include <Executable.hpp>
 
 std::vector<lcode::Program::Error> const& printErrors(std::vector<lcode::Program::Error> const& errors);
 

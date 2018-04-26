@@ -2,7 +2,7 @@
 // Created by Io on 13/04/2018.
 //
 
-#include <Program.hpp>
+#include <Executable.hpp>
 
 #include <iostream>
 
