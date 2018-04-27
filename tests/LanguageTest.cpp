@@ -5,7 +5,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-#include <Executable.hpp>
+#include <Program.hpp>
 
 #include "Fixtures/ProgramNoActionFixture.hpp"
 #include "Utility/ProgramError.hpp"
