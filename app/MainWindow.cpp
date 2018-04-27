@@ -71,8 +71,8 @@ void MainWindow::setupWidgets()
     setCentralWidget(m_graphicsView);
     setStatusBar(m_statusBar);
 }
-// Instead of using qOverload<> I prefer to use lambdas because they are
-// working with MSVC. qOverload does not compile with MSVC...
+// I'm using lambdas here Instead of using qOverload<>
+// because otherwise MSVC does not support empty template parameters?.
 void MainWindow::setupActions()
 {
     connect(m_actionBuild, &QAction::triggered, this, &MainWindow::build);
@@ -85,6 +85,10 @@ void MainWindow::setupActions()
         updateActions();
     });
 
+    m_actionNewProgram->setShortcut(QKeySequence::New);
+    m_actionSaveProgram->setShortcut(QKeySequence::Save);
+    m_actionSaveProgramAs->setShortcut(QKeySequence::SaveAs);
+    m_actionLoadProgram->setShortcut(QKeySequence::Open);
     connect(m_actionNewProgram, &QAction::triggered, this, &MainWindow::newProgram);
     connect(m_actionSaveProgram, &QAction::triggered, this, &MainWindow::saveProgram);
     connect(m_actionSaveProgramAs, &QAction::triggered, this, [this]() { saveProgramAs(); });
