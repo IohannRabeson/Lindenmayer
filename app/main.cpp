@@ -15,6 +15,9 @@ QCommandLineOption const optionAutoTest("auto-test", "run in automatic test mode
 int main(int argc, char** argv)
 {
     QApplication app(argc, argv);
+    QApplication::setApplicationName("Lindenmayer");
+    QApplication::setApplicationVersion("0.0.0");
+    QApplication::setOrganizationName("Dead Devs Society");
     QCommandLineParser commandLineParser;
 
     commandLineParser.addOption(optionAutoTest);

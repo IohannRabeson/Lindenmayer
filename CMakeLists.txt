@@ -27,6 +27,14 @@ if (RETAIL_MODE)
     set(BUILD_INFOS "${BUILD_INFOS} (retail)")
 endif()
 
+if (ENABLE_MSAN)
+    message(STATUS "Enabled memory sanitizer")
+endif()
+
+if (ENABLE_ASAN)
+    message(STATUS "Enabled address sanitizer")
+endif()
+
 # Google Test is builded with the flag /MT
 if (MSVC)
 	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")

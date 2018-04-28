@@ -105,10 +105,6 @@ namespace lcode
         {
             result = it->second;
         }
-        else
-        {
-            assert(false);
-        }
 
         return result;
     }

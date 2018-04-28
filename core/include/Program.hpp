@@ -44,11 +44,12 @@ namespace lcode
         std::vector<Error> loadFromLCode(std::string const& lcode, ModuleTable const& table);
         Content const& content() const { return m_content; }
         Modules rewrite(unsigned int const iterations) const;
+        Modules rewrite() const;
         void execute(unsigned int const iterations);
-        bool loaded() const { return m_loaded; }
+        void execute();
+        bool haveErrors() const;
     private:
         Content m_content;
-        bool m_loaded = false;
     };
 
     class Program::ALoader

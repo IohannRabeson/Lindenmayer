@@ -57,7 +57,7 @@ namespace lcode
             return context->Identifier()->getText();
         }
 
-        Module getModule(LSystemParser::ModuleContext* const context, ModuleTable const& table)
+        Module getModule(LSystemParser::ModuleContext* const context, ModuleTable const& table, std::vector<Program::Error>& errors)
         {
             assert(context != nullptr);
             assert(context->Identifier() != nullptr);
@@ -66,11 +66,23 @@ namespace lcode
 
             // TODO: use context->parameter_pack()!
 
-            return table.createModule(identifierText);
+            auto const module = table.createModule(identifierText);
+
+            if (module.isNull())
+            {
+                auto error = antlr::errorFromToken(context->Identifier()->getSymbol(), "Invalid identifier '" + context->Identifier()->getText() + "'");
+
+                errors.emplace_back(std::move(error));
+            }
+
+            return module;
         }
 
         Modules
-        getModules(std::vector<LSystemParser::ModuleContext*>::const_iterator begin, std::vector<LSystemParser::ModuleContext*>::const_iterator end, ModuleTable const& table)
+        getModules(std::vector<LSystemParser::ModuleContext*>::const_iterator begin,
+                   std::vector<LSystemParser::ModuleContext*>::const_iterator end,
+                   ModuleTable const& table,
+                   std::vector<Program::Error>& errors)
         {
             Modules modules;
 
@@ -78,7 +90,7 @@ namespace lcode
 
             for (auto it = begin; it != end; ++it)
             {
-                modules.emplace_back(getModule(*it, table));
+                modules.emplace_back(getModule(*it, table, errors));
             }
 
             return modules;
@@ -111,8 +123,8 @@ namespace lcode
 
         if (moduleContexts.size() > 1u)
         {
-            Module assignedModule = ContextHelper::getModule(moduleContexts.front(), m_parseResult.moduleTable);
-            auto replacementModules = ContextHelper::getModules(moduleContexts.begin() + 1, moduleContexts.end(), m_parseResult.moduleTable);
+            Module assignedModule = ContextHelper::getModule(moduleContexts.front(), m_parseResult.moduleTable, m_parseResult.errors);
+            auto replacementModules = ContextHelper::getModules(moduleContexts.begin() + 1, moduleContexts.end(), m_parseResult.moduleTable, m_parseResult.errors);
 
             if (probabilityContext && !ContextHelper::isError(probabilityContext->Float()))
             {
@@ -204,7 +216,7 @@ namespace lcode
     {
         auto const& moduleContexts = axiomContext->module();
 
-        m_parseResult.axiom = ContextHelper::getModules(moduleContexts.begin(), moduleContexts.end(), m_parseResult.moduleTable);
+        m_parseResult.axiom = ContextHelper::getModules(moduleContexts.begin(), moduleContexts.end(), m_parseResult.moduleTable, m_parseResult.errors);
     }
 
     void Program::LoadFromLCode::enterIterations(LSystemParser::IterationsContext* context)
