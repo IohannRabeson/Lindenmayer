@@ -27,10 +27,8 @@ boost::optional (1.67.0) is directly embedded using [bcp](https://github.com/boo
 
 ## Build
 
-Require Qt 5 installed on your system.
-Qt tool are also required.
-Also a C++ compiler with sparse support for C++17 is required.
-
+Require Qt 5 installed on your system.  
+Also a C++ compiler with sparse support for C++17 is required.  
 Qt directory should be added to `CMAKE_PREFIX_PATH`.
 
 ```bash
