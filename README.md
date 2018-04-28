@@ -1,4 +1,4 @@
-# Lindenmayer
+# Lindenmayer [![Build Status](https://travis-ci.com/IohannRabeson/Lindenmayer.svg?token=oSgYDG8ZHmxB1gxGNZxP&branch=master)](https://travis-ci.com/IohannRabeson/Lindenmayer)
 
 Provide a tool with a dedicated language to describe and visualize Lindenmayer systems.
 
