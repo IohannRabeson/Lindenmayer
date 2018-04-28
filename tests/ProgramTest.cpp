@@ -32,12 +32,25 @@ TEST(Program, program_empty)
 {
     lcode::Program program;
 
+    EXPECT_FALSE( program.haveErrors() );
     EXPECT_TRUE( program.content().axiom.empty() );
     ASSERT_TRUE( program.content().rewriteRules.empty() );
     ASSERT_FALSE( program.content().angle );
     ASSERT_FALSE( program.content().initialAngle );
     ASSERT_FALSE( program.content().distance );
     ASSERT_FALSE( program.content().iterations );
+}
+
+TEST(Program, program_have_error)
+{
+    lcode::Program program;
+
+    program.loadFromLCode("axiom: F;");
+    EXPECT_FALSE( program.haveErrors() );
+
+    // Missing ';'
+    program.loadFromLCode("axiom: F");
+    EXPECT_TRUE( program.haveErrors() );
 }
 
 struct ProgramTurtleMockActionFixture : public ::testing::Test

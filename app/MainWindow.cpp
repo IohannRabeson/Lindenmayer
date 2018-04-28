@@ -27,9 +27,6 @@ MainWindow::MainWindow()
 , m_statusBar(new QStatusBar(this))
 , m_programTextEdit(new QPlainTextEdit(this))
 , m_errorOutputTextEdit(new QPlainTextEdit(this))
-, m_iterationSelector(new QSpinBox(this))
-, m_distanceSelector(new QDoubleSpinBox(this))
-, m_angleSelector(new QDoubleSpinBox(this))
 , m_graphicsScene(new QGraphicsScene(this))
 , m_graphicsView(new QGraphicsView(m_graphicsScene, this))
 , m_turtle(m_graphicsScene)
@@ -48,8 +45,10 @@ MainWindow::MainWindow()
     setupMenus();
     updateActions();
 
-    connect(&m_documentOnDisk, &qool::DocumentOnDisk::filePathChanged, this, &QMainWindow::setWindowFilePath);
-    connect(&m_documentOnDisk, &qool::DocumentOnDisk::modifiedChanged, this, &QMainWindow::setWindowModified);
+    connect(&m_documentOnDisk, &qool::DocumentOnDisk::filePathChanged, this, &MainWindow::setWindowFilePath);
+    connect(&m_documentOnDisk, &qool::DocumentOnDisk::modifiedChanged, this, &MainWindow::setWindowModified);
+    connect(&m_documentOnDisk, &qool::DocumentOnDisk::modifiedChanged, this, &MainWindow::onDocumentModified);
+
     connect(m_programTextEdit, &QPlainTextEdit::textChanged, &m_documentOnDisk, &qool::DocumentOnDisk::modified);
     newProgram();
 }
@@ -65,9 +64,6 @@ void MainWindow::setupWidgets()
     m_errorOutputTextEdit->setReadOnly(true);
     m_dockWidgets->addDockWidget(m_programTextEdit, tr("Program"), "program_input");
     m_dockWidgets->addDockWidget(m_errorOutputTextEdit, tr("Errors"), "errors_output");
-    m_iterationSelector->setRange(1, 64);
-    m_distanceSelector->setRange(1, 1024);
-    m_angleSelector->setRange(-360, 360);
     setCentralWidget(m_graphicsView);
     setStatusBar(m_statusBar);
 }
@@ -75,8 +71,6 @@ void MainWindow::setupWidgets()
 // because otherwise MSVC does not support empty template parameters?.
 void MainWindow::setupActions()
 {
-    connect(m_actionBuild, &QAction::triggered, this, &MainWindow::build);
-
     connect(m_actionDraw, &QAction::triggered, this, &MainWindow::draw);
     connect(m_actionExportImage, &QAction::triggered, [this]() { exportImage(); });
     connect(m_actionClearErrors, &QAction::triggered, [this]()
@@ -89,6 +83,7 @@ void MainWindow::setupActions()
     m_actionSaveProgram->setShortcut(QKeySequence::Save);
     m_actionSaveProgramAs->setShortcut(QKeySequence::SaveAs);
     m_actionLoadProgram->setShortcut(QKeySequence::Open);
+
     connect(m_actionNewProgram, &QAction::triggered, this, &MainWindow::newProgram);
     connect(m_actionSaveProgram, &QAction::triggered, this, &MainWindow::saveProgram);
     connect(m_actionSaveProgramAs, &QAction::triggered, this, [this]() { saveProgramAs(); });
@@ -112,11 +107,6 @@ void MainWindow::setupToolbars()
 {
     QToolBar* const toolbar = addToolBar(tr("Main"));
 
-    toolbar->addWidget(m_iterationSelector);
-    toolbar->addWidget(m_distanceSelector);
-    toolbar->addWidget(m_angleSelector);
-    toolbar->addSeparator();
-    toolbar->addAction(m_actionBuild);
     toolbar->addAction(m_actionDraw);
     toolbar->addSeparator();
     toolbar->addAction(m_actionZoomReset);
@@ -129,6 +119,7 @@ void MainWindow::newProgram()
     {
         m_programTextEdit->clear();
         m_documentOnDisk.newDocument();
+        m_needToBeBuilded = true;
         updateActions();
     }
 }
@@ -143,7 +134,6 @@ bool MainWindow::loadProgram()
 
         result = loadProgram(filePath);
     }
-
     return result;
 }
 
@@ -163,6 +153,7 @@ bool MainWindow::loadProgram(QString const& filePath)
             m_programTextEdit->setPlainText(text);
             m_turtle.reset();
             m_documentOnDisk.opened(file.fileName());
+            m_needToBeBuilded = true;
             updateActions();
             result = true;
         }
@@ -250,20 +241,25 @@ void MainWindow::exportImage(QString const& filePath)
 
 void MainWindow::draw()
 {
+    build();
     // Execute turtle orders
     m_graphicsScene->clear();
     m_turtle.reset();
     m_turtle.setPen(QPen(Qt::black, 2.));
-    m_program.execute(getIterations());
+    m_program.execute();
     m_graphicsView->ensureVisible(getBoundingRectangle());
     updateActions();
 }
 
 bool MainWindow::build()
 {
+    if (!m_needToBeBuilded)
+    {
+        return true;
+    }
+
     // Convert text to program content using ANTLR
     auto const text = m_programTextEdit->toPlainText().toUtf8().toStdString();
-
     auto const errors = m_program.loadFromLCode(text, m_moduleTable);
 
     // Print potential errors
@@ -276,18 +272,17 @@ bool MainWindow::build()
             m_errorOutputTextEdit->appendPlainText(tr(" - Error [%0;%1]: %2").arg(error.line).arg(error.charIndex).arg(QString::fromStdString(error.message)));
         }
 
+        // If they are an error m_needToBeBuilded is set to false so
+        // the next call to build will not trigger a build again.
+        m_needToBeBuilded = false;
         return false;
     }
 
-    // Update global variables
-    auto const& content = m_program.content();
-
-    m_iterationSelector->setValue(static_cast<int>(content.iterations.value_or(1u)));
-    m_distanceSelector->setValue(content.distance.value_or(1.f));
-    m_angleSelector->setValue(content.angle.value_or(90.f));
-    m_graphicsView->fitInView(m_graphicsScene->itemsBoundingRect(), Qt::KeepAspectRatio);
+    m_program.rewrite();
 
     updateActions();
+
+    m_needToBeBuilded = false;
 
     return true;
 }
@@ -306,10 +301,9 @@ void MainWindow::zoomReset()
 
 void MainWindow::updateActions()
 {
-    auto const haveModules = m_program.loaded();
+    auto const haveModules = m_documentOnDisk.isLoaded();
     auto const haveProgram = m_programTextEdit->toPlainText().trimmed().size() > 0;
 
-    m_actionBuild->setEnabled(haveProgram);
     m_actionDraw->setEnabled(haveProgram && haveModules);
     m_actionSaveProgram->setEnabled(m_documentOnDisk.isModified() && m_documentOnDisk.isOnDisk());
     m_actionSaveProgramAs->setEnabled(m_documentOnDisk.isModified() && !m_documentOnDisk.isOnDisk());
@@ -317,17 +311,17 @@ void MainWindow::updateActions()
 
 unsigned int MainWindow::getIterations() const
 {
-    return static_cast<unsigned int>(m_iterationSelector->value());
+    return m_program.content().iterations.get_value_or(0u);
 }
 
 qreal MainWindow::getDistance() const
 {
-    return m_distanceSelector->value();
+    return m_program.content().distance.get_value_or(0.);
 }
 
 qreal MainWindow::getAngle() const
 {
-    return m_angleSelector->value();
+    return m_program.content().angle.get_value_or(0.);
 }
 
 QRectF MainWindow::getBoundingRectangle() const
@@ -398,4 +392,12 @@ bool MainWindow::maybeSave()
 void MainWindow::closeEvent(QCloseEvent* event)
 {
     event->setAccepted(maybeSave());
+}
+
+void MainWindow::onDocumentModified(bool const modified)
+{
+    if (modified)
+    {
+        m_needToBeBuilded = true;
+    }
 }
