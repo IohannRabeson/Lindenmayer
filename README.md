@@ -10,13 +10,20 @@ checkout and clone using `--recursive`.
 git clone --recursive git@github.com:IohannRabeson/Lindenmayer.git
 ```
 
-## Install dependencies
-```bash
-brew install qt
-```
+## Dependencies
+ - Qt 5 (>= 5.10)
+ - Java (>= 8)
+
+Somes libraries are embedded:
+ - [ANTLR](https://github.com/IohannRabeson/antlr4)
+ - [Google Test](https://github.com/google/googletest)
+ - Boost::optional
+ - Qool
+Several libraries are embedded as submodules so don't forget to clone using the flag `--recursive`.
+If you didn't use it, shame on you and type `git submodule init && git submodule update`.
 
 ### Note
-boost::optional (1.67.0) is directly embedded using bcp.
+boost::optional (1.67.0) is directly embedded using [bcp](https://github.com/boostorg/bcp).
 
 ## Build
 
@@ -38,7 +45,7 @@ Tested generators:
  
 ### Windows with MSVC
 On Windows don't forget to select a x64 generator, default or x86 will not works.
-Also you will have some missing Qt DLL, so you have to update your PATH in Visual Studio:
+Also you will have some missing Qt DLL, so you have to update your `PATH` in Visual Studio:
 Right click on the project "Lindenmayer" > Properties > Debugging > Environment then add a new entry like that:
-PATH=$(PATH);$(QTDIR)\bin;
+`PATH=$(PATH);<QTDIR>\bin`.
 
