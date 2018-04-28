@@ -10,6 +10,8 @@
 
 #include <Qool/DockWidgetManager.hpp>
 #include <Qool/DocumentOnDisk.hpp>
+#include <Qool/RecentFileMenu.hpp>
+#include <Qool/ToolBarManager.hpp>
 
 #include <ModuleTable.hpp>
 #include <Program.hpp>
@@ -19,14 +21,14 @@
 class QStatusBar;
 class QAction;
 class QPlainTextEdit;
-class QSpinBox;
-class QDoubleSpinBox;
 class QGraphicsScene;
 class QGraphicsView;
 
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
+
+    static constexpr int const StateVersionNumber = 0u;
 public:
     MainWindow();
 
@@ -65,12 +67,17 @@ private:
 protected:
     void closeEvent(QCloseEvent* event) override;
 private:
+    void saveSettings() const;
+    void loadSettings();
+private:
     qool::DockWidgetManager* const m_dockWidgets;
     QStatusBar* const m_statusBar;
     QPlainTextEdit* const m_programTextEdit;
     QPlainTextEdit* const m_errorOutputTextEdit;
     QGraphicsScene* const m_graphicsScene;
     QGraphicsView* const m_graphicsView;
+    qool::RecentFileMenu* const m_recentFileMenu;
+    qool::ToolBarManager* const m_toolbarManager;
 
     QAction* const m_actionNewProgram = new QAction(tr("New"), this);
     QAction* const m_actionSaveProgram = new QAction(tr("Save"), this);

@@ -19,6 +19,8 @@
 #include <QGraphicsView>
 #include <QtGlobal>
 #include <QMessageBox>
+#include <QVariant>
+#include <QSettings>
 
 #include <QtDebug>
 
@@ -29,6 +31,8 @@ MainWindow::MainWindow()
 , m_errorOutputTextEdit(new QPlainTextEdit(this))
 , m_graphicsScene(new QGraphicsScene(this))
 , m_graphicsView(new QGraphicsView(m_graphicsScene, this))
+, m_recentFileMenu(new qool::RecentFileMenu(tr("Recent files"), this))
+, m_toolbarManager(new qool::ToolBarManager(this))
 , m_turtle(m_graphicsScene)
 , m_documentOnDisk(tr("Untitled %0"))
 {
@@ -50,6 +54,9 @@ MainWindow::MainWindow()
     connect(&m_documentOnDisk, &qool::DocumentOnDisk::modifiedChanged, this, &MainWindow::onDocumentModified);
 
     connect(m_programTextEdit, &QPlainTextEdit::textChanged, &m_documentOnDisk, &qool::DocumentOnDisk::modified);
+
+    loadSettings();
+
     newProgram();
 }
 
@@ -98,6 +105,7 @@ void MainWindow::setupMenus()
 
     fileMenu->addAction(m_actionNewProgram);
     fileMenu->addAction(m_actionLoadProgram);
+    fileMenu->addMenu(m_recentFileMenu);
     fileMenu->addAction(m_actionSaveProgram);
     fileMenu->addAction(m_actionSaveProgramAs);
     fileMenu->addAction(m_actionExportImage);
@@ -105,7 +113,7 @@ void MainWindow::setupMenus()
 
 void MainWindow::setupToolbars()
 {
-    QToolBar* const toolbar = addToolBar(tr("Main"));
+    QToolBar* const toolbar = m_toolbarManager->addToolBar(tr("Main"), QLatin1String("main_toolbar"));
 
     toolbar->addAction(m_actionDraw);
     toolbar->addSeparator();
@@ -343,6 +351,7 @@ bool MainWindow::writeProgram(QString const& filePath)
 
             stream << m_programTextEdit->toPlainText();
             qDebug() << "Write file:" << filePath;
+            m_recentFileMenu->addFile(filePath);
             result = true;
         }
         else
@@ -372,6 +381,7 @@ bool MainWindow::maybeSave()
                 result = saveProgram();
                 break;
             case QMessageBox::No:
+                m_documentOnDisk.setModified(false);
                 result = true;
                 break;
             case QMessageBox::Cancel:
@@ -391,7 +401,9 @@ bool MainWindow::maybeSave()
 
 void MainWindow::closeEvent(QCloseEvent* event)
 {
+    saveSettings();
     event->setAccepted(maybeSave());
+    QMainWindow::closeEvent(event);
 }
 
 void MainWindow::onDocumentModified(bool const modified)
@@ -400,4 +412,27 @@ void MainWindow::onDocumentModified(bool const modified)
     {
         m_needToBeBuilded = true;
     }
+    updateActions();
+}
+
+void MainWindow::saveSettings() const
+{
+    QSettings settings;
+
+    settings.beginGroup("MainWindow");
+    settings.setValue("geometry", saveGeometry());
+    settings.setValue("state", saveState(StateVersionNumber));
+    m_recentFileMenu->saveSettings(settings);
+    settings.endGroup();
+}
+
+void MainWindow::loadSettings()
+{
+    QSettings settings;
+
+    settings.beginGroup("MainWindow");
+    restoreGeometry(settings.value("geometry").toByteArray());
+    restoreState(settings.value("state").toByteArray(), StateVersionNumber);
+    m_recentFileMenu->loadSettings(settings);
+    settings.endGroup();
 }
