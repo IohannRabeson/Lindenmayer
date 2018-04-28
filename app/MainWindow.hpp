@@ -57,7 +57,6 @@ private:
 
     void updateActions();
 
-    unsigned int getIterations() const;
     qreal getDistance() const;
     qreal getAngle() const;
 

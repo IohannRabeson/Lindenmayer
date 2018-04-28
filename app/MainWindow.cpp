@@ -55,6 +55,8 @@ MainWindow::MainWindow()
 
     connect(m_programTextEdit, &QPlainTextEdit::textChanged, &m_documentOnDisk, &qool::DocumentOnDisk::modified);
 
+    connect(m_recentFileMenu, &qool::RecentFileMenu::fileClicked, [this](QString const& filePath) { loadProgram(filePath); } );
+
     loadSettings();
 
     newProgram();
@@ -149,7 +151,7 @@ bool MainWindow::loadProgram(QString const& filePath)
 {
     bool result = false;
 
-    if (maybeSave() && !filePath.isEmpty())
+    if (maybeSave())
     {
         QFile file(filePath);
 
@@ -250,6 +252,12 @@ void MainWindow::exportImage(QString const& filePath)
 void MainWindow::draw()
 {
     build();
+
+    if (m_program.haveErrors())
+    {
+        return;
+    }
+
     // Execute turtle orders
     m_graphicsScene->clear();
     m_turtle.reset();
@@ -263,7 +271,7 @@ bool MainWindow::build()
 {
     if (!m_needToBeBuilded)
     {
-        return true;
+        return false;
     }
 
     // Convert text to program content using ANTLR
@@ -314,12 +322,7 @@ void MainWindow::updateActions()
 
     m_actionDraw->setEnabled(haveProgram && haveModules);
     m_actionSaveProgram->setEnabled(m_documentOnDisk.isModified() && m_documentOnDisk.isOnDisk());
-    m_actionSaveProgramAs->setEnabled(m_documentOnDisk.isModified() && !m_documentOnDisk.isOnDisk());
-}
-
-unsigned int MainWindow::getIterations() const
-{
-    return m_program.content().iterations.get_value_or(0u);
+    m_actionSaveProgramAs->setEnabled(haveProgram && m_documentOnDisk.isLoaded());
 }
 
 qreal MainWindow::getDistance() const
@@ -352,11 +355,13 @@ bool MainWindow::writeProgram(QString const& filePath)
             stream << m_programTextEdit->toPlainText();
             qDebug() << "Write file:" << filePath;
             m_recentFileMenu->addFile(filePath);
+            m_documentOnDisk.savedAs(filePath);
             result = true;
         }
         else
         {
-            qWarning() << "MainWindow::saveProgram: failed to save " << filePath << file.isOpen() << file.errorString();
+            qWarning() << "MainWindow::saveProgram: failed to write file:" << filePath << file.isOpen()
+                       << file.errorString();
         }
         updateActions();
     }
@@ -366,7 +371,7 @@ bool MainWindow::writeProgram(QString const& filePath)
 
 bool MainWindow::maybeSave()
 {
-    bool result = false;
+    bool result = true;
 
     if (m_documentOnDisk.isModified())
     {
@@ -390,10 +395,6 @@ bool MainWindow::maybeSave()
             default:
                 break;
         }
-    }
-    else
-    {
-        result = true;
     }
 
     return result;
