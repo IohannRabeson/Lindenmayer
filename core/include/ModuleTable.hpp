@@ -2,8 +2,8 @@
 // Created by Io on 13/04/2018.
 //
 
-#ifndef LINDENMAYER_SYMBOLTABLE_HPP
-#define LINDENMAYER_SYMBOLTABLE_HPP
+#ifndef LINDENMAYER_MODULETABLE_HPP
+#define LINDENMAYER_MODULETABLE_HPP
 #include "Module.hpp"
 
 #include <functional>
@@ -27,8 +27,8 @@ namespace lcode
         Modules createModules(std::vector<std::string> const& identifiers) const;
 
         void execute(Modules const& modules) const;
-    private:
         void execute(Module const& module) const;
+    private:
         Module createNextModule();
         bool isFreeIdentifier(std::string const& identifier) const;
     private:
