@@ -6,13 +6,34 @@
 
 namespace lcode::ContextHelper
 {
-    Program::Error errorFromToken(antlr4::Token* token, std::string const& message)
+    Program::Error makeError(antlr4::tree::TerminalNode* node, std::string const& message)
+    {
+        return makeError(node->getSymbol(), message);
+    }
+
+    /*!
+     * \brief Construct an error
+     * \param token Token with something wrong
+     * \param message Message to display. You can use the placeholder '%t' replaced by the token text.
+     * \return
+     */
+    Program::Error makeError(antlr4::Token* token, std::string message)
     {
         Program::Error error;
 
+        static std::string const TextTag = "%t";
+        auto const textTagPosition = message.find(TextTag);
+
+        if (textTagPosition != std::string::npos)
+        {
+            auto const tokenText = token->getText();
+
+            message.replace(textTagPosition, TextTag.size(), tokenText);
+        }
+
         error.charIndex = token->getCharPositionInLine();
         error.line = token->getLine();
-        error.message = message;
+        error.message = std::move(message);
         return error;
     }
 
@@ -31,9 +52,7 @@ namespace lcode::ContextHelper
 
         if (module.isNull())
         {
-            auto error = errorFromToken(context->Identifier()->getSymbol(), "Invalid identifier '" + context->Identifier()->getText() + "'");
-
-            errors.emplace_back(std::move(error));
+            errors.emplace_back(makeError(context->Identifier(), "Invalid identifier '%t'"));
         }
 
         return module;
@@ -76,9 +95,7 @@ namespace lcode::ContextHelper
             }
             catch (std::out_of_range const& e)
             {
-                auto error = errorFromToken(terminalNode->getSymbol(), "number '" + terminalNode->getText() + "' to large for an unsigned int");
-
-                errors.emplace_back(std::move(error));
+                errors.emplace_back(makeError(terminalNode, "number '%t' to large for an unsigned int"));
             }
         }
 
@@ -102,7 +119,7 @@ namespace lcode::ContextHelper
             }
             catch (std::out_of_range const& e)
             {
-                auto error = errorFromToken(terminalNode->getSymbol(), "number '" + terminalNode->getText() + "' to large for an unsigned int");
+                auto error = makeError(terminalNode, "number '%t' to large for an unsigned int");
 
                 errors.emplace_back(std::move(error));
             }

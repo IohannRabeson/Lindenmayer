@@ -10,7 +10,7 @@
 namespace lcode
 {
     Program::LoadFromLCode::LoadFromLCode(std::string const& lcode, ModuleTable const& table)
-            : m_lcode(lcode)
+    : m_lcode(lcode)
     {
         m_parseResult.moduleTable = table;
     }
@@ -95,6 +95,12 @@ namespace lcode
     {
         auto const& moduleContexts = axiomContext->module();
 
+        if (m_parseResult.axiom)
+        {
+            m_parseResult.errors.emplace_back(ContextHelper::makeError(moduleContexts.front()->Identifier(), "axiom already defined"));
+            return;
+        }
+
         m_parseResult.axiom = ContextHelper::getModules(moduleContexts.begin(), moduleContexts.end(),
                                                         m_parseResult.moduleTable, m_parseResult.errors);
     }
@@ -107,6 +113,13 @@ namespace lcode
         if (tokens.size() == 1u)
         {
             auto* const token = tokens.front();
+
+            if (m_parseResult.iterations)
+            {
+                m_parseResult.errors.emplace_back(ContextHelper::makeError(token, "iterations value already defined"));
+                return;
+            }
+
             auto number = ContextHelper::getInteger(token, m_parseResult.errors);
 
             if (number)
@@ -117,7 +130,7 @@ namespace lcode
                 }
                 else
                 {
-                    auto error = ContextHelper::errorFromToken(token->getSymbol(), "iterations value must be unsigned");
+                    auto error = ContextHelper::makeError(token->getSymbol(), "iterations value must be unsigned");
 
                     m_parseResult.errors.emplace_back(std::move(error));
                 }
@@ -127,26 +140,29 @@ namespace lcode
 
     void Program::LoadFromLCode::enterDistance(LSystemParser::DistanceContext* context)
     {
-        auto const tokens = context->getTokens(LSystemParser::Float);
-
         // TODO: resolve expression here instead of just parsing a simple number
-        if (tokens.size() == 1u)
+        if (context->Float())
         {
-            auto const number = ContextHelper::getFloat(context->Float(), m_parseResult.errors).value();
+            if (m_parseResult.distance)
+            {
+                m_parseResult.errors.emplace_back(ContextHelper::makeError(context->Float(), "distance value already defined"));
+                return;
+            }
+
+            auto const number = ContextHelper::getFloat(context->Float(), m_parseResult.errors);
 
             if (number)
             {
-                if (number >= 0)
+                if (number.value() < 0.f)
                 {
-                    m_parseResult.distance = number;
+                    Program::Error error = ContextHelper::makeError(context->Float(), "Invalid distance: '%t'");
+
+                    m_parseResult.errors.emplace_back(std::move(error));
                 }
                 else
                 {
-                    auto const text = tokens.front()->getText();
-                    Program::Error error = ContextHelper::errorFromToken(tokens.front()->getSymbol(),
-                                                                         "Invalid distance: '" + text + "'");
-
-                    m_parseResult.errors.emplace_back(std::move(error));
+                    // Notice usage of optional::value() to allow implicit type conversion.
+                    m_parseResult.distance.emplace(number.value());
                 }
             }
         }
@@ -154,12 +170,16 @@ namespace lcode
 
     void Program::LoadFromLCode::enterAngle(LSystemParser::AngleContext* context)
     {
-        auto const tokens = context->getTokens(LSystemParser::Float);
-
         // TODO: resolve expression here instead of just parsing a simple number
-        if (tokens.size() == 1u)
+        if (context->Float())
         {
-            m_parseResult.angle = std::stod(tokens.front()->getText());
+            if (m_parseResult.angle)
+            {
+                m_parseResult.errors.emplace_back(ContextHelper::makeError(context->Float(), "angle already defined"));
+                return;
+            }
+
+            m_parseResult.angle = std::stod(context->Float()->getText());
         }
     }
 
@@ -174,7 +194,7 @@ namespace lcode
 
         if (tokens.size() != 2u)
         {
-            Program::Error error = ContextHelper::errorFromToken(context->getStart(), "Invalid alias");
+            Program::Error error = ContextHelper::makeError(context->getStart(), "Invalid alias");
 
             m_parseResult.errors.emplace_back(std::move(error));
             return;
@@ -185,7 +205,8 @@ namespace lcode
 
         if (!m_parseResult.moduleTable.createAlias(aliasIdentifier, aliasedIdentifier))
         {
-            Program::Error error = ContextHelper::errorFromToken(context->getStart(), "Can't create alias '" + aliasIdentifier + "'");
+            Program::Error error = ContextHelper::makeError(context->getStart(),
+                                                            "Can't create alias '" + aliasIdentifier + "'");
 
             m_parseResult.errors.emplace_back(std::move(error));
         }
