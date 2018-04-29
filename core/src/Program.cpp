@@ -31,7 +31,7 @@ namespace lcode
 
     Modules Program::rewrite(unsigned int const iterations) const
     {
-        return rewrote(m_content.rewriteRules, m_content.axiom, iterations);
+        return rewrote(m_content.rewriteRules, m_content.axiom.get_value_or({}), iterations);
     }
 
     Modules Program::rewrite() const

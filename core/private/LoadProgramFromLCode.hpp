@@ -21,14 +21,9 @@ namespace lcode
         std::string const& m_lcode;
         Content m_parseResult;
     public:
-        LoadFromLCode(std::string const& lcode, ModuleTable const& table)
-        : m_lcode(lcode)
-        {
-            m_parseResult.moduleTable = table;
-        }
+        LoadFromLCode(std::string const& lcode, ModuleTable const& table);
 
         Content load() override;
-
 
         void syntaxError(antlr4::Recognizer*, antlr4::Token*,
                 size_t line, size_t charPositionInLine, const std::string& msg, std::exception_ptr) override;
@@ -41,14 +36,6 @@ namespace lcode
 
         void reportContextSensitivity(antlr4::Parser*, antlr4::dfa::DFA const&, size_t, size_t, size_t,
                 antlr4::atn::ATNConfigSet*) override;
-
-
-        template <class T>
-        using FunctionType = T(*)(std::string const&, std::size_t*);
-
-        template <class T, class F>
-        Optional<T> toT(antlr4::Token* const token, std::vector<Error>& errors, F f);
-
 
         void enterAxiom(LSystemParser::AxiomContext* context) override;
 

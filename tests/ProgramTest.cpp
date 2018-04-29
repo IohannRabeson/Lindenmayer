@@ -3,7 +3,6 @@
 //
 
 #include <Program.hpp>
-
 #include <iostream>
 
 #include "Mocks/Turtle2DMock.hpp"
@@ -33,7 +32,7 @@ TEST(Program, program_empty)
     lcode::Program program;
 
     EXPECT_FALSE( program.haveErrors() );
-    EXPECT_TRUE( program.content().axiom.empty() );
+    EXPECT_FALSE( program.content().axiom );
     ASSERT_TRUE( program.content().rewriteRules.empty() );
     ASSERT_FALSE( program.content().angle );
     ASSERT_FALSE( program.content().initialAngle );
@@ -56,8 +55,7 @@ struct ProgramTurtleMockActionFixture : public ::testing::Test
     lcode::ModuleTable moduleTable;
 };
 
-
-TEST_F(ProgramNoActionFixture, program_have_error)
+TEST_F(ProgramNoActionFixture, program_error_missing_semicolon)
 {
     lcode::Program program;
 
@@ -75,8 +73,8 @@ TEST_F(ProgramNoActionFixture, axiom_single)
     lcode::Program program;
 
     EXPECT_TRUE( printErrors(program.loadFromLCode("axiom: F;", moduleTable)).empty() );
-    ASSERT_FALSE( program.content().axiom.empty() );
-    ASSERT_EQ( program.content().axiom.front(), moduleTable.createModule("F") );
+    ASSERT_FALSE( program.content().axiom.value().empty() );
+    ASSERT_EQ( program.content().axiom.value().front(), moduleTable.createModule("F") );
     ASSERT_TRUE( program.content().rewriteRules.empty() );
     ASSERT_FALSE( program.content().angle );
     ASSERT_FALSE( program.content().initialAngle );
@@ -90,11 +88,11 @@ TEST_F(ProgramNoActionFixture, axiom_multiple)
 
     EXPECT_TRUE( printErrors(program.loadFromLCode("axiom: F f [ ];", moduleTable)).empty() );
 
-    ASSERT_EQ( program.content().axiom.size(), 4u );
-    ASSERT_EQ( program.content().axiom.at(0u), moduleTable.createModule("F") );
-    ASSERT_EQ( program.content().axiom.at(1u), moduleTable.createModule("f") );
-    ASSERT_EQ( program.content().axiom.at(2u), moduleTable.createModule("[") );
-    ASSERT_EQ( program.content().axiom.at(3u), moduleTable.createModule("]") );
+    ASSERT_EQ( program.content().axiom.value().size(), 4u );
+    ASSERT_EQ( program.content().axiom.value().at(0u), moduleTable.createModule("F") );
+    ASSERT_EQ( program.content().axiom.value().at(1u), moduleTable.createModule("f") );
+    ASSERT_EQ( program.content().axiom.value().at(2u), moduleTable.createModule("[") );
+    ASSERT_EQ( program.content().axiom.value().at(3u), moduleTable.createModule("]") );
     ASSERT_TRUE( program.content().rewriteRules.empty() );
     ASSERT_FALSE( program.content().angle );
     ASSERT_FALSE( program.content().initialAngle );
@@ -108,11 +106,11 @@ TEST_F(ProgramNoActionFixture, axiom_multiple_no_spaces)
 
     EXPECT_TRUE( printErrors(program.loadFromLCode("axiom:Ff[];", moduleTable)).empty() );
 
-    ASSERT_EQ( program.content().axiom.size(), 4u );
-    ASSERT_EQ( program.content().axiom.at(0u), moduleTable.createModule("F") );
-    ASSERT_EQ( program.content().axiom.at(1u), moduleTable.createModule("f") );
-    ASSERT_EQ( program.content().axiom.at(2u), moduleTable.createModule("[") );
-    ASSERT_EQ( program.content().axiom.at(3u), moduleTable.createModule("]") );
+    ASSERT_EQ( program.content().axiom.value().size(), 4u );
+    ASSERT_EQ( program.content().axiom.value().at(0u), moduleTable.createModule("F") );
+    ASSERT_EQ( program.content().axiom.value().at(1u), moduleTable.createModule("f") );
+    ASSERT_EQ( program.content().axiom.value().at(2u), moduleTable.createModule("[") );
+    ASSERT_EQ( program.content().axiom.value().at(3u), moduleTable.createModule("]") );
     ASSERT_TRUE( program.content().rewriteRules.empty() );
     ASSERT_FALSE( program.content().angle );
     ASSERT_FALSE( program.content().initialAngle );
@@ -127,11 +125,11 @@ TEST_F(ProgramNoActionFixture, axiom_multiple_iterations)
     EXPECT_TRUE( printErrors(program.loadFromLCode("axiom: F f [ ];"
                                        "iterations: 9;",
                                        moduleTable)).empty() );
-    ASSERT_EQ( program.content().axiom.size(), 4u );
-    ASSERT_EQ( program.content().axiom.at(0u), moduleTable.createModule("F") );
-    ASSERT_EQ( program.content().axiom.at(1u), moduleTable.createModule("f") );
-    ASSERT_EQ( program.content().axiom.at(2u), moduleTable.createModule("[") );
-    ASSERT_EQ( program.content().axiom.at(3u), moduleTable.createModule("]") );
+    ASSERT_EQ( program.content().axiom.value().size(), 4u );
+    ASSERT_EQ( program.content().axiom.value().at(0u), moduleTable.createModule("F") );
+    ASSERT_EQ( program.content().axiom.value().at(1u), moduleTable.createModule("f") );
+    ASSERT_EQ( program.content().axiom.value().at(2u), moduleTable.createModule("[") );
+    ASSERT_EQ( program.content().axiom.value().at(3u), moduleTable.createModule("]") );
 
     ASSERT_TRUE( program.content().rewriteRules.empty() );
     ASSERT_FALSE( program.content().angle );
@@ -148,11 +146,11 @@ TEST_F(ProgramNoActionFixture, axiom_multiple_distance)
     ASSERT_TRUE( printErrors(program.loadFromLCode("axiom: F f [ ];"
                                        "distance: 3.14;",
                                        moduleTable)).empty() );
-    ASSERT_EQ( program.content().axiom.size(), 4u );
-    ASSERT_EQ( program.content().axiom.at(0u), moduleTable.createModule("F") );
-    ASSERT_EQ( program.content().axiom.at(1u), moduleTable.createModule("f") );
-    ASSERT_EQ( program.content().axiom.at(2u), moduleTable.createModule("[") );
-    ASSERT_EQ( program.content().axiom.at(3u), moduleTable.createModule("]") );
+    ASSERT_EQ( program.content().axiom.value().size(), 4u );
+    ASSERT_EQ( program.content().axiom.value().at(0u), moduleTable.createModule("F") );
+    ASSERT_EQ( program.content().axiom.value().at(1u), moduleTable.createModule("f") );
+    ASSERT_EQ( program.content().axiom.value().at(2u), moduleTable.createModule("[") );
+    ASSERT_EQ( program.content().axiom.value().at(3u), moduleTable.createModule("]") );
 
     ASSERT_TRUE( program.content().rewriteRules.empty() );
     ASSERT_FALSE( program.content().angle );
@@ -169,11 +167,11 @@ TEST_F(ProgramNoActionFixture, axiom_multiple_angle)
     EXPECT_TRUE( printErrors(program.loadFromLCode("axiom: F f [ ];"
                                        "angle: 63.14;",
                                        moduleTable)).empty() );
-    ASSERT_EQ( program.content().axiom.size(), 4u );
-    ASSERT_EQ( program.content().axiom.at(0u), moduleTable.createModule("F") );
-    ASSERT_EQ( program.content().axiom.at(1u), moduleTable.createModule("f") );
-    ASSERT_EQ( program.content().axiom.at(2u), moduleTable.createModule("[") );
-    ASSERT_EQ( program.content().axiom.at(3u), moduleTable.createModule("]") );
+    ASSERT_EQ( program.content().axiom.value().size(), 4u );
+    ASSERT_EQ( program.content().axiom.value().at(0u), moduleTable.createModule("F") );
+    ASSERT_EQ( program.content().axiom.value().at(1u), moduleTable.createModule("f") );
+    ASSERT_EQ( program.content().axiom.value().at(2u), moduleTable.createModule("[") );
+    ASSERT_EQ( program.content().axiom.value().at(3u), moduleTable.createModule("]") );
     ASSERT_TRUE( program.content().rewriteRules.empty() );
     ASSERT_TRUE( program.content().angle );
     ASSERT_FLOAT_EQ( program.content().angle.value(), 63.14f );
@@ -191,11 +189,11 @@ TEST_F(ProgramNoActionFixture, axiom_multiple_iteration_distance_angle)
                                        "distance: 3.14;"
                                        "angle: 63.14;", moduleTable)).empty() );
 
-    ASSERT_EQ( program.content().axiom.size(), 4u );
-    ASSERT_EQ( program.content().axiom.at(0u), moduleTable.createModule("F") );
-    ASSERT_EQ( program.content().axiom.at(1u), moduleTable.createModule("f") );
-    ASSERT_EQ( program.content().axiom.at(2u), moduleTable.createModule("[") );
-    ASSERT_EQ( program.content().axiom.at(3u), moduleTable.createModule("]") );
+    ASSERT_EQ( program.content().axiom.value().size(), 4u );
+    ASSERT_EQ( program.content().axiom.value().at(0u), moduleTable.createModule("F") );
+    ASSERT_EQ( program.content().axiom.value().at(1u), moduleTable.createModule("f") );
+    ASSERT_EQ( program.content().axiom.value().at(2u), moduleTable.createModule("[") );
+    ASSERT_EQ( program.content().axiom.value().at(3u), moduleTable.createModule("]") );
     ASSERT_TRUE( program.content().rewriteRules.empty() );
     ASSERT_TRUE( program.content().angle );
     ASSERT_NEAR( program.content().angle.value(), 63.14, 0.0001 );
@@ -203,7 +201,7 @@ TEST_F(ProgramNoActionFixture, axiom_multiple_iteration_distance_angle)
     ASSERT_TRUE( program.content().distance );
     ASSERT_NEAR( program.content().distance.value(), 3.14f, 0.0001f );
     ASSERT_TRUE( program.content().iterations );
-    ASSERT_EQ( program.content().iterations, 9u );
+    ASSERT_EQ( program.content().iterations.value(), 9u );
 }
 
 TEST(Program, execute_twice)
@@ -280,10 +278,10 @@ TEST(Program, koch)
     ASSERT_TRUE( printErrors(programExpected2.loadFromLCode("axiom: F+F-F-F+F + F+F-F-F+F - F+F-F-F+F - F+F-F-F+F + F+F-F-F+F;" , moduleTable)).empty() );
     ASSERT_TRUE( printErrors(programExpected3.loadFromLCode("axiom: F+F-F-F+F+F+F-F-F+F-F+F-F-F+F-F+F-F-F+F+F+F-F-F+F + F+F-F-F+F+F+F-F-F+F-F+F-F-F+F-F+F-F-F+F+F+F-F-F+F - F+F-F-F+F+F+F-F-F+F-F+F-F-F+F-F+F-F-F+F+F+F-F-F+F - F+F-F-F+F+F+F-F-F+F-F+F-F-F+F-F+F-F-F+F+F+F-F-F+F + F+F-F-F+F+F+F-F-F+F-F+F-F-F+F-F+F-F-F+F+F+F-F-F+F;" , moduleTable)).empty() );
 
-    ASSERT_EQ( program.rewrite(0u), programExpected0.content().axiom );
-    ASSERT_EQ( program.rewrite(1u), programExpected1.content().axiom );
-    ASSERT_EQ( program.rewrite(2u), programExpected2.content().axiom );
-    ASSERT_EQ( program.rewrite(3u), programExpected3.content().axiom );
+    ASSERT_EQ( program.rewrite(0u), programExpected0.content().axiom.value() );
+    ASSERT_EQ( program.rewrite(1u), programExpected1.content().axiom.value() );
+    ASSERT_EQ( program.rewrite(2u), programExpected2.content().axiom.value() );
+    ASSERT_EQ( program.rewrite(3u), programExpected3.content().axiom.value() );
 }
 
 
@@ -315,12 +313,12 @@ TEST(Program, plant01)
     ASSERT_TRUE( printErrors(programExpected1.loadFromLCode("axiom: F[+X]F[-X]+X;" , moduleTable)).empty() );
     ASSERT_TRUE( printErrors(programExpected2.loadFromLCode("axiom: FF[+F[+X]F[-X]+X]FF[-F[+X]F[-X]+X]+F[+X]F[-X]+X;" , moduleTable)).empty() );
 
-    EXPECT_EQ( program.rewrite(0u).size(), programExpected0.content().axiom.size() );
-    EXPECT_EQ( program.rewrite(1u).size(), programExpected1.content().axiom.size() );
-    EXPECT_EQ( program.rewrite(2u).size(), programExpected2.content().axiom.size() );
-    ASSERT_EQ( program.rewrite(0u), programExpected0.content().axiom );
-    ASSERT_EQ( program.rewrite(1u), programExpected1.content().axiom );
-    ASSERT_EQ( program.rewrite(2u), programExpected2.content().axiom );
+    EXPECT_EQ( program.rewrite(0u).size(), programExpected0.content().axiom.value().size() );
+    EXPECT_EQ( program.rewrite(1u).size(), programExpected1.content().axiom.value().size() );
+    EXPECT_EQ( program.rewrite(2u).size(), programExpected2.content().axiom.value().size() );
+    ASSERT_EQ( program.rewrite(0u), programExpected0.content().axiom.value() );
+    ASSERT_EQ( program.rewrite(1u), programExpected1.content().axiom.value() );
+    ASSERT_EQ( program.rewrite(2u), programExpected2.content().axiom.value() );
 }
 
 TEST(Program, plant01_2)
@@ -347,8 +345,8 @@ TEST(Program, plant01_2)
 
     ASSERT_TRUE( printErrors(programExpected2.loadFromLCode("alias X = F; axiom: FF[+F[+X]F[-X]+X]FF[-F[+X]F[-X]+X]+F[+X]F[-X]+X;" , moduleTable)).empty() );
 
-    EXPECT_EQ( program.rewrite(1u).size(), programExpected2.content().axiom.size() );
-    ASSERT_EQ( program.rewrite(1u), programExpected2.content().axiom );
+    EXPECT_EQ( program.rewrite(1u).size(), programExpected2.content().axiom.value().size() );
+    ASSERT_EQ( program.rewrite(1u), programExpected2.content().axiom.value() );
 }
 
 TEST(Program, sierpinsky)
@@ -372,7 +370,7 @@ TEST(Program, sierpinsky)
     ASSERT_TRUE( printErrors(programExpected.loadFromLCode("axiom: F+G+F-G-F-G-F+G+F;" , moduleTable)).empty() );
 
     auto const result = program.rewrite(2u);
-    auto const expected = programExpected.content().axiom;
+    auto const expected = programExpected.content().axiom.value();
 
     ASSERT_EQ( result, expected );
 }
@@ -458,12 +456,12 @@ TEST(Program, alias_action2)
     ASSERT_TRUE( printErrors(programExpected0.loadFromLCode("alias G = F; axiom: F;" , moduleTable)).empty() );
     ASSERT_TRUE( printErrors(programExpected1.loadFromLCode("alias G = F; axiom: G;" , moduleTable)).empty() );
     ASSERT_TRUE( printErrors(programExpected2.loadFromLCode("alias G = F; axiom: FGF;" , moduleTable)).empty() );
-    EXPECT_EQ( program.rewrite(0u).size(), programExpected0.content().axiom.size() );
-    EXPECT_EQ( program.rewrite(1u).size(), programExpected1.content().axiom.size() );
-    EXPECT_EQ( program.rewrite(2u).size(), programExpected2.content().axiom.size() );
-    ASSERT_EQ( program.rewrite(0u), programExpected0.content().axiom );
-    ASSERT_EQ( program.rewrite(1u), programExpected1.content().axiom );
-    ASSERT_EQ( program.rewrite(2u), programExpected2.content().axiom );
+    EXPECT_EQ( program.rewrite(0u).size(), programExpected0.content().axiom.value().size() );
+    EXPECT_EQ( program.rewrite(1u).size(), programExpected1.content().axiom.value().size() );
+    EXPECT_EQ( program.rewrite(2u).size(), programExpected2.content().axiom.value().size() );
+    ASSERT_EQ( program.rewrite(0u), programExpected0.content().axiom.value() );
+    ASSERT_EQ( program.rewrite(1u), programExpected1.content().axiom.value() );
+    ASSERT_EQ( program.rewrite(2u), programExpected2.content().axiom.value() );
 }
 
 TEST(Program, plant01_alias)
@@ -494,12 +492,12 @@ TEST(Program, plant01_alias)
     ASSERT_TRUE( printErrors(programExpected1.loadFromLCode("alias X = F; axiom: F[+X]F[-X]+X;" , moduleTable)).empty() );
     ASSERT_TRUE( printErrors(programExpected2.loadFromLCode("alias X = F; axiom: FF[+F[+X]F[-X]+X]FF[-F[+X]F[-X]+X]+F[+X]F[-X]+X;" , moduleTable)).empty() );
 
-    EXPECT_EQ( program.rewrite(0u).size(), programExpected0.content().axiom.size() );
-    EXPECT_EQ( program.rewrite(1u).size(), programExpected1.content().axiom.size() );
-    EXPECT_EQ( program.rewrite(2u).size(), programExpected2.content().axiom.size() );
-    ASSERT_EQ( program.rewrite(0u), programExpected0.content().axiom );
-    ASSERT_EQ( program.rewrite(1u), programExpected1.content().axiom );
-    ASSERT_EQ( program.rewrite(2u), programExpected2.content().axiom );
+    EXPECT_EQ( program.rewrite(0u).size(), programExpected0.content().axiom.value().size() );
+    EXPECT_EQ( program.rewrite(1u).size(), programExpected1.content().axiom.value().size() );
+    EXPECT_EQ( program.rewrite(2u).size(), programExpected2.content().axiom.value().size() );
+    ASSERT_EQ( program.rewrite(0u), programExpected0.content().axiom.value() );
+    ASSERT_EQ( program.rewrite(1u), programExpected1.content().axiom.value() );
+    ASSERT_EQ( program.rewrite(2u), programExpected2.content().axiom.value() );
 }
 
 TEST(Program, sierpinsky_alias)
@@ -523,7 +521,7 @@ TEST(Program, sierpinsky_alias)
     ASSERT_TRUE( printErrors(programExpected.loadFromLCode("alias G = F; axiom: F+G+F-G-F-G-F+G+F;" , moduleTable)).empty() );
 
     auto const result = program.rewrite(2u);
-    auto const expected = programExpected.content().axiom;
+    auto const expected = programExpected.content().axiom.value();
 
     ASSERT_EQ( result, expected );
 }
@@ -552,8 +550,8 @@ TEST(Program, stochastic_rules_double)
     for (auto i = 0u; i < 1000u; ++i)
     {
         auto const result = program.rewrite(1u);
-        auto const expectedA = programExpectedA.content().axiom;
-        auto const expectedB = programExpectedB.content().axiom;
+        auto const expectedA = programExpectedA.content().axiom.value();
+        auto const expectedB = programExpectedB.content().axiom.value();
 
         ASSERT_TRUE( result == expectedA || result == expectedB );
     }
@@ -590,9 +588,9 @@ TEST(Program, stochastic_rules_triple)
     for (auto i = 0u; i < 5000u; ++i)
     {
         auto const result = program.rewrite(1u);
-        auto const expectedA = programExpectedA.content().axiom;
-        auto const expectedB = programExpectedB.content().axiom;
-        auto const expectedC = programExpectedC.content().axiom;
+        auto const expectedA = programExpectedA.content().axiom.value();
+        auto const expectedB = programExpectedB.content().axiom.value();
+        auto const expectedC = programExpectedC.content().axiom.value();
 
         ASSERT_TRUE( result == expectedA || result == expectedB || result == expectedC );
 
@@ -639,8 +637,50 @@ TEST(Program, stochastic_rules_zero_chance)
     for (auto i = 0u; i < 1000u; ++i)
     {
         auto const result = program.rewrite(1u);
-        auto const expectedB = programExpectedB.content().axiom;
+        auto const expectedB = programExpectedB.content().axiom.value();
 
         ASSERT_TRUE( result == expectedB );
     }
+}
+
+/*!
+ * \brief Iterations test
+ * Iterations can only have unsigned integer value.
+ */
+TEST_F(ProgramNoActionFixture, iterations_tests)
+{
+    unsigned long maxUnsignedInt = std::numeric_limits<unsigned int>::max();
+
+    lcode::Program program;
+
+    EXPECT_TRUE( program.loadFromLCode("iterations: 0;", moduleTable).empty() );
+    EXPECT_TRUE( program.loadFromLCode("iterations: " + std::to_string(maxUnsignedInt) + ";", moduleTable).empty() );
+    EXPECT_FALSE( program.loadFromLCode("iterations: -1;", moduleTable).empty() );
+}
+
+/*!
+ * \brief Distance test
+ * Distance can only have unsigned float value.
+ */
+TEST_F(ProgramNoActionFixture, distance_tests)
+{
+    float const maxUnsignedFloat = std::numeric_limits<float>::max();
+
+    lcode::Program program;
+
+    // Missing '.' then considered as integer
+    EXPECT_FALSE( program.loadFromLCode("distance: 0;", moduleTable).empty() );
+    EXPECT_TRUE( program.loadFromLCode("distance: 0.;", moduleTable).empty() );
+    EXPECT_TRUE( program.loadFromLCode("distance: " + std::to_string(maxUnsignedFloat) + ";", moduleTable).empty() );
+    EXPECT_FALSE( program.loadFromLCode("distance: -1.;", moduleTable).empty() );
+}
+
+TEST_F(ProgramNoActionFixture, duplicate_global_variables)
+{
+    lcode::Program program;
+
+    EXPECT_FALSE( program.loadFromLCode("distance: 0.; distance: 9.;", moduleTable).empty() );
+    EXPECT_FALSE( program.loadFromLCode("iterations: 0; iterations: 9;", moduleTable).empty() );
+    EXPECT_FALSE( program.loadFromLCode("angle: 0.; angle: 9.;", moduleTable).empty() );
+    EXPECT_FALSE( program.loadFromLCode("axiom: F; axiom: F;", moduleTable).empty() );
 }

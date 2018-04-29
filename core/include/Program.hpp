@@ -29,7 +29,7 @@ namespace lcode
         struct Content
         {
             RewriteRules rewriteRules;
-            Modules axiom;
+            Optional<Modules> axiom;
             Optional<unsigned int> iterations;
             Optional<float> distance;
             Optional<float> angle;
