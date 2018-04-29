@@ -3,7 +3,6 @@
 //
 
 #include <Program.hpp>
-
 #include <iostream>
 
 #include "Mocks/Turtle2DMock.hpp"
@@ -56,8 +55,7 @@ struct ProgramTurtleMockActionFixture : public ::testing::Test
     lcode::ModuleTable moduleTable;
 };
 
-
-TEST_F(ProgramNoActionFixture, program_have_error)
+TEST_F(ProgramNoActionFixture, program_error_missing_semicolon)
 {
     lcode::Program program;
 
@@ -203,7 +201,7 @@ TEST_F(ProgramNoActionFixture, axiom_multiple_iteration_distance_angle)
     ASSERT_TRUE( program.content().distance );
     ASSERT_NEAR( program.content().distance.value(), 3.14f, 0.0001f );
     ASSERT_TRUE( program.content().iterations );
-    ASSERT_EQ( program.content().iterations, 9u );
+    ASSERT_EQ( program.content().iterations.value(), 9u );
 }
 
 TEST(Program, execute_twice)
@@ -643,4 +641,36 @@ TEST(Program, stochastic_rules_zero_chance)
 
         ASSERT_TRUE( result == expectedB );
     }
+}
+
+/*!
+ * \brief Iterations test
+ * Iterations can only have unsigned integer value.
+ */
+TEST_F(ProgramNoActionFixture, iterations_tests)
+{
+    unsigned long maxUnsignedInt = std::numeric_limits<unsigned int>::max();
+
+    lcode::Program program;
+
+    ASSERT_TRUE( program.loadFromLCode("iterations: 0;", moduleTable).empty() );
+    ASSERT_TRUE( program.loadFromLCode("iterations: " + std::to_string(maxUnsignedInt) + ";", moduleTable).empty() );
+    ASSERT_FALSE( program.loadFromLCode("iterations: -1;", moduleTable).empty() );
+}
+
+/*!
+ * \brief Distance test
+ * Distance can only have unsigned float value.
+ */
+TEST_F(ProgramNoActionFixture, distance_tests)
+{
+    float const maxUnsignedFloat = std::numeric_limits<float>::max();
+
+    lcode::Program program;
+
+    // Missing '.' then considered as integer
+    ASSERT_FALSE( program.loadFromLCode("distance: 0;", moduleTable).empty() );
+    ASSERT_TRUE( program.loadFromLCode("distance: 0.;", moduleTable).empty() );
+    ASSERT_TRUE( program.loadFromLCode("distance: " + std::to_string(maxUnsignedFloat) + ";", moduleTable).empty() );
+    ASSERT_FALSE( program.loadFromLCode("distance: -1.;", moduleTable).empty() );
 }

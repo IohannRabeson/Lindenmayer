@@ -3,117 +3,16 @@
 //
 
 #include "LoadProgramFromLCode.hpp"
+#include "ContextHelper.hpp"
 
 #include <string>
 
 namespace lcode
 {
-    namespace antlr
+    Program::LoadFromLCode::LoadFromLCode(std::string const& lcode, ModuleTable const& table)
+            : m_lcode(lcode)
     {
-        unsigned int stoui(std::string const& text, std::size_t* consumed)
-        {
-            return static_cast<unsigned int>(std::stoul(text, consumed));
-        }
-
-        std::string getTokenIdentifier(antlr4::Token* const token)
-        {
-            return token->getText();
-        }
-
-        template <class IT>
-        std::vector<std::string> getTokenIdentifiers(IT begin, IT end)
-        {
-            std::vector<std::string> identifiers(std::distance(begin, end));
-
-            std::generate(identifiers.begin(), identifiers.end(), [&begin] ()
-            {
-                auto text = (*begin)->getText();
-
-                ++begin;
-                return text;
-            });
-
-            return identifiers;
-        }
-
-        Program::Error errorFromToken(antlr4::Token* token, std::string const& message)
-        {
-            Program::Error error;
-
-            error.charIndex = token->getCharPositionInLine();
-            error.line = token->getLine();
-            error.message = message;
-            return error;
-        }
-    }
-
-    namespace ContextHelper
-    {
-        std::string getIdentifier(LSystemParser::ModuleContext* const context)
-        {
-            assert(context != nullptr);
-            assert(context->Identifier() != nullptr);
-
-            return context->Identifier()->getText();
-        }
-
-        Module getModule(LSystemParser::ModuleContext* const context, ModuleTable const& table, std::vector<Program::Error>& errors)
-        {
-            assert(context != nullptr);
-            assert(context->Identifier() != nullptr);
-
-            auto const identifierText = context->Identifier()->getText();
-
-            // TODO: use context->parameter_pack()!
-
-            auto const module = table.createModule(identifierText);
-
-            if (module.isNull())
-            {
-                auto error = antlr::errorFromToken(context->Identifier()->getSymbol(), "Invalid identifier '" + context->Identifier()->getText() + "'");
-
-                errors.emplace_back(std::move(error));
-            }
-
-            return module;
-        }
-
-        Modules
-        getModules(std::vector<LSystemParser::ModuleContext*>::const_iterator begin,
-                   std::vector<LSystemParser::ModuleContext*>::const_iterator end,
-                   ModuleTable const& table,
-                   std::vector<Program::Error>& errors)
-        {
-            Modules modules;
-
-            modules.reserve(std::distance(begin, end));
-
-            for (auto it = begin; it != end; ++it)
-            {
-                modules.emplace_back(getModule(*it, table, errors));
-            }
-
-            return modules;
-        }
-
-        bool isError(antlr4::tree::TerminalNode* const node)
-        {
-            return node == nullptr || dynamic_cast<antlr4::tree::ErrorNode*>(node) != nullptr;
-        }
-
-        Optional<float> getFloat(antlr4::tree::TerminalNode* const terminalNode)
-        {
-            assert(terminalNode != nullptr);
-
-            Optional<float> result;
-            auto const text = terminalNode->getText();
-
-            if (!text.empty() && !isError(terminalNode))
-            {
-                result.emplace(std::stof(text));
-            }
-            return result;
-        }
+        m_parseResult.moduleTable = table;
     }
 
     void Program::LoadFromLCode::enterTransformation(LSystemParser::TransformationContext* context)
@@ -128,7 +27,7 @@ namespace lcode
 
             if (probabilityContext && !ContextHelper::isError(probabilityContext->Float()))
             {
-                auto probabilityValue = ContextHelper::getFloat(probabilityContext->Float());
+                auto probabilityValue = ContextHelper::getFloat(probabilityContext->Float(), m_parseResult.errors);
 
                 assert( probabilityValue );
 
@@ -163,8 +62,8 @@ namespace lcode
         return m_parseResult;
     }
 
-    void
-    Program::LoadFromLCode::syntaxError(antlr4::Recognizer*, antlr4::Token*, size_t line, size_t charPositionInLine, const std::string& msg, std::exception_ptr)
+    void Program::LoadFromLCode::syntaxError(antlr4::Recognizer*, antlr4::Token*, size_t line,
+                                             std::size_t charPositionInLine, const std::string& msg, std::exception_ptr)
     {
         Error error;
 
@@ -174,49 +73,30 @@ namespace lcode
         m_parseResult.errors.emplace_back(std::move(error));
     }
 
-    void
-    Program::LoadFromLCode::reportAmbiguity(antlr4::Parser*, antlr4::dfa::DFA const&, size_t, size_t, bool, const antlrcpp::BitSet&, antlr4::atn::ATNConfigSet*)
+    void Program::LoadFromLCode::reportAmbiguity(antlr4::Parser*, antlr4::dfa::DFA const&, std::size_t, std::size_t, bool,
+                                                 const antlrcpp::BitSet&, antlr4::atn::ATNConfigSet*)
     {
+        // Do nothing
     }
 
-    void
-    Program::LoadFromLCode::reportAttemptingFullContext(antlr4::Parser*, antlr4::dfa::DFA const&, size_t, size_t, const antlrcpp::BitSet&, antlr4::atn::ATNConfigSet*)
+    void Program::LoadFromLCode::reportAttemptingFullContext(antlr4::Parser*, antlr4::dfa::DFA const&, size_t, size_t,
+                                                             const antlrcpp::BitSet&, antlr4::atn::ATNConfigSet*)
     {
+        // Do nothing
     }
 
-    void
-    Program::LoadFromLCode::reportContextSensitivity(antlr4::Parser*, antlr4::dfa::DFA const&, size_t, size_t, size_t, antlr4::atn::ATNConfigSet*)
+    void Program::LoadFromLCode::reportContextSensitivity(antlr4::Parser*, antlr4::dfa::DFA const&,
+                                                          size_t, size_t, size_t, antlr4::atn::ATNConfigSet*)
     {
-    }
-
-    template <class T, class F>
-    Optional<T> Program::LoadFromLCode::toT(antlr4::Token* const token, std::vector<Error>& errors, F f)
-    {
-        std::size_t digitUsed = 0u;
-        auto const text = token->getText();
-        Optional<T> result;
-
-        T tempResult = f(text, &digitUsed);
-
-        if (digitUsed != text.size())
-        {
-            Program::Error error = antlr::errorFromToken(token, "Invalid input: '" + text + "'");
-
-            errors.emplace_back(std::move(error));
-        }
-        else
-        {
-            result.emplace(std::move(tempResult));
-        }
-
-        return result;
+        // Do nothing
     }
 
     void Program::LoadFromLCode::enterAxiom(LSystemParser::AxiomContext* axiomContext)
     {
         auto const& moduleContexts = axiomContext->module();
 
-        m_parseResult.axiom = ContextHelper::getModules(moduleContexts.begin(), moduleContexts.end(), m_parseResult.moduleTable, m_parseResult.errors);
+        m_parseResult.axiom = ContextHelper::getModules(moduleContexts.begin(), moduleContexts.end(),
+                                                        m_parseResult.moduleTable, m_parseResult.errors);
     }
 
     void Program::LoadFromLCode::enterIterations(LSystemParser::IterationsContext* context)
@@ -226,7 +106,22 @@ namespace lcode
         // TODO: resolve expression here instead of just parsing a simple number
         if (tokens.size() == 1u)
         {
-            m_parseResult.iterations = toT<unsigned int>(tokens.front()->getSymbol(), m_parseResult.errors, antlr::stoui);
+            auto* const token = tokens.front();
+            auto number = ContextHelper::getInteger(token, m_parseResult.errors);
+
+            if (number)
+            {
+                if (number.value() >= 0)
+                {
+                    m_parseResult.iterations.emplace(number.value());
+                }
+                else
+                {
+                    auto error = ContextHelper::errorFromToken(token->getSymbol(), "iterations value must be unsigned");
+
+                    m_parseResult.errors.emplace_back(std::move(error));
+                }
+            }
         }
     }
 
@@ -237,19 +132,22 @@ namespace lcode
         // TODO: resolve expression here instead of just parsing a simple number
         if (tokens.size() == 1u)
         {
-            auto const value = ContextHelper::getFloat(context->Float()).value();
+            auto const number = ContextHelper::getFloat(context->Float(), m_parseResult.errors).value();
 
-            if (value >= 0)
+            if (number)
             {
-                m_parseResult.distance = value;
-            }
-            else
-            {
-                auto const text = tokens.front()->getText();
-                Program::Error error = antlr::errorFromToken(tokens.front()->getSymbol(),
-                                                             "Invalid distance: '" + text + "'");
+                if (number >= 0)
+                {
+                    m_parseResult.distance = number;
+                }
+                else
+                {
+                    auto const text = tokens.front()->getText();
+                    Program::Error error = ContextHelper::errorFromToken(tokens.front()->getSymbol(),
+                                                                         "Invalid distance: '" + text + "'");
 
-                m_parseResult.errors.emplace_back(std::move(error));
+                    m_parseResult.errors.emplace_back(std::move(error));
+                }
             }
         }
     }
@@ -267,7 +165,7 @@ namespace lcode
 
     void Program::LoadFromLCode::enterInitial_angle(LSystemParser::Initial_angleContext* context)
     {
-        m_parseResult.initialAngle = ContextHelper::getFloat(context->Float());
+        m_parseResult.initialAngle = ContextHelper::getFloat(context->Float(), m_parseResult.errors);
     }
 
     void Program::LoadFromLCode::enterAlias(LSystemParser::AliasContext* context)
@@ -276,7 +174,7 @@ namespace lcode
 
         if (tokens.size() != 2u)
         {
-            Program::Error error = antlr::errorFromToken(context->getStart(), "Invalid alias");
+            Program::Error error = ContextHelper::errorFromToken(context->getStart(), "Invalid alias");
 
             m_parseResult.errors.emplace_back(std::move(error));
             return;
@@ -287,7 +185,7 @@ namespace lcode
 
         if (!m_parseResult.moduleTable.createAlias(aliasIdentifier, aliasedIdentifier))
         {
-            Program::Error error = antlr::errorFromToken(context->getStart(), "Can't create alias '" + aliasIdentifier + "'");
+            Program::Error error = ContextHelper::errorFromToken(context->getStart(), "Can't create alias '" + aliasIdentifier + "'");
 
             m_parseResult.errors.emplace_back(std::move(error));
         }
