@@ -24,6 +24,9 @@
 
 #include <QtDebug>
 
+QString const MainWindow::LCodeDocumentExtension = QStringLiteral("lcode");
+QString const MainWindow::LCodeDocumentFilter = QObject::tr("LCode document (*.lcode)");
+
 MainWindow::MainWindow()
 : m_dockWidgets(new qool::DockWidgetManager(this))
 , m_statusBar(new QStatusBar(this))
@@ -140,9 +143,20 @@ bool MainWindow::loadProgram()
 
     if (maybeSave())
     {
-        auto const filePath = QFileDialog::getOpenFileName(this, tr("Load L-Code program"));
+        QFileDialog fileDialog(this);
 
-        result = loadProgram(filePath);
+        fileDialog.setWindowTitle(tr("Load L-Code program..."));
+        fileDialog.setDirectory(m_documentOnDisk.directory());
+        fileDialog.setAcceptMode(QFileDialog::AcceptMode::AcceptOpen);
+        fileDialog.setFileMode(QFileDialog::ExistingFile);
+        fileDialog.setNameFilter(LCodeDocumentFilter);
+
+        if (fileDialog.exec() == QFileDialog::Accepted)
+        {
+            auto const filePath = fileDialog.selectedFiles().front();
+
+            result = loadProgram(filePath);
+        }
     }
     return result;
 }
@@ -189,9 +203,25 @@ bool MainWindow::saveProgram()
 
 bool MainWindow::saveProgramAs()
 {
-    auto const filePath = QFileDialog::getSaveFileName(this, tr("Save L-Code program"), m_documentOnDisk.directory().path());
+    QFileDialog fileDialog(this);
 
-    return saveProgramAs(filePath);
+    fileDialog.setWindowTitle(tr("Save L-Code program as..."));
+    fileDialog.setDirectory(m_documentOnDisk.directory());
+    fileDialog.setAcceptMode(QFileDialog::AcceptMode::AcceptSave);
+    fileDialog.setFileMode(QFileDialog::FileMode::AnyFile);
+    fileDialog.setNameFilter(LCodeDocumentFilter);
+    fileDialog.setDefaultSuffix(LCodeDocumentExtension);
+
+    bool result = false;
+
+    if (fileDialog.exec() == QFileDialog::Accepted)
+    {
+        auto const filePath = fileDialog.selectedFiles().front();
+
+        result = saveProgramAs(filePath);
+    }
+
+    return result;
 }
 
 bool MainWindow::saveProgramAs(QString const& filePath)

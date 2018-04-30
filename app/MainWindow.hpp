@@ -27,9 +27,11 @@ class QGraphicsView;
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
-
-    static constexpr int const StateVersionNumber = 0u;
 public:
+    static constexpr int const StateVersionNumber = 0u;
+    static QString const LCodeDocumentExtension;
+    static QString const LCodeDocumentFilter;
+
     MainWindow();
 
     void newProgram();
