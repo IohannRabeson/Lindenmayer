@@ -1,5 +1,5 @@
 axiom: F;
-iterations: 7;
+iteration: 7;
 angle: 45.;
 distance: 20.;
 F -> F[-F]F[+F][F];

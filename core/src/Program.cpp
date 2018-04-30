@@ -16,17 +16,22 @@
 
 namespace lcode
 {
+    Program::ALoader::~ALoader() = default;
+
     std::vector<Program::Error> Program::load(ALoader&& loader)
     {
         m_content = loader.load();
         return m_content.errors;
     }
 
-    Program::ALoader::~ALoader() = default;
-
-    std::vector<Program::Error> Program::loadFromLCode(std::string const& lcode, ModuleTable const& table)
+    std::vector<Program::Error> Program::loadFromLCode(std::string const& lcode, ModuleTable const& moduleTable, ActionTable const& actionTable)
     {
-        return load(LoadFromLCode(lcode, table));
+        return load(LoadFromLCode(lcode, moduleTable, actionTable));
+    }
+
+    std::vector<Program::Error> Program::loadFromLCode(std::string const& lcode, ActionTable const& actionTable)
+    {
+        return load(LoadFromLCode(lcode, lcode::ModuleTable(), actionTable));
     }
 
     Modules Program::rewrite(unsigned int const iterations) const
@@ -36,7 +41,7 @@ namespace lcode
 
     Modules Program::rewrite() const
     {
-        return rewrite(m_content.iterations.get_value_or(0u));
+        return rewrite(m_content.iteration.get_value_or(0u));
     }
 
     void Program::execute(unsigned int const iterations)
@@ -53,7 +58,7 @@ namespace lcode
 
     void Program::execute()
     {
-        execute(m_content.iterations.get_value_or(0u));
+        execute(m_content.iteration.get_value_or(0u));
     }
 
     bool Program::haveErrors() const

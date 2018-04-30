@@ -20,8 +20,9 @@ namespace lcode
     {
         std::string const& m_lcode;
         Content m_parseResult;
+        ActionTable m_actionTable;
     public:
-        LoadFromLCode(std::string const& lcode, ModuleTable const& table);
+        LoadFromLCode(std::string const& lcode, ModuleTable const& moduleTable, ActionTable const& actionTable);
 
         Content load() override;
 
@@ -38,18 +39,18 @@ namespace lcode
                 antlr4::atn::ATNConfigSet*) override;
 
         void enterAxiom(LSystemParser::AxiomContext* context) override;
-
-        void enterTransformation(LSystemParser::TransformationContext* context) override;
-
-        void enterIterations(LSystemParser::IterationsContext* context) override;
-
+        void enterIteration(LSystemParser::IterationContext* context) override;
         void enterDistance(LSystemParser::DistanceContext* context) override;
-
         void enterAngle(LSystemParser::AngleContext* context) override;
-
         void enterInitial_angle(LSystemParser::Initial_angleContext* context) override;
 
         void enterAlias(LSystemParser::AliasContext* context) override;
+
+        void enterTransformation(LSystemParser::TransformationContext* context) override;
+
+        void enterModule_def(LSystemParser::Module_defContext* context) override;
+    private:
+        void pushError(Program::Error&& error);
     };
 }
 

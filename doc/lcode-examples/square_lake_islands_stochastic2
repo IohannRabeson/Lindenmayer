@@ -1,5 +1,5 @@
 axiom: F+F+F+F;
-iterations: 2;
+iteration: 2;
 angle: 90.;
 distance: 5.;
 F->F+f-FfF+F+FfF+Ff+FfF-f+FfF-F-FfF-Ff-FFF;

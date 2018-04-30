@@ -128,4 +128,9 @@ namespace lcode
     {
         return m_identifierTable.find(identifier) == m_identifierTable.end();
     }
+
+    bool ModuleTable::contains(std::string const& identifier) const
+    {
+        return m_identifierTable.find(identifier) != m_identifierTable.end();
+    }
 }

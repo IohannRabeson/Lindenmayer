@@ -10,14 +10,13 @@
 #include <string>
 #include <map>
 #include <initializer_list>
+#include "ModuleAction.hpp"
 
 namespace lcode
 {
     class ModuleTable
     {
     public:
-        using Action = std::function<void()>;
-
         bool registerModule(std::string const& identifier, Action&& action);
         bool registerModule(std::string const& identifier);
 
@@ -25,6 +24,7 @@ namespace lcode
         Module createModule(std::string const& identifier) const;
         Modules createModules(std::initializer_list<std::string> const& identifiers) const;
         Modules createModules(std::vector<std::string> const& identifiers) const;
+        bool contains(std::string const& identifier) const;
 
         void execute(Modules const& modules) const;
         void execute(Module const& module) const;

@@ -6,19 +6,20 @@ fragment TRUE : 'true' ;
 fragment FALSE : 'false' ;
 fragment NEWLINE   : '\r' '\n' | '\n' | '\r';
 
-program 	   : (axiom | iterations | distance |  angle | initial_angle | alias)* transformation*;
-axiom          : 'axiom:' module+ EndOfLine;
-iterations     : 'iterations:' Integer EndOfLine;
-distance       : 'distance:' Float EndOfLine;
-angle          : 'angle:' Float EndOfLine;
-initial_angle  : 'initialAngle:' Float EndOfLine;
-alias          : 'alias' Identifier '=' Identifier EndOfLine;
-transformation : module TransformOperator probability? module+ EndOfLine;
-probability    : '(' Float ')';
-module         : Identifier parameter_pack?;
-parameter_pack : ('(' parameter ( ',' parameter )* ')') | '(' ')';
-parameter      : expression;
-expression     : Float | Integer | Boolean;
+program 	        : (axiom | iteration | distance |  angle | initial_angle | alias | module_def)* transformation*;
+
+axiom               : 'axiom:' module+ EndOfLine;
+iteration           : 'iteration:' Integer EndOfLine;
+distance            : 'distance:' Float EndOfLine;
+angle               : 'angle:' Float EndOfLine;
+initial_angle       : 'initial_angle:' Float EndOfLine;
+
+alias               : 'alias' ModuleIdentifier '=' ModuleIdentifier EndOfLine;
+module_def          : 'module' ModuleIdentifier '=' ModuleIdentifier+ EndOfLine;
+transformation      : module TransformOperator probability? module+ EndOfLine;
+probability         : '(' Float ')';
+module              : ModuleIdentifier;
+expression          : Float | Integer | Boolean;
 
 Integer
     : ( '-' | '+' ) ? DIGIT09+
@@ -41,9 +42,13 @@ TransformOperator
 	: '->'
 	;
 
-Identifier
+ModuleIdentifier
 	: [a-zA-Z_] | '[' | ']' | '+' | '-'
 	;
+
+StringIdentifier
+    : [a-zA-Z_]
+    ;
 
 EndOfLine
     : ';'

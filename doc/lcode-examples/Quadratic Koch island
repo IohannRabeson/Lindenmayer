@@ -1,6 +1,6 @@
 axiom: F+F+F+F;
 angle: 90.;
 distance: 10.;
-iterations: 4;
+iteration: 4;
 
 F -> F+F-F-FF+F+F-F;

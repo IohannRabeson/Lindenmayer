@@ -42,9 +42,9 @@ namespace lcode::ContextHelper
                      std::vector<Program::Error>& errors)
     {
         assert(context != nullptr);
-        assert(context->Identifier() != nullptr);
+        assert(context->ModuleIdentifier() != nullptr);
 
-        auto const identifierText = context->Identifier()->getText();
+        auto const identifierText = context->ModuleIdentifier()->getText();
 
         // TODO: use context->parameter_pack()!
 
@@ -52,7 +52,7 @@ namespace lcode::ContextHelper
 
         if (module.isNull())
         {
-            errors.emplace_back(makeError(context->Identifier(), "Invalid identifier '%t'"));
+            errors.emplace_back(makeError(context->ModuleIdentifier(), "Invalid module identifier '%t'"));
         }
 
         return module;
