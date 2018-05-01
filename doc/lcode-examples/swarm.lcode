@@ -1,5 +1,5 @@
 axiom: FffFffFffFff;
-iterations: 4;
+iteration: 4;
 angle: 45.;
 distance: 5.;
 alias G = F;

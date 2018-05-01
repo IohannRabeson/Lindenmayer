@@ -22,6 +22,8 @@ struct ProgramNoActionFixture : public ::testing::Test
         moduleTable.registerModule("R");
         moduleTable.registerModule("[");
         moduleTable.registerModule("]");
+        moduleTable.registerModule("+");
+        moduleTable.registerModule("-");
     }
 
     lcode::ModuleTable moduleTable;
@@ -37,23 +39,8 @@ TEST(Program, program_empty)
     ASSERT_FALSE( program.content().angle );
     ASSERT_FALSE( program.content().initialAngle );
     ASSERT_FALSE( program.content().distance );
-    ASSERT_FALSE( program.content().iterations );
+    ASSERT_FALSE( program.content().iteration );
 }
-
-struct ProgramTurtleMockActionFixture : public ::testing::Test
-{
-    ProgramTurtleMockActionFixture()
-    {
-        moduleTable.registerModule("F");
-        moduleTable.registerModule("f");
-        moduleTable.registerModule("L");
-        moduleTable.registerModule("R");
-        moduleTable.registerModule("[");
-        moduleTable.registerModule("]");
-    }
-
-    lcode::ModuleTable moduleTable;
-};
 
 TEST_F(ProgramNoActionFixture, program_error_missing_semicolon)
 {
@@ -79,7 +66,7 @@ TEST_F(ProgramNoActionFixture, axiom_single)
     ASSERT_FALSE( program.content().angle );
     ASSERT_FALSE( program.content().initialAngle );
     ASSERT_FALSE( program.content().distance );
-    ASSERT_FALSE( program.content().iterations );
+    ASSERT_FALSE( program.content().iteration );
 }
 
 TEST_F(ProgramNoActionFixture, axiom_multiple)
@@ -97,7 +84,7 @@ TEST_F(ProgramNoActionFixture, axiom_multiple)
     ASSERT_FALSE( program.content().angle );
     ASSERT_FALSE( program.content().initialAngle );
     ASSERT_FALSE( program.content().distance );
-    ASSERT_FALSE( program.content().iterations );
+    ASSERT_FALSE( program.content().iteration );
 }
 
 TEST_F(ProgramNoActionFixture, axiom_multiple_no_spaces)
@@ -115,7 +102,7 @@ TEST_F(ProgramNoActionFixture, axiom_multiple_no_spaces)
     ASSERT_FALSE( program.content().angle );
     ASSERT_FALSE( program.content().initialAngle );
     ASSERT_FALSE( program.content().distance );
-    ASSERT_FALSE( program.content().iterations );
+    ASSERT_FALSE( program.content().iteration );
 }
 
 TEST_F(ProgramNoActionFixture, axiom_multiple_iterations)
@@ -123,7 +110,7 @@ TEST_F(ProgramNoActionFixture, axiom_multiple_iterations)
     lcode::Program program;
 
     EXPECT_TRUE( printErrors(program.loadFromLCode("axiom: F f [ ];"
-                                       "iterations: 9;",
+                                       "iteration: 9;",
                                        moduleTable)).empty() );
     ASSERT_EQ( program.content().axiom.value().size(), 4u );
     ASSERT_EQ( program.content().axiom.value().at(0u), moduleTable.createModule("F") );
@@ -135,8 +122,8 @@ TEST_F(ProgramNoActionFixture, axiom_multiple_iterations)
     ASSERT_FALSE( program.content().angle );
     ASSERT_FALSE( program.content().initialAngle );
     ASSERT_FALSE( program.content().distance );
-    ASSERT_TRUE( program.content().iterations );
-    ASSERT_EQ( program.content().iterations, 9u );
+    ASSERT_TRUE( program.content().iteration );
+    ASSERT_EQ( program.content().iteration, 9u );
 }
 
 TEST_F(ProgramNoActionFixture, axiom_multiple_distance)
@@ -157,7 +144,7 @@ TEST_F(ProgramNoActionFixture, axiom_multiple_distance)
     ASSERT_FALSE( program.content().initialAngle );
     ASSERT_TRUE( program.content().distance );
     ASSERT_FLOAT_EQ( program.content().distance.value(), 3.14f );
-    ASSERT_FALSE( program.content().iterations );
+    ASSERT_FALSE( program.content().iteration );
 }
 
 TEST_F(ProgramNoActionFixture, axiom_multiple_angle)
@@ -177,7 +164,7 @@ TEST_F(ProgramNoActionFixture, axiom_multiple_angle)
     ASSERT_FLOAT_EQ( program.content().angle.value(), 63.14f );
     ASSERT_FALSE( program.content().initialAngle );
     ASSERT_FALSE( program.content().distance );
-    ASSERT_FALSE( program.content().iterations );
+    ASSERT_FALSE( program.content().iteration );
 }
 
 TEST_F(ProgramNoActionFixture, axiom_multiple_iteration_distance_angle)
@@ -185,7 +172,7 @@ TEST_F(ProgramNoActionFixture, axiom_multiple_iteration_distance_angle)
     lcode::Program program;
 
     EXPECT_TRUE( printErrors(program.loadFromLCode("axiom: F f [ ];"
-                                       "iterations: 9;"
+                                       "iteration: 9;"
                                        "distance: 3.14;"
                                        "angle: 63.14;", moduleTable)).empty() );
 
@@ -200,8 +187,8 @@ TEST_F(ProgramNoActionFixture, axiom_multiple_iteration_distance_angle)
     ASSERT_FALSE( program.content().initialAngle );
     ASSERT_TRUE( program.content().distance );
     ASSERT_NEAR( program.content().distance.value(), 3.14f, 0.0001f );
-    ASSERT_TRUE( program.content().iterations );
-    ASSERT_EQ( program.content().iterations.value(), 9u );
+    ASSERT_TRUE( program.content().iteration );
+    ASSERT_EQ( program.content().iteration.value(), 9u );
 }
 
 TEST(Program, execute_twice)
@@ -250,20 +237,12 @@ TEST(Program, turtle_advance)
     moduleTable.execute(program.rewrite(9u));
 }
 
-TEST(Program, koch)
+TEST_F(ProgramNoActionFixture, koch)
 {
     using ::testing::_;
 
     lcode::Program program;
 
-    lcode::ModuleTable moduleTable;
-
-    moduleTable.registerModule("F");
-    moduleTable.registerModule("f");
-    moduleTable.registerModule("+");
-    moduleTable.registerModule("-");
-    moduleTable.registerModule("[");
-    moduleTable.registerModule("]");
     ASSERT_TRUE( printErrors(program.loadFromLCode("axiom: F;"
                                                    "F -> F+F-F-F+F;"
                                                    , moduleTable)).empty() );
@@ -285,23 +264,14 @@ TEST(Program, koch)
 }
 
 
-TEST(Program, plant01)
+TEST_F(ProgramNoActionFixture, plant01)
 {
     using ::testing::_;
 
     lcode::Program program;
 
-    lcode::ModuleTable moduleTable;
-
-    moduleTable.registerModule("F");
     moduleTable.registerModule("X");
-    moduleTable.registerModule("f");
-    moduleTable.registerModule("+");
-    moduleTable.registerModule("-");
-    moduleTable.registerModule("[");
-    moduleTable.registerModule("]");
-    ASSERT_TRUE( printErrors(program.loadFromLCode(""
-                                                   "axiom: X;"
+    ASSERT_TRUE( printErrors(program.loadFromLCode("axiom: X;"
                                                    "X -> F[+X]F[-X]+X;"
                                                    "F -> FF;", moduleTable)).empty() );
 
@@ -321,21 +291,13 @@ TEST(Program, plant01)
     ASSERT_EQ( program.rewrite(2u), programExpected2.content().axiom.value() );
 }
 
-TEST(Program, plant01_2)
+// ProgramNoActionFixture doesn't provide module X, it's ok, it should be defined by alias.
+TEST_F(ProgramNoActionFixture, plant01_2_alias_test)
 {
     using ::testing::_;
 
     lcode::Program program;
 
-    lcode::ModuleTable moduleTable;
-
-    moduleTable.registerModule("F");
-    //moduleTable.registerModule("X");
-    moduleTable.registerModule("f");
-    moduleTable.registerModule("+");
-    moduleTable.registerModule("-");
-    moduleTable.registerModule("[");
-    moduleTable.registerModule("]");
     ASSERT_TRUE( printErrors(program.loadFromLCode("alias X = F;"
                                                    "axiom: F[+X]F[-X]+X;"
                                                    "X -> F[+X]F[-X]+X;"
@@ -349,19 +311,14 @@ TEST(Program, plant01_2)
     ASSERT_EQ( program.rewrite(1u), programExpected2.content().axiom.value() );
 }
 
-TEST(Program, sierpinsky)
+TEST_F(ProgramNoActionFixture, sierpinsky)
 {
     using ::testing::_;
 
     lcode::Program program;
     lcode::Program programExpected;
-    lcode::ModuleTable moduleTable;
 
-    moduleTable.registerModule("F");
     moduleTable.registerModule("G");
-    moduleTable.registerModule("f");
-    moduleTable.registerModule("+");
-    moduleTable.registerModule("-");
 
     ASSERT_TRUE( printErrors(program.loadFromLCode("axiom: F;"
                                                    "F -> G-F-G;"
@@ -429,19 +386,11 @@ TEST(Program, alias_action)
     program.execute(2u);
 }
 
-TEST(Program, alias_action2)
+TEST_F(ProgramNoActionFixture, alias_action2)
 {
     using ::testing::_;
 
     lcode::Program program;
-    lcode::ModuleTable moduleTable;
-
-    moduleTable.registerModule("F");
-    moduleTable.registerModule("f");
-    moduleTable.registerModule("L");
-    moduleTable.registerModule("R");
-    moduleTable.registerModule("[");
-    moduleTable.registerModule("]");
 
     ASSERT_TRUE( printErrors(program.loadFromLCode("axiom: F;"
                                                    "alias G = F;"
@@ -464,20 +413,11 @@ TEST(Program, alias_action2)
     ASSERT_EQ( program.rewrite(2u), programExpected2.content().axiom.value() );
 }
 
-TEST(Program, plant01_alias)
+TEST_F(ProgramNoActionFixture, plant01_alias)
 {
     using ::testing::_;
 
     lcode::Program program;
-
-    lcode::ModuleTable moduleTable;
-
-    moduleTable.registerModule("F");
-    moduleTable.registerModule("f");
-    moduleTable.registerModule("+");
-    moduleTable.registerModule("-");
-    moduleTable.registerModule("[");
-    moduleTable.registerModule("]");
 
     ASSERT_TRUE( printErrors(program.loadFromLCode("alias X = F;"
                                                    "axiom: X;"
@@ -500,21 +440,15 @@ TEST(Program, plant01_alias)
     ASSERT_EQ( program.rewrite(2u), programExpected2.content().axiom.value() );
 }
 
-TEST(Program, sierpinsky_alias)
+// ProgramNoActionFixture doesn't provide module G, it's ok, it should be defined by alias.
+TEST_F(ProgramNoActionFixture, sierpinsky_alias)
 {
     using ::testing::_;
 
     lcode::Program program;
     lcode::Program programExpected;
-    lcode::ModuleTable moduleTable;
-
-    moduleTable.registerModule("F");
-    moduleTable.registerModule("f");
-    moduleTable.registerModule("+");
-    moduleTable.registerModule("-");
 
     ASSERT_TRUE( printErrors(program.loadFromLCode("alias G = F;" "axiom: F;"
-
                                                    "F -> G-F-G;"
                                                    "G -> F+G+F;", moduleTable)).empty() );
 
@@ -526,19 +460,13 @@ TEST(Program, sierpinsky_alias)
     ASSERT_EQ( result, expected );
 }
 
-TEST(Program, stochastic_rules_double)
+TEST_F(ProgramNoActionFixture, stochastic_rules_double)
 {
     using ::testing::_;
 
     lcode::Program program;
     lcode::Program programExpectedA;
     lcode::Program programExpectedB;
-    lcode::ModuleTable moduleTable;
-
-    moduleTable.registerModule("F");
-    moduleTable.registerModule("f");
-    moduleTable.registerModule("+");
-    moduleTable.registerModule("-");
 
     ASSERT_TRUE( printErrors(program.loadFromLCode("axiom: F;"
                                                    "F -> (0.5) -;"
@@ -557,7 +485,7 @@ TEST(Program, stochastic_rules_double)
     }
 }
 
-TEST(Program, stochastic_rules_triple)
+TEST_F(ProgramNoActionFixture, stochastic_rules_triple)
 {
     using ::testing::_;
 
@@ -565,12 +493,6 @@ TEST(Program, stochastic_rules_triple)
     lcode::Program programExpectedA;
     lcode::Program programExpectedB;
     lcode::Program programExpectedC;
-    lcode::ModuleTable moduleTable;
-
-    moduleTable.registerModule("F");
-    moduleTable.registerModule("f");
-    moduleTable.registerModule("+");
-    moduleTable.registerModule("-");
 
     ASSERT_TRUE( printErrors(program.loadFromLCode("axiom: F;"
                                                    "F -> (0.33) -;"
@@ -613,19 +535,13 @@ TEST(Program, stochastic_rules_triple)
     ASSERT_GT(resultC, 0u);
 }
 
-TEST(Program, stochastic_rules_zero_chance)
+TEST_F(ProgramNoActionFixture, stochastic_rules_zero_chance)
 {
     using ::testing::_;
 
     lcode::Program program;
     lcode::Program programExpectedA;
     lcode::Program programExpectedB;
-    lcode::ModuleTable moduleTable;
-
-    moduleTable.registerModule("F");
-    moduleTable.registerModule("f");
-    moduleTable.registerModule("+");
-    moduleTable.registerModule("-");
 
     ASSERT_TRUE( printErrors(program.loadFromLCode("axiom: F;"
                                                    "F -> (0.) -;"
@@ -653,9 +569,12 @@ TEST_F(ProgramNoActionFixture, iterations_tests)
 
     lcode::Program program;
 
-    EXPECT_TRUE( program.loadFromLCode("iterations: 0;", moduleTable).empty() );
-    EXPECT_TRUE( program.loadFromLCode("iterations: " + std::to_string(maxUnsignedInt) + ";", moduleTable).empty() );
-    EXPECT_FALSE( program.loadFromLCode("iterations: -1;", moduleTable).empty() );
+    EXPECT_TRUE( program.loadFromLCode("iteration: 0;", moduleTable).empty() );
+    EXPECT_TRUE( program.loadFromLCode("iteration: " + std::to_string(maxUnsignedInt) + ";", moduleTable).empty() );
+    EXPECT_FALSE( program.loadFromLCode("iteration: -1;", moduleTable).empty() );
+    ASSERT_TRUE( program.loadFromLCode("iteration: 12;", moduleTable).empty() );
+    EXPECT_TRUE( program.content().iteration );
+    EXPECT_EQ( program.content().iteration.value(), 12 );
 }
 
 /*!
@@ -675,12 +594,85 @@ TEST_F(ProgramNoActionFixture, distance_tests)
     EXPECT_FALSE( program.loadFromLCode("distance: -1.;", moduleTable).empty() );
 }
 
+/*!
+ * \brief Initial angle test
+ */
+TEST_F(ProgramNoActionFixture, initial_angle_tests)
+{
+    float const maxUnsignedFloat = std::numeric_limits<float>::max();
+
+    lcode::Program program;
+
+    // Missing '.' then considered as integer
+    EXPECT_FALSE( program.loadFromLCode("initial_angle: 0;", moduleTable).empty() );
+    EXPECT_TRUE( program.loadFromLCode("initial_angle: 0.;", moduleTable).empty() );
+    EXPECT_TRUE( program.loadFromLCode("initial_angle: -1.;", moduleTable).empty() );
+}
+
 TEST_F(ProgramNoActionFixture, duplicate_global_variables)
 {
     lcode::Program program;
 
     EXPECT_FALSE( program.loadFromLCode("distance: 0.; distance: 9.;", moduleTable).empty() );
-    EXPECT_FALSE( program.loadFromLCode("iterations: 0; iterations: 9;", moduleTable).empty() );
+    EXPECT_FALSE( program.loadFromLCode("iteration: 0; iteration: 9;", moduleTable).empty() );
+    EXPECT_FALSE( program.loadFromLCode("initial_angle: 0.; initial_angle: 9.;", moduleTable).empty() );
     EXPECT_FALSE( program.loadFromLCode("angle: 0.; angle: 9.;", moduleTable).empty() );
     EXPECT_FALSE( program.loadFromLCode("axiom: F; axiom: F;", moduleTable).empty() );
+}
+
+TEST(Program, module_definition_0)
+{
+    lcode::Program program;
+    lcode::ActionTable actionTable;
+
+    actionTable.registerAction("forward", [](){});
+    EXPECT_FALSE( program.loadFromLCode("module F = coward;", actionTable).empty() );
+    EXPECT_TRUE( program.loadFromLCode("module F = forward;", actionTable).empty() );
+    EXPECT_TRUE( program.loadFromLCode("module F = forward; axiom: F;", actionTable).empty() );
+}
+
+/*!
+ * \brief Test the module identification fallback mechanism
+ *
+ * <code>
+ * axiom: Ff;
+ * </code>
+ * is equivalent to
+ * <code>
+ * axiom: F f;
+ * </code>
+ * if module "Ff" doesn't exist
+ */
+TEST(Program, module_identification_fallback)
+{
+    lcode::Program program;
+    lcode::ModuleTable modules;
+
+    modules.registerModule("Ffff");
+    modules.registerModule("Foof");
+    modules.registerModule("F");
+    modules.registerModule("f");
+    modules.registerModule("o");
+
+    EXPECT_TRUE( printErrors(program.loadFromLCode("axiom: Ffff Foof F f o;", modules)).empty() );
+    EXPECT_TRUE( printErrors(program.loadFromLCode("axiom: Ffo;", modules)).empty() );
+}
+
+TEST(Program, module_identification_fallback_2)
+{
+    lcode::ModuleTable modules;
+
+    modules.registerModule("Ffff");
+    modules.registerModule("Foof");
+    modules.registerModule("F");
+    modules.registerModule("f");
+    modules.registerModule("o");
+
+    lcode::Program p0;
+    lcode::Program p1;
+    lcode::Program p2;
+    lcode::Program p3;
+    EXPECT_TRUE( printErrors(p0.loadFromLCode("axiom: F f o;", modules)).empty() );
+    EXPECT_TRUE( printErrors(p1.loadFromLCode("axiom: Ffo;", modules)).empty() );
+    EXPECT_EQ( p0.content().axiom.value(), p1.content().axiom.value() );
 }

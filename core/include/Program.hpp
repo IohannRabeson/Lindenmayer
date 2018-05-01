@@ -8,12 +8,13 @@
 #include "RewriteRules.hpp"
 #include "ModuleTable.hpp"
 #include "Optional.hpp"
+#include "ActionTable.hpp"
 
 #include <vector>
 
 namespace lcode
 {
-    class ProgramPrivate;
+    class ActionTable;
 
     class Program
     {
@@ -30,7 +31,7 @@ namespace lcode
         {
             RewriteRules rewriteRules;
             Optional<Modules> axiom;
-            Optional<unsigned int> iterations;
+            Optional<unsigned int> iteration;
             Optional<float> distance;
             Optional<float> angle;
             Optional<float> initialAngle;
@@ -41,7 +42,8 @@ namespace lcode
         class ALoader;
 
         std::vector<Error> load(ALoader&& loader);
-        std::vector<Error> loadFromLCode(std::string const& lcode, ModuleTable const& table);
+        std::vector<Error> loadFromLCode(std::string const& lcode, ModuleTable const& moduleTable, ActionTable const& actionTable = ActionTable());
+        std::vector<Error> loadFromLCode(std::string const& lcode, ActionTable const& actionTable = ActionTable());
         Content const& content() const { return m_content; }
         Modules rewrite(unsigned int const iterations) const;
         Modules rewrite() const;

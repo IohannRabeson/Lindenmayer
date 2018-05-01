@@ -1,6 +1,6 @@
-alias G =F;
+alias G = F;
 axiom: F;
-iterations: 8;
+iteration: 8;
 distance: 5.;
 angle: 90.;
 

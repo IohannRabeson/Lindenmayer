@@ -4,6 +4,8 @@
 
 #include "ContextHelper.hpp"
 
+#include <iostream>
+
 namespace lcode::ContextHelper
 {
     Program::Error makeError(antlr4::tree::TerminalNode* node, std::string const& message)
@@ -42,9 +44,9 @@ namespace lcode::ContextHelper
                      std::vector<Program::Error>& errors)
     {
         assert(context != nullptr);
-        assert(context->Identifier() != nullptr);
+        assert(context->StringIdentifier() != nullptr);
 
-        auto const identifierText = context->Identifier()->getText();
+        auto const identifierText = context->StringIdentifier()->getText();
 
         // TODO: use context->parameter_pack()!
 
@@ -52,24 +54,71 @@ namespace lcode::ContextHelper
 
         if (module.isNull())
         {
-            errors.emplace_back(makeError(context->Identifier(), "Invalid identifier '%t'"));
+            errors.emplace_back(makeError(context->StringIdentifier(), "Invalid module identifier '%t'"));
         }
 
         return module;
     }
 
-    Modules getModules(std::vector<LSystemParser::ModuleContext*>::const_iterator begin, std::vector<LSystemParser::ModuleContext*>::const_iterator end, ModuleTable const& table, std::vector<Program::Error>& errors)
+    namespace
     {
-        Modules modules;
+        bool splitIdentifier(std::string const& identifier, std::vector<std::string>& identifiers, ModuleTable const& table)
+        {
+            for (auto const letter : identifier)
+            {
+                std::string letterString(1u, letter);
 
-        modules.reserve(std::distance(begin, end));
+                if (!table.contains(letterString))
+                {
+                    return false;
+                }
+
+                identifiers.emplace_back(std::move(letterString));
+            }
+
+            return true;
+        }
+    }
+
+    /*!
+     * \brief Create one or several modules from a string.
+     *
+     * This method try to parse string to extract a module. If no module are found
+     * the string is splitted into character. This behavior is very similar to the flags system
+     * in a shell, rm -rf is equivalent to rm -r -f.
+     */
+    Modules getModules(std::vector<LSystemParser::ModuleContext*>::const_iterator begin,
+                       std::vector<LSystemParser::ModuleContext*>::const_iterator end,
+                       ModuleTable const& table, std::vector<Program::Error>& errors)
+    {
+        Modules moduleResults;
+
+        moduleResults.reserve(std::distance(begin, end));
 
         for (auto it = begin; it != end; ++it)
         {
-            modules.emplace_back(getModule(*it, table, errors));
+            LSystemParser::ModuleContext* const context = *it;
+            std::vector<std::string> identifiers;
+            auto const identifier = context->getText();
+
+            if (table.contains(identifier))
+            {
+                moduleResults.emplace_back(table.createModule(identifier));
+            }
+            else if (splitIdentifier(identifier, identifiers, table))
+            {
+                for (auto const& splittedIdentifier : identifiers)
+                {
+                    moduleResults.emplace_back(table.createModule(splittedIdentifier));
+                }
+            }
+            else
+            {
+                errors.emplace_back(ContextHelper::makeError(context->StringIdentifier(), "Invalid module identifier '%t'"));
+            }
         }
 
-        return modules;
+        return moduleResults;
     }
 
     bool isError(antlr4::tree::TerminalNode* const node)
@@ -88,14 +137,14 @@ namespace lcode::ContextHelper
             try
             {
                 auto const text = terminalNode->getText();
-                // TODO: use strtol instead of stol...
+                // TODO: use strtol instead of stol to avoid usage of exceptions.
                 auto const number = std::stol(text);
 
                 result.emplace(number);
             }
             catch (std::out_of_range const& e)
             {
-                errors.emplace_back(makeError(terminalNode, "number '%t' to large for an unsigned int"));
+                errors.emplace_back(makeError(terminalNode, "number '%t' to large for an integer"));
             }
         }
 
@@ -119,7 +168,7 @@ namespace lcode::ContextHelper
             }
             catch (std::out_of_range const& e)
             {
-                auto error = makeError(terminalNode, "number '%t' to large for an unsigned int");
+                auto error = makeError(terminalNode, "number '%t' to large for an real");
 
                 errors.emplace_back(std::move(error));
             }

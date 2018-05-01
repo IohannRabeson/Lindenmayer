@@ -6,19 +6,24 @@ fragment TRUE : 'true' ;
 fragment FALSE : 'false' ;
 fragment NEWLINE   : '\r' '\n' | '\n' | '\r';
 
-program 	   : (axiom | iterations | distance |  angle | initial_angle | alias)* transformation*;
-axiom          : 'axiom:' module+ EndOfLine;
-iterations     : 'iterations:' Integer EndOfLine;
-distance       : 'distance:' Float EndOfLine;
-angle          : 'angle:' Float EndOfLine;
-initial_angle  : 'initialAngle:' Float EndOfLine;
-alias          : 'alias' Identifier '=' Identifier EndOfLine;
-transformation : module TransformOperator probability? module+ EndOfLine;
-probability    : '(' Float ')';
-module         : Identifier parameter_pack?;
-parameter_pack : ('(' parameter ( ',' parameter )* ')') | '(' ')';
-parameter      : expression;
-expression     : Float | Integer | Boolean;
+program 	        : (axiom | iteration | distance |  angle | initial_angle | alias | module_def)* transformation*;
+
+axiom               : 'axiom:' module+ EndOfLine;
+iteration           : 'iteration:' Integer EndOfLine;
+distance            : 'distance:' Float EndOfLine;
+angle               : 'angle:' Float EndOfLine;
+initial_angle       : 'initial_angle:' Float EndOfLine;
+
+alias               : 'alias' StringIdentifier '=' StringIdentifier EndOfLine;
+transformation      : module TransformOperator probability? module+ EndOfLine;
+probability         : '(' Float ')';
+module              : StringIdentifier;
+expression          : Float | Integer | Boolean;
+module_def          : 'module' StringIdentifier '=' StringIdentifier EndOfLine;
+
+ModuleDefinition
+    : 'module' StringIdentifier AssignOperator StringIdentifier EndOfLine
+    ;
 
 Integer
     : ( '-' | '+' ) ? DIGIT09+
@@ -41,9 +46,10 @@ TransformOperator
 	: '->'
 	;
 
-Identifier
-	: [a-zA-Z_] | '[' | ']' | '+' | '-'
-	;
+StringIdentifier
+    :  (('a'..'z' | 'A'..'Z' | '_') ('a'..'z' | 'A'..'Z' | '_' | '0'..'9')*)
+    |  '[' | ']' | '+' | '-'
+    ;
 
 EndOfLine
     : ';'

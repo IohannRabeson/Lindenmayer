@@ -1,5 +1,5 @@
 axiom: -F;
-iterations: 4;
+iteration: 4;
 distance: 10.;
 angle: 90.;
 

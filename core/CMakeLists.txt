@@ -15,7 +15,11 @@ set(LINDENMAYER_CORE_SOURCES
     include/ATurtle2D.hpp
     private/LoadProgramFromLCode.hpp
     private/LoadProgramFromLCode.cpp
-    include/Optional.hpp private/ContextHelper.cpp private/ContextHelper.hpp)
+    include/Optional.hpp
+    private/ContextHelper.cpp
+    private/ContextHelper.hpp
+    include/ActionTable.hpp
+    src/ActionTable.cpp include/ModuleAction.hpp)
 
 if (ENABLE_MSAN)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=memory")
