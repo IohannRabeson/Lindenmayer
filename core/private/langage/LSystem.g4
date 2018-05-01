@@ -14,12 +14,16 @@ distance            : 'distance:' Float EndOfLine;
 angle               : 'angle:' Float EndOfLine;
 initial_angle       : 'initial_angle:' Float EndOfLine;
 
-alias               : 'alias' ModuleIdentifier '=' ModuleIdentifier EndOfLine;
-module_def          : 'module' ModuleIdentifier '=' ModuleIdentifier+ EndOfLine;
+alias               : 'alias' StringIdentifier '=' StringIdentifier EndOfLine;
 transformation      : module TransformOperator probability? module+ EndOfLine;
 probability         : '(' Float ')';
-module              : ModuleIdentifier;
+module              : StringIdentifier;
 expression          : Float | Integer | Boolean;
+module_def          : 'module' StringIdentifier '=' StringIdentifier EndOfLine;
+
+ModuleDefinition
+    : 'module' StringIdentifier AssignOperator StringIdentifier EndOfLine
+    ;
 
 Integer
     : ( '-' | '+' ) ? DIGIT09+
@@ -42,12 +46,9 @@ TransformOperator
 	: '->'
 	;
 
-ModuleIdentifier
-	: [a-zA-Z_] | '[' | ']' | '+' | '-'
-	;
-
 StringIdentifier
-    : [a-zA-Z_]
+    :  (('a'..'z' | 'A'..'Z' | '_') ('a'..'z' | 'A'..'Z' | '_' | '0'..'9')*)
+    |  '[' | ']' | '+' | '-'
     ;
 
 EndOfLine

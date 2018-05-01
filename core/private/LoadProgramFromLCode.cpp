@@ -76,11 +76,11 @@ namespace lcode
 
     void Program::LoadFromLCode::enterAxiom(LSystemParser::AxiomContext* axiomContext)
     {
-        auto const& moduleContexts = axiomContext->module();
+        auto const moduleContexts = axiomContext->module();
 
         if (m_parseResult.axiom)
         {
-            pushError(ContextHelper::makeError(moduleContexts.front()->ModuleIdentifier(), "Axiom identifier '%t' already used"));
+            pushError(ContextHelper::makeError(moduleContexts.front()->StringIdentifier(), "Axiom identifier '%t' already used"));
             return;
         }
 
@@ -178,7 +178,7 @@ namespace lcode
 
     void Program::LoadFromLCode::enterAlias(LSystemParser::AliasContext* context)
     {
-        auto const tokens = context->ModuleIdentifier();
+        auto const tokens = context->StringIdentifier();
 
         if (tokens.size() != 2u)
         {
@@ -198,36 +198,38 @@ namespace lcode
 
     void Program::LoadFromLCode::enterModule_def(LSystemParser::Module_defContext* context)
     {
-        auto const& moduleIdentifiers = context->ModuleIdentifier();
+        auto const stringIdentifiers = context->StringIdentifier();
 
-        if (moduleIdentifiers.size() > 1u)
+        if (ContextHelper::isError(stringIdentifiers.front()))
         {
-            std::string moduleIdentifierText;
-            std::string actionIdentifierText;
-
-            moduleIdentifierText = moduleIdentifiers.front()->getText();
-
-            if (m_parseResult.moduleTable.contains(moduleIdentifierText))
-            {
-                pushError(ContextHelper::makeError(moduleIdentifiers.front(), "Module identifier '%t' already used"));
-                return;
-            }
-
-            for (auto i = 1u; i < moduleIdentifiers.size(); ++i)
-            {
-                actionIdentifierText += moduleIdentifiers[i]->getText();
-            }
-
-            auto action = m_actionTable.get(actionIdentifierText);
-
-            if (!action)
-            {
-                pushError(ContextHelper::makeError(moduleIdentifiers[1u], "Unknown action identifier: '" + actionIdentifierText + "'"));
-                return;
-            }
-
-            m_parseResult.moduleTable.registerModule(moduleIdentifierText, std::move(action.value()));
+            pushError(ContextHelper::makeError(stringIdentifiers.front(), "Expected module identifier instead of '%t'"));
+            return;
         }
+
+        if (ContextHelper::isError(stringIdentifiers.back()))
+        {
+            pushError(ContextHelper::makeError(stringIdentifiers.back(), "Expected string identifier instead of '%t'"));
+            return;
+        }
+
+        auto const moduleIdentifierText = stringIdentifiers.front()->getText();
+        auto const actionIdentifierText = stringIdentifiers.back()->getText();
+
+        if (m_parseResult.moduleTable.contains(moduleIdentifierText))
+        {
+            pushError(ContextHelper::makeError(stringIdentifiers.front(), "Module identifier '%t' already used"));
+            return;
+        }
+
+        auto action = m_actionTable.get(actionIdentifierText);
+
+        if (!action)
+        {
+            pushError(ContextHelper::makeError(stringIdentifiers.back(), "Unknown action identifier: '%t'"));
+            return;
+        }
+
+        m_parseResult.moduleTable.registerModule(moduleIdentifierText, std::move(action.value()));
     }
 
     void Program::LoadFromLCode::enterTransformation(LSystemParser::TransformationContext* context)

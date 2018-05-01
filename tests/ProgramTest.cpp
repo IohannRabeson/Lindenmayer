@@ -630,3 +630,49 @@ TEST(Program, module_definition_0)
     EXPECT_TRUE( program.loadFromLCode("module F = forward;", actionTable).empty() );
     EXPECT_TRUE( program.loadFromLCode("module F = forward; axiom: F;", actionTable).empty() );
 }
+
+/*!
+ * \brief Test the module identification fallback mechanism
+ *
+ * <code>
+ * axiom: Ff;
+ * </code>
+ * is equivalent to
+ * <code>
+ * axiom: F f;
+ * </code>
+ * if module "Ff" doesn't exist
+ */
+TEST(Program, module_identification_fallback)
+{
+    lcode::Program program;
+    lcode::ModuleTable modules;
+
+    modules.registerModule("Ffff");
+    modules.registerModule("Foof");
+    modules.registerModule("F");
+    modules.registerModule("f");
+    modules.registerModule("o");
+
+    EXPECT_TRUE( printErrors(program.loadFromLCode("axiom: Ffff Foof F f o;", modules)).empty() );
+    EXPECT_TRUE( printErrors(program.loadFromLCode("axiom: Ffo;", modules)).empty() );
+}
+
+TEST(Program, module_identification_fallback_2)
+{
+    lcode::ModuleTable modules;
+
+    modules.registerModule("Ffff");
+    modules.registerModule("Foof");
+    modules.registerModule("F");
+    modules.registerModule("f");
+    modules.registerModule("o");
+
+    lcode::Program p0;
+    lcode::Program p1;
+    lcode::Program p2;
+    lcode::Program p3;
+    EXPECT_TRUE( printErrors(p0.loadFromLCode("axiom: F f o;", modules)).empty() );
+    EXPECT_TRUE( printErrors(p1.loadFromLCode("axiom: Ffo;", modules)).empty() );
+    EXPECT_EQ( p0.content().axiom.value(), p1.content().axiom.value() );
+}
