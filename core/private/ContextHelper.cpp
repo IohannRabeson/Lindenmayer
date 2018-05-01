@@ -4,8 +4,6 @@
 
 #include "ContextHelper.hpp"
 
-#include <iostream>
-
 namespace lcode::ContextHelper
 {
     Program::Error makeError(antlr4::tree::TerminalNode* node, std::string const& message)
