@@ -1,3 +1,7 @@
+# Jekyll
+docs/_site
+Gemfile.lock
+
 # ANTLR is a dirty boy
 dist/
 
