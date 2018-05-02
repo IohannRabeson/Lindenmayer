@@ -34,6 +34,7 @@ namespace lcode::ContextHelper
         error.charIndex = token->getCharPositionInLine();
         error.line = token->getLine();
         error.message = std::move(message);
+
         return error;
     }
 
@@ -171,6 +172,7 @@ namespace lcode::ContextHelper
                 errors.emplace_back(std::move(error));
             }
         }
+
         return result;
     }
 }

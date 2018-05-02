@@ -164,6 +164,7 @@ namespace lcode
 
     void Program::LoadFromLCode::enterInitial_angle(LSystemParser::Initial_angleContext* context)
     {
+        // TODO: resolve expression here instead of just parsing a simple number
         if (context->Float())
         {
             if (m_parseResult.initialAngle)
