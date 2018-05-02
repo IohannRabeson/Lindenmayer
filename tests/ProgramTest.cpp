@@ -29,6 +29,16 @@ struct ProgramNoActionFixture : public ::testing::Test
     lcode::ModuleTable moduleTable;
 };
 
+
+inline void testAxiomModules(std::string const& text, lcode::Modules&& modules, lcode::ModuleTable const& moduleTable)
+{
+    lcode::Program program;
+
+    ASSERT_TRUE( printErrors(program.loadFromLCode(text, moduleTable)).empty() );
+
+    EXPECT_EQ( program.content().axiom, modules );
+}
+
 TEST(Program, program_empty)
 {
     lcode::Program program;
@@ -54,6 +64,15 @@ TEST_F(ProgramNoActionFixture, program_error_missing_semicolon)
     EXPECT_TRUE( program.haveErrors() );
 }
 
+TEST_F(ProgramNoActionFixture, axiom)
+{
+    testAxiomModules("axiom: F;", lcode::makeModules({0}), moduleTable);
+    testAxiomModules("axiom: F F;", lcode::makeModules({0, 0}), moduleTable);
+    testAxiomModules("axiom: FF;", lcode::makeModules({0, 0}), moduleTable);
+    testAxiomModules("axiom: f;", lcode::makeModules({1}), moduleTable);
+    testAxiomModules("axiom: F f;", lcode::makeModules({0, 1}), moduleTable);
+    testAxiomModules("axiom: Ff;", lcode::makeModules({0, 1}), moduleTable);
+}
 
 TEST_F(ProgramNoActionFixture, axiom_single)
 {

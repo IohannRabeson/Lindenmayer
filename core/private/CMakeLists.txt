@@ -1,1 +1,1 @@
-add_subdirectory(langage)
+add_subdirectory(language)
