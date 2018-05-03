@@ -8,14 +8,17 @@
 #include "RewriteRules.hpp"
 #include "ModuleTable.hpp"
 #include "Optional.hpp"
-#include "ActionTable.hpp"
+#include "ActionFactory.hpp"
 
 #include <vector>
 
 namespace lcode
 {
-    class ActionTable;
+    class ActionFactory;
 
+    /*!
+     * \brief A complete, executable, L-Code program.
+     */
     class Program
     {
         class LoadFromLCode;
@@ -39,11 +42,15 @@ namespace lcode
             ModuleTable moduleTable;
         };
 
-        class ALoader;
+        struct ALoader
+        {
+            virtual ~ALoader();
+            virtual Content load() = 0;
+        };
 
         std::vector<Error> load(ALoader&& loader);
-        std::vector<Error> loadFromLCode(std::string const& lcode, ModuleTable const& moduleTable, ActionTable const& actionTable = ActionTable());
-        std::vector<Error> loadFromLCode(std::string const& lcode, ActionTable const& actionTable = ActionTable());
+        std::vector<Error> loadFromLCode(std::string const& lcode, ModuleTable const& moduleTable, ActionFactory const& actionTable = ActionFactory());
+        std::vector<Error> loadFromLCode(std::string const& lcode, ActionFactory const& actionTable = ActionFactory());
         Content const& content() const { return m_content; }
         Modules rewrite(unsigned int const iterations) const;
         Modules rewrite() const;
@@ -52,13 +59,6 @@ namespace lcode
         bool haveErrors() const;
     private:
         Content m_content;
-    };
-
-    class Program::ALoader
-    {
-    public:
-        virtual ~ALoader();
-        virtual Content load() = 0;
     };
 }
 

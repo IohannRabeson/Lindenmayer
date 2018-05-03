@@ -14,16 +14,26 @@
 
 namespace lcode
 {
+    /*!
+     * \brief Create and execute modules.
+     *
+     * ModuleTable store heavy data and is able to call mapped action for each module.</br>
+     * Alias system give a way to map the same module to different identifiers.</br>
+     */
     class ModuleTable
     {
     public:
+        ModuleTable() = default;
+        
         bool registerModule(std::string const& identifier, Action&& action);
         bool registerModule(std::string const& identifier);
 
         bool createAlias(std::string const& alias, std::string const& aliased);
+
         Module createModule(std::string const& identifier) const;
         Modules createModules(std::initializer_list<std::string> const& identifiers) const;
         Modules createModules(std::vector<std::string> const& identifiers) const;
+
         bool contains(std::string const& identifier) const;
 
         void execute(Modules const& modules) const;

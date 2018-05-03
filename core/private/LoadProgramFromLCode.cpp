@@ -11,7 +11,7 @@ namespace lcode
 {
     Program::LoadFromLCode::LoadFromLCode(std::string const& lcode,
                                           ModuleTable const& moduleTable,
-                                          ActionTable const& actionTable)
+                                          ActionFactory const& actionTable)
     : m_lcode(lcode)
     , m_actionTable(actionTable)
     {
@@ -164,6 +164,7 @@ namespace lcode
 
     void Program::LoadFromLCode::enterInitial_angle(LSystemParser::Initial_angleContext* context)
     {
+        // TODO: resolve expression here instead of just parsing a simple number
         if (context->Float())
         {
             if (m_parseResult.initialAngle)

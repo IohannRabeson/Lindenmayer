@@ -2,11 +2,11 @@
 // Created by Io on 29/04/2018.
 //
 
-#include "ActionTable.hpp"
+#include "ActionFactory.hpp"
 
 namespace lcode
 {
-    bool ActionTable::registerAction(std::string const& identifier, Action&& action)
+    bool ActionFactory::registerAction(std::string const& identifier, Action&& action)
     {
         auto it = m_actions.find(identifier);
 
@@ -20,7 +20,7 @@ namespace lcode
         return true;
     }
 
-    auto ActionTable::get(std::string const& identifier) const -> Optional<Action>
+    auto ActionFactory::get(std::string const& identifier) const -> Optional<Action>
     {
         Optional<Action> result;
 
@@ -34,7 +34,7 @@ namespace lcode
         return result;
     }
 
-    bool ActionTable::contains(std::string const& identifier) const
+    bool ActionFactory::contains(std::string const& identifier) const
     {
         return m_actions.find(identifier) != m_actions.end();
     }
