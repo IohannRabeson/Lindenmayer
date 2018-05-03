@@ -24,12 +24,12 @@ namespace lcode
         return m_content.errors;
     }
 
-    std::vector<Program::Error> Program::loadFromLCode(std::string const& lcode, ModuleTable const& moduleTable, ActionTable const& actionTable)
+    std::vector<Program::Error> Program::loadFromLCode(std::string const& lcode, ModuleTable const& moduleTable, ActionFactory const& actionTable)
     {
         return load(LoadFromLCode(lcode, moduleTable, actionTable));
     }
 
-    std::vector<Program::Error> Program::loadFromLCode(std::string const& lcode, ActionTable const& actionTable)
+    std::vector<Program::Error> Program::loadFromLCode(std::string const& lcode, ActionFactory const& actionTable)
     {
         return load(LoadFromLCode(lcode, lcode::ModuleTable(), actionTable));
     }

@@ -12,7 +12,7 @@
 
 namespace lcode
 {
-    class ActionTable
+    class ActionFactory
     {
     public:
         bool registerAction(std::string const& identifier, Action&& action);

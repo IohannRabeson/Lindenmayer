@@ -11,7 +11,7 @@ namespace lcode
 {
     Program::LoadFromLCode::LoadFromLCode(std::string const& lcode,
                                           ModuleTable const& moduleTable,
-                                          ActionTable const& actionTable)
+                                          ActionFactory const& actionTable)
     : m_lcode(lcode)
     , m_actionTable(actionTable)
     {

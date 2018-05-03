@@ -642,7 +642,7 @@ TEST_F(ProgramNoActionFixture, duplicate_global_variables)
 TEST(Program, module_definition_0)
 {
     lcode::Program program;
-    lcode::ActionTable actionTable;
+    lcode::ActionFactory actionTable;
 
     actionTable.registerAction("forward", [](){});
     EXPECT_FALSE( program.loadFromLCode("module F = coward;", actionTable).empty() );
@@ -681,8 +681,8 @@ TEST(Program, module_identification_fallback_2)
 {
     lcode::ModuleTable modules;
 
-    modules.registerModule("Ffff");
-    modules.registerModule("Foof");
+    modules.registerModule("oFfo");
+    modules.registerModule("Ffoo");
     modules.registerModule("F");
     modules.registerModule("f");
     modules.registerModule("o");
