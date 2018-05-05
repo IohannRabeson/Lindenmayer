@@ -177,7 +177,7 @@ namespace lcode
         }
     }
 
-    void Program::LoadFromLCode::enterAlias(LSystemParser::AliasContext* context)
+    void Program::LoadFromLCode::enterAlias_def(LSystemParser::Alias_defContext* context)
     {
         auto const tokens = context->StringIdentifier();
 

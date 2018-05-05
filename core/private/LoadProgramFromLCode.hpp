@@ -40,7 +40,7 @@ namespace lcode
         void enterInitial_angle(LSystemParser::Initial_angleContext* context) override;
 
         // Definitions
-        void enterAlias(LSystemParser::AliasContext* context) override;
+        void enterAlias_def(LSystemParser::Alias_defContext* context) override;
         void enterModule_def(LSystemParser::Module_defContext* context) override;
         void enterTransformation(LSystemParser::TransformationContext* context) override;
     private:

@@ -40,17 +40,8 @@ file(DOWNLOAD "http://www.antlr.org/download/antlr-${ANTLR_VERSION}-complete.jar
 
 # Call antlr to generate C++ files into the "generated" directory.
 # Doc here: https://github.com/antlr/antlr4/blob/master/doc/cpp-target.md
-add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/generated/LSystemBaseListener.cpp"
-        "${CMAKE_CURRENT_BINARY_DIR}/generated/LSystemBaseListener.h"
-        "${CMAKE_CURRENT_BINARY_DIR}/generated/LSystemLexer.cpp"
-        "${CMAKE_CURRENT_BINARY_DIR}/generated/LSystemLexer.h"
-        "${CMAKE_CURRENT_BINARY_DIR}/generated/LSystemLexer.interp"
-        "${CMAKE_CURRENT_BINARY_DIR}/generated/LSystemLexer.tokens"
-        "${CMAKE_CURRENT_BINARY_DIR}/generated/LSystemListener.cpp"
-        "${CMAKE_CURRENT_BINARY_DIR}/generated/LSystemListener.h"
-        "${CMAKE_CURRENT_BINARY_DIR}/generated/LSystemParser.cpp"
-        "${CMAKE_CURRENT_BINARY_DIR}/generated/LSystemParser.h"
-        COMMAND "${Java_JAVA_EXECUTABLE}" -cp "${LOCAL_ANTLR_GENERATOR_JAR}" org.antlr.v4.Tool
-        -Dlanguage=Cpp "${CMAKE_CURRENT_SOURCE_DIR}/LSystem.g4" -o "${CMAKE_CURRENT_BINARY_DIR}/generated"
-        DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/LSystem.g4"
-        COMMENT "Generate LSystem Language")
+add_custom_command(OUTPUT ${GENERATED_SRC}
+                   COMMAND "${Java_JAVA_EXECUTABLE}" -cp "${LOCAL_ANTLR_GENERATOR_JAR}" org.antlr.v4.Tool
+                   -Dlanguage=Cpp "${CMAKE_CURRENT_SOURCE_DIR}/LSystem.g4" -o "${CMAKE_CURRENT_BINARY_DIR}/generated"
+                   DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/LSystem.g4"
+                   COMMENT "Generate LSystem Language")
