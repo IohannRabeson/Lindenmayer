@@ -9,14 +9,14 @@
 
 #include <QGraphicsScene>
 
-class GraphicsSceneTurtle2D : public lcode::ATurtle2D
+class GraphicsSceneTurtle2D final : public lcode::ATurtle2D
 {
 public:
     explicit GraphicsSceneTurtle2D(QGraphicsScene* scene, QPen const& pen = QPen(Qt::SolidLine));
 
     void setPen(QPen const& pen);
 private:
-    void drawLine(QLineF const& line);
+    void drawLine(double x0, double y0, double x1, double y1) override;
 private:
     QGraphicsScene* const m_scene;
     QPen m_pen;

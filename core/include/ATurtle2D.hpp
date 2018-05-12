@@ -4,31 +4,34 @@
 
 #ifndef LINDENMAYER_ATURTLE_HPP
 #define LINDENMAYER_ATURTLE_HPP
-#include <QLine>
 #include <stack>
+#include <memory>
 
 namespace lcode
 {
     class ATurtle2D
     {
+        class ATurtle2DImp;
         struct State
         {
-            qreal x = 0;
-            qreal y = 0;
+            double x = 0;
+            double y = 0;
             /*!
              * \brief Direction angle in radians
              */
-            qreal direction = 0;
+            double direction = 0;
         };
     public:
         ATurtle2D();
+        ATurtle2D(ATurtle2D&&) = default;
+        ATurtle2D& operator = (ATurtle2D&&) = default;
         virtual ~ATurtle2D();
 
         void reset();
-        void setPosition(QPointF const& point);
-        void setRotation(qreal const degrees);
-        void advance(qreal const distance, bool const trace);
-        void rotate(qreal const degrees);
+        void setPosition(double const x, double const y);
+        void setRotation(double const degrees);
+        void advance(double const distance, bool const trace);
+        void rotate(double const degrees);
         void push();
         void pop();
 
@@ -36,9 +39,9 @@ namespace lcode
     private:
         State& getCurrentState();
 
-        virtual void drawLine(QLineF const& line) = 0;
+        virtual void drawLine(double const x0, double const y0, double const x1, double const y1) = 0;
     private:
-        std::stack<State> m_states;
+        std::unique_ptr<ATurtle2DImp> m_imp;
     };
 }
 

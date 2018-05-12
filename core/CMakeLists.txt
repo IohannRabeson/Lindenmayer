@@ -18,8 +18,9 @@ set(LINDENMAYER_CORE_SOURCES
     include/Optional.hpp
     private/ContextHelper.cpp
     private/ContextHelper.hpp
-        include/ActionFactory.hpp
-        src/ActionFactory.cpp include/ModuleAction.hpp)
+    include/ActionFactory.hpp
+    src/ActionFactory.cpp
+    include/ModuleAction.hpp)
 
 if (ENABLE_MSAN)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=memory")
@@ -37,13 +38,9 @@ if (ENABLE_SANITIZERS)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -fno-omit-frame-pointer")
 endif()
 
-add_library(LindenmayerHeart
-            ${LINDENMAYER_CORE_SOURCES})
+add_library(LindenmayerHeart ${LINDENMAYER_CORE_SOURCES})
 
-target_link_libraries(LindenmayerHeart PUBLIC antlr4_static lindenmayer-langage Qt5::Core Qt5::Widgets)
-
-# It's necessary to use QT_NO_FOREACH to avoid problems with QMidiMessageMatrix::foreach
-target_compile_definitions(LindenmayerHeart PUBLIC QT_NO_FOREACH)
+target_link_libraries(LindenmayerHeart PUBLIC antlr4_static lindenmayer-langage)
 
 target_include_directories(LindenmayerHeart PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>

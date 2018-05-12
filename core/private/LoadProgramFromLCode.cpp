@@ -29,22 +29,36 @@ namespace lcode
         pushError(std::move(error));
     }
 
-    void Program::LoadFromLCode::reportAmbiguity(antlr4::Parser*, antlr4::dfa::DFA const&, std::size_t, std::size_t, bool,
+    void Program::LoadFromLCode::reportAmbiguity(antlr4::Parser*,
+            antlr4::dfa::DFA const&, std::size_t, std::size_t, bool,
             const antlrcpp::BitSet&, antlr4::atn::ATNConfigSet*)
     {
         // Do nothing
     }
 
-    void Program::LoadFromLCode::reportAttemptingFullContext(antlr4::Parser*, antlr4::dfa::DFA const&, size_t, size_t,
+    void Program::LoadFromLCode::reportAttemptingFullContext(antlr4::Parser*,
+            antlr4::dfa::DFA const&, size_t, size_t,
             const antlrcpp::BitSet&, antlr4::atn::ATNConfigSet*)
     {
         // Do nothing
     }
 
-    void Program::LoadFromLCode::reportContextSensitivity(antlr4::Parser*, antlr4::dfa::DFA const&,
-            size_t, size_t, size_t, antlr4::atn::ATNConfigSet*)
+    void Program::LoadFromLCode::reportContextSensitivity(antlr4::Parser*,
+            antlr4::dfa::DFA const&,
+            size_t, size_t, size_t,
+            antlr4::atn::ATNConfigSet*)
     {
         // Do nothing
+    }
+
+    void Program::LoadFromLCode::pushError(antlr4::Token* token, std::string const& message)
+    {
+        pushError(ContextHelper::makeError(token, message));
+    }
+
+    void Program::LoadFromLCode::pushError(antlr4::tree::TerminalNode* node, std::string const& message)
+    {
+        pushError(ContextHelper::makeError(node, message));
     }
 
     void Program::LoadFromLCode::pushError(Program::Error&& error)
@@ -80,7 +94,7 @@ namespace lcode
 
         if (m_parseResult.axiom)
         {
-            pushError(ContextHelper::makeError(moduleContexts.front()->StringIdentifier(), "Axiom identifier '%t' already used"));
+            pushError(moduleContexts.front()->StringIdentifier(), "Axiom identifier '%t' already used");
             return;
         }
 
@@ -90,7 +104,7 @@ namespace lcode
 
     void Program::LoadFromLCode::enterIteration(LSystemParser::IterationContext* context)
     {
-        auto const tokens = context->getTokens(LSystemParser::Integer);
+        auto const tokens = context->getTokens(LSystemParser::IntegerConstant);
 
         // TODO: resolve expression here instead of just parsing a simple number
         if (tokens.size() == 1u)
@@ -99,7 +113,7 @@ namespace lcode
 
             if (m_parseResult.iteration)
             {
-                pushError(ContextHelper::makeError(token, "Iteration already defined"));
+                pushError(token, "Iteration already defined");
                 return;
             }
 
@@ -113,7 +127,7 @@ namespace lcode
                 }
                 else
                 {
-                    pushError(ContextHelper::makeError(token->getSymbol(), "Iteration value must be unsigned"));
+                    pushError(token->getSymbol(), "Iteration value must be unsigned");
                 }
             }
         }
@@ -122,21 +136,21 @@ namespace lcode
     void Program::LoadFromLCode::enterDistance(LSystemParser::DistanceContext* context)
     {
         // TODO: resolve expression here instead of just parsing a simple number
-        if (context->Float())
+        if (context->FloatConstant())
         {
             if (m_parseResult.distance)
             {
-                pushError(ContextHelper::makeError(context->Float(), "Distance already defined"));
+                pushError(context->FloatConstant(), "Distance already defined");
                 return;
             }
 
-            auto const number = ContextHelper::getFloat(context->Float(), m_parseResult.errors);
+            auto const number = ContextHelper::getFloat(context->FloatConstant(), m_parseResult.errors);
 
             if (number)
             {
                 if (number.value() < 0.f)
                 {
-                    pushError(ContextHelper::makeError(context->Float(), "Distance must be positive: '%t' < 0"));
+                    pushError(context->FloatConstant(), "Distance must be positive: '%t' < 0");
                 }
                 else
                 {
@@ -150,40 +164,40 @@ namespace lcode
     void Program::LoadFromLCode::enterAngle(LSystemParser::AngleContext* context)
     {
         // TODO: resolve expression here instead of just parsing a simple number
-        if (context->Float())
+        if (context->FloatConstant())
         {
             if (m_parseResult.angle)
             {
-                pushError(ContextHelper::makeError(context->Float(), "Angle already defined"));
+                pushError(context->FloatConstant(), "Angle already defined");
                 return;
             }
 
-            m_parseResult.angle = std::stod(context->Float()->getText());
+            m_parseResult.angle = std::stod(context->FloatConstant()->getText());
         }
     }
 
     void Program::LoadFromLCode::enterInitial_angle(LSystemParser::Initial_angleContext* context)
     {
         // TODO: resolve expression here instead of just parsing a simple number
-        if (context->Float())
+        if (context->FloatConstant())
         {
             if (m_parseResult.initialAngle)
             {
-                pushError(ContextHelper::makeError(context->Float(), "Initial angle already defined"));
+                pushError(context->FloatConstant(), "Initial angle already defined");
                 return;
             }
 
-            m_parseResult.initialAngle = std::stod(context->Float()->getText());
+            m_parseResult.initialAngle = std::stod(context->FloatConstant()->getText());
         }
     }
 
-    void Program::LoadFromLCode::enterAlias(LSystemParser::AliasContext* context)
+    void Program::LoadFromLCode::enterAlias_def(LSystemParser::Alias_defContext* context)
     {
         auto const tokens = context->StringIdentifier();
 
         if (tokens.size() != 2u)
         {
-            pushError(ContextHelper::makeError(context->getStart(), "Invalid alias '%t'"));
+            pushError(context->getStart(), "Invalid alias '%t'");
             return;
         }
 
@@ -192,7 +206,7 @@ namespace lcode
 
         if (!m_parseResult.moduleTable.createAlias(aliasIdentifier, aliasedIdentifier))
         {
-            pushError(ContextHelper::makeError(context->getStart(), "Can't create alias '%t'"));
+            pushError(context->getStart(), "Can't create alias '%t'");
             return;
         }
     }
@@ -201,15 +215,18 @@ namespace lcode
     {
         auto const stringIdentifiers = context->StringIdentifier();
 
+        // Parser ensure the module definition has the form <StringIdentifier> = <StringIdentifier>
+        assert( stringIdentifiers.size() == 2u );
+
         if (ContextHelper::isError(stringIdentifiers.front()))
         {
-            pushError(ContextHelper::makeError(stringIdentifiers.front(), "Expected module identifier instead of '%t'"));
+            pushError(stringIdentifiers.front(), "Expected module identifier instead of '%t'");
             return;
         }
 
         if (ContextHelper::isError(stringIdentifiers.back()))
         {
-            pushError(ContextHelper::makeError(stringIdentifiers.back(), "Expected string identifier instead of '%t'"));
+            pushError(stringIdentifiers.back(), "Expected string identifier instead of '%t'");
             return;
         }
 
@@ -218,7 +235,7 @@ namespace lcode
 
         if (m_parseResult.moduleTable.contains(moduleIdentifierText))
         {
-            pushError(ContextHelper::makeError(stringIdentifiers.front(), "Module identifier '%t' already used"));
+            pushError(stringIdentifiers.front(), "Module identifier '%t' already used");
             return;
         }
 
@@ -226,7 +243,7 @@ namespace lcode
 
         if (!action)
         {
-            pushError(ContextHelper::makeError(stringIdentifiers.back(), "Unknown action identifier: '%t'"));
+            pushError(stringIdentifiers.back(), "Unknown action identifier: '%t'");
             return;
         }
 
@@ -243,9 +260,9 @@ namespace lcode
             Module assignedModule = ContextHelper::getModule(moduleContexts.front(), m_parseResult.moduleTable, m_parseResult.errors);
             auto replacementModules = ContextHelper::getModules(moduleContexts.begin() + 1, moduleContexts.end(), m_parseResult.moduleTable, m_parseResult.errors);
 
-            if (probabilityContext && !ContextHelper::isError(probabilityContext->Float()))
+            if (probabilityContext && !ContextHelper::isError(probabilityContext->FloatConstant()))
             {
-                auto probabilityValue = ContextHelper::getFloat(probabilityContext->Float(), m_parseResult.errors);
+                auto probabilityValue = ContextHelper::getFloat(probabilityContext->FloatConstant(), m_parseResult.errors);
 
                 assert( probabilityValue );
 

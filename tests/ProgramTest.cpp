@@ -29,7 +29,6 @@ struct ProgramNoActionFixture : public ::testing::Test
     lcode::ModuleTable moduleTable;
 };
 
-
 inline void testAxiomModules(std::string const& text, lcode::Modules&& modules, lcode::ModuleTable const& moduleTable)
 {
     lcode::Program program;
@@ -62,6 +61,64 @@ TEST_F(ProgramNoActionFixture, program_error_missing_semicolon)
     // Missing ';'
     program.loadFromLCode("axiom: F", moduleTable);
     EXPECT_TRUE( program.haveErrors() );
+}
+
+
+TEST(Program, module_definition_0)
+{
+    lcode::Program program;
+    lcode::ActionFactory actionTable;
+
+    actionTable.registerAction("forward", [](){});
+    EXPECT_FALSE( program.loadFromLCode("module F = coward;", actionTable).empty() );
+    EXPECT_TRUE( program.loadFromLCode("module F = forward;", actionTable).empty() );
+    EXPECT_TRUE( program.loadFromLCode("module F = forward; axiom: F;", actionTable).empty() );
+}
+
+/*!
+ * \brief Test the module identification fallback mechanism
+ *
+ * <code>
+ * axiom: Ff;
+ * </code>
+ * is equivalent to
+ * <code>
+ * axiom: F f;
+ * </code>
+ * if module "Ff" doesn't exist
+ */
+TEST(Program, module_identification_fallback)
+{
+    lcode::Program program;
+    lcode::ModuleTable modules;
+
+    modules.registerModule("Ffff");
+    modules.registerModule("Foof");
+    modules.registerModule("F");
+    modules.registerModule("f");
+    modules.registerModule("o");
+
+    EXPECT_TRUE( printErrors(program.loadFromLCode("axiom: Ffff Foof F f o;", modules)).empty() );
+    EXPECT_TRUE( printErrors(program.loadFromLCode("axiom: Ffo;", modules)).empty() );
+}
+
+TEST(Program, module_identification_fallback_2)
+{
+    lcode::ModuleTable modules;
+
+    modules.registerModule("oFfo");
+    modules.registerModule("Ffoo");
+    modules.registerModule("F");
+    modules.registerModule("f");
+    modules.registerModule("o");
+
+    lcode::Program p0;
+    lcode::Program p1;
+    lcode::Program p2;
+    lcode::Program p3;
+    EXPECT_TRUE( printErrors(p0.loadFromLCode("axiom: F f o;", modules)).empty() );
+    EXPECT_TRUE( printErrors(p1.loadFromLCode("axiom: Ffo;", modules)).empty() );
+    EXPECT_EQ( p0.content().axiom.value(), p1.content().axiom.value() );
 }
 
 TEST_F(ProgramNoActionFixture, axiom)
@@ -218,7 +275,7 @@ TEST(Program, execute_twice)
     lcode::ModuleTable moduleTable;
     Turtle2DMock turtle;
 
-    EXPECT_CALL(turtle, drawLine(_))
+    EXPECT_CALL(turtle, drawLine(_, _, _, _))
             .Times(4);
 
     moduleTable.registerModule("F", [&turtle](){ turtle.advance(1., true); });
@@ -240,7 +297,7 @@ TEST(Program, turtle_advance)
     lcode::ModuleTable moduleTable;
     Turtle2DMock turtle;
 
-    EXPECT_CALL(turtle, drawLine(_))
+    EXPECT_CALL(turtle, drawLine(_, _, _, _))
             .Times(1);
 
     moduleTable.registerModule("F", [&turtle](){ turtle.advance(1., true); });
@@ -250,8 +307,7 @@ TEST(Program, turtle_advance)
     moduleTable.registerModule("[");
     moduleTable.registerModule("]");
 
-    ASSERT_TRUE( printErrors(program.loadFromLCode("axiom: F;"
-            , moduleTable)).empty() );
+    ASSERT_TRUE( printErrors(program.loadFromLCode("axiom: F;", moduleTable)).empty() );
 
     moduleTable.execute(program.rewrite(9u));
 }
@@ -262,8 +318,7 @@ TEST_F(ProgramNoActionFixture, koch)
 
     lcode::Program program;
 
-    ASSERT_TRUE( printErrors(program.loadFromLCode("axiom: F;"
-                                                   "F -> F+F-F-F+F;"
+    ASSERT_TRUE( printErrors(program.loadFromLCode("axiom: F; F -> F+F-F-F+F;"
                                                    , moduleTable)).empty() );
 
     lcode::Program programExpected0;
@@ -359,7 +414,7 @@ TEST(Program, alias)
     lcode::ModuleTable moduleTable;
     Turtle2DMock turtle;
 
-    EXPECT_CALL(turtle, drawLine(_))
+    EXPECT_CALL(turtle, drawLine(_, _, _, _))
             .Times(1);
 
     moduleTable.registerModule("F", [&turtle](){ turtle.advance(1., true); });
@@ -385,7 +440,7 @@ TEST(Program, alias_action)
     lcode::ModuleTable moduleTable;
     Turtle2DMock turtle;
 
-    EXPECT_CALL(turtle, drawLine(_))
+    EXPECT_CALL(turtle, drawLine(_, _, _, _))
             .Times(2);
 
     moduleTable.registerModule("F", [&turtle](){ turtle.advance(1., true); });
@@ -637,61 +692,4 @@ TEST_F(ProgramNoActionFixture, duplicate_global_variables)
     EXPECT_FALSE( program.loadFromLCode("initial_angle: 0.; initial_angle: 9.;", moduleTable).empty() );
     EXPECT_FALSE( program.loadFromLCode("angle: 0.; angle: 9.;", moduleTable).empty() );
     EXPECT_FALSE( program.loadFromLCode("axiom: F; axiom: F;", moduleTable).empty() );
-}
-
-TEST(Program, module_definition_0)
-{
-    lcode::Program program;
-    lcode::ActionFactory actionTable;
-
-    actionTable.registerAction("forward", [](){});
-    EXPECT_FALSE( program.loadFromLCode("module F = coward;", actionTable).empty() );
-    EXPECT_TRUE( program.loadFromLCode("module F = forward;", actionTable).empty() );
-    EXPECT_TRUE( program.loadFromLCode("module F = forward; axiom: F;", actionTable).empty() );
-}
-
-/*!
- * \brief Test the module identification fallback mechanism
- *
- * <code>
- * axiom: Ff;
- * </code>
- * is equivalent to
- * <code>
- * axiom: F f;
- * </code>
- * if module "Ff" doesn't exist
- */
-TEST(Program, module_identification_fallback)
-{
-    lcode::Program program;
-    lcode::ModuleTable modules;
-
-    modules.registerModule("Ffff");
-    modules.registerModule("Foof");
-    modules.registerModule("F");
-    modules.registerModule("f");
-    modules.registerModule("o");
-
-    EXPECT_TRUE( printErrors(program.loadFromLCode("axiom: Ffff Foof F f o;", modules)).empty() );
-    EXPECT_TRUE( printErrors(program.loadFromLCode("axiom: Ffo;", modules)).empty() );
-}
-
-TEST(Program, module_identification_fallback_2)
-{
-    lcode::ModuleTable modules;
-
-    modules.registerModule("oFfo");
-    modules.registerModule("Ffoo");
-    modules.registerModule("F");
-    modules.registerModule("f");
-    modules.registerModule("o");
-
-    lcode::Program p0;
-    lcode::Program p1;
-    lcode::Program p2;
-    lcode::Program p3;
-    EXPECT_TRUE( printErrors(p0.loadFromLCode("axiom: F f o;", modules)).empty() );
-    EXPECT_TRUE( printErrors(p1.loadFromLCode("axiom: Ffo;", modules)).empty() );
-    EXPECT_EQ( p0.content().axiom.value(), p1.content().axiom.value() );
 }

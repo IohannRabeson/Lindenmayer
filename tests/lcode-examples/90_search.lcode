@@ -1,0 +1,8 @@
+alias G = F;
+alias H = F;
+axiom: G+Ff+G+Ff;
+iteration: 4;
+angle: 90.;
+distance: 10.;
+
+G -> FHF;

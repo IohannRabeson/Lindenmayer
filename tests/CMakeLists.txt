@@ -16,7 +16,7 @@ set(SRC
     Fixtures/ProgramNoActionFixture.hpp
     Utility/ProgramError.hpp
     Utility/ProgramError.cpp
-    Utility/Printers.hpp)
+    Utility/Printers.hpp ExpressionTest.cpp)
 
 add_executable(unit_tests ${SRC})
 target_link_libraries(unit_tests PRIVATE LindenmayerHeart gtest gmock Qt5::Core Qt5::Widgets)
