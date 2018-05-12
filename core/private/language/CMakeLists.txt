@@ -1,5 +1,7 @@
 find_package(Java COMPONENTS Runtime)
 
+set(GrammarName LSystem)
+
 set(GENERATED_SRC
     "${CMAKE_CURRENT_BINARY_DIR}/generated/LSystemBaseListener.cpp"
     "${CMAKE_CURRENT_BINARY_DIR}/generated/LSystemBaseListener.h"

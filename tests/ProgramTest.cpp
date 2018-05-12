@@ -275,7 +275,7 @@ TEST(Program, execute_twice)
     lcode::ModuleTable moduleTable;
     Turtle2DMock turtle;
 
-    EXPECT_CALL(turtle, drawLine(_))
+    EXPECT_CALL(turtle, drawLine(_, _, _, _))
             .Times(4);
 
     moduleTable.registerModule("F", [&turtle](){ turtle.advance(1., true); });
@@ -297,7 +297,7 @@ TEST(Program, turtle_advance)
     lcode::ModuleTable moduleTable;
     Turtle2DMock turtle;
 
-    EXPECT_CALL(turtle, drawLine(_))
+    EXPECT_CALL(turtle, drawLine(_, _, _, _))
             .Times(1);
 
     moduleTable.registerModule("F", [&turtle](){ turtle.advance(1., true); });
@@ -307,8 +307,7 @@ TEST(Program, turtle_advance)
     moduleTable.registerModule("[");
     moduleTable.registerModule("]");
 
-    ASSERT_TRUE( printErrors(program.loadFromLCode("axiom: F;"
-            , moduleTable)).empty() );
+    ASSERT_TRUE( printErrors(program.loadFromLCode("axiom: F;", moduleTable)).empty() );
 
     moduleTable.execute(program.rewrite(9u));
 }
@@ -319,8 +318,7 @@ TEST_F(ProgramNoActionFixture, koch)
 
     lcode::Program program;
 
-    ASSERT_TRUE( printErrors(program.loadFromLCode("axiom: F;"
-                                                   "F -> F+F-F-F+F;"
+    ASSERT_TRUE( printErrors(program.loadFromLCode("axiom: F; F -> F+F-F-F+F;"
                                                    , moduleTable)).empty() );
 
     lcode::Program programExpected0;
@@ -416,7 +414,7 @@ TEST(Program, alias)
     lcode::ModuleTable moduleTable;
     Turtle2DMock turtle;
 
-    EXPECT_CALL(turtle, drawLine(_))
+    EXPECT_CALL(turtle, drawLine(_, _, _, _))
             .Times(1);
 
     moduleTable.registerModule("F", [&turtle](){ turtle.advance(1., true); });
@@ -442,7 +440,7 @@ TEST(Program, alias_action)
     lcode::ModuleTable moduleTable;
     Turtle2DMock turtle;
 
-    EXPECT_CALL(turtle, drawLine(_))
+    EXPECT_CALL(turtle, drawLine(_, _, _, _))
             .Times(2);
 
     moduleTable.registerModule("F", [&turtle](){ turtle.advance(1., true); });
