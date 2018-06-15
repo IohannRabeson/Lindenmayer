@@ -4,6 +4,10 @@
 
 #ifndef LINDENMAYER_MODULEACTION_HPP
 #define LINDENMAYER_MODULEACTION_HPP
+#include <sstream>
+#include <vector>
+#include <string>
+#include <tuple>
 
 namespace lcode
 {

@@ -1,35 +1,29 @@
 grammar LSystem;
 
-fragment DIGIT09 : [0-9] ;
-fragment DIGIT19 : [1-9] ;
-fragment TRUE : 'true' ;
-fragment FALSE : 'false' ;
-fragment NEWLINE   : '\r' '\n' | '\n' | '\r';
-
-program 	        : (axiom | iteration | distance |  angle | initial_angle | alias | module_def)* transformation*;
+program 	        : (axiom | iteration | distance | angle | initial_angle | alias_def | module_def)* transformation*;
 
 axiom               : 'axiom:' module+ EndOfLine;
-iteration           : 'iteration:' Integer EndOfLine;
-distance            : 'distance:' Float EndOfLine;
-angle               : 'angle:' Float EndOfLine;
-initial_angle       : 'initial_angle:' Float EndOfLine;
+iteration           : 'iteration:' IntegerConstant EndOfLine;
+distance            : 'distance:' FloatConstant EndOfLine;
+angle               : 'angle:' FloatConstant EndOfLine;
+initial_angle       : 'initial_angle:' FloatConstant EndOfLine;
 
-alias               : 'alias' StringIdentifier '=' StringIdentifier EndOfLine;
 transformation      : module TransformOperator probability? module+ EndOfLine;
-probability         : '(' Float ')';
+probability         : '(' FloatConstant ')';
 module              : StringIdentifier;
-expression          : Float | Integer | Boolean;
+
+alias_def           : 'alias' StringIdentifier '=' StringIdentifier EndOfLine;
 module_def          : 'module' StringIdentifier '=' StringIdentifier EndOfLine;
 
 ModuleDefinition
     : 'module' StringIdentifier AssignOperator StringIdentifier EndOfLine
     ;
 
-Integer
+IntegerConstant
     : ( '-' | '+' ) ? DIGIT09+
     ;
 
-Float
+FloatConstant
     : ( '-' | '+' ) ? DIGIT09+ '.' DIGIT09*
     ;
 
@@ -67,3 +61,8 @@ Whitespace
       -> skip
     ;
 
+fragment DIGIT09 : [0-9] ;
+fragment DIGIT19 : [1-9] ;
+fragment TRUE : 'true' ;
+fragment FALSE : 'false' ;
+fragment NEWLINE   : '\r' '\n' | '\n' | '\r';
