@@ -18,8 +18,9 @@ set(LINDENMAYER_CORE_SOURCES
     include/Optional.hpp
     private/ContextHelper.cpp
     private/ContextHelper.hpp
-        include/ActionFactory.hpp
-        src/ActionFactory.cpp include/ModuleAction.hpp)
+    include/ActionFactory.hpp
+    src/ActionFactory.cpp
+    include/ModuleAction.hpp)
 
 if (ENABLE_MSAN)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=memory")
