@@ -1,0 +1,7 @@
+angle: 90.;
+iteration: 5;
+distance: 5.;
+
+alias G = F;
+axiom: FG--FG--FG;
+G -> FG-FG+F+FG-FG;

@@ -10,7 +10,7 @@
 class Turtle2DMock : public lcode::ATurtle2D
 {
 public:
-    MOCK_METHOD1( drawLine, void(QLineF const&) );
+    MOCK_METHOD4( drawLine, void(double const x0, double const y0, double const x1, double const y1) );
 };
 
 
