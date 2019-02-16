@@ -1,6 +1,7 @@
 # Jekyll
 docs/_site
 Gemfile.lock
+.sass-cache
 
 # ANTLR is a dirty boy
 dist/
