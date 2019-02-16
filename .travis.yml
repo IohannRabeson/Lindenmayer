@@ -41,3 +41,5 @@ matrix:
 
     - os: osx
       env: SETUP_COMPILERS="CC=clang CXX=clang++" TRAVIS_CONFIGURATION_NAME=Retail
+
+    -os: windows
