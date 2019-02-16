@@ -16,8 +16,8 @@ set(GENERATED_SRC
 )
 
 # Avoid CMake warning related to AUTOMOC and AUTOUI.
-# Theses files should be processed the Qt machinery because
-# ANTLR use "emit" in his C++ code.
+# Theses files shouldn't be processed by the Qt machinery because
+# ANTLR generate code with something called "emit" in it.
 foreach(GENERATED_FILE ${GENERATED_SRC})
     set_property(SOURCE ${GENERATED_FILE} PROPERTY SKIP_AUTOGEN ON)
 endforeach()

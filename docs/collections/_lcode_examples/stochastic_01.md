@@ -1,0 +1,12 @@
+---
+name: Stochastic test
+screenshot: stochastic_01.png
+---
+axiom: ----F;
+iteration: 6;
+angle: 22.5;
+distance: 50.;
+
+F -> (0.5) F[+F][-F]F;
+F -> (0.3) F[-F]F;
+F -> (0.2) F[+F]F;

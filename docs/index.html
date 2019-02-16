@@ -1,0 +1,17 @@
+---
+layout: default
+overview: true
+---
+{% for example in site.lcode_examples %}
+{% assign lcode_snippet = example.content | newline_to_br | strip_html | strip %}
+<h2>{{ example.name }}</h2>
+<div style="display: flex; align-items: center; padding: 8px 0">
+<img src="{{ site.url }}/screenshots/{{ example.screenshot }}" style="clear: both; float: left" width="400">
+<pre class="highlight">
+<code class="language-bash" data-lang="bash">{{ lcode_snippet }}</code>
+</pre>
+<br/>
+</div>
+{% endfor %}
+
+<a href="{{ site.baseurl }}{% link language.md %}">Language reference</a>
