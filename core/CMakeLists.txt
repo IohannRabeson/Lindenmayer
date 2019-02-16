@@ -41,7 +41,7 @@ endif()
 add_library(LindenmayerHeart ${LINDENMAYER_CORE_SOURCES})
 
 target_link_libraries(LindenmayerHeart PUBLIC antlr4_static lindenmayer-langage)
-
+target_include_directories(LindenmayerHeart PUBLIC "${CMAKE_SOURCE_DIR}/externals/optional")
 target_include_directories(LindenmayerHeart PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src ${CMAKE_CURRENT_SOURCE_DIR}/private
