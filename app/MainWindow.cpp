@@ -74,8 +74,8 @@ void MainWindow::setupWidgets()
     m_programTextEdit->setFont(monospaced);
     m_errorOutputTextEdit->setFont(monospaced);
     m_errorOutputTextEdit->setReadOnly(true);
-    m_dockWidgets->addDockWidget(m_programTextEdit, tr("Program"), "program_input");
-    m_dockWidgets->addDockWidget(m_errorOutputTextEdit, tr("Errors"), "errors_output");
+    m_dockWidgets->addDockWidget(m_programTextEdit, tr("Program"), QLatin1Literal("program_input"));
+    m_dockWidgets->addDockWidget(m_errorOutputTextEdit, tr("Errors"), QLatin1Literal("errors_output"));
     setCentralWidget(m_graphicsView);
     setStatusBar(m_statusBar);
 }

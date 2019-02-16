@@ -26,7 +26,7 @@ angle: 90;
 F = F+F−F−F+F;
 {% endhighlight %}
 This code is very similar to the Koch curve pseudo-code on Wikipedia.
-
+![koch_results]({{ site.url }}/screenshots/Development snapshots/koch_curve.png)
 ### L-Code program's elements
 
 #### Constants
