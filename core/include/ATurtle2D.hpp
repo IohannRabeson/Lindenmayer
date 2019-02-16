@@ -35,6 +35,9 @@ namespace lcode
         void push();
         void pop();
 
+        virtual void start() = 0;
+        virtual void finish() = 0;
+
         State const& getCurrentState() const;
     private:
         State& getCurrentState();
