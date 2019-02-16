@@ -50,3 +50,8 @@ Right click on the project "Lindenmayer" > Properties > Debugging > Environment 
 ### Documentation
 https://iohannrabeson.github.io/Lindenmayer/language.html
 
+## CLion configurations
+ - Lindenmayer: The application
+ - Unit tests: The core unit tests
+ - Lindenmayer Auto Tests: starts Lindenmayer and try to generate each example in the directory passed as `--auto-test` parameter value.
+
