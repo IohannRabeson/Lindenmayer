@@ -2,3 +2,4 @@ theme: jekyll-theme-midnight
 collections_dir: collections
 collections:
   - lcode_examples
+  - features

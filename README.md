@@ -1,4 +1,4 @@
-# [Lindenmayer](https://iohannrabeson.github.io/Lindenmayer/language.html) [![Build Status](https://travis-ci.com/IohannRabeson/Lindenmayer.svg?token=oSgYDG8ZHmxB1gxGNZxP&branch=master)](https://travis-ci.com/IohannRabeson/Lindenmayer)
+# [Lindenmayer](https://iohannrabeson.github.io/Lindenmayer/index.html) [![Build Status](https://travis-ci.com/IohannRabeson/Lindenmayer.svg?token=oSgYDG8ZHmxB1gxGNZxP&branch=master)](https://travis-ci.com/IohannRabeson/Lindenmayer)
 
 Provide a tool with a dedicated language to describe and visualize Lindenmayer systems.
 
@@ -17,13 +17,9 @@ git clone --recursive git@github.com:IohannRabeson/Lindenmayer.git
 Somes libraries are embedded:
  - [ANTLR](https://github.com/IohannRabeson/antlr4)
  - [Google Test](https://github.com/google/googletest)
- - Boost::optional
  - Qool  
 Several libraries are embedded as submodules so don't forget to clone using the flag `--recursive`.
 If you didn't use it, shame on you and type `git submodule init && git submodule update`.
-
-### Note
-boost::optional (1.67.0) is directly embedded using [bcp](https://github.com/boostorg/bcp).
 
 ## Build
 
@@ -49,4 +45,9 @@ Right click on the project "Lindenmayer" > Properties > Debugging > Environment 
 
 ### Documentation
 https://iohannrabeson.github.io/Lindenmayer/language.html
+
+## CLion configurations
+ - Lindenmayer: The application
+ - Unit tests: The core unit tests
+ - Lindenmayer Auto Tests: starts Lindenmayer and try to generate each example in the directory passed as `--auto-test` parameter value.
 

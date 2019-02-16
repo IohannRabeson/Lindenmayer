@@ -8,11 +8,6 @@ overview: true
 The L-Code language is an attempt to provide a language able to describe
 several Lindenmayer's systems.
 
- - [DONE] Deterministic L-System
- - [DONE] Stochastic L-System
- - [TODO] Contextual L-System
- - [TODO] Parametric L-System
-
 ## Programming in L-Code
 ### Structure of a L-Code program
 An L-Code program look like almost any Lindenmayer's system textual representation.
@@ -38,3 +33,8 @@ This code is very similar to the Koch curve pseudo-code on Wikipedia.
 | iteration | unsigned integer | Iteration count                                             |
 | distance  | unsigned float   | The distance that the turtle moves when 'forward' is called |
 | angle     | float            | The angle that the turtle rotates when '+' or '-' is called |
+
+## References
+
+ - http://algorithmicbotany.org papers: http://algorithmicbotany.org/papers/abop/
+  
