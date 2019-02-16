@@ -19,13 +19,15 @@ An L-Code program look like almost any Lindenmayer's system textual representati
 The following example is the [Koch curve](https://en.wikipedia.org/wiki/L-system#Example_4:_Koch_curve)
 written in L-Code:
 {% highlight bash %}
-axiom: F;
+axiom: -F;
 iteration: 4;
-angle: 90;
+distance: 10.;
+angle: 90.;
 
-F = F+F−F−F+F;
+F -> F+F-F-F+F;
 {% endhighlight %}
 This code is very similar to the Koch curve pseudo-code on Wikipedia.
+
 ### L-Code program's elements
 
 #### Constants
