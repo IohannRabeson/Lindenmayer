@@ -57,3 +57,4 @@ add_subdirectory(app)
 add_subdirectory(core)
 add_subdirectory(tests)
 
+add_custom_target(serve_doc COMMAND jekyll serve --watch --trace -s ./docs -d ./docs/_site)
