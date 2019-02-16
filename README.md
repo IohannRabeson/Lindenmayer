@@ -17,13 +17,9 @@ git clone --recursive git@github.com:IohannRabeson/Lindenmayer.git
 Somes libraries are embedded:
  - [ANTLR](https://github.com/IohannRabeson/antlr4)
  - [Google Test](https://github.com/google/googletest)
- - Boost::optional
  - Qool  
 Several libraries are embedded as submodules so don't forget to clone using the flag `--recursive`.
 If you didn't use it, shame on you and type `git submodule init && git submodule update`.
-
-### Note
-boost::optional (1.67.0) is directly embedded using [bcp](https://github.com/boostorg/bcp).
 
 ## Build
 
