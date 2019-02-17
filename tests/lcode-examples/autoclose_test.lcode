@@ -1,0 +1,6 @@
+angle: 90.;
+iteration: 1;
+distance: 5.;
+
+axiom: F;
+F -> F-F-F-F;

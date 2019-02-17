@@ -289,11 +289,13 @@ void MainWindow::draw()
     }
 
     // Execute turtle orders
-    m_graphicsScene->clear();
     m_turtle.reset();
-    m_turtle.setPen(QPen(Qt::black, 2.));
+    m_turtle.setPen(QPen(Qt::black, 2., Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
+    m_turtle.start();
     m_program.execute();
+    m_turtle.finish();
     m_graphicsView->ensureVisible(getBoundingRectangle());
+    qDebug() << getBoundingRectangle();
     updateActions();
 }
 
