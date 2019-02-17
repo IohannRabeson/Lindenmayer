@@ -37,7 +37,6 @@ namespace lcode
         void enterIteration(LSystemParser::IterationContext* context) override;
         void enterDistance(LSystemParser::DistanceContext* context) override;
         void enterAngle(LSystemParser::AngleContext* context) override;
-        void enterInitial_angle(LSystemParser::Initial_angleContext* context) override;
 
         // Definitions
         void enterAlias_def(LSystemParser::Alias_defContext* context) override;

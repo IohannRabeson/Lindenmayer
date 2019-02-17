@@ -1,12 +1,11 @@
 grammar LSystem;
 
-program 	        : (axiom | iteration | distance | angle | initial_angle | alias_def | module_def)* transformation*;
+program 	        : (axiom | iteration | distance | angle | alias_def | module_def)* transformation*;
 
 axiom               : 'axiom:' module+ EndOfLine;
 iteration           : 'iteration:' IntegerConstant EndOfLine;
 distance            : 'distance:' FloatConstant EndOfLine;
 angle               : 'angle:' FloatConstant EndOfLine;
-initial_angle       : 'initial_angle:' FloatConstant EndOfLine;
 
 transformation      : module TransformOperator probability? module+ EndOfLine;
 probability         : '(' FloatConstant ')';
