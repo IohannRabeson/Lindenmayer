@@ -3,5 +3,7 @@ iteration: 3;
 distance: 5.;
 
 alias G = F;
-axiom: FG--FG--FG;
+alias Go = F;
+axiom: F Go -- F Go -- F Go;
 G -> FG-FG+F+FG-FG;
+Go -> FG-FG+F+FG-FG;

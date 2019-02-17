@@ -186,7 +186,7 @@ namespace lcode
                 pushError(context->FloatConstant(), "Initial angle already defined");
                 return;
             }
-
+            // TODO: is initial angle is really usefull??? => https://github.com/IohannRabeson/Lindenmayer/issues/32
             m_parseResult.initialAngle = std::stod(context->FloatConstant()->getText());
         }
     }

@@ -65,6 +65,8 @@ void GraphicsSceneTurtle2D::finish()
 {
     if (!m_firstPoints.empty() && comparePoint(m_firstPoints.front(), QPointF(m_lastX1, m_lastY1), 0.001))
     {
+        // If the first point is the same than the last point, then this is likely a polygon
+        // and we can try to close it.
         drawLine(m_firstPoints[0].x(), m_firstPoints[0].y(), m_firstPoints[1].x(), m_firstPoints[1].y());
     }
     m_pathItem->setPath(m_painterPath);
