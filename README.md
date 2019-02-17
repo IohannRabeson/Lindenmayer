@@ -43,6 +43,10 @@ Also you will have some missing Qt DLL, so you have to update your `PATH` in Vis
 Right click on the project "Lindenmayer" > Properties > Debugging > Environment then add a new entry like that:
 `PATH=$(PATH);<QTDIR>\bin`.
 
+### The extra build step to generate the L-Code parser
+Because I'm using ANTLR, I added an extra build step where Antlr generated C++ code from a grammar defined by
+the file core/private/language/LSystem.g4.
+
 ### Documentation
 https://iohannrabeson.github.io/Lindenmayer/language.html
 
