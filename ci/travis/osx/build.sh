@@ -5,7 +5,7 @@ set -e
 brew update
 brew install qt ninja
 
-QT_PATH="/usr/local/opt/qt"
+QT_PATH="$(brew --prefix qt)"
 
 mkdir builds
 cd builds

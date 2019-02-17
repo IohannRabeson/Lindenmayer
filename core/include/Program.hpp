@@ -37,7 +37,6 @@ namespace lcode
             Optional<unsigned int> iteration;
             Optional<float> distance;
             Optional<float> angle;
-            Optional<float> initialAngle;
             std::vector<Error> errors;
             ModuleTable moduleTable;
         };
