@@ -27,7 +27,7 @@ namespace
         return (std::fabs(right - left) < epsilon);
     }
 
-    static inline bool comparePoint(QPointF const& left, QPointF const& right, decltype(left.x()) epsilon = std::numeric_limits<decltype(left.x())>::epsilon())
+    static inline bool comparePoint(QPointF const& left, QPointF const& right, qreal epsilon = std::numeric_limits<qreal>::epsilon())
     {
         return compareFloatingPoint(left.x(), right.x(), epsilon) && compareFloatingPoint(left.y(), right.y(), epsilon);
     }
