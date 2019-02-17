@@ -176,21 +176,6 @@ namespace lcode
         }
     }
 
-    void Program::LoadFromLCode::enterInitial_angle(LSystemParser::Initial_angleContext* context)
-    {
-        // TODO: resolve expression here instead of just parsing a simple number
-        if (context->FloatConstant())
-        {
-            if (m_parseResult.initialAngle)
-            {
-                pushError(context->FloatConstant(), "Initial angle already defined");
-                return;
-            }
-
-            m_parseResult.initialAngle = std::stod(context->FloatConstant()->getText());
-        }
-    }
-
     void Program::LoadFromLCode::enterAlias_def(LSystemParser::Alias_defContext* context)
     {
         auto const tokens = context->StringIdentifier();
