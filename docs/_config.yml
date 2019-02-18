@@ -3,3 +3,17 @@ collections_dir: collections
 collections:
   - lcode_examples
   - features
+sass:
+  style: compressed
+  sass_dir: assets/styles
+defaults:
+  - scope:
+      type: "features"
+    values:
+      since: "v.0"
+      status: "Done"
+      order: 999999
+  - scope:
+      path: "assets/images"
+    values:
+      image: true
