@@ -46,7 +46,6 @@ TEST(Program, program_empty)
     EXPECT_FALSE( program.content().axiom );
     ASSERT_TRUE( program.content().rewriteRules.empty() );
     ASSERT_FALSE( program.content().angle );
-    ASSERT_FALSE( program.content().initialAngle );
     ASSERT_FALSE( program.content().distance );
     ASSERT_FALSE( program.content().iteration );
 }
@@ -140,7 +139,6 @@ TEST_F(ProgramNoActionFixture, axiom_single)
     ASSERT_EQ( program.content().axiom.value().front(), moduleTable.createModule("F") );
     ASSERT_TRUE( program.content().rewriteRules.empty() );
     ASSERT_FALSE( program.content().angle );
-    ASSERT_FALSE( program.content().initialAngle );
     ASSERT_FALSE( program.content().distance );
     ASSERT_FALSE( program.content().iteration );
 }
@@ -158,7 +156,6 @@ TEST_F(ProgramNoActionFixture, axiom_multiple)
     ASSERT_EQ( program.content().axiom.value().at(3u), moduleTable.createModule("]") );
     ASSERT_TRUE( program.content().rewriteRules.empty() );
     ASSERT_FALSE( program.content().angle );
-    ASSERT_FALSE( program.content().initialAngle );
     ASSERT_FALSE( program.content().distance );
     ASSERT_FALSE( program.content().iteration );
 }
@@ -176,7 +173,6 @@ TEST_F(ProgramNoActionFixture, axiom_multiple_no_spaces)
     ASSERT_EQ( program.content().axiom.value().at(3u), moduleTable.createModule("]") );
     ASSERT_TRUE( program.content().rewriteRules.empty() );
     ASSERT_FALSE( program.content().angle );
-    ASSERT_FALSE( program.content().initialAngle );
     ASSERT_FALSE( program.content().distance );
     ASSERT_FALSE( program.content().iteration );
 }
@@ -196,7 +192,6 @@ TEST_F(ProgramNoActionFixture, axiom_multiple_iterations)
 
     ASSERT_TRUE( program.content().rewriteRules.empty() );
     ASSERT_FALSE( program.content().angle );
-    ASSERT_FALSE( program.content().initialAngle );
     ASSERT_FALSE( program.content().distance );
     ASSERT_TRUE( program.content().iteration );
     ASSERT_EQ( program.content().iteration, 9u );
@@ -217,7 +212,6 @@ TEST_F(ProgramNoActionFixture, axiom_multiple_distance)
 
     ASSERT_TRUE( program.content().rewriteRules.empty() );
     ASSERT_FALSE( program.content().angle );
-    ASSERT_FALSE( program.content().initialAngle );
     ASSERT_TRUE( program.content().distance );
     ASSERT_FLOAT_EQ( program.content().distance.value(), 3.14f );
     ASSERT_FALSE( program.content().iteration );
@@ -238,7 +232,6 @@ TEST_F(ProgramNoActionFixture, axiom_multiple_angle)
     ASSERT_TRUE( program.content().rewriteRules.empty() );
     ASSERT_TRUE( program.content().angle );
     ASSERT_FLOAT_EQ( program.content().angle.value(), 63.14f );
-    ASSERT_FALSE( program.content().initialAngle );
     ASSERT_FALSE( program.content().distance );
     ASSERT_FALSE( program.content().iteration );
 }
@@ -260,7 +253,6 @@ TEST_F(ProgramNoActionFixture, axiom_multiple_iteration_distance_angle)
     ASSERT_TRUE( program.content().rewriteRules.empty() );
     ASSERT_TRUE( program.content().angle );
     ASSERT_NEAR( program.content().angle.value(), 63.14, 0.0001 );
-    ASSERT_FALSE( program.content().initialAngle );
     ASSERT_TRUE( program.content().distance );
     ASSERT_NEAR( program.content().distance.value(), 3.14f, 0.0001f );
     ASSERT_TRUE( program.content().iteration );
@@ -671,16 +663,20 @@ TEST_F(ProgramNoActionFixture, distance_tests)
 /*!
  * \brief Initial angle test
  */
-TEST_F(ProgramNoActionFixture, initial_angle_tests)
+TEST_F(ProgramNoActionFixture, angle_tests)
 {
     float const maxUnsignedFloat = std::numeric_limits<float>::max();
 
     lcode::Program program;
 
     // Missing '.' then considered as integer
-    EXPECT_FALSE( program.loadFromLCode("initial_angle: 0;", moduleTable).empty() );
-    EXPECT_TRUE( program.loadFromLCode("initial_angle: 0.;", moduleTable).empty() );
-    EXPECT_TRUE( program.loadFromLCode("initial_angle: -1.;", moduleTable).empty() );
+    EXPECT_FALSE( program.loadFromLCode("angle: 0;", moduleTable).empty() );
+    EXPECT_FALSE( program.content().angle );
+    EXPECT_TRUE( program.loadFromLCode("angle: 0.;", moduleTable).empty() );
+    EXPECT_TRUE( program.content().angle );
+    EXPECT_EQ( program.content().angle.value(), 0. );
+    EXPECT_TRUE( program.loadFromLCode("angle: -1.;", moduleTable).empty() );
+    EXPECT_EQ( program.content().angle.value(), -1. );
 }
 
 TEST_F(ProgramNoActionFixture, duplicate_global_variables)
@@ -689,7 +685,6 @@ TEST_F(ProgramNoActionFixture, duplicate_global_variables)
 
     EXPECT_FALSE( program.loadFromLCode("distance: 0.; distance: 9.;", moduleTable).empty() );
     EXPECT_FALSE( program.loadFromLCode("iteration: 0; iteration: 9;", moduleTable).empty() );
-    EXPECT_FALSE( program.loadFromLCode("initial_angle: 0.; initial_angle: 9.;", moduleTable).empty() );
     EXPECT_FALSE( program.loadFromLCode("angle: 0.; angle: 9.;", moduleTable).empty() );
     EXPECT_FALSE( program.loadFromLCode("axiom: F; axiom: F;", moduleTable).empty() );
 }

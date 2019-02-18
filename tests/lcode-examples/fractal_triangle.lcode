@@ -1,0 +1,7 @@
+distance: 20.;
+iteration: 1;
+angle: 90.;
+axiom: F;
+alias G = F;
+F -> GG+;
+G -> F;
