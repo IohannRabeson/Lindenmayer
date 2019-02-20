@@ -7,6 +7,7 @@ function(generate_grammars GRAMMAR_LIBRARY_NAME GRAMMAR_SOURCE_FILES)
     set(LOCAL_ANTLR_GENERATOR_JAR "${CMAKE_CURRENT_BINARY_DIR}/antlr-complete-${ANTLR_VERSION}.jar")
     file(DOWNLOAD "http://www.antlr.org/download/antlr-${ANTLR_VERSION}-complete.jar" "${LOCAL_ANTLR_GENERATOR_JAR}")
 
+    ${CMAKE_CURRENT_SOURCE_DIR}/L-Code.g4
     foreach(GRAMMAR_SOURCE_FILE ${GRAMMAR_SOURCE_FILES})
         get_filename_component(GRAMMAR_NAME ${GRAMMAR_SOURCE_FILE} NAME_WE)
         message(STATUS "grammar: ${GRAMMAR_NAME} -> ${GRAMMAR_NAME}GENERATED_SRC")
