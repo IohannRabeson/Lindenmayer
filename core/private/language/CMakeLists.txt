@@ -19,6 +19,7 @@ function(generate_grammars GRAMMAR_LIBRARY_NAME GRAMMAR_SOURCE_FILES)
                 "${CMAKE_CURRENT_BINARY_DIR}/generated/${GRAMMAR_NAME}Lexer.h"
                 "${CMAKE_CURRENT_BINARY_DIR}/generated/${GRAMMAR_NAME}Listener.h"
                 "${CMAKE_CURRENT_BINARY_DIR}/generated/${GRAMMAR_NAME}Parser.h"
+                "${CMAKE_CURRENT_BINARY_DIR}/generated/${GRAMMAR_NAME}Visitor.h"
                 )
 
         set(GENERATED_SOURCES
@@ -26,6 +27,7 @@ function(generate_grammars GRAMMAR_LIBRARY_NAME GRAMMAR_SOURCE_FILES)
                 "${CMAKE_CURRENT_BINARY_DIR}/generated/${GRAMMAR_NAME}Lexer.cpp"
                 "${CMAKE_CURRENT_BINARY_DIR}/generated/${GRAMMAR_NAME}Listener.cpp"
                 "${CMAKE_CURRENT_BINARY_DIR}/generated/${GRAMMAR_NAME}Parser.cpp"
+                "${CMAKE_CURRENT_BINARY_DIR}/generated/${GRAMMAR_NAME}Visitor.cpp"
                 )
 
         set(GENERATED_META
@@ -39,8 +41,9 @@ function(generate_grammars GRAMMAR_LIBRARY_NAME GRAMMAR_SOURCE_FILES)
             ${GENERATED_META}
             )
 
+        list(APPEND SOURCES ${GENERATED_INCLUDES})
+        list(APPEND SOURCES ${GENERATED_SOURCES})
         foreach(GENERATED_FILE ${GENERATED_SRC})
-            message(STATUS "generated file: ${GENERATED_FILE}")
             # Avoid CMake warning related to AUTOMOC and AUTOUI.
             # Theses files shouldn't be processed by the Qt machinery because
             # ANTLR generate code with something called "emit" in it.
@@ -50,11 +53,13 @@ function(generate_grammars GRAMMAR_LIBRARY_NAME GRAMMAR_SOURCE_FILES)
         # Custom command to define how to generate files listed by GENERATED_SRC
         add_custom_command(OUTPUT ${GENERATED_SRC}
                 COMMAND "${Java_JAVA_EXECUTABLE}" -cp "${LOCAL_ANTLR_GENERATOR_JAR}" org.antlr.v4.Tool
-                -Dlanguage=Cpp ${GRAMMAR_SOURCE_FILE} -o ${GENERATION_OUTPUT_DIR}
+                -visitor -Dlanguage=Cpp ${GRAMMAR_SOURCE_FILE} -o ${GENERATION_OUTPUT_DIR}
                 DEPENDS ${GRAMMAR_SOURCE_FILE}
                 COMMENT "Generate language for grammar ${GRAMMAR_NAME}")
     endforeach(GRAMMAR_SOURCE_FILE)
-    add_library(${GRAMMAR_LIBRARY_NAME} ${GENERATED_SOURCES})
+    message(STATUS "generated file: ${SOURCES}")
+
+    add_library(${GRAMMAR_LIBRARY_NAME} ${SOURCES})
     target_include_directories(${GRAMMAR_LIBRARY_NAME} PUBLIC ${GENERATION_OUTPUT_DIR} ${ANTLR4CPP_INCLUDE_DIRS})
     target_link_libraries(${GRAMMAR_LIBRARY_NAME} PUBLIC ${ANTLR4CPP_LIBS})
 endfunction()

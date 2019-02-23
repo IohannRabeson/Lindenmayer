@@ -11,8 +11,8 @@ transformation      : module TransformOperator probability? module+ EndOfLine;
 probability         : '(' FloatConstant ')';
 module              : StringIdentifier;
 
-alias_def           : 'alias' StringIdentifier '=' module EndOfLine;
-module_def          : 'module' StringIdentifier '=' StringIdentifier EndOfLine;
+alias_def           : 'alias' StringIdentifier '=' StringIdentifier+ EndOfLine;
+module_def          : 'module' StringIdentifier '=' StringIdentifier+ EndOfLine;
 
 ModuleDefinition
     : 'module' StringIdentifier AssignOperator StringIdentifier EndOfLine

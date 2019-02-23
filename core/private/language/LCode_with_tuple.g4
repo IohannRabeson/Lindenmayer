@@ -20,6 +20,8 @@ expression: SUB expression                                              #Minus
           | LITTERAL_BOOLEAN                                            #Boolean
           | IDENTIFIER                                                  #Identifier
           | LPARENT expression RPARENT                                  #EnclosedExpression
+          | '{' expression_list '}'                                     #Tuple
+          | '{' '}'                                                     #EmptyTuple
           ;
 
 ADD : '+' ;

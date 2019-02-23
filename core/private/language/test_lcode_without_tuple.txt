@@ -1,0 +1,12 @@
+// Here `d` and `a` are placeholders
+const iteration = 4;
+const d = -(10.);
+const a = 90.;
+// Here `d` and `a` are placeholders
+alias F(d) = __trace(d);
+alias R(a) = __rotate(a);
+// Here `d` is the constant.
+axiom F(d);
+// Here `_d` is just a placeholder. But `a` is the constant.
+// Because `d` is passed as parameter of F in the axiom, `_d` will be replaced by `d`.
+rewrite F(_d) = F(_d)R(a)F(_d)R(-a)F(_d)R(-a)F(_d)R(a)F(_d);
