@@ -20,7 +20,17 @@ set(LINDENMAYER_CORE_SOURCES
     private/ContextHelper.hpp
     include/ActionFactory.hpp
     src/ActionFactory.cpp
-    include/ModuleAction.hpp private/LCodeAST.cpp private/LCodeAST.hpp LCodeASTBuilder.cpp LCodeASTBuilder.hpp)
+    include/ModuleAction.hpp
+    private/LCodeAST.cpp
+    private/LCodeAST.hpp
+    LCodeASTBuilder.cpp
+    LCodeASTBuilder.hpp
+    include/LCode/SymbolTable.hpp
+    src/LCode/SymbolTable.cpp
+        src/LCode/SymbolDefinitionPass.cpp
+    include/LCode/SymbolDefinitionPass.hpp
+        src/LCode/ScopeTree.cpp
+    include/LCode/ScopeTree.hpp)
 
 if (ENABLE_MSAN)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=memory")

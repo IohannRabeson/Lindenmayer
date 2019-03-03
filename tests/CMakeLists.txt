@@ -16,11 +16,20 @@ set(SRC
     Fixtures/ProgramNoActionFixture.hpp
     Utility/ProgramError.hpp
     Utility/ProgramError.cpp
-    Utility/Printers.hpp ExpressionTest.cpp)
+    Utility/Printers.hpp
+    ExpressionTest.cpp
+    LCode/SymbolTableTest.cpp LCode/SymbolDefinitionPassTest.cpp)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 add_executable(unit_tests ${SRC})
 target_link_libraries(unit_tests PRIVATE LindenmayerHeart gtest gmock Qt5::Core Qt5::Widgets)
-target_include_directories(unit_tests PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}}" "${GTEST_INCLUDE_DIR}"
-                           "${CMAKE_CURRENT_SOURCE_DIR}/mocks" "${PROJECT_SOURCE_DIR}/app")
+target_include_directories(unit_tests PRIVATE
+                           "${CMAKE_CURRENT_SOURCE_DIR}}"
+                           "${GTEST_INCLUDE_DIR}"
+                           "${CMAKE_CURRENT_SOURCE_DIR}/mocks"
+                           "${PROJECT_SOURCE_DIR}/app")
 set_property(TARGET unit_tests PROPERTY CXX_STANDARD 14)
 set_property(TARGET unit_tests PROPERTY CXX_STANDARD_REQUIRED ON)

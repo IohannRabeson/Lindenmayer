@@ -1,11 +1,18 @@
 grammar LCode;
 
-program: statement+ ;
-statement: 'const' IDENTIFIER ASSIGNATION expression END_OF_STATEMENT                                           #ConstDecl
+program: statement* ;
+statement: 'const' type IDENTIFIER ASSIGNATION expression END_OF_STATEMENT                                           #ConstantDecl
          | 'alias' function_call ASSIGNATION function_call+ END_OF_STATEMENT                                    #AliasDecl
          | 'axiom' expression END_OF_STATEMENT                                                                  #AxiomDecl
          | 'rewrite' IDENTIFIER LPARENT expression_list RPARENT ASSIGNATION function_call+ END_OF_STATEMENT     #RewriteRuleDecl
          ;
+
+type: 'void'
+    | 'integer'
+    | 'float'
+    | 'boolean'
+    | 'string'
+    ;
 
 function_call: IDENTIFIER LPARENT expression_list RPARENT ;
 expression_list: expression (',' expression)* ;
