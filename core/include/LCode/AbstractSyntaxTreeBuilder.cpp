@@ -12,7 +12,6 @@ void AbstractSyntaxTreeBuilder::enterProgram(LCodeParser::ProgramContext* contex
 }
 
 
-
 void AbstractSyntaxTreeBuilder::enterInteger(LCodeParser::IntegerContext* context)
 {
     currentNode()->makeChild<IntegerNode>(context, StorageTypeTrait<StorageType::Integer>::fromText(context->getText()));
@@ -71,6 +70,7 @@ void AbstractSyntaxTreeBuilder::enterConstIdentifier(LCodeParser::ConstIdentifie
 
 void AbstractSyntaxTreeBuilder::enterConstantDecl(LCodeParser::ConstantDeclContext* context)
 {
+    // TODO: store identifier and type
     pushNode(currentNode()->makeChild<ConstantDeclarationNode>(context));
 }
 
@@ -151,18 +151,6 @@ void AbstractSyntaxTreeBuilder::exitDivision(LCodeParser::DivisionContext*)
     popNode();
 }
 
-void AbstractSyntaxTreeBuilder::enterEnclosedExpression(LCodeParser::EnclosedExpressionContext* context)
-{
-    // TODO
-    LCodeBaseListener::enterEnclosedExpression(context);
-}
-
-void AbstractSyntaxTreeBuilder::exitEnclosedExpression(LCodeParser::EnclosedExpressionContext* context)
-{
-    // TODO
-    LCodeBaseListener::exitEnclosedExpression(context);
-}
-
 void AbstractSyntaxTreeBuilder::enterNegativeExpression(LCodeParser::NegativeExpressionContext* context)
 {
     pushNode(currentNode()->makeChild<NegativeNode>(context));
@@ -214,18 +202,6 @@ void AbstractSyntaxTreeBuilder::exitConstDivision(LCodeParser::ConstDivisionCont
     popNode();
 }
 
-void AbstractSyntaxTreeBuilder::enterConstEnclosedExpression(LCodeParser::ConstEnclosedExpressionContext* context)
-{
-    // TODO
-    LCodeBaseListener::enterConstEnclosedExpression(context);
-}
-
-void AbstractSyntaxTreeBuilder::exitConstEnclosedExpression(LCodeParser::ConstEnclosedExpressionContext* context)
-{
-    // TODO
-    LCodeBaseListener::exitConstEnclosedExpression(context);
-}
-
 void AbstractSyntaxTreeBuilder::enterConstNegativeExpression(LCodeParser::ConstNegativeExpressionContext* context)
 {
     pushNode(currentNode()->makeChild<NegativeNode>(context));
@@ -249,4 +225,9 @@ void AbstractSyntaxTreeBuilder::popNode()
 AbstractSyntaxTreeNode* AbstractSyntaxTreeBuilder::currentNode() const
 {
     return _stack.top();
+}
+
+std::unique_ptr<ProgramNode> const& AbstractSyntaxTreeBuilder::programNode() const
+{
+    return _root;
 }

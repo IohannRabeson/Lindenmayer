@@ -56,7 +56,7 @@ std::string const& AbstractSyntaxTreeNode::nodeTypeName(AbstractSyntaxTreeNode::
         { AbstractSyntaxTreeNode::NodeType::ConstantDeclaration, "ConstantDeclaration" },
         { AbstractSyntaxTreeNode::NodeType::AliasDeclaration, "AliasDeclaration" },
         { AbstractSyntaxTreeNode::NodeType::AxiomDeclaration, "AxiomDeclaration" },
-        { AbstractSyntaxTreeNode::NodeType::RewriteRuleDeclaration, "RewriteRuleDeclaration" }
+        { AbstractSyntaxTreeNode::NodeType::RewriteRuleDeclaration, "RewriteRuleDeclaration" },
     };
     return NodeTypeNames.at(nodeType);
 }
@@ -70,11 +70,6 @@ StorageType ExpressionNode::getEvaluatedTypeChild(std::size_t index) const
 {
     auto* node = getExpressionChild(index);
     return node == nullptr ? StorageType::Null : node->evaluatedType();
-}
-
-NegativeNode::NegativeNode(antlr4::tree::ParseTree* parseTreeNode)
-: ExpressionNode(parseTreeNode)
-{
 }
 
 StorageType NegativeNode::evaluatedType() const
@@ -106,11 +101,6 @@ StorageType BinaryOperatorNode::evaluatedType() const
     return static_cast<StorageType>(maxTypeId);
 }
 
-bool BinaryOperatorNode::areEqual(AbstractSyntaxTreeNode const* other) const
-{
-    return other == nullptr || other->nodeType() == nodeType();
-}
-
 AbstractSyntaxTreeNode::NodeType AdditionNode::nodeType() const
 {
     return AbstractSyntaxTreeNode::NodeType::Addition;
@@ -129,11 +119,6 @@ AbstractSyntaxTreeNode::NodeType MultiplicationNode::nodeType() const
 AbstractSyntaxTreeNode::NodeType DivisionNode::nodeType() const
 {
     return AbstractSyntaxTreeNode::NodeType::Division;
-}
-
-bool StatementNode::areEqual(AbstractSyntaxTreeNode const* other) const
-{
-    return other == nullptr || other->nodeType() == nodeType();
 }
 
 AbstractSyntaxTreeNode::NodeType ProgramNode::nodeType() const

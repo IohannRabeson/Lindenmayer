@@ -18,10 +18,7 @@ private:
 
     AbstractSyntaxTreeNode* currentNode() const;
 public:
-    std::unique_ptr<ProgramNode> const& programNode() const
-    {
-        return _root;
-    }
+    std::unique_ptr<ProgramNode> const& programNode() const;
 
     void enterAddition(LCodeParser::AdditionContext* context) override;
     void enterAliasDecl(LCodeParser::AliasDeclContext* context) override;
@@ -31,7 +28,6 @@ public:
     void enterConstantDecl(LCodeParser::ConstantDeclContext* context) override;
     void enterConstBoolean(LCodeParser::ConstBooleanContext* context) override;
     void enterConstDivision(LCodeParser::ConstDivisionContext* context) override;
-    void enterConstEnclosedExpression(LCodeParser::ConstEnclosedExpressionContext* context) override;
     void enterConstFloat(LCodeParser::ConstFloatContext* context) override;
     void enterConstIdentifier(LCodeParser::ConstIdentifierContext* context) override;
     void enterConstInteger(LCodeParser::ConstIntegerContext* context) override;
@@ -40,7 +36,6 @@ public:
     void enterConstString(LCodeParser::ConstStringContext* context) override;
     void enterConstSubstraction(LCodeParser::ConstSubstractionContext* context) override;
     void enterDivision(LCodeParser::DivisionContext* context) override;
-    void enterEnclosedExpression(LCodeParser::EnclosedExpressionContext* context) override;
     void enterFloat(LCodeParser::FloatContext* context) override;
     void enterIdentifier(LCodeParser::IdentifierContext* context) override;
     void enterInteger(LCodeParser::IntegerContext* context) override;
@@ -56,12 +51,10 @@ public:
     void exitConstAddition(LCodeParser::ConstAdditionContext* context) override;
     void exitConstantDecl(LCodeParser::ConstantDeclContext* context) override;
     void exitConstDivision(LCodeParser::ConstDivisionContext* context) override;
-    void exitConstEnclosedExpression(LCodeParser::ConstEnclosedExpressionContext* context) override;
     void exitConstMultiplication(LCodeParser::ConstMultiplicationContext* context) override;
     void exitConstNegativeExpression(LCodeParser::ConstNegativeExpressionContext* context) override;
     void exitConstSubstraction(LCodeParser::ConstSubstractionContext* context) override;
     void exitDivision(LCodeParser::DivisionContext* context) override;
-    void exitEnclosedExpression(LCodeParser::EnclosedExpressionContext* context) override;
     void exitMultiplication(LCodeParser::MultiplicationContext* context) override;
     void exitNegativeExpression(LCodeParser::NegativeExpressionContext* context) override;
     void exitRewriteRuleDecl(LCodeParser::RewriteRuleDeclContext* context) override;

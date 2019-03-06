@@ -37,7 +37,10 @@ public:
     explicit AbstractSyntaxTreeNode(antlr4::tree::ParseTree* parseTreeNode = nullptr);
     virtual ~AbstractSyntaxTreeNode() = default;
     virtual NodeType nodeType() const = 0;
-    virtual bool areEqual(AbstractSyntaxTreeNode const* other) const = 0;
+    virtual bool areEqual(AbstractSyntaxTreeNode const* other) const
+    {
+        return nodeType() == other->nodeType();
+    }
 
     antlr4::tree::ParseTree* parseTreeNode() const;
 
@@ -68,8 +71,6 @@ class StatementNode : public AbstractSyntaxTreeNode
 {
 public:
     using AbstractSyntaxTreeNode::AbstractSyntaxTreeNode;
-
-    bool areEqual(AbstractSyntaxTreeNode const* other) const override;
 };
 
 class ProgramNode : public StatementNode
@@ -175,7 +176,6 @@ public:
     explicit BinaryOperatorNode(antlr4::tree::ParseTree* parseTreeNode = nullptr);
 
     StorageType evaluatedType() const override;
-    bool areEqual(AbstractSyntaxTreeNode const* other) const override;
 };
 
 class AdditionNode : public BinaryOperatorNode
@@ -215,7 +215,7 @@ class AssignationNode : public BinaryOperatorNode
 class NegativeNode : public ExpressionNode
 {
 public:
-    explicit NegativeNode(antlr4::tree::ParseTree* parseTreeNode = nullptr);
+    using ExpressionNode::ExpressionNode;
     StorageType evaluatedType() const override;
     NodeType nodeType() const override;
     bool areEqual(AbstractSyntaxTreeNode const* other) const override;

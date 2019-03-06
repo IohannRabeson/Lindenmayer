@@ -105,3 +105,21 @@ TEST(AbstractSyntaxTreeBuilderTest, expression_math_0)
     divisionNode->makeChild<IntegerNode>(5);
     EXPECT_TRUE( compareTrees(expectedTree.get(), builder.programNode().get()) );
 }
+
+TEST(AbstractSyntaxTreeBuilderTest, expression_precedence)
+{
+    AbstractSyntaxTreeBuilder builder;
+    parseLCode("const integer integer_value = (1 + 2) * 3 - 4 / 5;", builder);
+    auto expectedTree = std::make_unique<ProgramNode>();
+    auto* const constantDeclarationNode = expectedTree->makeChild<ConstantDeclarationNode>();
+    auto* const substractionNode = constantDeclarationNode->makeChild<SubstractionNode>();
+    auto* const multiplicationNode = substractionNode->makeChild<MultiplicationNode>();
+    auto* const divisionNode = substractionNode->makeChild<DivisionNode>();
+    auto* const additionNode = multiplicationNode->makeChild<AdditionNode>();
+    multiplicationNode->makeChild<IntegerNode>(3);
+    additionNode->makeChild<IntegerNode>(1);
+    additionNode->makeChild<IntegerNode>(2);
+    divisionNode->makeChild<IntegerNode>(4);
+    divisionNode->makeChild<IntegerNode>(5);
+    EXPECT_TRUE( compareTrees(expectedTree.get(), builder.programNode().get()) );
+}
