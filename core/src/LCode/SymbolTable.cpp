@@ -26,22 +26,22 @@ bool SymbolTable::defineType(std::string const& identifier)
     return define(identifier, createSymbol<Type>(identifier));
 }
 
-bool SymbolTable::defineConstant(std::string const& identifier, StringStorage const& value)
+bool SymbolTable::defineConstant(std::string const& identifier, CppType<StorageType::String> const& value)
 {
     return define(identifier, createSymbol<StringConstant>(value));
 }
 
-bool SymbolTable::defineConstant(std::string const& identifier, BooleanStorage value)
+bool SymbolTable::defineConstant(std::string const& identifier, CppType<StorageType::Boolean> value)
 {
     return define(identifier, createSymbol<BooleanConstant>(value));
 }
 
-bool SymbolTable::defineConstant(std::string const& identifier, FloatStorage value)
+bool SymbolTable::defineConstant(std::string const& identifier, CppType<StorageType::Float> value)
 {
     return define(identifier, createSymbol<FloatConstant>(value));
 }
 
-bool SymbolTable::defineConstant(std::string const& identifier, IntegerStorage value)
+bool SymbolTable::defineConstant(std::string const& identifier, CppType<StorageType::Integer> value)
 {
     return define(identifier, createSymbol<IntegerConstant>(value));
 }
@@ -82,4 +82,24 @@ SymbolTable::SymbolType SymbolTable::Type::symbolType() const
 std::string const& SymbolTable::Type::typeName() const
 {
     return _typeName;
+}
+
+SymbolTable::IntegerConstant::IntegerConstant(ValueType value)
+    : Constant(StorageType::Integer, value)
+{
+}
+
+SymbolTable::FloatConstant::FloatConstant(ValueType value)
+    : Constant(StorageType::Float, value)
+{
+}
+
+SymbolTable::StringConstant::StringConstant(ValueType const& value)
+    : Constant(StorageType::String, value)
+{
+}
+
+SymbolTable::BooleanConstant::BooleanConstant(ValueType value)
+    : Constant(StorageType::Boolean, value)
+{
 }

@@ -24,7 +24,7 @@ void SymbolDefinitionPass::exitProgram(LCodeParser::ProgramContext*)
 {
 }
 
-//static SymbolTable::ConstantType getConstantType()
+//static SymbolTable::StorageType getConstantType()
 
 void SymbolDefinitionPass::enterConstantDecl(LCodeParser::ConstantDeclContext* constantDeclarationContext)
 {

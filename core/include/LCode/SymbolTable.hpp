@@ -10,19 +10,15 @@
 #include <memory>
 #include <functional>
 
+#include "StorageType.hpp"
+
 class SymbolTable
 {
 public:
     class ASymbol;
     using Symbol = std::unique_ptr<ASymbol>;
 public:
-    using IntegerStorage = std::int64_t;
-    using FloatStorage = double;
-    using BooleanStorage = bool;
-    using StringStorage = std::string;
-
     enum class SymbolType;
-    enum class ConstantType;
 
     template <typename T>
     class Constant;
@@ -41,10 +37,11 @@ public:
     }
 
     bool defineType(std::string const& identifier);
-    bool defineConstant(std::string const& identifier, IntegerStorage value);
-    bool defineConstant(std::string const& identifier, FloatStorage value);
-    bool defineConstant(std::string const& identifier, BooleanStorage value);
-    bool defineConstant(std::string const& identifier, StringStorage const& value);
+
+    bool defineConstant(std::string const& identifier, CppType<StorageType::Integer> value);
+    bool defineConstant(std::string const& identifier, CppType<StorageType::Float> value);
+    bool defineConstant(std::string const& identifier, CppType<StorageType::Boolean> value);
+    bool defineConstant(std::string const& identifier, CppType<StorageType::String> const& value);
 
     bool contains(std::string const& identifier) const;
     SymbolType symbolType(std::string const& identifier) const;
@@ -61,15 +58,6 @@ enum class SymbolTable::SymbolType
     Type
 };
 
-enum class SymbolTable::ConstantType
-{
-    Null,
-    Integer,
-    Float,
-    Boolean,
-    String
-};
-
 class SymbolTable::ASymbol
 {
 public:
@@ -81,12 +69,19 @@ template <typename T>
 class SymbolTable::Constant : public ASymbol
 {
     T const _storage;
+    StorageType const _type;
 public:
     using ValueType = T;
 
-    explicit Constant(T const& value)
-        : _storage(value)
+    explicit Constant(StorageType type, T const& value)
+    : _storage(value)
+    , _type(type)
     {
+    }
+
+    StorageType type() const
+    {
+        return _type;
     }
 
     SymbolType symbolType() const override
@@ -100,28 +95,28 @@ public:
     }
 };
 
-class SymbolTable::IntegerConstant final : public Constant<std::int64_t>
+class SymbolTable::IntegerConstant final : public Constant<CppType<StorageType::Integer>>
 {
 public:
-    using Constant::Constant;
+    explicit IntegerConstant(ValueType value);
 };
 
-class SymbolTable::FloatConstant final : public Constant<double>
+class SymbolTable::FloatConstant final : public Constant<CppType<StorageType::Float>>
 {
 public:
-    using Constant::Constant;
+    explicit FloatConstant(ValueType value);
 };
 
-class SymbolTable::StringConstant final : public Constant<std::string>
+class SymbolTable::StringConstant final : public Constant<CppType<StorageType::String>>
 {
 public:
-    using Constant::Constant;
+    explicit StringConstant(ValueType const& value);
 };
 
-class SymbolTable::BooleanConstant final : public Constant<bool>
+class SymbolTable::BooleanConstant final : public Constant<CppType<StorageType::Boolean>>
 {
 public:
-    using Constant::Constant;
+    explicit BooleanConstant(ValueType value);
 };
 
 class SymbolTable::Function final : public ASymbol

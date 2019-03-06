@@ -11,6 +11,8 @@
 #include <memory>
 #include <stack>
 
+class CompilationContext;
+
 class SymbolDefinitionPass : public LCodeBaseListener
 {
     using ScopeTree = ScopeTree;

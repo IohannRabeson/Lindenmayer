@@ -6,20 +6,27 @@
 #include <gmock/gmock.h>
 
 #include <LCode/SymbolDefinitionPass.hpp>
-#include <generated/LCodeLexer.h>
-#include <generated/LCodeParser.h>
 #include <generated/LCodeListener.h>
-#include <gmock/gmock.h>
 
-static void parseLCode(std::string const& text, antlr4::tree::ParseTreeListener& listener)
+#include "ParserUtility.hpp"
+
+// TODO: clean this shit: move this test to a dedicated file GatherConstantExpressionPassTest.cpp
+#include "LCode/GatherConstantExpressionPass.hpp"
+#include "LCode/CompilationContext.hpp"
+TEST(Temp, temp)
 {
-    antlr4::ANTLRInputStream inputStream(text);
-    LCodeLexer lexer(&inputStream);
-    antlr4::CommonTokenStream tokenStream(&lexer);
-    LCodeParser parser(&tokenStream);
-    antlr4::tree::ParseTreeWalker treeWalker;
-    treeWalker.walk(&listener, parser.program());
+    CompilationContext context;
+    GatherConstantExpressionPass listener(context);
+    std::string const code =
+        "const integer integer_value = 123;"
+        "const float float_value = 0.123;"
+        "const float float_value = 1 + 2 * 3 - 4 / 5;"
+        "const boolean boolean_value_true = true;"
+        "const boolean boolean_value_false = false;"
+        "const string string_value = \"123\";";
+    parseLCode(code, listener);
 }
+// ENDTODO: clean this shit
 
 TEST(SymbolDefinitionPassTest, constants)
 {
