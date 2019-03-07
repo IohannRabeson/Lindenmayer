@@ -2,8 +2,8 @@
 // Created by Io on 2019-03-05.
 //
 
-#include "AbstractSyntaxTreeBuilder.hpp"
-#include "AbstractSyntaxTreeNode.hpp"
+#include "LCode/AbstractSyntaxTreeBuilder.hpp"
+#include "LCode/AbstractSyntaxTreeNode.hpp"
 
 void AbstractSyntaxTreeBuilder::enterProgram(LCodeParser::ProgramContext* context)
 {

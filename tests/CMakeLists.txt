@@ -18,7 +18,10 @@ set(SRC
     Utility/ProgramError.cpp
     Utility/Printers.hpp
     ExpressionTest.cpp
-    LCode/SymbolTableTest.cpp LCode/SymbolDefinitionPassTest.cpp LCode/AbstractSyntaxTreeTest.cpp LCode/AbstractSyntaxTreeBuilderTest.cpp LCode/ParserUtility.hpp LCode/ParserUtility.cpp)
+    LCode/AbstractSyntaxTreeTest.cpp
+    LCode/AbstractSyntaxTreeBuilderTest.cpp
+    LCode/ParserUtility.hpp
+    LCode/ParserUtility.cpp)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)

@@ -25,12 +25,7 @@ set(LINDENMAYER_CORE_SOURCES
     private/LCodeAST.hpp
     LCodeASTBuilder.cpp
     LCodeASTBuilder.hpp
-    include/LCode/SymbolTable.hpp
-    src/LCode/SymbolTable.cpp
-        src/LCode/SymbolDefinitionPass.cpp
-    include/LCode/SymbolDefinitionPass.hpp
-        src/LCode/ScopeTree.cpp
-    include/LCode/ScopeTree.hpp src/LCode/AbstractSyntaxTreeNode.cpp include/LCode/AbstractSyntaxTreeNode.hpp include/LCode/StorageType.hpp src/LCode/GatherConstantExpressionPass.cpp include/LCode/GatherConstantExpressionPass.hpp include/LCode/CompilationContext.hpp src/LCode/CompilationContext.cpp src/LCode/AbstractSyntaxTreeAlgorithms.cpp include/LCode/AbstractSyntaxTreeAlgorithms.hpp include/LCode/AbstractSyntaxTreeBuilder.cpp include/LCode/AbstractSyntaxTreeBuilder.hpp)
+        src/LCode/AbstractSyntaxTreeNode.cpp include/LCode/AbstractSyntaxTreeNode.hpp include/LCode/StorageType.hpp include/LCode/CompilationContext.hpp src/LCode/CompilationContext.cpp src/LCode/AbstractSyntaxTreeAlgorithms.cpp include/LCode/AbstractSyntaxTreeAlgorithms.hpp src/LCode/AbstractSyntaxTreeBuilder.cpp include/LCode/AbstractSyntaxTreeBuilder.hpp)
 
 if (ENABLE_MSAN)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=memory")
