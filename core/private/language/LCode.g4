@@ -30,7 +30,8 @@ expression: SUBSTRACTION expression                                             
           | IDENTIFIER                                                              #Identifier
           | LEFT_PARENTHSIS expression RIGHT_PARENTHSIS                             #EnclosedExpression
           ;
-
+// Const expression can't contains function calls because
+// function are non const.
 const_expression: SUBSTRACTION const_expression                     #ConstNegativeExpression
                 | const_expression MULTIPLICATION const_expression  #ConstMultiplication
                 | const_expression DIVISION const_expression        #ConstDivision

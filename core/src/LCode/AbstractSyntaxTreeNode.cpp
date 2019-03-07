@@ -151,8 +151,19 @@ AbstractSyntaxTreeNode::NodeType AssignationNode::nodeType() const
     return NodeType::Assignation;
 }
 
+
+IdentifierNode::IdentifierNode(std::string const& identifier)
+    : IdentifierNode(nullptr, identifier)
+{
+}
+
 IdentifierNode::IdentifierNode(antlr4::tree::ParseTree* parserTreeNode, std::string const& identifier)
 : ExpressionNode(parserTreeNode)
 , _identifier(identifier)
 {
+}
+
+AbstractSyntaxTreeNode::NodeType IdentifierNode::nodeType() const
+{
+    return NodeType::Identifier;
 }

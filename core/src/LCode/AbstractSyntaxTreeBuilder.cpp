@@ -56,15 +56,14 @@ void AbstractSyntaxTreeBuilder::enterConstFloat(LCodeParser::ConstFloatContext* 
 
 
 
-
 void AbstractSyntaxTreeBuilder::enterIdentifier(LCodeParser::IdentifierContext* context)
 {
-    LCodeBaseListener::enterIdentifier(context);
+    currentNode()->makeChild<IdentifierNode>(context, context->getText());
 }
 
 void AbstractSyntaxTreeBuilder::enterConstIdentifier(LCodeParser::ConstIdentifierContext* context)
 {
-    LCodeBaseListener::enterConstIdentifier(context);
+    currentNode()->makeChild<IdentifierNode>(context, context->getText());
 }
 
 

@@ -18,6 +18,7 @@ public:
         LiteralInteger,
         LiteralFloat,
         LiteralString,
+        Identifier,
         Assignation,
         Addition,
         Substraction,
@@ -165,9 +166,20 @@ using BooleanNode = LitteralNode<StorageType::Boolean, AbstractSyntaxTreeNode::N
 
 class IdentifierNode : public ExpressionNode
 {
+    // TODO: storage an iterator on an element in the symbol table
     std::string const _identifier;
 public:
+    explicit IdentifierNode(std::string const& identifier);
     IdentifierNode(antlr4::tree::ParseTree* parserTreeNode, std::string const& identifier);
+    StorageType evaluatedType() const override
+    {
+        // TODO: I need to have a symbol table which stores informations about
+        // every constants. This method should query the symbol table to be able to
+        // return the type.
+        return StorageType::Null;
+    }
+
+    NodeType nodeType() const override;
 };
 
 class BinaryOperatorNode : public ExpressionNode

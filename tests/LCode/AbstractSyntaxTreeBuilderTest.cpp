@@ -123,3 +123,15 @@ TEST(AbstractSyntaxTreeBuilderTest, expression_precedence)
     divisionNode->makeChild<IntegerNode>(5);
     EXPECT_TRUE( compareTrees(expectedTree.get(), builder.programNode().get()) );
 }
+
+TEST(AbstractSyntaxTreeBuilderTest, identifier)
+{
+    AbstractSyntaxTreeBuilder builder;
+    parseLCode("const integer integer_value = 123 / hello;", builder);
+    auto expectedTree = std::make_unique<ProgramNode>();
+    auto* const constantDeclarationNode = expectedTree->makeChild<ConstantDeclarationNode>();
+    auto* const operatorNode = constantDeclarationNode->makeChild<DivisionNode>();
+    operatorNode->makeChild<IntegerNode>(123);
+    operatorNode->makeChild<IdentifierNode>("hello");
+    EXPECT_TRUE( compareTrees(expectedTree.get(), builder.programNode().get()) );
+}
