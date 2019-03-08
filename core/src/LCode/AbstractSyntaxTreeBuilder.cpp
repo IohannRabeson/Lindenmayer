@@ -58,7 +58,7 @@ void AbstractSyntaxTreeBuilder::enterConstFloat(LCodeParser::ConstFloatContext* 
 
 void AbstractSyntaxTreeBuilder::enterIdentifier(LCodeParser::IdentifierContext* context)
 {
-    currentNode()->makeChild<IdentifierNode>(context, context->getText());
+    currentNode()->makeChild<IdentifierNode>(context, context->getText(), StorageType::Null);
 }
 
 void AbstractSyntaxTreeBuilder::enterConstIdentifier(LCodeParser::ConstIdentifierContext* context)
@@ -210,6 +210,20 @@ void AbstractSyntaxTreeBuilder::exitConstNegativeExpression(LCodeParser::ConstNe
 {
     popNode();
 }
+
+void AbstractSyntaxTreeBuilder::enterFunctionCall(LCodeParser::FunctionCallContext* context)
+{
+    auto* const functionCall = context->function_call();
+    auto const functionIdentifier = functionCall->IDENTIFIER()->getText();
+    auto const functionReturnType = StorageType::Null; // TODO: lookup in symbol table
+    pushNode(currentNode()->makeChild<FunctionCallNode>(context, functionIdentifier, functionReturnType));
+}
+
+void AbstractSyntaxTreeBuilder::exitFunctionCall(LCodeParser::FunctionCallContext*)
+{
+    popNode();
+}
+
 
 void AbstractSyntaxTreeBuilder::pushNode(AbstractSyntaxTreeNode* node)
 {

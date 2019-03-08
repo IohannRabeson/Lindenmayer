@@ -152,18 +152,42 @@ AbstractSyntaxTreeNode::NodeType AssignationNode::nodeType() const
 }
 
 
-IdentifierNode::IdentifierNode(std::string const& identifier)
-    : IdentifierNode(nullptr, identifier)
+IdentifierNode::IdentifierNode(std::string const& identifier, StorageType storageType)
+: IdentifierNode(nullptr, identifier, storageType)
 {
 }
 
-IdentifierNode::IdentifierNode(antlr4::tree::ParseTree* parserTreeNode, std::string const& identifier)
+IdentifierNode::IdentifierNode(antlr4::tree::ParseTree* parserTreeNode, std::string const& identifier, StorageType storageType)
 : ExpressionNode(parserTreeNode)
 , _identifier(identifier)
+, _storageType(storageType)
 {
 }
 
 AbstractSyntaxTreeNode::NodeType IdentifierNode::nodeType() const
 {
     return NodeType::Identifier;
+}
+
+FunctionCallNode::FunctionCallNode(antlr4::tree::ParseTree* const parseTree, std::string const& identifier, StorageType returnType)
+    : ExpressionNode(parseTree)
+    , _identifier(identifier)
+    , _returnType(returnType)
+{
+}
+
+FunctionCallNode::FunctionCallNode(std::string const& identifier, StorageType returnType)
+    : _identifier(identifier)
+    , _returnType(returnType)
+{
+}
+
+StorageType FunctionCallNode::evaluatedType() const
+{
+    return _returnType;
+}
+
+AbstractSyntaxTreeNode::NodeType FunctionCallNode::nodeType() const
+{
+    return NodeType::FunctionCall;
 }

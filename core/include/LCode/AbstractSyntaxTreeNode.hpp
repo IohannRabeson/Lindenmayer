@@ -29,7 +29,8 @@ public:
         ConstantDeclaration,
         AliasDeclaration,
         AxiomDeclaration,
-        RewriteRuleDeclaration
+        RewriteRuleDeclaration,
+        FunctionCall
     };
 
     static std::string const& nodeTypeName(NodeType nodeType);
@@ -166,11 +167,13 @@ using BooleanNode = LitteralNode<StorageType::Boolean, AbstractSyntaxTreeNode::N
 
 class IdentifierNode : public ExpressionNode
 {
-    // TODO: storage an iterator on an element in the symbol table
+    // TODO: storage an iterator on an element in the symbol table?
+    // Maybe just the ParseTree is enough to retreive the correct symbol
     std::string const _identifier;
+    StorageType _storageType;
 public:
-    explicit IdentifierNode(std::string const& identifier);
-    IdentifierNode(antlr4::tree::ParseTree* parserTreeNode, std::string const& identifier);
+    explicit IdentifierNode(std::string const& identifier, StorageType storageType = StorageType::Null);
+    IdentifierNode(antlr4::tree::ParseTree* parserTreeNode, std::string const& identifier, StorageType storageType = StorageType::Null);
     StorageType evaluatedType() const override
     {
         // TODO: I need to have a symbol table which stores informations about
@@ -180,6 +183,8 @@ public:
     }
 
     NodeType nodeType() const override;
+    StorageType storageType() const { return _storageType; }
+    void setStorageType(StorageType type) { _storageType = type; }
 };
 
 class BinaryOperatorNode : public ExpressionNode
@@ -231,6 +236,29 @@ public:
     StorageType evaluatedType() const override;
     NodeType nodeType() const override;
     bool areEqual(AbstractSyntaxTreeNode const* other) const override;
+};
+
+class FunctionCallNode : public ExpressionNode
+{
+    std::string const _identifier;
+    StorageType const _returnType;
+public:
+    FunctionCallNode(antlr4::tree::ParseTree* const parseTree, std::string const& identifier, StorageType returnType);
+    FunctionCallNode(std::string const& identifier, StorageType returnType);
+
+    StorageType evaluatedType() const override;
+
+    NodeType nodeType() const override;
+    bool areEqual(AbstractSyntaxTreeNode const* other) const override
+    {
+        if (nodeType() == other->nodeType())
+        {
+            auto* const otherNode = static_cast<FunctionCallNode const*>(other);
+
+            return _identifier == otherNode->_identifier;
+        }
+        return false;
+    }
 };
 
 #endif //LINDENMAYER_ABSTRACTSYNTAXTREE_HPP
