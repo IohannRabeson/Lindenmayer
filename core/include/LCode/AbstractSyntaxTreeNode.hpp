@@ -164,15 +164,7 @@ class NumericNode : public LitteralNode<StorageType::Number, AbstractSyntaxTreeN
 public:
     using LitteralNode::LitteralNode;
 
-    bool areEqual(AbstractSyntaxTreeNode const* other) const override
-    {
-        if (other == nullptr || other->nodeType() != nodeType())
-        {
-            return false;
-        }
-        auto const otherValue = static_cast<NumericNode const*>(other)->value();
-        return std::fabs(otherValue - value()) < std::numeric_limits<ValueType>::epsilon();
-    }
+    bool areEqual(AbstractSyntaxTreeNode const* other) const override;
 };
 
 class IdentifierNode : public ExpressionNode

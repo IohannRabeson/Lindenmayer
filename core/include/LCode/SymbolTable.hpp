@@ -6,7 +6,6 @@
 #define LINDENMAYER_SYMBOLTABLE_HPP
 #include <map>
 #include <string>
-#include <variant>
 #include <tree/ParseTree.h>
 #include "LCode/StorageType.hpp"
 

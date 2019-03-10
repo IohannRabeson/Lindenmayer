@@ -3,6 +3,7 @@
 //
 
 #include "LCode/AbstractSyntaxTreeNode.hpp"
+#include <cmath>
 
 AbstractSyntaxTreeNode::AbstractSyntaxTreeNode(antlr4::tree::ParseTree* parseTreeNode)
 : _parseTreeNode(parseTreeNode)
@@ -198,4 +199,14 @@ bool FunctionCallNode::areEqual(AbstractSyntaxTreeNode const* other) const
         return _identifier == otherNode->_identifier;
     }
     return false;
+}
+
+bool NumericNode::areEqual(AbstractSyntaxTreeNode const* other) const
+{
+    if (other == nullptr || other->nodeType() != nodeType())
+    {
+        return false;
+    }
+    auto const otherValue = static_cast<NumericNode const*>(other)->value();
+    return std::abs(otherValue - value()) < std::numeric_limits<ValueType>::epsilon();
 }
