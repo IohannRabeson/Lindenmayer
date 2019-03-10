@@ -14,6 +14,7 @@ void ScopeTreeBuilder::enterProgram(LCodeParser::ProgramContext* context)
 {
     _context._scope = std::make_unique<Context::ScopeNode>(context);
     _currentScope = _context._scope.get();
+
     auto& rootSymbolTable = _currentScope->value();
     rootSymbolTable.defineType("number", StorageType::Number);
 }
@@ -22,10 +23,9 @@ void ScopeTreeBuilder::exitProgram(LCodeParser::ProgramContext*)
 {
     std::function<bool(Context::ScopeNode*)> f([this](Context::ScopeNode* node) -> bool
     {
-        _context._scopeByParseTree[node->parseTreeNode()] = node;
+        _context._scopeByParseTree.emplace(node->parseTreeNode(), node);
         return true;
     });
-
     visitDepthFirstSearch(_context._scope.get(), std::move(f));
 }
 

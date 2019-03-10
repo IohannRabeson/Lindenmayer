@@ -4,18 +4,25 @@
 
 #include "LCode/AbstractSyntaxTreeBuilder.hpp"
 #include "LCode/AbstractSyntaxTreeNode.hpp"
+#include <cassert>
+
+AbstractSyntaxTreeBuilder::AbstractSyntaxTreeBuilder(std::map<antlr4::tree::ParseTree*, Context::ScopeNode*> const& scopeByParseTree)
+: _scopeByParseTree(scopeByParseTree)
+{
+}
 
 void AbstractSyntaxTreeBuilder::enterProgram(LCodeParser::ProgramContext* context)
 {
     _astRoot = std::make_unique<ProgramNode>(context);
-    _currentScopeNode = _context._scope.get();
+    assert( _scopeByParseTree.size() > 0u );
+    assert( _scopeByParseTree.find(context) != _scopeByParseTree.end() );
+    _currentScopeNode = _scopeByParseTree.at(context);
     pushAstNode(_astRoot.get());
 }
 
 void AbstractSyntaxTreeBuilder::exitProgram(LCodeParser::ProgramContext*)
 {
     popAstNode();
-    _context._ast = std::move(_astRoot);
 }
 
 void AbstractSyntaxTreeBuilder::enterFloat(LCodeParser::FloatContext* context)
@@ -230,19 +237,24 @@ AbstractSyntaxTreeNode* AbstractSyntaxTreeBuilder::currentAstNode() const
 Context::ScopeNode* AbstractSyntaxTreeBuilder::currentScopeNode() const
 {
     auto* const parseTreeNode = currentAstNode()->parseTreeNode();
-    auto scopeIt = _context._scopeByParseTree.find(parseTreeNode);
-    return scopeIt != _context._scopeByParseTree.end() ? scopeIt->second : nullptr;
-}
-
-AbstractSyntaxTreeBuilder::AbstractSyntaxTreeBuilder(Context& context)
-: _context(context)
-{
+    auto scopeIt = _scopeByParseTree.find(parseTreeNode);
+    return scopeIt != _scopeByParseTree.end() ? scopeIt->second : nullptr;
 }
 
 void AbstractSyntaxTreeBuilder::updateCurrentScope(antlr4::tree::ParseTree* parseTreeNode)
 {
-    if (auto it = _context._scopeByParseTree.find(parseTreeNode); it != _context._scopeByParseTree.end())
+    if (auto it = _scopeByParseTree.find(parseTreeNode); it != _scopeByParseTree.end())
     {
         _currentScopeNode = it->second;
     }
+}
+
+void AbstractSyntaxTreeBuilder::releaseAst(std::unique_ptr<ProgramNode>& ast)
+{
+    ast.reset(_astRoot.release());
+}
+
+void AbstractSyntaxTreeBuilder::releaseAst(Context& context)
+{
+    releaseAst(context._ast);
 }

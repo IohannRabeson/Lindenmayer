@@ -8,7 +8,8 @@
 #include "LCode/Context.hpp"
 
 /*!
- * \brief Build the scope tree and add it defined symbols found.
+ * \brief Build the scope tree.
+ * This pass doesn't add symbols to scope tree nodes.
  */
 class ScopeTreeBuilder : public LCodeBaseListener
 {

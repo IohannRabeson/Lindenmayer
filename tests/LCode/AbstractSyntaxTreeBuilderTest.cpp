@@ -7,23 +7,43 @@
 #include <LCode/AbstractSyntaxTreeNode.hpp>
 #include <LCode/AbstractSyntaxTreeAlgorithms.hpp>
 #include <LCode/AbstractSyntaxTreeBuilder.hpp>
+#include <LCode/ScopeTreeBuilder.hpp>
 #include <LCode/Context.hpp>
+#include <generated/LCodeLexer.h>
+#include <generated/LCodeParser.h>
 #include "ParserUtility.hpp"
 
 class AbstractSyntaxTreeBuilderTest : public ::testing::Test
 {
 public:
     Context context;
-    AbstractSyntaxTreeBuilder builder;
+    ScopeTreeBuilder scopeTreeBuilder;
+    AbstractSyntaxTreeBuilder astBuilder;
 
     AbstractSyntaxTreeBuilderTest()
-    : builder(context)
+    : scopeTreeBuilder(context)
+    , astBuilder(context._scopeByParseTree)
     {
     }
 
     void parseLCode(std::string const& text)
     {
-        ::parseLCode(text, builder);
+        antlr4::ANTLRInputStream inputStream(text);
+        LCodeLexer lexer(&inputStream);
+        antlr4::CommonTokenStream tokenStream(&lexer);
+        LCodeParser parser(&tokenStream);
+        antlr4::tree::ParseTreeWalker treeWalker;
+
+        // /!\ program() instanciate a new node each time so it's really really important to call it
+        // only once and store the pointer returned /!\
+        //
+        auto* programNode = parser.program();
+        // We have to build the scope tree before building the AST
+        treeWalker.walk(&scopeTreeBuilder, programNode);
+        // Then with a scope tree we can build the AST
+        treeWalker.walk(&astBuilder, programNode);
+        // And store it in a context
+        astBuilder.releaseAst(context._ast);
     }
 };
 

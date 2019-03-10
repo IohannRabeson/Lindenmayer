@@ -19,9 +19,9 @@ class AbstractSyntaxTreeNode;
 class AbstractSyntaxTreeBuilder : public LCodeBaseListener
 {
     std::unique_ptr<ProgramNode> _astRoot;
+    std::map<antlr4::tree::ParseTree*, Context::ScopeNode*> const& _scopeByParseTree;
     std::stack<AbstractSyntaxTreeNode*> _stack;
     Context::ScopeNode* _currentScopeNode = nullptr;
-    Context& _context;
 private:
     void pushAstNode(AbstractSyntaxTreeNode* astNode);
     void popAstNode();
@@ -30,7 +30,11 @@ private:
     AbstractSyntaxTreeNode* currentAstNode() const;
     Context::ScopeNode* currentScopeNode() const;
 public:
-    explicit AbstractSyntaxTreeBuilder(Context& context);
+    explicit AbstractSyntaxTreeBuilder(std::map<antlr4::tree::ParseTree*, Context::ScopeNode*> const& scopeByParseTree);
+
+    void releaseAst(std::unique_ptr<ProgramNode>& ast);
+    void releaseAst(Context& context);
+
     void enterProgram(LCodeParser::ProgramContext* context) override;
     void exitProgram(LCodeParser::ProgramContext* context) override;
 
