@@ -48,7 +48,7 @@ Because I'm using ANTLR, I added an extra build step where Antlr generates C++ c
 the file core/private/language/LSystem.g4.
 
 ### Documentation
-https://iohannrabeson.github.io/Lindenmayer/language.html
+https://iohannrabeson.github.io/Lindenmayer
 
 ## CLion configurations
  - Lindenmayer: The application
