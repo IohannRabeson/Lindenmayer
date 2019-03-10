@@ -16,15 +16,6 @@ overview: true
 
 <img src="{{ site.baseurl }}/assets/images/Screen Shot 2019-02-15 at 23.06.02.png"/>
 <ul>
-<li><h2>Features</h2></a>
-<table>
-    <tr><th>Feature</th><th>Status</th></tr>
-    {% assign features = site.features | sort: 'status' %}
-    {% for feature in features %}
-    <tr><td>{{ feature.name }}</td><td>{{ feature.status }}</td></tr>
-    {% endfor %}
-</table>
-</li>
 <li><h2>L-Code language documentation</h2>
     Documentation of L-Code language can be found <a href="{{ site.baseurl }}{% link language.html %}">
     here</a>.
@@ -41,7 +32,7 @@ overview: true
             {% assign lcode_snippet = example.content | strip_html | strip %}
             <tr><td colspan="2"><h2>{{ example.name }}</h2></td></tr>
             <tr>
-                <td>{% highlight text %}{{ lcode_snippet }}{% endhighlight %}</td>
+                <td><pre class="highlight"><code class="highlight">{{ lcode_snippet }}</code></pre></td>
                 <td><img src="{{ site.baseurl }}/assets/images/{{ example.screenshot }}" alt="{{ example.screenshot }}"></td>
             </tr>
             {% endfor %}

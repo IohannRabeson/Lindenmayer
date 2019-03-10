@@ -44,7 +44,7 @@ Right click on the project "Lindenmayer" > Properties > Debugging > Environment 
 `PATH=$(PATH);<QTDIR>\bin`.
 
 ### The extra build step to generate the L-Code parser
-Because I'm using ANTLR, I added an extra build step where Antlr generated C++ code from a grammar defined by
+Because I'm using ANTLR, I added an extra build step where Antlr generates C++ code from a grammar defined by
 the file core/private/language/LSystem.g4.
 
 ### Documentation
