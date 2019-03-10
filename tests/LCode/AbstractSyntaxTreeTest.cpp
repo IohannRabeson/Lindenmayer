@@ -10,12 +10,12 @@
 TEST(AbstractSyntaxTreeTest, CompareTree_01)
 {
     std::unique_ptr<AbstractSyntaxTreeNode> rootLeft = std::make_unique<AdditionNode>(nullptr);
-    rootLeft->addChild(std::make_unique<IntegerNode>(nullptr, 1));
-    rootLeft->addChild(std::make_unique<IntegerNode>(nullptr, 2));
+    rootLeft->addChild(std::make_unique<FloatNode>(nullptr, 1));
+    rootLeft->addChild(std::make_unique<FloatNode>(nullptr, 2));
 
     std::unique_ptr<AbstractSyntaxTreeNode> rootRight = std::make_unique<AdditionNode>(nullptr);
-    rootRight->addChild(std::make_unique<IntegerNode>(nullptr, 1));
-    rootRight->addChild(std::make_unique<IntegerNode>(nullptr, 2));
+    rootRight->addChild(std::make_unique<FloatNode>(nullptr, 1));
+    rootRight->addChild(std::make_unique<FloatNode>(nullptr, 2));
 
     ASSERT_TRUE( compareTrees(rootLeft.get(), rootRight.get()) );
 }
@@ -23,12 +23,12 @@ TEST(AbstractSyntaxTreeTest, CompareTree_01)
 TEST(AbstractSyntaxTreeTest, CompareTree_01b)
 {
     std::unique_ptr<AbstractSyntaxTreeNode> rootLeft = std::make_unique<AdditionNode>(nullptr);
-    rootLeft->addChild(std::make_unique<IntegerNode>(nullptr, 1));
-    rootLeft->addChild(std::make_unique<IntegerNode>(nullptr, 2));
+    rootLeft->addChild(std::make_unique<FloatNode>(nullptr, 1));
+    rootLeft->addChild(std::make_unique<FloatNode>(nullptr, 2));
 
     std::unique_ptr<AbstractSyntaxTreeNode> rootRight = std::make_unique<AdditionNode>(nullptr);
-    rootRight->addChild(std::make_unique<IntegerNode>(nullptr, 1));
-    rootRight->addChild(std::make_unique<IntegerNode>(nullptr, 56789));
+    rootRight->addChild(std::make_unique<FloatNode>(nullptr, 1));
+    rootRight->addChild(std::make_unique<FloatNode>(nullptr, 56789));
 
     ASSERT_FALSE( compareTrees(rootLeft.get(), rootRight.get()) );
 }
@@ -36,16 +36,16 @@ TEST(AbstractSyntaxTreeTest, CompareTree_01b)
 TEST(AbstractSyntaxTreeTest, CompareTree_02)
 {
     std::unique_ptr<AbstractSyntaxTreeNode> rootLeft = std::make_unique<AdditionNode>(nullptr);
-    rootLeft->addChild(std::make_unique<IntegerNode>(nullptr, 1));
+    rootLeft->addChild(std::make_unique<FloatNode>(nullptr, 1));
     auto* leftLeftAdd = rootLeft->addChild(std::make_unique<AdditionNode>(nullptr));
-    leftLeftAdd->addChild(std::make_unique<IntegerNode>(nullptr, 3));
-    leftLeftAdd->addChild(std::make_unique<IntegerNode>(nullptr, 4));
+    leftLeftAdd->addChild(std::make_unique<FloatNode>(nullptr, 3));
+    leftLeftAdd->addChild(std::make_unique<FloatNode>(nullptr, 4));
 
     std::unique_ptr<AbstractSyntaxTreeNode> rootRight = std::make_unique<AdditionNode>(nullptr);
-    rootRight->addChild(std::make_unique<IntegerNode>(nullptr, 1));
+    rootRight->addChild(std::make_unique<FloatNode>(nullptr, 1));
     auto* leftRightAdd = rootRight->addChild(std::make_unique<AdditionNode>(nullptr));
-    leftRightAdd->addChild(std::make_unique<IntegerNode>(nullptr, 3));
-    leftRightAdd->addChild(std::make_unique<IntegerNode>(nullptr, 4));
+    leftRightAdd->addChild(std::make_unique<FloatNode>(nullptr, 3));
+    leftRightAdd->addChild(std::make_unique<FloatNode>(nullptr, 4));
 
     ASSERT_TRUE( compareTrees(rootLeft.get(), rootRight.get()) );
 }
@@ -53,16 +53,16 @@ TEST(AbstractSyntaxTreeTest, CompareTree_02)
 TEST(AbstractSyntaxTreeTest, CompareTree_02b)
 {
     std::unique_ptr<AbstractSyntaxTreeNode> rootLeft = std::make_unique<AdditionNode>(nullptr);
-    rootLeft->addChild(std::make_unique<IntegerNode>(nullptr, 1));
+    rootLeft->addChild(std::make_unique<FloatNode>(nullptr, 1));
     auto* leftLeftAdd = rootLeft->addChild(std::make_unique<AdditionNode>(nullptr));
-    leftLeftAdd->addChild(std::make_unique<IntegerNode>(nullptr, 3));
-    leftLeftAdd->addChild(std::make_unique<IntegerNode>(nullptr, 4));
+    leftLeftAdd->addChild(std::make_unique<FloatNode>(nullptr, 3));
+    leftLeftAdd->addChild(std::make_unique<FloatNode>(nullptr, 4));
 
     std::unique_ptr<AbstractSyntaxTreeNode> rootRight = std::make_unique<AdditionNode>(nullptr);
-    rootRight->addChild(std::make_unique<IntegerNode>(nullptr, 1));
+    rootRight->addChild(std::make_unique<FloatNode>(nullptr, 1));
     auto* leftRightAdd = rootRight->addChild(std::make_unique<AdditionNode>(nullptr));
-    leftRightAdd->addChild(std::make_unique<IntegerNode>(nullptr, 3));
-    leftRightAdd->addChild(std::make_unique<IntegerNode>(nullptr, 56789));
+    leftRightAdd->addChild(std::make_unique<FloatNode>(nullptr, 3));
+    leftRightAdd->addChild(std::make_unique<FloatNode>(nullptr, 56789));
 
     ASSERT_FALSE( compareTrees(rootLeft.get(), rootRight.get()) );
 }

@@ -48,6 +48,9 @@ public:
 
 bool compareTrees(AbstractSyntaxTreeNode const* left, AbstractSyntaxTreeNode const* right)
 {
+    assert( left );
+    assert( right );
+
     std::vector<AbstractSyntaxTreeNode const*> leftNodes;
     std::vector<AbstractSyntaxTreeNode const*> rightNodes;
     visitDepthFirstSearch(left, GatherNode(leftNodes));

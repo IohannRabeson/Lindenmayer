@@ -8,10 +8,7 @@
 enum class StorageType : std::size_t
 {
     Null,
-    Boolean,
-    Integer,
-    Float,
-    String
+    Number,
 };
 
 template <StorageType StorageTypeId>
@@ -24,43 +21,12 @@ struct StorageTypeTrait<StorageType::Null>
 };
 
 template <>
-struct StorageTypeTrait<StorageType::Integer>
-{
-    using Type = std::int64_t;
-    static Type fromText(std::string const& str)
-    {
-        return std::stoll(str);
-    }
-};
-
-template <>
-struct StorageTypeTrait<StorageType::Float>
+struct StorageTypeTrait<StorageType::Number>
 {
     using Type = double;
     static Type fromText(std::string const& str)
     {
         return std::stod(str);
-    }
-};
-
-template <>
-struct StorageTypeTrait<StorageType::Boolean>
-{
-    using Type = bool;
-    static Type fromText(std::string const& str)
-    {
-        return (str == "true");
-    }
-};
-
-template <>
-struct StorageTypeTrait<StorageType::String>
-{
-    using Type = std::string;
-
-    static Type fromText(std::string const& str)
-    {
-        return str;
     }
 };
 

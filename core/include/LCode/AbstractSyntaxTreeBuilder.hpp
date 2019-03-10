@@ -5,20 +5,34 @@
 #ifndef LINDENMAYER_ABSTRACTSYNTAXTREEBUILDER_HPP
 #define LINDENMAYER_ABSTRACTSYNTAXTREEBUILDER_HPP
 #include <generated/LCodeBaseListener.h>
+#include "LCode/Context.hpp"
+
 class ProgramNode;
 class AbstractSyntaxTreeNode;
 
+/*!
+ * \brief This pass build the complete abstract syntax tree
+ *
+ * If everything goes well, context passed as parameter store an AST
+ * after a complete visit of a parse tree.
+ */
 class AbstractSyntaxTreeBuilder : public LCodeBaseListener
 {
-    std::unique_ptr<ProgramNode> _root;
+    std::unique_ptr<ProgramNode> _astRoot;
     std::stack<AbstractSyntaxTreeNode*> _stack;
+    Context::ScopeNode* _currentScopeNode = nullptr;
+    Context& _context;
 private:
-    void pushNode(AbstractSyntaxTreeNode* node);
-    void popNode();
+    void pushAstNode(AbstractSyntaxTreeNode* astNode);
+    void popAstNode();
+    void updateCurrentScope(antlr4::tree::ParseTree* parseTreeNode);
 
-    AbstractSyntaxTreeNode* currentNode() const;
+    AbstractSyntaxTreeNode* currentAstNode() const;
+    Context::ScopeNode* currentScopeNode() const;
 public:
-    std::unique_ptr<ProgramNode> const& programNode() const;
+    explicit AbstractSyntaxTreeBuilder(Context& context);
+    void enterProgram(LCodeParser::ProgramContext* context) override;
+    void exitProgram(LCodeParser::ProgramContext* context) override;
 
     void enterAliasDecl(LCodeParser::AliasDeclContext* context) override;
     void exitAliasDecl(LCodeParser::AliasDeclContext* context) override;
@@ -32,16 +46,11 @@ public:
     void enterRewriteRuleDecl(LCodeParser::RewriteRuleDeclContext* context) override;
     void exitRewriteRuleDecl(LCodeParser::RewriteRuleDeclContext* context) override;
 
-    void enterBoolean(LCodeParser::BooleanContext* context) override;
-    void enterConstBoolean(LCodeParser::ConstBooleanContext* context) override;
     void enterConstFloat(LCodeParser::ConstFloatContext* context) override;
-    void enterConstIdentifier(LCodeParser::ConstIdentifierContext* context) override;
-    void enterConstInteger(LCodeParser::ConstIntegerContext* context) override;
-    void enterInteger(LCodeParser::IntegerContext* context) override;
-    void enterString(LCodeParser::StringContext* context) override;
     void enterFloat(LCodeParser::FloatContext* context) override;
+
+    void enterConstIdentifier(LCodeParser::ConstIdentifierContext* context) override;
     void enterIdentifier(LCodeParser::IdentifierContext* context) override;
-    void enterConstString(LCodeParser::ConstStringContext* context) override;
 
     void enterAddition(LCodeParser::AdditionContext* context) override;
     void enterSubstraction(LCodeParser::SubstractionContext* context) override;
@@ -55,7 +64,6 @@ public:
     void enterConstNegativeExpression(LCodeParser::ConstNegativeExpressionContext* context) override;
 
     void enterNegativeExpression(LCodeParser::NegativeExpressionContext* context) override;
-    void enterProgram(LCodeParser::ProgramContext* context) override;
 
     void exitAddition(LCodeParser::AdditionContext* context) override;
     void exitSubstraction(LCodeParser::SubstractionContext* context) override;

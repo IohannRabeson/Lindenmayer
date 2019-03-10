@@ -169,25 +169,36 @@ AbstractSyntaxTreeNode::NodeType IdentifierNode::nodeType() const
     return NodeType::Identifier;
 }
 
-FunctionCallNode::FunctionCallNode(antlr4::tree::ParseTree* const parseTree, std::string const& identifier, StorageType returnType)
+FunctionCallNode::FunctionCallNode(antlr4::tree::ParseTree* const parseTree, std::string const& identifier, SymbolTable::FunctionSymbol const& symbol)
     : ExpressionNode(parseTree)
     , _identifier(identifier)
-    , _returnType(returnType)
+    , _symbol(symbol)
 {
 }
 
-FunctionCallNode::FunctionCallNode(std::string const& identifier, StorageType returnType)
+FunctionCallNode::FunctionCallNode(std::string const& identifier, SymbolTable::FunctionSymbol const& symbol)
     : _identifier(identifier)
-    , _returnType(returnType)
+    , _symbol(symbol)
 {
 }
 
 StorageType FunctionCallNode::evaluatedType() const
 {
-    return _returnType;
+    return _symbol._returnType;
 }
 
 AbstractSyntaxTreeNode::NodeType FunctionCallNode::nodeType() const
 {
     return NodeType::FunctionCall;
+}
+
+bool FunctionCallNode::areEqual(AbstractSyntaxTreeNode const* other) const
+{
+    if (nodeType() == other->nodeType())
+    {
+        auto* const otherNode = static_cast<FunctionCallNode const*>(other);
+
+        return _identifier == otherNode->_identifier;
+    }
+    return false;
 }

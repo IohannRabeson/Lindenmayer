@@ -7,240 +7,242 @@
 
 void AbstractSyntaxTreeBuilder::enterProgram(LCodeParser::ProgramContext* context)
 {
-    _root = std::make_unique<ProgramNode>(context);
-    pushNode(_root.get());
+    _astRoot = std::make_unique<ProgramNode>(context);
+    _currentScopeNode = _context._scope.get();
+    pushAstNode(_astRoot.get());
 }
 
-
-void AbstractSyntaxTreeBuilder::enterInteger(LCodeParser::IntegerContext* context)
+void AbstractSyntaxTreeBuilder::exitProgram(LCodeParser::ProgramContext*)
 {
-    currentNode()->makeChild<IntegerNode>(context, StorageTypeTrait<StorageType::Integer>::fromText(context->getText()));
+    popAstNode();
+    _context._ast = std::move(_astRoot);
 }
 
 void AbstractSyntaxTreeBuilder::enterFloat(LCodeParser::FloatContext* context)
 {
-    currentNode()->makeChild<FloatNode>(context, StorageTypeTrait<StorageType::Float>::fromText(context->getText()));
-}
-
-void AbstractSyntaxTreeBuilder::enterString(LCodeParser::StringContext* context)
-{
-    currentNode()->makeChild<StringNode>(context, StorageTypeTrait<StorageType::String>::fromText(context->getText()));
-}
-
-void AbstractSyntaxTreeBuilder::enterBoolean(LCodeParser::BooleanContext* context)
-{
-    currentNode()->makeChild<BooleanNode>(context, StorageTypeTrait<StorageType::Boolean>::fromText(context->getText()));
-}
-
-
-
-void AbstractSyntaxTreeBuilder::enterConstInteger(LCodeParser::ConstIntegerContext* context)
-{
-    currentNode()->makeChild<IntegerNode>(context, StorageTypeTrait<StorageType::Integer>::fromText(context->getText()));
-}
-
-void AbstractSyntaxTreeBuilder::enterConstString(LCodeParser::ConstStringContext* context)
-{
-    currentNode()->makeChild<StringNode>(context, StorageTypeTrait<StorageType::String>::fromText(context->getText()));
-}
-
-void AbstractSyntaxTreeBuilder::enterConstBoolean(LCodeParser::ConstBooleanContext* context)
-{
-    currentNode()->makeChild<BooleanNode>(context, StorageTypeTrait<StorageType::Boolean>::fromText(context->getText()));
+    currentAstNode()->makeChild<FloatNode>(context, StorageTypeTrait<StorageType::Number>::fromText(context->getText()));
 }
 
 void AbstractSyntaxTreeBuilder::enterConstFloat(LCodeParser::ConstFloatContext* context)
 {
-    currentNode()->makeChild<FloatNode>(context, StorageTypeTrait<StorageType::Float>::fromText(context->getText()));
+    currentAstNode()->makeChild<FloatNode>(context, StorageTypeTrait<StorageType::Number>::fromText(context->getText()));
 }
 
 
 
 void AbstractSyntaxTreeBuilder::enterIdentifier(LCodeParser::IdentifierContext* context)
 {
-    currentNode()->makeChild<IdentifierNode>(context, context->getText(), StorageType::Null);
+    currentAstNode()->makeChild<IdentifierNode>(context, context->getText(), StorageType::Null);
 }
 
 void AbstractSyntaxTreeBuilder::enterConstIdentifier(LCodeParser::ConstIdentifierContext* context)
 {
-    currentNode()->makeChild<IdentifierNode>(context, context->getText());
+    currentAstNode()->makeChild<IdentifierNode>(context, context->getText());
 }
-
 
 void AbstractSyntaxTreeBuilder::enterConstantDecl(LCodeParser::ConstantDeclContext* context)
 {
-    // TODO: store identifier and type
-    pushNode(currentNode()->makeChild<ConstantDeclarationNode>(context));
+    pushAstNode(currentAstNode()->makeChild<ConstantDeclarationNode>(context));
 }
 
 void AbstractSyntaxTreeBuilder::exitConstantDecl(LCodeParser::ConstantDeclContext*)
 {
-    popNode();
+    popAstNode();
 }
 
 void AbstractSyntaxTreeBuilder::enterAliasDecl(LCodeParser::AliasDeclContext* context)
 {
-    pushNode(currentNode()->makeChild<AliasDeclarationNode>(context));
+    updateCurrentScope(context);
+    pushAstNode(currentAstNode()->makeChild<AliasDeclarationNode>(context));
 }
 
-void AbstractSyntaxTreeBuilder::exitAliasDecl(LCodeParser::AliasDeclContext*)
+void AbstractSyntaxTreeBuilder::exitAliasDecl(LCodeParser::AliasDeclContext* context)
 {
-    popNode();
+    updateCurrentScope(context);
+    popAstNode();
 }
 
 void AbstractSyntaxTreeBuilder::enterAxiomDecl(LCodeParser::AxiomDeclContext* context)
 {
-    pushNode(currentNode()->makeChild<AxiomDeclarationNode>(context));
+    pushAstNode(currentAstNode()->makeChild<AxiomDeclarationNode>(context));
 }
 
 void AbstractSyntaxTreeBuilder::exitAxiomDecl(LCodeParser::AxiomDeclContext*)
 {
-    popNode();
+    popAstNode();
 }
 
 void AbstractSyntaxTreeBuilder::enterRewriteRuleDecl(LCodeParser::RewriteRuleDeclContext* context)
 {
-    pushNode(currentNode()->makeChild<RewriteRuleDeclaratinoNode>(context));
+    updateCurrentScope(context);
+    pushAstNode(currentAstNode()->makeChild<RewriteRuleDeclaratinoNode>(context));
 }
 
 void AbstractSyntaxTreeBuilder::exitRewriteRuleDecl(LCodeParser::RewriteRuleDeclContext*)
 {
-    popNode();
+    popAstNode();
 }
 
 
 
 void AbstractSyntaxTreeBuilder::enterAddition(LCodeParser::AdditionContext* context)
 {
-    pushNode(currentNode()->makeChild<AdditionNode>(context));
+    pushAstNode(currentAstNode()->makeChild<AdditionNode>(context));
 }
 
 void AbstractSyntaxTreeBuilder::exitAddition(LCodeParser::AdditionContext*)
 {
-    popNode();
+    popAstNode();
 }
 
 void AbstractSyntaxTreeBuilder::enterSubstraction(LCodeParser::SubstractionContext* context)
 {
-    pushNode(currentNode()->makeChild<SubstractionNode>(context));
+    pushAstNode(currentAstNode()->makeChild<SubstractionNode>(context));
 }
 
 void AbstractSyntaxTreeBuilder::exitSubstraction(LCodeParser::SubstractionContext*)
 {
-    popNode();
+    popAstNode();
 }
 
 void AbstractSyntaxTreeBuilder::enterMultiplication(LCodeParser::MultiplicationContext* context)
 {
-    pushNode(currentNode()->makeChild<MultiplicationNode>(context));
+    pushAstNode(currentAstNode()->makeChild<MultiplicationNode>(context));
 }
 
 void AbstractSyntaxTreeBuilder::exitMultiplication(LCodeParser::MultiplicationContext*)
 {
-    popNode();
+    popAstNode();
 }
 
 void AbstractSyntaxTreeBuilder::enterDivision(LCodeParser::DivisionContext* context)
 {
-    pushNode(currentNode()->makeChild<DivisionNode>(context));
+    pushAstNode(currentAstNode()->makeChild<DivisionNode>(context));
 }
 
 void AbstractSyntaxTreeBuilder::exitDivision(LCodeParser::DivisionContext*)
 {
-    popNode();
+    popAstNode();
 }
 
 void AbstractSyntaxTreeBuilder::enterNegativeExpression(LCodeParser::NegativeExpressionContext* context)
 {
-    pushNode(currentNode()->makeChild<NegativeNode>(context));
+    pushAstNode(currentAstNode()->makeChild<NegativeNode>(context));
 }
 
 void AbstractSyntaxTreeBuilder::exitNegativeExpression(LCodeParser::NegativeExpressionContext*)
 {
-    popNode();
+    popAstNode();
 }
 
 
 void AbstractSyntaxTreeBuilder::enterConstAddition(LCodeParser::ConstAdditionContext* context)
 {
-    pushNode(currentNode()->makeChild<AdditionNode>(context));
+    pushAstNode(currentAstNode()->makeChild<AdditionNode>(context));
 }
 
 void AbstractSyntaxTreeBuilder::exitConstAddition(LCodeParser::ConstAdditionContext*)
 {
-    popNode();
+    popAstNode();
 }
 
 void AbstractSyntaxTreeBuilder::enterConstSubstraction(LCodeParser::ConstSubstractionContext* context)
 {
-    pushNode(currentNode()->makeChild<SubstractionNode>(context));
+    pushAstNode(currentAstNode()->makeChild<SubstractionNode>(context));
 }
 
 void AbstractSyntaxTreeBuilder::exitConstSubstraction(LCodeParser::ConstSubstractionContext*)
 {
-    popNode();
+    popAstNode();
 }
 
 void AbstractSyntaxTreeBuilder::enterConstMultiplication(LCodeParser::ConstMultiplicationContext* context)
 {
-    pushNode(currentNode()->makeChild<MultiplicationNode>(context));
+    pushAstNode(currentAstNode()->makeChild<MultiplicationNode>(context));
 }
 
 void AbstractSyntaxTreeBuilder::exitConstMultiplication(LCodeParser::ConstMultiplicationContext*)
 {
-    popNode();
+    popAstNode();
 }
 
 void AbstractSyntaxTreeBuilder::enterConstDivision(LCodeParser::ConstDivisionContext* context)
 {
-    pushNode(currentNode()->makeChild<DivisionNode>(context));
+    pushAstNode(currentAstNode()->makeChild<DivisionNode>(context));
 }
 
 void AbstractSyntaxTreeBuilder::exitConstDivision(LCodeParser::ConstDivisionContext*)
 {
-    popNode();
+    popAstNode();
 }
 
 void AbstractSyntaxTreeBuilder::enterConstNegativeExpression(LCodeParser::ConstNegativeExpressionContext* context)
 {
-    pushNode(currentNode()->makeChild<NegativeNode>(context));
+    pushAstNode(currentAstNode()->makeChild<NegativeNode>(context));
 }
 
 void AbstractSyntaxTreeBuilder::exitConstNegativeExpression(LCodeParser::ConstNegativeExpressionContext*)
 {
-    popNode();
+    popAstNode();
 }
 
 void AbstractSyntaxTreeBuilder::enterFunctionCall(LCodeParser::FunctionCallContext* context)
 {
-    auto* const functionCall = context->function_call();
-    auto const functionIdentifier = functionCall->IDENTIFIER()->getText();
-    auto const functionReturnType = StorageType::Null; // TODO: lookup in symbol table
-    pushNode(currentNode()->makeChild<FunctionCallNode>(context, functionIdentifier, functionReturnType));
+    if (auto* scopeNode = currentScopeNode(); scopeNode != nullptr)
+    {
+        auto const& symbolTable = scopeNode->value();
+        auto* const functionCall = context->function_call();
+        auto const functionIdentifier = functionCall->IDENTIFIER()->getText();
+        if (!symbolTable.isFunctionDefined(functionIdentifier))
+        {
+            // TODO: signal error with an exception? or an error stack stored by the context?
+            std::cerr << "Undefined function '" << functionIdentifier << "' called\n";
+            return;
+        }
+        auto const& functionSymbol = symbolTable.getFunction(functionIdentifier);
+        pushAstNode(currentAstNode()->makeChild<FunctionCallNode>(context, functionIdentifier, functionSymbol));
+    }
 }
 
 void AbstractSyntaxTreeBuilder::exitFunctionCall(LCodeParser::FunctionCallContext*)
 {
-    popNode();
+    popAstNode();
 }
 
 
-void AbstractSyntaxTreeBuilder::pushNode(AbstractSyntaxTreeNode* node)
+void AbstractSyntaxTreeBuilder::pushAstNode(AbstractSyntaxTreeNode* astNode)
 {
-    _stack.push(node);
+    _stack.push(astNode);
 }
 
-void AbstractSyntaxTreeBuilder::popNode()
+void AbstractSyntaxTreeBuilder::popAstNode()
 {
+    assert( !_stack.empty() );
     _stack.pop();
 }
 
-AbstractSyntaxTreeNode* AbstractSyntaxTreeBuilder::currentNode() const
+AbstractSyntaxTreeNode* AbstractSyntaxTreeBuilder::currentAstNode() const
 {
+    assert( !_stack.empty() );
     return _stack.top();
 }
 
-std::unique_ptr<ProgramNode> const& AbstractSyntaxTreeBuilder::programNode() const
+Context::ScopeNode* AbstractSyntaxTreeBuilder::currentScopeNode() const
 {
-    return _root;
+    auto* const parseTreeNode = currentAstNode()->parseTreeNode();
+    auto scopeIt = _context._scopeByParseTree.find(parseTreeNode);
+    return scopeIt != _context._scopeByParseTree.end() ? scopeIt->second : nullptr;
+}
+
+AbstractSyntaxTreeBuilder::AbstractSyntaxTreeBuilder(Context& context)
+: _context(context)
+{
+}
+
+void AbstractSyntaxTreeBuilder::updateCurrentScope(antlr4::tree::ParseTree* parseTreeNode)
+{
+    if (auto it = _context._scopeByParseTree.find(parseTreeNode); it != _context._scopeByParseTree.end())
+    {
+        _currentScopeNode = it->second;
+    }
 }

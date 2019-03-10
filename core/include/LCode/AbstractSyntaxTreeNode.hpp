@@ -6,6 +6,7 @@
 #define LINDENMAYER_ABSTRACTSYNTAXTREE_HPP
 #include <antlr4-runtime.h>
 #include "StorageType.hpp"
+#include "SymbolTable.hpp"
 
 class AbstractSyntaxTreeNode
 {
@@ -160,10 +161,7 @@ private:
     ValueType const _value;
 };
 
-using IntegerNode = LitteralNode<StorageType::Integer, AbstractSyntaxTreeNode::NodeType::LiteralInteger>;
-using FloatNode = LitteralNode<StorageType::Float, AbstractSyntaxTreeNode::NodeType::LiteralFloat>;
-using StringNode = LitteralNode<StorageType::String, AbstractSyntaxTreeNode::NodeType::LiteralString>;
-using BooleanNode = LitteralNode<StorageType::Boolean, AbstractSyntaxTreeNode::NodeType::LiteralBoolean>;
+using FloatNode = LitteralNode<StorageType::Number, AbstractSyntaxTreeNode::NodeType::LiteralFloat>;
 
 class IdentifierNode : public ExpressionNode
 {
@@ -241,24 +239,14 @@ public:
 class FunctionCallNode : public ExpressionNode
 {
     std::string const _identifier;
-    StorageType const _returnType;
+    SymbolTable::FunctionSymbol const& _symbol;
 public:
-    FunctionCallNode(antlr4::tree::ParseTree* const parseTree, std::string const& identifier, StorageType returnType);
-    FunctionCallNode(std::string const& identifier, StorageType returnType);
+    FunctionCallNode(antlr4::tree::ParseTree* const parseTree, std::string const& identifier, SymbolTable::FunctionSymbol const& symbol);
+    FunctionCallNode(std::string const& identifier, SymbolTable::FunctionSymbol const& symbol);
 
     StorageType evaluatedType() const override;
-
     NodeType nodeType() const override;
-    bool areEqual(AbstractSyntaxTreeNode const* other) const override
-    {
-        if (nodeType() == other->nodeType())
-        {
-            auto* const otherNode = static_cast<FunctionCallNode const*>(other);
-
-            return _identifier == otherNode->_identifier;
-        }
-        return false;
-    }
+    bool areEqual(AbstractSyntaxTreeNode const* other) const override;
 };
 
 #endif //LINDENMAYER_ABSTRACTSYNTAXTREE_HPP
