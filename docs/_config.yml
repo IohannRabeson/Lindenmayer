@@ -1,5 +1,6 @@
 theme: jekyll-theme-midnight
 collections_dir: collections
+google_analystics: UA-108824428-2
 collections:
   - lcode_examples
   - features
