@@ -5,6 +5,7 @@
 #ifndef LINDENMAYER_ABSTRACTSYNTAXTREE_HPP
 #define LINDENMAYER_ABSTRACTSYNTAXTREE_HPP
 #include <antlr4-runtime.h>
+#include <limits>
 #include "StorageType.hpp"
 #include "SymbolTable.hpp"
 
@@ -15,10 +16,7 @@ public:
     enum class NodeType
     {
         Abstract,
-        LiteralBoolean,
-        LiteralInteger,
-        LiteralFloat,
-        LiteralString,
+        Number,
         Identifier,
         Assignation,
         Addition,
@@ -161,7 +159,21 @@ private:
     ValueType const _value;
 };
 
-using FloatNode = LitteralNode<StorageType::Number, AbstractSyntaxTreeNode::NodeType::LiteralFloat>;
+class NumericNode : public LitteralNode<StorageType::Number, AbstractSyntaxTreeNode::NodeType::Number>
+{
+public:
+    using LitteralNode::LitteralNode;
+
+    bool areEqual(AbstractSyntaxTreeNode const* other) const override
+    {
+        if (other == nullptr || other->nodeType() != nodeType())
+        {
+            return false;
+        }
+        auto const otherValue = static_cast<NumericNode const*>(other)->value();
+        return std::fabs(otherValue - value()) < std::numeric_limits<ValueType>::epsilon();
+    }
+};
 
 class IdentifierNode : public ExpressionNode
 {

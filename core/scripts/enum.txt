@@ -1,7 +1,7 @@
 Abstract,
         LiteralBoolean,
         LiteralInteger,
-        LiteralFloat,
+        Number,
         LiteralString,
         Assignation,
         Addition,

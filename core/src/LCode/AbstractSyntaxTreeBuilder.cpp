@@ -20,12 +20,12 @@ void AbstractSyntaxTreeBuilder::exitProgram(LCodeParser::ProgramContext*)
 
 void AbstractSyntaxTreeBuilder::enterFloat(LCodeParser::FloatContext* context)
 {
-    currentAstNode()->makeChild<FloatNode>(context, StorageTypeTrait<StorageType::Number>::fromText(context->getText()));
+    currentAstNode()->makeChild<NumericNode>(context, StorageTypeTrait<StorageType::Number>::fromText(context->getText()));
 }
 
 void AbstractSyntaxTreeBuilder::enterConstFloat(LCodeParser::ConstFloatContext* context)
 {
-    currentAstNode()->makeChild<FloatNode>(context, StorageTypeTrait<StorageType::Number>::fromText(context->getText()));
+    currentAstNode()->makeChild<NumericNode>(context, StorageTypeTrait<StorageType::Number>::fromText(context->getText()));
 }
 
 

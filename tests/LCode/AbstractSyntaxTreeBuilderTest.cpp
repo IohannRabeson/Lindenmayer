@@ -31,7 +31,7 @@ TEST_F(AbstractSyntaxTreeBuilderTest, constant_simple_number)
 {
     parseLCode("number number_value = 123;");
     std::unique_ptr<AbstractSyntaxTreeNode> expectedTree = std::make_unique<ProgramNode>();
-    expectedTree->makeChild<ConstantDeclarationNode>()->makeChild<FloatNode>(123);
+    expectedTree->makeChild<ConstantDeclarationNode>()->makeChild<NumericNode>(123);
     EXPECT_TRUE( compareTrees(expectedTree.get(), context._ast.get()) );
 }
 
@@ -41,8 +41,8 @@ TEST_F(AbstractSyntaxTreeBuilderTest, const_addition)
     auto expectedTree = std::make_unique<ProgramNode>();
     auto* const constantDeclarationNode = expectedTree->makeChild<ConstantDeclarationNode>();
     auto* const operatorNode = constantDeclarationNode->makeChild<AdditionNode>();
-    operatorNode->makeChild<FloatNode>(123);
-    operatorNode->makeChild<FloatNode>(2);
+    operatorNode->makeChild<NumericNode>(123);
+    operatorNode->makeChild<NumericNode>(2);
     EXPECT_TRUE( compareTrees(expectedTree.get(), context._ast.get()) );
 }
 
@@ -52,8 +52,8 @@ TEST_F(AbstractSyntaxTreeBuilderTest, const_substraction)
     auto expectedTree = std::make_unique<ProgramNode>();
     auto* const constantDeclarationNode = expectedTree->makeChild<ConstantDeclarationNode>();
     auto* const operatorNode = constantDeclarationNode->makeChild<SubstractionNode>();
-    operatorNode->makeChild<FloatNode>(123);
-    operatorNode->makeChild<FloatNode>(2);
+    operatorNode->makeChild<NumericNode>(123);
+    operatorNode->makeChild<NumericNode>(2);
     EXPECT_TRUE( compareTrees(expectedTree.get(), context._ast.get()) );
 }
 
@@ -63,8 +63,8 @@ TEST_F(AbstractSyntaxTreeBuilderTest, const_multiplication)
     auto expectedTree = std::make_unique<ProgramNode>();
     auto* const constantDeclarationNode = expectedTree->makeChild<ConstantDeclarationNode>();
     auto* const operatorNode = constantDeclarationNode->makeChild<MultiplicationNode>();
-    operatorNode->makeChild<FloatNode>(123);
-    operatorNode->makeChild<FloatNode>(2);
+    operatorNode->makeChild<NumericNode>(123);
+    operatorNode->makeChild<NumericNode>(2);
     EXPECT_TRUE( compareTrees(expectedTree.get(), context._ast.get()) );
 }
 
@@ -74,8 +74,8 @@ TEST_F(AbstractSyntaxTreeBuilderTest, const_division)
     auto expectedTree = std::make_unique<ProgramNode>();
     auto* const constantDeclarationNode = expectedTree->makeChild<ConstantDeclarationNode>();
     auto* const operatorNode = constantDeclarationNode->makeChild<DivisionNode>();
-    operatorNode->makeChild<FloatNode>(123);
-    operatorNode->makeChild<FloatNode>(2);
+    operatorNode->makeChild<NumericNode>(123);
+    operatorNode->makeChild<NumericNode>(2);
     EXPECT_TRUE( compareTrees(expectedTree.get(), context._ast.get()) );
 }
 
@@ -85,7 +85,7 @@ TEST_F(AbstractSyntaxTreeBuilderTest, const_negation)
     auto expectedTree = std::make_unique<ProgramNode>();
     auto* const constantDeclarationNode = expectedTree->makeChild<ConstantDeclarationNode>();
     auto* const operatorNode = constantDeclarationNode->makeChild<NegativeNode>();
-    operatorNode->makeChild<FloatNode>(-2);
+    operatorNode->makeChild<NumericNode>(-2);
     EXPECT_TRUE( compareTrees(expectedTree.get(), context._ast.get()) );
 }
 
@@ -95,7 +95,7 @@ TEST_F(AbstractSyntaxTreeBuilderTest, const_negation_1)
     auto expectedTree = std::make_unique<ProgramNode>();
     auto* const constantDeclarationNode = expectedTree->makeChild<ConstantDeclarationNode>();
     auto* const operatorNode = constantDeclarationNode->makeChild<NegativeNode>();
-    operatorNode->makeChild<FloatNode>(-2);
+    operatorNode->makeChild<NumericNode>(-2);
     EXPECT_TRUE( compareTrees(expectedTree.get(), context._ast.get()) );
 }
 
@@ -107,12 +107,12 @@ TEST_F(AbstractSyntaxTreeBuilderTest, expression_math_0)
     auto* const substractionNode = constantDeclarationNode->makeChild<SubstractionNode>();
     auto* const additionNode = substractionNode->makeChild<AdditionNode>();
     auto* const divisionNode = substractionNode->makeChild<DivisionNode>();
-    additionNode->makeChild<FloatNode>(1);
+    additionNode->makeChild<NumericNode>(1);
     auto* const multiplicationNode = additionNode->makeChild<MultiplicationNode>();
-    multiplicationNode->makeChild<FloatNode>(2);
-    multiplicationNode->makeChild<FloatNode>(3);
-    divisionNode->makeChild<FloatNode>(4);
-    divisionNode->makeChild<FloatNode>(5);
+    multiplicationNode->makeChild<NumericNode>(2);
+    multiplicationNode->makeChild<NumericNode>(3);
+    divisionNode->makeChild<NumericNode>(4);
+    divisionNode->makeChild<NumericNode>(5);
     EXPECT_TRUE( compareTrees(expectedTree.get(), context._ast.get()) );
 }
 
@@ -125,11 +125,11 @@ TEST_F(AbstractSyntaxTreeBuilderTest, expression_precedence)
     auto* const multiplicationNode = substractionNode->makeChild<MultiplicationNode>();
     auto* const divisionNode = substractionNode->makeChild<DivisionNode>();
     auto* const additionNode = multiplicationNode->makeChild<AdditionNode>();
-    multiplicationNode->makeChild<FloatNode>(3);
-    additionNode->makeChild<FloatNode>(1);
-    additionNode->makeChild<FloatNode>(2);
-    divisionNode->makeChild<FloatNode>(4);
-    divisionNode->makeChild<FloatNode>(5);
+    multiplicationNode->makeChild<NumericNode>(3);
+    additionNode->makeChild<NumericNode>(1);
+    additionNode->makeChild<NumericNode>(2);
+    divisionNode->makeChild<NumericNode>(4);
+    divisionNode->makeChild<NumericNode>(5);
     EXPECT_TRUE( compareTrees(expectedTree.get(), context._ast.get()) );
 }
 
@@ -139,7 +139,7 @@ TEST_F(AbstractSyntaxTreeBuilderTest, identifier)
     auto expectedTree = std::make_unique<ProgramNode>();
     auto* const constantDeclarationNode = expectedTree->makeChild<ConstantDeclarationNode>();
     auto* const operatorNode = constantDeclarationNode->makeChild<DivisionNode>();
-    operatorNode->makeChild<FloatNode>(123);
+    operatorNode->makeChild<NumericNode>(123);
     operatorNode->makeChild<IdentifierNode>("hello");
     EXPECT_TRUE( compareTrees(expectedTree.get(), context._ast.get()) );
 }

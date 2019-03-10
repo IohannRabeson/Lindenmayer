@@ -42,10 +42,7 @@ std::string const& AbstractSyntaxTreeNode::nodeTypeName(AbstractSyntaxTreeNode::
     static std::map<AbstractSyntaxTreeNode::NodeType, std::string> const NodeTypeNames =
     {
         { AbstractSyntaxTreeNode::NodeType::Abstract, "Abstract" },
-        { AbstractSyntaxTreeNode::NodeType::LiteralBoolean, "LiteralBoolean" },
-        { AbstractSyntaxTreeNode::NodeType::LiteralInteger, "LiteralInteger" },
-        { AbstractSyntaxTreeNode::NodeType::LiteralFloat, "LiteralFloat" },
-        { AbstractSyntaxTreeNode::NodeType::LiteralString, "LiteralString" },
+        { AbstractSyntaxTreeNode::NodeType::Number, "Number" },
         { AbstractSyntaxTreeNode::NodeType::Assignation, "Assignation" },
         { AbstractSyntaxTreeNode::NodeType::Addition, "Addition" },
         { AbstractSyntaxTreeNode::NodeType::Substraction, "Substraction" },

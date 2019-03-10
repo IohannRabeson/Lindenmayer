@@ -4,7 +4,7 @@ program: statement* ;
 statement: 'number' IDENTIFIER ASSIGNATION const_expression END_OF_STATEMENT                        #ConstantDecl
          | 'alias' function_call ASSIGNATION function_call+ END_OF_STATEMENT                        #AliasDecl
          | 'axiom' function_call+ END_OF_STATEMENT                                                  #AxiomDecl
-         | 'rewrite' function_call RIGHT_PARENTHESIS ASSIGNATION function_call+ END_OF_STATEMENT    #RewriteRuleDecl
+         | 'rewrite' function_call ASSIGNATION function_call+ END_OF_STATEMENT    #RewriteRuleDecl
          ;
 
 function_call: IDENTIFIER LEFT_PARENTHESIS expression_list RIGHT_PARENTHESIS ;
@@ -42,7 +42,7 @@ LEFT_PARENTHESIS : '(' ;
 RIGHT_PARENTHESIS : ')' ;
 END_OF_STATEMENT : ';' ;
 
-IDENTIFIER  : [a-zA-Z_]+ ;
+IDENTIFIER  : [a-zA-Z_]+DIGIT09*;
 
 LITTERAL_FLOAT
     : '-'? DIGIT09+ '.' DIGIT09*
