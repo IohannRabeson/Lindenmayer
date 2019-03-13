@@ -6,6 +6,7 @@
 #define LINDENMAYER_ABSTRACTSYNTAXTREEALGORITHMS_HPP
 #include <functional>
 #include <ostream>
+#include "StorageType.hpp"
 
 class AbstractSyntaxTreeNode;
 
@@ -22,6 +23,8 @@ bool compareTrees(AbstractSyntaxTreeNode const* left, AbstractSyntaxTreeNode con
  * \param os Output stream
  */
 void exportDot(AbstractSyntaxTreeNode const* tree, std::string const& name, std::ostream& os);
+
+StorageTypeTrait<StorageType::Number>::Type reduceAst(AbstractSyntaxTreeNode const* tree);
 
 
 #endif //LINDENMAYER_ABSTRACTSYNTAXTREEALGORITHMS_HPP

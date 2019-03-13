@@ -98,3 +98,8 @@ void exportDot(AbstractSyntaxTreeNode const* tree, std::string const& name, std:
     }
     os << "}";
 }
+
+StorageTypeTrait<StorageType::Number>::Type reduceAst(AbstractSyntaxTreeNode const*)
+{
+    return 0;
+}
