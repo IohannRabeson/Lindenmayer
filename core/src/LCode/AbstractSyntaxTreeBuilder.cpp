@@ -30,21 +30,10 @@ void AbstractSyntaxTreeBuilder::enterFloat(LCodeParser::FloatContext* context)
     currentAstNode()->makeChild<NumericNode>(context, StorageTypeTrait<StorageType::Number>::fromText(context->getText()));
 }
 
-void AbstractSyntaxTreeBuilder::enterConstFloat(LCodeParser::ConstFloatContext* context)
-{
-    currentAstNode()->makeChild<NumericNode>(context, StorageTypeTrait<StorageType::Number>::fromText(context->getText()));
-}
-
-
 
 void AbstractSyntaxTreeBuilder::enterIdentifier(LCodeParser::IdentifierContext* context)
 {
     currentAstNode()->makeChild<IdentifierNode>(context, context->getText(), StorageType::Null);
-}
-
-void AbstractSyntaxTreeBuilder::enterConstIdentifier(LCodeParser::ConstIdentifierContext* context)
-{
-    currentAstNode()->makeChild<IdentifierNode>(context, context->getText());
 }
 
 void AbstractSyntaxTreeBuilder::enterConstantDecl(LCodeParser::ConstantDeclContext* context)
@@ -142,56 +131,6 @@ void AbstractSyntaxTreeBuilder::exitNegativeExpression(LCodeParser::NegativeExpr
     popAstNode();
 }
 
-
-void AbstractSyntaxTreeBuilder::enterConstAddition(LCodeParser::ConstAdditionContext* context)
-{
-    pushAstNode(currentAstNode()->makeChild<AdditionNode>(context));
-}
-
-void AbstractSyntaxTreeBuilder::exitConstAddition(LCodeParser::ConstAdditionContext*)
-{
-    popAstNode();
-}
-
-void AbstractSyntaxTreeBuilder::enterConstSubstraction(LCodeParser::ConstSubstractionContext* context)
-{
-    pushAstNode(currentAstNode()->makeChild<SubstractionNode>(context));
-}
-
-void AbstractSyntaxTreeBuilder::exitConstSubstraction(LCodeParser::ConstSubstractionContext*)
-{
-    popAstNode();
-}
-
-void AbstractSyntaxTreeBuilder::enterConstMultiplication(LCodeParser::ConstMultiplicationContext* context)
-{
-    pushAstNode(currentAstNode()->makeChild<MultiplicationNode>(context));
-}
-
-void AbstractSyntaxTreeBuilder::exitConstMultiplication(LCodeParser::ConstMultiplicationContext*)
-{
-    popAstNode();
-}
-
-void AbstractSyntaxTreeBuilder::enterConstDivision(LCodeParser::ConstDivisionContext* context)
-{
-    pushAstNode(currentAstNode()->makeChild<DivisionNode>(context));
-}
-
-void AbstractSyntaxTreeBuilder::exitConstDivision(LCodeParser::ConstDivisionContext*)
-{
-    popAstNode();
-}
-
-void AbstractSyntaxTreeBuilder::enterConstNegativeExpression(LCodeParser::ConstNegativeExpressionContext* context)
-{
-    pushAstNode(currentAstNode()->makeChild<NegativeNode>(context));
-}
-
-void AbstractSyntaxTreeBuilder::exitConstNegativeExpression(LCodeParser::ConstNegativeExpressionContext*)
-{
-    popAstNode();
-}
 
 void AbstractSyntaxTreeBuilder::enterFunctionCall(LCodeParser::FunctionCallContext* context)
 {

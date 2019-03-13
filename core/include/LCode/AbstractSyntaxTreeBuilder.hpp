@@ -50,23 +50,13 @@ public:
     void enterRewriteRuleDecl(LCodeParser::RewriteRuleDeclContext* context) override;
     void exitRewriteRuleDecl(LCodeParser::RewriteRuleDeclContext* context) override;
 
-    void enterConstFloat(LCodeParser::ConstFloatContext* context) override;
     void enterFloat(LCodeParser::FloatContext* context) override;
-
-    void enterConstIdentifier(LCodeParser::ConstIdentifierContext* context) override;
     void enterIdentifier(LCodeParser::IdentifierContext* context) override;
 
     void enterAddition(LCodeParser::AdditionContext* context) override;
     void enterSubstraction(LCodeParser::SubstractionContext* context) override;
     void enterMultiplication(LCodeParser::MultiplicationContext* context) override;
     void enterDivision(LCodeParser::DivisionContext* context) override;
-
-    void enterConstAddition(LCodeParser::ConstAdditionContext* context) override;
-    void enterConstSubstraction(LCodeParser::ConstSubstractionContext* context) override;
-    void enterConstDivision(LCodeParser::ConstDivisionContext* context) override;
-    void enterConstMultiplication(LCodeParser::ConstMultiplicationContext* context) override;
-    void enterConstNegativeExpression(LCodeParser::ConstNegativeExpressionContext* context) override;
-
     void enterNegativeExpression(LCodeParser::NegativeExpressionContext* context) override;
 
     void exitAddition(LCodeParser::AdditionContext* context) override;
@@ -74,12 +64,6 @@ public:
     void exitMultiplication(LCodeParser::MultiplicationContext* context) override;
     void exitDivision(LCodeParser::DivisionContext* context) override;
     void exitNegativeExpression(LCodeParser::NegativeExpressionContext* context) override;
-
-    void exitConstAddition(LCodeParser::ConstAdditionContext* context) override;
-    void exitConstSubstraction(LCodeParser::ConstSubstractionContext* context) override;
-    void exitConstMultiplication(LCodeParser::ConstMultiplicationContext* context) override;
-    void exitConstDivision(LCodeParser::ConstDivisionContext* context) override;
-    void exitConstNegativeExpression(LCodeParser::ConstNegativeExpressionContext* context) override;
 
     void enterFunctionCall(LCodeParser::FunctionCallContext* context) override;
     void exitFunctionCall(LCodeParser::FunctionCallContext* context) override;
