@@ -44,9 +44,9 @@ StorageType SymbolTable::getType(std::string const& identifier) const
     return _types.at(identifier);
 }
 
-bool SymbolTable::defineConstant(std::string const& identifier, StorageTypeTrait<StorageType::Number>::Type value)
+bool SymbolTable::defineConstant(std::string const& identifier, NumberType value)
 {
-    return _constants.emplace(identifier, value).second;
+    return _constants.emplace(identifier, ConstantSymbol{value}).second;
 }
 
 bool SymbolTable::isConstantDefined(std::string const& identifier) const
@@ -54,8 +54,7 @@ bool SymbolTable::isConstantDefined(std::string const& identifier) const
     return _constants.find(identifier) != _constants.end();
 }
 
-StorageTypeTrait<StorageType::Number>::Type SymbolTable::getConstantType(std::string const& identifier) const
+SymbolTable::ConstantSymbol const& SymbolTable::getConstant(std::string const& identifier) const
 {
-    assert( isConstantDefined(identifier) );
     return _constants.at(identifier);
 }

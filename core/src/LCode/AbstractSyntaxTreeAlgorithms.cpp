@@ -7,6 +7,8 @@
 
 #include <stack>
 #include <set>
+#include <vector>
+#include <functional>
 
 namespace
 {
@@ -44,6 +46,28 @@ public:
     {
         _nodes.push_back(node);
     }
+};
+
+template <typename F>
+class GatherNodeIf
+{
+public:
+    explicit GatherNodeIf(std::vector<AbstractSyntaxTreeNode const*>& nodes, F&& predicate)
+        : _nodes(nodes)
+        , _predicate(predicate)
+    {
+    }
+
+    void operator()(AbstractSyntaxTreeNode const* node)
+    {
+        if (_predicate(node))
+        {
+            _nodes.push_back(node);
+        }
+    }
+private:
+    std::vector<AbstractSyntaxTreeNode const*>& _nodes;
+    F _predicate;
 };
 
 bool compareTrees(AbstractSyntaxTreeNode const* left, AbstractSyntaxTreeNode const* right)
@@ -97,4 +121,9 @@ void exportDot(AbstractSyntaxTreeNode const* tree, std::string const& name, std:
         }
     }
     os << "}";
+}
+
+StorageTypeTrait<StorageType::Number>::Type reduceAst(ExpressionNode const* node)
+{
+    return node->evaluateNumber();
 }

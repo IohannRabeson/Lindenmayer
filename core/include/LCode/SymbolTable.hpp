@@ -14,11 +14,17 @@
  */
 class SymbolTable
 {
+    using NumberType = StorageTypeTrait<StorageType::Number>::Type;
 public:
     struct FunctionSymbol
     {
         StorageType _returnType;
         std::vector<StorageType> _parameterTypes;
+    };
+
+    struct ConstantSymbol
+    {
+        NumberType const _value;
     };
 
     void clear();
@@ -31,13 +37,13 @@ public:
     bool isTypeDefined(std::string const& identifier) const;
     StorageType getType(std::string const& identifier) const;
 
-    bool defineConstant(std::string const& identifier, StorageTypeTrait<StorageType::Number>::Type value);
+    bool defineConstant(std::string const& identifier, NumberType value);
     bool isConstantDefined(std::string const& identifier) const;
-    StorageTypeTrait<StorageType::Number>::Type getConstantType(std::string const& identifier) const;
+    ConstantSymbol const& getConstant(std::string const& identifier) const;
 private:
     std::map<std::string, StorageType> _types;
     std::map<std::string, FunctionSymbol> _functions;
-    std::map<std::string, StorageTypeTrait<StorageType::Number>::Type> _constants;
+    std::map<std::string, ConstantSymbol> _constants;
 };
 
 #endif //LINDENMAYER_SYMBOLTABLE_HPP

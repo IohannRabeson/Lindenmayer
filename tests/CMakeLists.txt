@@ -21,7 +21,7 @@ set(SRC
     LCode/AbstractSyntaxTreeTest.cpp
     LCode/AbstractSyntaxTreeBuilderTest.cpp
     LCode/ParserUtility.hpp
-    LCode/ParserUtility.cpp)
+    LCode/ParserUtility.cpp LCode/AbstractSyntaxTreeAlgorithmTest.cpp)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)

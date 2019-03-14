@@ -17,31 +17,31 @@ public:
     {
         Abstract,
         Number,
-        Identifier,
+        Constant,
         Assignation,
-        Addition,
-        Substraction,
-        Multiplication,
-        Division,
-        Negative,
         Program,
         ConstantDeclaration,
         AliasDeclaration,
         AxiomDeclaration,
         RewriteRuleDeclaration,
-        FunctionCall
+        FunctionCall,
+        // Binary operators
+        Addition,
+        Substraction,
+        Multiplication,
+        Division,
+        // Unary operators
+        Negative,
     };
 
     static std::string const& nodeTypeName(NodeType nodeType);
+    static bool isBinaryOperator(NodeType nodeType);
     static constexpr NodeType const Type = NodeType::Abstract;
 
     explicit AbstractSyntaxTreeNode(antlr4::tree::ParseTree* parseTreeNode = nullptr);
     virtual ~AbstractSyntaxTreeNode() = default;
     virtual NodeType nodeType() const = 0;
-    virtual bool areEqual(AbstractSyntaxTreeNode const* other) const
-    {
-        return nodeType() == other->nodeType();
-    }
+    virtual bool areEqual(AbstractSyntaxTreeNode const* other) const;
 
     antlr4::tree::ParseTree* parseTreeNode() const;
 
@@ -55,14 +55,8 @@ public:
     AbstractSyntaxTreeNode* getChild(std::size_t index) const;
     void replaceChild(std::size_t index, AbstractSyntaxTreePtr&& tree);
     std::size_t getChildrenCount() const;
-    auto begin() const
-    {
-        return _children.begin();
-    }
-    auto end() const
-    {
-        return _children.begin();
-    }
+    auto begin() const;
+    auto end() const;
 private:
     std::vector<AbstractSyntaxTreePtr> _children;
     antlr4::tree::ParseTree* const _parseTreeNode;
@@ -109,32 +103,40 @@ public:
     NodeType nodeType() const override;
 };
 
+class AssignationNode : public StatementNode
+{
+public:
+    using StatementNode::StatementNode;
+    NodeType nodeType() const override;
+};
+
 class ExpressionNode : public AbstractSyntaxTreeNode
 {
 protected:
+    using NumberType = StorageTypeTrait<StorageType::Number>::Type;
+
     ExpressionNode const* getExpressionChild(std::size_t index) const;
     StorageType getEvaluatedTypeChild(std::size_t index) const;
 public:
     using AbstractSyntaxTreeNode::AbstractSyntaxTreeNode;
     virtual StorageType evaluatedType() const = 0;
+    virtual NumberType evaluateNumber() const = 0;
 };
 
-using ExpressionNodePtr = std::unique_ptr<ExpressionNode>;
-
 template <StorageType StorageTypeId, AbstractSyntaxTreeNode::NodeType NodeTypeId>
-class LitteralNode : public ExpressionNode
+class LiteralNode : public ExpressionNode
 {
-    using ThisType = LitteralNode<StorageTypeId, NodeTypeId>;
+    using ThisType = LiteralNode<StorageTypeId, NodeTypeId>;
 public:
     using ValueType = CppType<StorageTypeId>;
 
-    explicit LitteralNode(ValueType value)
+    explicit LiteralNode(ValueType value)
     : ExpressionNode(nullptr)
     , _value(value)
     {
     }
 
-    LitteralNode(antlr4::tree::ParseTree* parserTreeNode, ValueType value)
+    LiteralNode(antlr4::tree::ParseTree* parserTreeNode, ValueType value)
     : ExpressionNode(parserTreeNode)
     , _value(value)
     {
@@ -159,42 +161,47 @@ private:
     ValueType const _value;
 };
 
-class NumericNode : public LitteralNode<StorageType::Number, AbstractSyntaxTreeNode::NodeType::Number>
+class LiteralNumberNode : public LiteralNode<StorageType::Number, AbstractSyntaxTreeNode::NodeType::Number>
 {
 public:
-    using LitteralNode::LitteralNode;
+    using LiteralNode::LiteralNode;
 
+    NumberType evaluateNumber() const override;
     bool areEqual(AbstractSyntaxTreeNode const* other) const override;
 };
 
-class IdentifierNode : public ExpressionNode
+class ConstantNumberNode : public ExpressionNode
 {
-    // TODO: storage an iterator on an element in the symbol table?
-    // Maybe just the ParseTree is enough to retreive the correct symbol
     std::string const _identifier;
-    StorageType _storageType;
+    SymbolTable const& _symbolTable;
 public:
-    explicit IdentifierNode(std::string const& identifier, StorageType storageType = StorageType::Null);
-    IdentifierNode(antlr4::tree::ParseTree* parserTreeNode, std::string const& identifier, StorageType storageType = StorageType::Null);
-    StorageType evaluatedType() const override
-    {
-        // TODO: I need to have a symbol table which stores informations about
-        // every constants. This method should query the symbol table to be able to
-        // return the type.
-        return StorageType::Null;
-    }
-
+    explicit ConstantNumberNode(std::string const& identifier, SymbolTable const& symbolTable);
+    ConstantNumberNode(antlr4::tree::ParseTree* parserTreeNode, std::string const& identifier, SymbolTable const& symbolTable);
+    StorageType evaluatedType() const override;
+    NumberType evaluateNumber() const override;
     NodeType nodeType() const override;
-    StorageType storageType() const { return _storageType; }
-    void setStorageType(StorageType type) { _storageType = type; }
+};
+
+class UnaryOperatorNode : public ExpressionNode
+{
+public:
+    using ExpressionNode::ExpressionNode;
+
+    StorageType evaluatedType() const override;
+    NumberType evaluateNumber() const override;
+private:
+    virtual NumberType evaluateUnaryOperation(NumberType number) const = 0;
 };
 
 class BinaryOperatorNode : public ExpressionNode
 {
 public:
-    explicit BinaryOperatorNode(antlr4::tree::ParseTree* parseTreeNode = nullptr);
+    using ExpressionNode::ExpressionNode;
 
     StorageType evaluatedType() const override;
+    NumberType evaluateNumber() const override;
+private:
+    virtual NumberType evaluateBinaryOperation(NumberType left, NumberType right) const = 0;
 };
 
 class AdditionNode : public BinaryOperatorNode
@@ -202,6 +209,7 @@ class AdditionNode : public BinaryOperatorNode
 public:
     using BinaryOperatorNode::BinaryOperatorNode;
     NodeType nodeType() const override;
+    NumberType evaluateBinaryOperation(NumberType left, NumberType right) const override;
 };
 
 class SubstractionNode : public BinaryOperatorNode
@@ -209,6 +217,7 @@ class SubstractionNode : public BinaryOperatorNode
 public:
     using BinaryOperatorNode::BinaryOperatorNode;
     NodeType nodeType() const override;
+    NumberType evaluateBinaryOperation(NumberType left, NumberType right) const override;
 };
 
 class MultiplicationNode : public BinaryOperatorNode
@@ -216,6 +225,7 @@ class MultiplicationNode : public BinaryOperatorNode
 public:
     using BinaryOperatorNode::BinaryOperatorNode;
     NodeType nodeType() const override;
+    NumberType evaluateBinaryOperation(NumberType left, NumberType right) const override;
 };
 
 class DivisionNode : public BinaryOperatorNode
@@ -223,21 +233,17 @@ class DivisionNode : public BinaryOperatorNode
 public:
     using BinaryOperatorNode::BinaryOperatorNode;
     NodeType nodeType() const override;
+    NumberType evaluateBinaryOperation(NumberType left, NumberType right) const override;
 };
 
-class AssignationNode : public BinaryOperatorNode
-{
-    using BinaryOperatorNode::BinaryOperatorNode;
-    NodeType nodeType() const override;
-};
-
-class NegativeNode : public ExpressionNode
+class NegativeNode : public UnaryOperatorNode
 {
 public:
-    using ExpressionNode::ExpressionNode;
+    using UnaryOperatorNode::UnaryOperatorNode;
     StorageType evaluatedType() const override;
     NodeType nodeType() const override;
     bool areEqual(AbstractSyntaxTreeNode const* other) const override;
+    NumberType evaluateUnaryOperation(NumberType value) const override;
 };
 
 class FunctionCallNode : public ExpressionNode
@@ -249,6 +255,7 @@ public:
     FunctionCallNode(std::string const& identifier, SymbolTable::FunctionSymbol const& symbol);
 
     StorageType evaluatedType() const override;
+    NumberType evaluateNumber() const override;
     NodeType nodeType() const override;
     bool areEqual(AbstractSyntaxTreeNode const* other) const override;
 };
