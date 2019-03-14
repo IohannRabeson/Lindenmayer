@@ -59,6 +59,20 @@ std::string const& AbstractSyntaxTreeNode::nodeTypeName(AbstractSyntaxTreeNode::
     return NodeTypeNames.at(nodeType);
 }
 
+bool AbstractSyntaxTreeNode::isBinaryOperator(NodeType nodeType)
+{
+    switch (nodeType)
+    {
+        case AbstractSyntaxTreeNode::NodeType::Addition:
+        case AbstractSyntaxTreeNode::NodeType::Substraction:
+        case AbstractSyntaxTreeNode::NodeType::Multiplication:
+        case AbstractSyntaxTreeNode::NodeType::Division:
+            return true;
+        default:
+            return false;
+    }
+}
+
 ExpressionNode const* ExpressionNode::getExpressionChild(std::size_t index) const
 {
     return dynamic_cast<ExpressionNode const*>(getChild(index));
@@ -85,9 +99,9 @@ AbstractSyntaxTreeNode::NodeType NegativeNode::nodeType() const
     return AbstractSyntaxTreeNode::NodeType::Negative;
 }
 
-BinaryOperatorNode::BinaryOperatorNode(antlr4::tree::ParseTree* parseTreeNode)
-    : ExpressionNode(parseTreeNode)
+auto NegativeNode::evaluateUnaryOperation(ExpressionNode::NumberType value) const -> NumberType
 {
+    return -value;
 }
 
 StorageType BinaryOperatorNode::evaluatedType() const
@@ -99,9 +113,22 @@ StorageType BinaryOperatorNode::evaluatedType() const
     return static_cast<StorageType>(maxTypeId);
 }
 
-AbstractSyntaxTreeNode::NodeType AdditionNode::nodeType() const
+auto BinaryOperatorNode::evaluateNumber() const -> NumberType
+{
+    auto const* leftNode = getExpressionChild(0);
+    auto const* rightNode = getExpressionChild(1);
+
+    return evaluateBinaryOperation(leftNode->evaluateNumber(), rightNode->evaluateNumber());
+}
+
+auto AdditionNode::nodeType() const -> NodeType
 {
     return AbstractSyntaxTreeNode::NodeType::Addition;
+}
+
+ExpressionNode::NumberType AdditionNode::evaluateBinaryOperation(ExpressionNode::NumberType left, ExpressionNode::NumberType right) const
+{
+    return left + right;
 }
 
 AbstractSyntaxTreeNode::NodeType SubstractionNode::nodeType() const
@@ -109,14 +136,29 @@ AbstractSyntaxTreeNode::NodeType SubstractionNode::nodeType() const
     return AbstractSyntaxTreeNode::NodeType::Substraction;
 }
 
+ExpressionNode::NumberType SubstractionNode::evaluateBinaryOperation(ExpressionNode::NumberType left, ExpressionNode::NumberType right) const
+{
+    return left - right;
+}
+
 AbstractSyntaxTreeNode::NodeType MultiplicationNode::nodeType() const
 {
     return AbstractSyntaxTreeNode::NodeType::Multiplication;
 }
 
+ExpressionNode::NumberType MultiplicationNode::evaluateBinaryOperation(ExpressionNode::NumberType left, ExpressionNode::NumberType right) const
+{
+    return left * right;
+}
+
 AbstractSyntaxTreeNode::NodeType DivisionNode::nodeType() const
 {
     return AbstractSyntaxTreeNode::NodeType::Division;
+}
+
+ExpressionNode::NumberType DivisionNode::evaluateBinaryOperation(ExpressionNode::NumberType left, ExpressionNode::NumberType right) const
+{
+    return left / right;
 }
 
 AbstractSyntaxTreeNode::NodeType ProgramNode::nodeType() const
@@ -199,6 +241,20 @@ bool FunctionCallNode::areEqual(AbstractSyntaxTreeNode const* other) const
         return _identifier == otherNode->_identifier;
     }
     return false;
+}
+
+ExpressionNode::NumberType FunctionCallNode::evaluateNumber() const
+{
+    auto result = 0;
+
+
+    return result;
+}
+
+auto NumericNode::evaluateNumber() const -> NumberType
+{
+
+    return value();
 }
 
 bool NumericNode::areEqual(AbstractSyntaxTreeNode const* other) const
