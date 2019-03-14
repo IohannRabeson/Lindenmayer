@@ -8,7 +8,7 @@
 
 TEST(AbstractSyntaxTreeAlgorithmTest, constant_simple_number)
 {
-    std::unique_ptr<ExpressionNode> expectedTree = std::make_unique<NumericNode>(123.0);
+    std::unique_ptr<ExpressionNode> expectedTree = std::make_unique<LiteralNumberNode>(123.0);
     EXPECT_EQ( reduceAst(expectedTree.get()), 123.0 );
 }
 
@@ -18,8 +18,8 @@ TEST(AbstractSyntaxTreeAlgorithmTest, const_addition)
     auto const operatorNode = std::make_unique<AdditionNode>();
     auto const right = 123.0;
     auto const left = 2.0;
-    operatorNode->makeChild<NumericNode>(right);
-    operatorNode->makeChild<NumericNode>(left);
+    operatorNode->makeChild<LiteralNumberNode>(right);
+    operatorNode->makeChild<LiteralNumberNode>(left);
     EXPECT_EQ( reduceAst(operatorNode.get()), right + left );
 }
 
@@ -29,8 +29,8 @@ TEST(AbstractSyntaxTreeAlgorithmTest, const_substraction)
     auto const operatorNode = std::make_unique<SubstractionNode>();
     auto const right = 123.0;
     auto const left = 2.0;
-    operatorNode->makeChild<NumericNode>(right);
-    operatorNode->makeChild<NumericNode>(left);
+    operatorNode->makeChild<LiteralNumberNode>(right);
+    operatorNode->makeChild<LiteralNumberNode>(left);
     EXPECT_EQ( reduceAst(operatorNode.get()), right - left );
 }
 
@@ -40,8 +40,8 @@ TEST(AbstractSyntaxTreeAlgorithmTest, const_multiplication)
     auto const operatorNode = std::make_unique<MultiplicationNode>();
     auto const right = 123.0;
     auto const left = 2.0;
-    operatorNode->makeChild<NumericNode>(right);
-    operatorNode->makeChild<NumericNode>(left);
+    operatorNode->makeChild<LiteralNumberNode>(right);
+    operatorNode->makeChild<LiteralNumberNode>(left);
     EXPECT_EQ( reduceAst(operatorNode.get()), right * left );
 }
 
@@ -51,8 +51,8 @@ TEST(AbstractSyntaxTreeAlgorithmTest, const_division)
     auto const operatorNode = std::make_unique<DivisionNode>();
     auto const right = 123.0;
     auto const left = 2.0;
-    operatorNode->makeChild<NumericNode>(right);
-    operatorNode->makeChild<NumericNode>(left);
+    operatorNode->makeChild<LiteralNumberNode>(right);
+    operatorNode->makeChild<LiteralNumberNode>(left);
     EXPECT_EQ( reduceAst(operatorNode.get()), right / left );
 }
 
@@ -61,7 +61,7 @@ TEST(AbstractSyntaxTreeAlgorithmTest, const_negation)
     // - -2
     auto const operatorNode = std::make_unique<NegativeNode>();
     auto const value = -2.0;
-    operatorNode->makeChild<NumericNode>(value);
+    operatorNode->makeChild<LiteralNumberNode>(value);
     EXPECT_EQ( reduceAst(operatorNode.get()), -value );
 }
 
@@ -70,7 +70,7 @@ TEST(AbstractSyntaxTreeAlgorithmTest, const_negation_1)
     // --2
     auto const operatorNode = std::make_unique<NegativeNode>();
     auto const value = -2.0;
-    operatorNode->makeChild<NumericNode>(value);
+    operatorNode->makeChild<LiteralNumberNode>(value);
     EXPECT_EQ( reduceAst(operatorNode.get()), -value );
 }
 
@@ -85,12 +85,12 @@ TEST(AbstractSyntaxTreeAlgorithmTest, expression_math_0)
     auto const c = 3.0;
     auto const d = 4.0;
     auto const e = 5.0;
-    additionNode->makeChild<NumericNode>(a);
+    additionNode->makeChild<LiteralNumberNode>(a);
     auto* const multiplicationNode = additionNode->makeChild<MultiplicationNode>();
-    multiplicationNode->makeChild<NumericNode>(b);
-    multiplicationNode->makeChild<NumericNode>(c);
-    divisionNode->makeChild<NumericNode>(d);
-    divisionNode->makeChild<NumericNode>(e);
+    multiplicationNode->makeChild<LiteralNumberNode>(b);
+    multiplicationNode->makeChild<LiteralNumberNode>(c);
+    divisionNode->makeChild<LiteralNumberNode>(d);
+    divisionNode->makeChild<LiteralNumberNode>(e);
     EXPECT_EQ( reduceAst(substractionNode.get()), a + b * c - d / e );
 }
 
@@ -106,10 +106,23 @@ TEST(AbstractSyntaxTreeAlgorithmTest, expression_precedence)
     auto const c = 3.0;
     auto const d = 4.0;
     auto const e = 5.0;
-    multiplicationNode->makeChild<NumericNode>(c);
-    additionNode->makeChild<NumericNode>(a);
-    additionNode->makeChild<NumericNode>(b);
-    divisionNode->makeChild<NumericNode>(d);
-    divisionNode->makeChild<NumericNode>(e);
+    multiplicationNode->makeChild<LiteralNumberNode>(c);
+    additionNode->makeChild<LiteralNumberNode>(a);
+    additionNode->makeChild<LiteralNumberNode>(b);
+    divisionNode->makeChild<LiteralNumberNode>(d);
+    divisionNode->makeChild<LiteralNumberNode>(e);
     EXPECT_EQ( reduceAst(substractionNode.get()), (a + b) * c - d / e );
+}
+
+TEST(AbstractSyntaxTreeAlgorithmTest, constant)
+{
+    auto const number = 123.0;
+    auto const hello = 2.0;
+    SymbolTable symbolTable;
+    symbolTable.defineConstant("hello", hello);
+    // 123 / hello
+    auto const operatorNode = std::make_unique<DivisionNode>();
+    operatorNode->makeChild<LiteralNumberNode>(number);
+    operatorNode->makeChild<ConstantNumberNode>("hello", symbolTable);
+    EXPECT_EQ( reduceAst(operatorNode.get()), number / hello );
 }

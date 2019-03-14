@@ -44,17 +44,19 @@ std::string const& AbstractSyntaxTreeNode::nodeTypeName(AbstractSyntaxTreeNode::
     {
         { AbstractSyntaxTreeNode::NodeType::Abstract, "Abstract" },
         { AbstractSyntaxTreeNode::NodeType::Number, "Number" },
+        { AbstractSyntaxTreeNode::NodeType::Constant, "Constant" },
         { AbstractSyntaxTreeNode::NodeType::Assignation, "Assignation" },
-        { AbstractSyntaxTreeNode::NodeType::Addition, "Addition" },
-        { AbstractSyntaxTreeNode::NodeType::Substraction, "Substraction" },
-        { AbstractSyntaxTreeNode::NodeType::Multiplication, "Multiplication" },
-        { AbstractSyntaxTreeNode::NodeType::Division, "Division" },
-        { AbstractSyntaxTreeNode::NodeType::Negative, "Negative" },
         { AbstractSyntaxTreeNode::NodeType::Program, "Program" },
         { AbstractSyntaxTreeNode::NodeType::ConstantDeclaration, "ConstantDeclaration" },
         { AbstractSyntaxTreeNode::NodeType::AliasDeclaration, "AliasDeclaration" },
         { AbstractSyntaxTreeNode::NodeType::AxiomDeclaration, "AxiomDeclaration" },
         { AbstractSyntaxTreeNode::NodeType::RewriteRuleDeclaration, "RewriteRuleDeclaration" },
+        { AbstractSyntaxTreeNode::NodeType::FunctionCall, "FunctionCall" },
+        { AbstractSyntaxTreeNode::NodeType::Addition, "Addition" },
+        { AbstractSyntaxTreeNode::NodeType::Substraction, "Substraction" },
+        { AbstractSyntaxTreeNode::NodeType::Multiplication, "Multiplication" },
+        { AbstractSyntaxTreeNode::NodeType::Division, "Division" },
+        { AbstractSyntaxTreeNode::NodeType::Negative, "Negative" }
     };
     return NodeTypeNames.at(nodeType);
 }
@@ -73,6 +75,21 @@ bool AbstractSyntaxTreeNode::isBinaryOperator(NodeType nodeType)
     }
 }
 
+bool AbstractSyntaxTreeNode::areEqual(AbstractSyntaxTreeNode const* other) const
+{
+    return nodeType() == other->nodeType();
+}
+
+auto AbstractSyntaxTreeNode::begin() const
+{
+    return _children.begin();
+}
+
+auto AbstractSyntaxTreeNode::end() const
+{
+    return _children.end();
+}
+
 ExpressionNode const* ExpressionNode::getExpressionChild(std::size_t index) const
 {
     return dynamic_cast<ExpressionNode const*>(getChild(index));
@@ -80,7 +97,7 @@ ExpressionNode const* ExpressionNode::getExpressionChild(std::size_t index) cons
 
 StorageType ExpressionNode::getEvaluatedTypeChild(std::size_t index) const
 {
-    auto* node = getExpressionChild(index);
+    auto* const node = getExpressionChild(index);
     return node == nullptr ? StorageType::Null : node->evaluatedType();
 }
 
@@ -192,21 +209,32 @@ AbstractSyntaxTreeNode::NodeType AssignationNode::nodeType() const
 }
 
 
-IdentifierNode::IdentifierNode(std::string const& identifier, StorageType storageType)
-: IdentifierNode(nullptr, identifier, storageType)
+ConstantNumberNode::ConstantNumberNode(std::string const& identifier, SymbolTable const& symbolTable)
+: ConstantNumberNode(nullptr, identifier, symbolTable)
 {
 }
 
-IdentifierNode::IdentifierNode(antlr4::tree::ParseTree* parserTreeNode, std::string const& identifier, StorageType storageType)
+ConstantNumberNode::ConstantNumberNode(antlr4::tree::ParseTree* parserTreeNode, std::string const& identifier, SymbolTable const& symbolTable)
 : ExpressionNode(parserTreeNode)
 , _identifier(identifier)
-, _storageType(storageType)
+, _symbolTable(symbolTable)
 {
 }
 
-AbstractSyntaxTreeNode::NodeType IdentifierNode::nodeType() const
+AbstractSyntaxTreeNode::NodeType ConstantNumberNode::nodeType() const
 {
-    return NodeType::Identifier;
+    return NodeType::Constant;
+}
+
+StorageType ConstantNumberNode::evaluatedType() const
+{
+    return StorageType::Number;
+}
+
+ExpressionNode::NumberType ConstantNumberNode::evaluateNumber() const
+{
+    assert( _symbolTable.isConstantDefined(_identifier) );
+    return _symbolTable.getConstant(_identifier)._value;
 }
 
 FunctionCallNode::FunctionCallNode(antlr4::tree::ParseTree* const parseTree, std::string const& identifier, SymbolTable::FunctionSymbol const& symbol)
@@ -251,18 +279,30 @@ ExpressionNode::NumberType FunctionCallNode::evaluateNumber() const
     return result;
 }
 
-auto NumericNode::evaluateNumber() const -> NumberType
+auto LiteralNumberNode::evaluateNumber() const -> NumberType
 {
 
     return value();
 }
 
-bool NumericNode::areEqual(AbstractSyntaxTreeNode const* other) const
+bool LiteralNumberNode::areEqual(AbstractSyntaxTreeNode const* other) const
 {
     if (other == nullptr || other->nodeType() != nodeType())
     {
         return false;
     }
-    auto const otherValue = static_cast<NumericNode const*>(other)->value();
+    auto const otherValue = static_cast<LiteralNumberNode const*>(other)->value();
     return std::abs(otherValue - value()) < std::numeric_limits<ValueType>::epsilon();
+}
+
+StorageType UnaryOperatorNode::evaluatedType() const
+{
+    return getEvaluatedTypeChild(0);
+}
+
+ExpressionNode::NumberType UnaryOperatorNode::evaluateNumber() const
+{
+    auto const* childNode = getExpressionChild(0);
+
+    return evaluateUnaryOperation(childNode->evaluateNumber());
 }

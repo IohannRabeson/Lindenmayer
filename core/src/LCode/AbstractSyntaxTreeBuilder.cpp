@@ -3,7 +3,10 @@
 //
 
 #include "LCode/AbstractSyntaxTreeBuilder.hpp"
+#include "LCode/ScopeTreeBuilder.hpp"
+#include "LCode/AbstractSyntaxTreeAlgorithms.hpp"
 #include "LCode/AbstractSyntaxTreeNode.hpp"
+
 #include <cassert>
 
 AbstractSyntaxTreeBuilder::AbstractSyntaxTreeBuilder(std::map<antlr4::tree::ParseTree*, Context::ScopeNode*> const& scopeByParseTree)
@@ -27,13 +30,23 @@ void AbstractSyntaxTreeBuilder::exitProgram(LCodeParser::ProgramContext*)
 
 void AbstractSyntaxTreeBuilder::enterFloat(LCodeParser::FloatContext* context)
 {
-    currentAstNode()->makeChild<NumericNode>(context, StorageTypeTrait<StorageType::Number>::fromText(context->getText()));
+    currentAstNode()->makeChild<LiteralNumberNode>(context, StorageTypeTrait<StorageType::Number>::fromText(context->getText()));
 }
 
 
 void AbstractSyntaxTreeBuilder::enterIdentifier(LCodeParser::IdentifierContext* context)
 {
-    currentAstNode()->makeChild<IdentifierNode>(context, context->getText(), StorageType::Null);
+    auto const identifier = context->getText();
+    assert( currentScopeNode() != nullptr );
+    auto const& symbolTable = currentScopeNode()->value();
+    if (symbolTable.isConstantDefined(identifier))
+    {
+        currentAstNode()->makeChild<ConstantNumberNode>(context, identifier, symbolTable);
+    }
+    else
+    {
+        // TODO: signal invalid identifier
+    }
 }
 
 void AbstractSyntaxTreeBuilder::enterConstantDecl(LCodeParser::ConstantDeclContext* context)
@@ -41,8 +54,15 @@ void AbstractSyntaxTreeBuilder::enterConstantDecl(LCodeParser::ConstantDeclConte
     pushAstNode(currentAstNode()->makeChild<ConstantDeclarationNode>(context));
 }
 
-void AbstractSyntaxTreeBuilder::exitConstantDecl(LCodeParser::ConstantDeclContext*)
+void AbstractSyntaxTreeBuilder::exitConstantDecl(LCodeParser::ConstantDeclContext* context)
 {
+    auto* constantDeclarationNode = dynamic_cast<ConstantDeclarationNode*>(currentAstNode());
+    assert( constantDeclarationNode != nullptr );
+    auto* expressionNode = dynamic_cast<ExpressionNode*>(constantDeclarationNode->getChild(0));
+    assert( expressionNode != nullptr );
+    auto const identifier = context->IDENTIFIER()->getText();
+    auto const value = reduceAst(expressionNode);
+    currentScopeNode()->value().defineConstant(identifier, value);
     popAstNode();
 }
 
@@ -175,9 +195,7 @@ AbstractSyntaxTreeNode* AbstractSyntaxTreeBuilder::currentAstNode() const
 
 Context::ScopeNode* AbstractSyntaxTreeBuilder::currentScopeNode() const
 {
-    auto* const parseTreeNode = currentAstNode()->parseTreeNode();
-    auto scopeIt = _scopeByParseTree.find(parseTreeNode);
-    return scopeIt != _scopeByParseTree.end() ? scopeIt->second : nullptr;
+    return _currentScopeNode;
 }
 
 void AbstractSyntaxTreeBuilder::updateCurrentScope(antlr4::tree::ParseTree* parseTreeNode)

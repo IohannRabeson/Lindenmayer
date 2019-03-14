@@ -17,7 +17,7 @@ public:
     {
         Abstract,
         Number,
-        Identifier,
+        Constant,
         Assignation,
         Program,
         ConstantDeclaration,
@@ -41,10 +41,7 @@ public:
     explicit AbstractSyntaxTreeNode(antlr4::tree::ParseTree* parseTreeNode = nullptr);
     virtual ~AbstractSyntaxTreeNode() = default;
     virtual NodeType nodeType() const = 0;
-    virtual bool areEqual(AbstractSyntaxTreeNode const* other) const
-    {
-        return nodeType() == other->nodeType();
-    }
+    virtual bool areEqual(AbstractSyntaxTreeNode const* other) const;
 
     antlr4::tree::ParseTree* parseTreeNode() const;
 
@@ -58,14 +55,8 @@ public:
     AbstractSyntaxTreeNode* getChild(std::size_t index) const;
     void replaceChild(std::size_t index, AbstractSyntaxTreePtr&& tree);
     std::size_t getChildrenCount() const;
-    auto begin() const
-    {
-        return _children.begin();
-    }
-    auto end() const
-    {
-        return _children.begin();
-    }
+    auto begin() const;
+    auto end() const;
 private:
     std::vector<AbstractSyntaxTreePtr> _children;
     antlr4::tree::ParseTree* const _parseTreeNode;
@@ -132,22 +123,20 @@ public:
     virtual NumberType evaluateNumber() const = 0;
 };
 
-using ExpressionNodePtr = std::unique_ptr<ExpressionNode>;
-
 template <StorageType StorageTypeId, AbstractSyntaxTreeNode::NodeType NodeTypeId>
-class LitteralNode : public ExpressionNode
+class LiteralNode : public ExpressionNode
 {
-    using ThisType = LitteralNode<StorageTypeId, NodeTypeId>;
+    using ThisType = LiteralNode<StorageTypeId, NodeTypeId>;
 public:
     using ValueType = CppType<StorageTypeId>;
 
-    explicit LitteralNode(ValueType value)
+    explicit LiteralNode(ValueType value)
     : ExpressionNode(nullptr)
     , _value(value)
     {
     }
 
-    LitteralNode(antlr4::tree::ParseTree* parserTreeNode, ValueType value)
+    LiteralNode(antlr4::tree::ParseTree* parserTreeNode, ValueType value)
     : ExpressionNode(parserTreeNode)
     , _value(value)
     {
@@ -172,40 +161,25 @@ private:
     ValueType const _value;
 };
 
-class NumericNode : public LitteralNode<StorageType::Number, AbstractSyntaxTreeNode::NodeType::Number>
+class LiteralNumberNode : public LiteralNode<StorageType::Number, AbstractSyntaxTreeNode::NodeType::Number>
 {
 public:
-    using LitteralNode::LitteralNode;
+    using LiteralNode::LiteralNode;
 
     NumberType evaluateNumber() const override;
     bool areEqual(AbstractSyntaxTreeNode const* other) const override;
 };
 
-class IdentifierNode : public ExpressionNode
+class ConstantNumberNode : public ExpressionNode
 {
-    // TODO: storage an iterator on an element in the symbol table?
-    // Maybe just the ParseTree is enough to retreive the correct symbol
     std::string const _identifier;
-    StorageType _storageType;
+    SymbolTable const& _symbolTable;
 public:
-    explicit IdentifierNode(std::string const& identifier, StorageType storageType = StorageType::Null);
-    IdentifierNode(antlr4::tree::ParseTree* parserTreeNode, std::string const& identifier, StorageType storageType = StorageType::Null);
-    StorageType evaluatedType() const override
-    {
-        // TODO: I need to have a symbol table which stores informations about
-        // every constants. This method should query the symbol table to be able to
-        // return the type.
-        return StorageType::Null;
-    }
-
-    NumberType evaluateNumber() const override
-    {
-        return std::numeric_limits<NumberType>::signaling_NaN();
-    }
-
+    explicit ConstantNumberNode(std::string const& identifier, SymbolTable const& symbolTable);
+    ConstantNumberNode(antlr4::tree::ParseTree* parserTreeNode, std::string const& identifier, SymbolTable const& symbolTable);
+    StorageType evaluatedType() const override;
+    NumberType evaluateNumber() const override;
     NodeType nodeType() const override;
-    StorageType storageType() const { return _storageType; }
-    void setStorageType(StorageType type) { _storageType = type; }
 };
 
 class UnaryOperatorNode : public ExpressionNode
@@ -213,17 +187,8 @@ class UnaryOperatorNode : public ExpressionNode
 public:
     using ExpressionNode::ExpressionNode;
 
-    StorageType evaluatedType() const override
-    {
-        return getEvaluatedTypeChild(0);
-    }
-
-    NumberType evaluateNumber() const override
-    {
-        auto const* childNode = getExpressionChild(0);
-
-        return evaluateUnaryOperation(childNode->evaluateNumber());
-    }
+    StorageType evaluatedType() const override;
+    NumberType evaluateNumber() const override;
 private:
     virtual NumberType evaluateUnaryOperation(NumberType number) const = 0;
 };
