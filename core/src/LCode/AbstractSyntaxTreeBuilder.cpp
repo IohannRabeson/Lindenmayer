@@ -59,10 +59,15 @@ void AbstractSyntaxTreeBuilder::exitConstantDecl(LCodeParser::ConstantDeclContex
     auto* constantDeclarationNode = dynamic_cast<ConstantDeclarationNode*>(currentAstNode());
     assert( constantDeclarationNode != nullptr );
     auto* expressionNode = dynamic_cast<ExpressionNode*>(constantDeclarationNode->getChild(0));
+    // If this assertion fails then something is broken in the parser itself
     assert( expressionNode != nullptr );
     auto const identifier = context->IDENTIFIER()->getText();
     auto const value = reduceAst(expressionNode);
-    currentScopeNode()->value().defineConstant(identifier, value);
+    if (!currentScopeNode()->value().defineConstant(identifier, value))
+    {
+        // TODO: error
+        std::cerr << "Constant already defined '" << identifier << "'\n";
+    }
     popAstNode();
 }
 
