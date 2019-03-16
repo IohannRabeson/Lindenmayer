@@ -19,6 +19,5 @@ public:
 };
 
 bool getFunction(std::string const& identifier, Context::ScopeNode const* node, SymbolTable::FunctionSymbol& symbol);
-bool isConstantDefined(std::string const& identifier, Context::ScopeNode const* node);
 
 #endif //LINDENMAYER_CONTEXT_HPP
