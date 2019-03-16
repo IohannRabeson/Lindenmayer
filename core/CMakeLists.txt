@@ -23,8 +23,6 @@ set(LINDENMAYER_CORE_SOURCES
     include/ModuleAction.hpp
     private/LCodeAST.cpp
     private/LCodeAST.hpp
-    LCodeASTBuilder.cpp
-    LCodeASTBuilder.hpp
         src/LCode/AbstractSyntaxTreeNode.cpp include/LCode/AbstractSyntaxTreeNode.hpp include/LCode/StorageType.hpp src/LCode/AbstractSyntaxTreeAlgorithms.cpp include/LCode/AbstractSyntaxTreeAlgorithms.hpp src/LCode/AbstractSyntaxTreeBuilder.cpp include/LCode/AbstractSyntaxTreeBuilder.hpp include/Symbol.hpp src/Symbol.cpp src/LCode/SymbolTable.cpp include/LCode/SymbolTable.hpp include/LCode/ScopeTree.hpp src/LCode/Context.cpp include/LCode/Context.hpp src/LCode/ScopeTreeBuilder.cpp include/LCode/ScopeTreeBuilder.hpp include/LCode/ScopeTreeAlgorithms.hpp)
 
 if (ENABLE_MSAN)
