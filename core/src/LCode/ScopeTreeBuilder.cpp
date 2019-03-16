@@ -3,16 +3,18 @@
 //
 
 #include "LCode/ScopeTreeBuilder.hpp"
-#include "LCode/Context.hpp"
+#include "LCode/ParsingContext.hpp"
 
-ScopeTreeBuilder::ScopeTreeBuilder(Context& context)
+ScopeTreeBuilder::ScopeTreeBuilder(ParsingContext& context, ParseErrors& errors)
 : _context(context)
+, _errors(errors)
 {
+    static_cast<void>(_errors);
 }
 
 void ScopeTreeBuilder::enterProgram(LCodeParser::ProgramContext* context)
 {
-    _context._scope = std::make_unique<Context::ScopeNode>(context);
+    _context._scope = std::make_unique<ParsingContext::ScopeNode>(context);
     _currentScope = _context._scope.get();
 
     auto& rootSymbolTable = _currentScope->value();
@@ -21,7 +23,7 @@ void ScopeTreeBuilder::enterProgram(LCodeParser::ProgramContext* context)
 
 void ScopeTreeBuilder::exitProgram(LCodeParser::ProgramContext*)
 {
-    std::function<bool(Context::ScopeNode*)> f([this](Context::ScopeNode* node) -> bool
+    std::function<bool(ParsingContext::ScopeNode*)> f([this](ParsingContext::ScopeNode* node) -> bool
     {
         _context._scopeByParseTree.emplace(node->parseTreeNode(), node);
         return true;
@@ -34,7 +36,17 @@ void ScopeTreeBuilder::enterRewriteRuleDecl(LCodeParser::RewriteRuleDeclContext*
     _currentScope = _currentScope->makeChild(context);
 }
 
+void ScopeTreeBuilder::exitRewriteRuleDecl(LCodeParser::RewriteRuleDeclContext*)
+{
+    _currentScope = _currentScope->parent();
+}
+
 void ScopeTreeBuilder::enterAliasDecl(LCodeParser::AliasDeclContext* context)
 {
     _currentScope = _currentScope->makeChild(context);
+}
+
+void ScopeTreeBuilder::exitAliasDecl(LCodeParser::AliasDeclContext*)
+{
+    _currentScope = _currentScope->parent();
 }

@@ -8,7 +8,7 @@
 #include <LCode/AbstractSyntaxTreeAlgorithms.hpp>
 #include <LCode/AbstractSyntaxTreeBuilder.hpp>
 #include <LCode/ScopeTreeBuilder.hpp>
-#include <LCode/Context.hpp>
+#include <LCode/ParsingContext.hpp>
 #include <generated/LCodeLexer.h>
 #include <generated/LCodeParser.h>
 #include "ParserUtility.hpp"
@@ -16,13 +16,14 @@
 class AbstractSyntaxTreeBuilderTest : public ::testing::Test
 {
 public:
-    Context context;
+    ParsingContext context;
     ScopeTreeBuilder scopeTreeBuilder;
     AbstractSyntaxTreeBuilder astBuilder;
+    ParseErrors errors;
 
     AbstractSyntaxTreeBuilderTest()
-    : scopeTreeBuilder(context)
-    , astBuilder(context._scopeByParseTree)
+    : scopeTreeBuilder(context, errors)
+    , astBuilder(context._scopeByParseTree, errors)
     {
     }
 
@@ -178,7 +179,7 @@ TEST_F(AbstractSyntaxTreeBuilderTest, expression_precedence)
 
 TEST_F(AbstractSyntaxTreeBuilderTest, constant)
 {
-    parseLCodeAndDefineSymbols("number number_value = 123 / hello;", [](Context& context)
+    parseLCodeAndDefineSymbols("number number_value = 123 / hello;", [](ParsingContext& context)
     {
         SymbolTable& symbolTable = context._scope->value();
         symbolTable.defineConstant("hello", 2.0);
@@ -191,4 +192,16 @@ TEST_F(AbstractSyntaxTreeBuilderTest, constant)
     EXPECT_TRUE( compareTrees(expectedTree.get(), context._ast.get()) );
     EXPECT_TRUE( context._scope->value().isConstantDefined("number_value") );
     EXPECT_EQ( context._scope->value().getConstant("number_value")._value, 123.0 / 2.0 );
+}
+
+TEST_F(AbstractSyntaxTreeBuilderTest, constants)
+{
+    parseLCode("number a = 2; number b = 1; number c = 123;");
+    auto expectedTree = std::make_unique<ProgramNode>();
+    ASSERT_TRUE( context._scope->value().isConstantDefined("a") );
+    EXPECT_EQ( context._scope->value().getConstant("a")._value, 2.0 );
+    ASSERT_TRUE( context._scope->value().isConstantDefined("b") );
+    EXPECT_EQ( context._scope->value().getConstant("b")._value, 1.0 );
+    ASSERT_TRUE( context._scope->value().isConstantDefined("c") );
+    EXPECT_EQ( context._scope->value().getConstant("c")._value, 123.0 );
 }

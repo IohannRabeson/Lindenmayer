@@ -21,13 +21,12 @@ set(SRC
     LCode/AbstractSyntaxTreeTest.cpp
     LCode/AbstractSyntaxTreeBuilderTest.cpp
     LCode/ParserUtility.hpp
-    LCode/ParserUtility.cpp LCode/AbstractSyntaxTreeAlgorithmTest.cpp)
-
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
+    LCode/ParserUtility.cpp
+    LCode/AbstractSyntaxTreeAlgorithmTest.cpp
+    LCode/StringFormatTest.cpp)
 
 add_executable(unit_tests ${SRC})
+apply_cxx_target(unit_tests)
 target_link_libraries(unit_tests PRIVATE LindenmayerHeart gtest gmock Qt5::Core Qt5::Widgets)
 target_include_directories(unit_tests PRIVATE
                            "${CMAKE_CURRENT_SOURCE_DIR}}"

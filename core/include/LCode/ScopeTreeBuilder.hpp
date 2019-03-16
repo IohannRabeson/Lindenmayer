@@ -5,7 +5,8 @@
 #ifndef LINDENMAYER_SCOPETREEBUILDER_HPP
 #define LINDENMAYER_SCOPETREEBUILDER_HPP
 #include <generated/LCodeBaseListener.h>
-#include "LCode/Context.hpp"
+#include "LCode/ParsingContext.hpp"
+#include "LCode/ParseError.hpp"
 
 /*!
  * \brief Build the scope tree.
@@ -13,14 +14,17 @@
  */
 class ScopeTreeBuilder : public LCodeBaseListener
 {
-    Context& _context;
-    Context::ScopeNode* _currentScope;
+    ParsingContext& _context;
+    ParseErrors& _errors;
+    ParsingContext::ScopeNode* _currentScope;
 public:
-    explicit ScopeTreeBuilder(Context& context);
+    explicit ScopeTreeBuilder(ParsingContext& context, ParseErrors& errors);
     void enterProgram(LCodeParser::ProgramContext* context) override;
     void exitProgram(LCodeParser::ProgramContext* context) override;
     void enterRewriteRuleDecl(LCodeParser::RewriteRuleDeclContext* context) override;
+    void exitRewriteRuleDecl(LCodeParser::RewriteRuleDeclContext* context) override;
     void enterAliasDecl(LCodeParser::AliasDeclContext* context) override;
+    void exitAliasDecl(LCodeParser::AliasDeclContext* context) override;
 };
 
 #endif //LINDENMAYER_SCOPETREEBUILDER_HPP

@@ -8,7 +8,7 @@
 #include "LCode/ScopeTree.hpp"
 #include "LCode/AbstractSyntaxTreeNode.hpp"
 
-class Context
+class ParsingContext
 {
 public:
     using ScopeNode = ScopeTreeNode<SymbolTable>;
@@ -18,6 +18,6 @@ public:
     std::map<antlr4::tree::ParseTree*, ScopeNode*> _scopeByParseTree;
 };
 
-bool getFunction(std::string const& identifier, Context::ScopeNode const* node, SymbolTable::FunctionSymbol& symbol);
+bool getFunction(std::string const& identifier, ParsingContext::ScopeNode const* node, SymbolTable::FunctionSymbol& symbol);
 
 #endif //LINDENMAYER_CONTEXT_HPP
