@@ -24,7 +24,7 @@ If you didn't use it, shame on you and type `git submodule init && git submodule
 ## Build
 
 Require Qt 5 installed on your system.  
-Also a C++ compiler with sparse support for C++17 is required.  
+Also a C++ compiler with sparse support for C++17 is required (g++-7 or clang++-7)
 Qt directory should be added to `CMAKE_PREFIX_PATH`.
 
 ```bash

@@ -1,5 +1,6 @@
 sudo: required
 language: cpp
+osx_image: xcode10.1
 
 before_install:
   - export CI_TRAVIS_SCRIPT_BASE_PATH="./ci/travis/$TRAVIS_OS_NAME"
