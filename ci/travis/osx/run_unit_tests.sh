@@ -1,3 +1,6 @@
+#!/usr/bin/env bash
+
+set -e
 
 # Run unit tests
 ./builds/tests/unit_tests/unit_tests
