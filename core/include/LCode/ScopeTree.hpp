@@ -7,6 +7,8 @@
 #include "SymbolTable.hpp"
 #include "ScopeTreeAlgorithms.hpp"
 #include <functional>
+#include <vector>
+#include <map>
 
 /*!
  * \brief Generic data structure to simulate scopes
@@ -58,6 +60,49 @@ private:
     antlr4::tree::ParseTree* const _parseTreeNode;
     std::vector<std::unique_ptr<ThisType>> _children;
     T _value;
+};
+
+template <typename T>
+class ScopeTree
+{
+public:
+    using NodeType = ScopeTreeNode<T>;
+
+    void clear()
+    {
+        _root.reset();
+    }
+
+    NodeType* root() const
+    {
+        return _root.get();
+    }
+
+    NodeType* findNode(antlr4::tree::ParseTree* parseTreeNode) const
+    {
+        auto it = _nodesByParseTree.find(parseTreeNode);
+
+        return it != _nodesByParseTree.end() ? it->second : nullptr;
+    }
+
+    NodeType* addNode(antlr4::tree::ParseTree* parseTreeNode, NodeType* parent = nullptr)
+    {
+        NodeType* newNode = nullptr;
+        if (parent == nullptr)
+        {
+            _root = std::make_unique<NodeType>(parseTreeNode);
+            newNode = _root.get();
+        }
+        else
+        {
+            newNode = parent->makeChild(parseTreeNode);
+        }
+        _nodesByParseTree.emplace(parseTreeNode, newNode);
+        return newNode;
+    }
+private:
+    std::unique_ptr<NodeType> _root;
+    std::map<antlr4::tree::ParseTree*, NodeType*> _nodesByParseTree;
 };
 
 #endif //LINDENMAYER_SCOPETREE_HPP

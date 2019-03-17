@@ -3,14 +3,14 @@
 //
 
 #include "LCode/AbstractSyntaxTreeBuilder.hpp"
-#include "LCode/ScopeTreeBuilder.hpp"
+#include "LCode/LCodeScopeTreeBuilder.hpp"
 #include "LCode/AbstractSyntaxTreeAlgorithms.hpp"
 #include "LCode/AbstractSyntaxTreeNode.hpp"
 
 #include <cassert>
 
-AbstractSyntaxTreeBuilder::AbstractSyntaxTreeBuilder(std::map<antlr4::tree::ParseTree*, ParsingContext::ScopeNode*> const& scopeByParseTree, ParseErrors& errors)
-: _scopeByParseTree(scopeByParseTree)
+AbstractSyntaxTreeBuilder::AbstractSyntaxTreeBuilder(ScopeTree<SymbolTable> const& scopeTree, ParseErrors& errors)
+: _scopeTree(scopeTree)
 , _errors(errors)
 {
 }
@@ -18,9 +18,8 @@ AbstractSyntaxTreeBuilder::AbstractSyntaxTreeBuilder(std::map<antlr4::tree::Pars
 void AbstractSyntaxTreeBuilder::enterProgram(LCodeParser::ProgramContext* context)
 {
     _astRoot = std::make_unique<ProgramNode>(context);
-    assert( _scopeByParseTree.size() > 0u );
-    assert( _scopeByParseTree.find(context) != _scopeByParseTree.end() );
-    _currentScopeNode = _scopeByParseTree.at(context);
+    _currentScopeNode = _scopeTree.findNode(context);
+    assert( _currentScopeNode != nullptr );
     pushAstNode(_astRoot.get());
 }
 
@@ -197,31 +196,20 @@ AbstractSyntaxTreeNode* AbstractSyntaxTreeBuilder::currentAstNode() const
     return _stack.top();
 }
 
-ParsingContext::ScopeNode* AbstractSyntaxTreeBuilder::currentScopeNode() const
+LCodeScopeTree::NodeType* AbstractSyntaxTreeBuilder::currentScopeNode() const
 {
     return _currentScopeNode;
 }
 
 void AbstractSyntaxTreeBuilder::updateCurrentScope(antlr4::tree::ParseTree* parseTreeNode)
 {
-    if (auto it = _scopeByParseTree.find(parseTreeNode); it != _scopeByParseTree.end())
-    {
-        _currentScopeNode = it->second;
-    }
-    else
-    {
-        // Must have complete scope tree: parseTreeNode must have
-        // his own scope tree.
-        assert(false);
-    }
+    _currentScopeNode = _scopeTree.findNode(parseTreeNode);
+    // Must have complete scope tree: parseTreeNode must have
+    // his own scope tree.
+    assert( _currentScopeNode != nullptr );
 }
 
 void AbstractSyntaxTreeBuilder::releaseAst(std::unique_ptr<ProgramNode>& ast)
 {
     ast.reset(_astRoot.release());
-}
-
-void AbstractSyntaxTreeBuilder::releaseAst(ParsingContext& context)
-{
-    releaseAst(context._ast);
 }
