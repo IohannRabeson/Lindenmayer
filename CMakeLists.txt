@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.9)
+cmake_minimum_required(VERSION 3.9 FATAL_ERROR)
 project(Lindenmayer)
 
 set(CMAKE_CXX_FLAGS_RETAIL "${CMAKE_CXX_FLAGS_RELEASE}")
@@ -44,10 +44,11 @@ endif()
 message(${BUILD_INFOS})
 
 macro(apply_cxx_target target)
-    message(STATUS "Enabled C++17 for ${target}")
-    set_property(TARGET ${target} PROPERTY CXX_STANDARD 17)
-    set_property(TARGET ${target} PROPERTY CXX_EXTENSIONS ON)
-    set_property(TARGET ${target} PROPERTY CXX_STANDARD_REQUIRED ON)
+    message(STATUS "Enabled C++17 for target ${target}")
+    set_target_properties(${target} PROPERTIES
+            CXX_STANDARD 17
+            CXX_EXTENSIONS ON
+            CXX_STANDARD_REQUIRED ON)
 endmacro(apply_cxx_target)
 
 set(CMAKE_AUTOMOC ON)

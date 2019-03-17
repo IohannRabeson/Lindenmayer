@@ -5,6 +5,11 @@
 #ifndef LINDENMAYER_DEFINITIONS_HPP
 #define LINDENMAYER_DEFINITIONS_HPP
 
+/*!
+ * \brief LCode types identifiers
+ * For now only the 'number' type is available.
+ * Later I will probably add more type (boolean and string I guess).
+ */
 enum class StorageType : std::size_t
 {
     Null,
@@ -30,6 +35,14 @@ struct StorageTypeTrait<StorageType::Number>
     }
 };
 
+/*!
+ * \brief Get the C++ type used to store a value of a LCode type specified by StorageTypeId
+ * \tparam StorageTypeId
+ * \code
+ * using CppTypeIWillHaveToUseToStoreAValue = CppType<StorageType::Number>;
+ * CppTypeIWillHaveToUseToStoreAValue myValueOfTypeNumber = 123;
+ * \endcode
+ */
 template <StorageType StorageTypeId>
 using CppType = typename StorageTypeTrait<StorageTypeId>::Type;
 

@@ -28,6 +28,7 @@ add_executable(Lindenmayer
     Lindenmayer.qrc
     ${QM_FILES}
 )
+apply_cxx_target(Lindenmayer)
 
 set_target_properties(Lindenmayer PROPERTIES OUTPUT_NAME ${THE_APPLICATION_DISPLAY_NAME})
 target_include_directories(Lindenmayer PRIVATE "${CMAKE_SOURCE_DIR}/app" "${CMAKE_SOURCE_DIR}/core" "${CMAKE_SOURCE_DIR}/externals/Qt-Frameless-Window-DarkStyle")

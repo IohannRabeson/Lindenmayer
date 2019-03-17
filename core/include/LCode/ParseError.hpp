@@ -6,12 +6,13 @@
 #define LINDENMAYER_ERROR_HPP
 #include <string>
 #include <vector>
+#include <limits>
 #include <antlr4-runtime.h>
 #include <LCode/StringFormat.hpp>
 
 struct ParseError
 {
-    static constexpr std::size_t const Null = std::numeric_limits<std::size_t>::max();
+    static std::size_t const Null;
 
     enum class Type
     {

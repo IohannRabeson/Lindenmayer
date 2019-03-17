@@ -44,3 +44,5 @@ ParseError::ParseError(std::string const& message, std::size_t line, std::size_t
     , type(type)
 {
 }
+
+std::size_t const ParseError::Null = std::numeric_limits<std::size_t>::max();
