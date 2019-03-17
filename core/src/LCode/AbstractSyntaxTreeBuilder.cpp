@@ -56,16 +56,22 @@ void AbstractSyntaxTreeBuilder::enterConstantDecl(LCodeParser::ConstantDeclConte
 
 void AbstractSyntaxTreeBuilder::exitConstantDecl(LCodeParser::ConstantDeclContext* context)
 {
-    auto* constantDeclarationNode = dynamic_cast<ConstantDeclarationNode*>(currentAstNode());
-    assert( constantDeclarationNode != nullptr );
-    auto* expressionNode = dynamic_cast<ExpressionNode*>(constantDeclarationNode->getChild(0));
-    // If this assertion fails then something is broken in the parser itself
-    assert( expressionNode != nullptr );
-    auto const identifier = context->IDENTIFIER()->getText();
-    auto const value = reduceAst(expressionNode);
-    if (!currentScopeNode()->value().defineConstant(identifier, value))
+    // AST reduction can be done only if parsing is finished without errors.
+    // Note: errors gathered here concerns only errors of parents or errors in the sub tree to reduce (the value assigned to
+    // the constant).
+    if (!containsErrors(_errors, ParseError::Type::Error))
     {
-        pushError(_errors, ParseError::Type::Error, context, "Constant '{}' already defined", identifier);
+        auto* constantDeclarationNode = dynamic_cast<ConstantDeclarationNode*>(currentAstNode());
+        assert(constantDeclarationNode != nullptr);
+        auto* expressionNode = dynamic_cast<ExpressionNode*>(constantDeclarationNode->getChild(0));
+        // If this assertion fails then something is broken in the parser itself
+        assert(expressionNode != nullptr);
+        auto const identifier = context->IDENTIFIER()->getText();
+        auto const value = reduceAst(expressionNode);
+        if (!currentScopeNode()->value().defineConstant(identifier, value))
+        {
+            pushError(_errors, ParseError::Type::Error, context, "Constant '{}' already defined", identifier);
+        }
     }
     popAstNode();
 }
@@ -158,6 +164,11 @@ void AbstractSyntaxTreeBuilder::exitNegativeExpression(LCodeParser::NegativeExpr
 
 void AbstractSyntaxTreeBuilder::enterFunctionCall(LCodeParser::FunctionCallContext* context)
 {
+    if (containsErrors(_errors, ParseError::Type::Error))
+    {
+        return;
+    }
+
     if (auto* scopeNode = currentScopeNode(); scopeNode != nullptr)
     {
         auto const& symbolTable = scopeNode->value();
@@ -175,6 +186,10 @@ void AbstractSyntaxTreeBuilder::enterFunctionCall(LCodeParser::FunctionCallConte
 
 void AbstractSyntaxTreeBuilder::exitFunctionCall(LCodeParser::FunctionCallContext*)
 {
+    if (containsErrors(_errors, ParseError::Type::Error))
+    {
+        return;
+    }
     popAstNode();
 }
 
