@@ -25,8 +25,8 @@ ProgramContent parseLCode(std::string const& text)
     LCodeScopeTreeBuilder scopeTreeBuilder(scopeTree);
     AbstractSyntaxTreeBuilder astBuilder(scopeTree, parseErrors);
 
-    // /!\ program() instanciate a new node each time so it's really really important to call it
-    // only once and store the pointer returned /!\
+    // !! program() instanciate a new node each time so it's really really important to call it
+    // only once and store the pointer returned !!
     // This pointer will be deleted when parser will be deleted.
     auto* programNode = parser.program();
     // We have to build the scope tree before building the AST
