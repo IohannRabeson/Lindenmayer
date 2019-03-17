@@ -66,7 +66,7 @@ void stringify(StringificationArray<StringTraitsType, TS...>& results, TS&&... a
         ++index;
     };
     // Fold expression: call f for each variadic arguments args
-    (f(args), ...);
+    (..., f(args));
 }
 
 /*!
