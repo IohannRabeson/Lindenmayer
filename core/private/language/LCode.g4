@@ -1,6 +1,9 @@
 grammar LCode;
 
-program: statement* ;
+program: statement+
+       | WHITESPACES
+       ;
+
 statement: 'number' IDENTIFIER ASSIGNATION expression END_OF_STATEMENT            #ConstantDecl
          | 'alias' function_call ASSIGNATION function_call+ END_OF_STATEMENT      #AliasDecl
          | 'axiom' function_call+ END_OF_STATEMENT                                #AxiomDecl

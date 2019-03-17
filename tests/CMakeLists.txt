@@ -23,7 +23,7 @@ set(SRC
     LCode/ParserUtility.hpp
     LCode/ParserUtility.cpp
     LCode/AbstractSyntaxTreeAlgorithmTest.cpp
-    LCode/StringFormatTest.cpp LCode/ParseErrorTest.cpp)
+    LCode/StringFormatTest.cpp LCode/ParseErrorTest.cpp LCode/LCodeLexicalAnalysisTest.cpp)
 
 add_executable(unit_tests ${SRC})
 apply_cxx_target(unit_tests)

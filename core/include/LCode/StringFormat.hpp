@@ -79,6 +79,8 @@ void stringify(StringificationArray<StringTraitsType, TS...>& results, TS&&... a
  * \code
  *   std::cout << formatText<StdStringTraits<char>>("hello {}!\n", "Bob");
  * \endcode
+ * Currently, only simple placeholders are supported ("{}").
+ * It can be possible I implement one day named placeholders ("{ foo }").
  */
 template <typename StringTraitsType, typename ... TS>
 typename StringTraitsType::StringType formatText(typename StringTraitsType::StringType const& format, TS&&...args)

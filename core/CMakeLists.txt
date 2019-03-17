@@ -23,7 +23,7 @@ set(LINDENMAYER_CORE_SOURCES
     include/ModuleAction.hpp
     private/LCodeAST.cpp
     private/LCodeAST.hpp
-        src/LCode/AbstractSyntaxTreeNode.cpp include/LCode/AbstractSyntaxTreeNode.hpp include/LCode/StorageType.hpp src/LCode/AbstractSyntaxTreeAlgorithms.cpp include/LCode/AbstractSyntaxTreeAlgorithms.hpp src/LCode/AbstractSyntaxTreeBuilder.cpp include/LCode/AbstractSyntaxTreeBuilder.hpp include/Symbol.hpp src/Symbol.cpp src/LCode/SymbolTable.cpp include/LCode/SymbolTable.hpp include/LCode/ScopeTree.hpp src/LCode/LCodeScopeTreeBuilder.cpp include/LCode/LCodeScopeTreeBuilder.hpp include/LCode/ScopeTreeAlgorithms.hpp src/LCode/LCodeProgram.cpp include/LCode/LCodeProgram.hpp src/LCode/ParseError.cpp include/LCode/ParseError.hpp include/LCode/StringFormat.hpp src/StringFormat.cpp include/LCode/LCodeScopeTree.hpp)
+        src/LCode/AbstractSyntaxTreeNode.cpp include/LCode/AbstractSyntaxTreeNode.hpp include/LCode/StorageType.hpp src/LCode/AbstractSyntaxTreeAlgorithms.cpp include/LCode/AbstractSyntaxTreeAlgorithms.hpp src/LCode/AbstractSyntaxTreeBuilder.cpp include/LCode/AbstractSyntaxTreeBuilder.hpp include/Symbol.hpp src/Symbol.cpp src/LCode/SymbolTable.cpp include/LCode/SymbolTable.hpp include/LCode/ScopeTree.hpp src/LCode/LCodeScopeTreeBuilder.cpp include/LCode/LCodeScopeTreeBuilder.hpp include/LCode/ScopeTreeAlgorithms.hpp src/LCode/LCodeProgram.cpp include/LCode/LCodeProgram.hpp src/LCode/ParseError.cpp include/LCode/ParseError.hpp include/LCode/StringFormat.hpp src/StringFormat.cpp include/LCode/LCodeScopeTree.hpp include/LCode/ParseErrorListener.cpp include/LCode/ParseErrorListener.hpp)
 
 if (ENABLE_MSAN)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=memory")
