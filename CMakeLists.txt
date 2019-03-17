@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.9 FATAL_ERROR)
 project(Lindenmayer)
 
 set(CMAKE_CXX_FLAGS_RETAIL "${CMAKE_CXX_FLAGS_RELEASE}")
+set(CMAKE_CXX_FLAGS_ASAN "${CMAKE_CXX_FLAGS_DEBUG} -fsanitize=address")
+set(CMAKE_CXX_FLAGS_MSAN "${CMAKE_CXX_FLAGS_DEBUG} -fsanitize=memory")
 
 if (${CMAKE_BUILD_TYPE} MATCHES Retail)
     set(RETAIL_MODE ON)
@@ -25,14 +27,6 @@ set(BUILD_INFOS "-- Build version: ${APPLICATION_VERSION}")
 
 if (RETAIL_MODE)
     set(BUILD_INFOS "${BUILD_INFOS} (retail)")
-endif()
-
-if (ENABLE_MSAN)
-    message(STATUS "Enabled memory sanitizer")
-endif()
-
-if (ENABLE_ASAN)
-    message(STATUS "Enabled address sanitizer")
 endif()
 
 # Google Test is builded with the flag /MT
