@@ -5,7 +5,8 @@
 #ifndef LINDENMAYER_ABSTRACTSYNTAXTREEBUILDER_HPP
 #define LINDENMAYER_ABSTRACTSYNTAXTREEBUILDER_HPP
 #include <generated/LCodeBaseListener.h>
-#include "LCode/Context.hpp"
+#include "LCode/ParseError.hpp"
+#include "LCode/LCodeScopeTree.hpp"
 
 class ProgramNode;
 class AbstractSyntaxTreeNode;
@@ -19,21 +20,21 @@ class AbstractSyntaxTreeNode;
 class AbstractSyntaxTreeBuilder : public LCodeBaseListener
 {
     std::unique_ptr<ProgramNode> _astRoot;
-    std::map<antlr4::tree::ParseTree*, Context::ScopeNode*> const& _scopeByParseTree;
+    ScopeTree<SymbolTable> const& _scopeTree;
     std::stack<AbstractSyntaxTreeNode*> _stack;
-    Context::ScopeNode* _currentScopeNode = nullptr;
+    LCodeScopeTree::NodeType* _currentScopeNode = nullptr;
+    ParseErrors& _errors;
 private:
     void pushAstNode(AbstractSyntaxTreeNode* astNode);
     void popAstNode();
     void updateCurrentScope(antlr4::tree::ParseTree* parseTreeNode);
 
     AbstractSyntaxTreeNode* currentAstNode() const;
-    Context::ScopeNode* currentScopeNode() const;
+    LCodeScopeTree::NodeType* currentScopeNode() const;
 public:
-    explicit AbstractSyntaxTreeBuilder(std::map<antlr4::tree::ParseTree*, Context::ScopeNode*> const& scopeByParseTree);
+    explicit AbstractSyntaxTreeBuilder(ScopeTree<SymbolTable> const& scopeTree, ParseErrors& errors);
 
     void releaseAst(std::unique_ptr<ProgramNode>& ast);
-    void releaseAst(Context& context);
 
     void enterProgram(LCodeParser::ProgramContext* context) override;
     void exitProgram(LCodeParser::ProgramContext* context) override;

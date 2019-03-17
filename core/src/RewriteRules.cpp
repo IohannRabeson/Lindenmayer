@@ -9,6 +9,7 @@ namespace lcode
 {
     void rewrite(RewriteRules const& rules, Modules& modules, unsigned int const iterations)
     {
+        std::cout << "Rewrite " << modules.size() << " instructions with " << iterations << " iterations: ";
         for (auto i = 0u; i < iterations; ++i)
         {
             auto moduleIt = modules.begin();
@@ -27,6 +28,7 @@ namespace lcode
                 }
             }
         }
+        std::cout << modules.size() << " modules\n";
     }
 
     Modules rewrote(RewriteRules const& rules, Modules const& modules, unsigned int const iterations)
