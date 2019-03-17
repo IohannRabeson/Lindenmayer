@@ -3,8 +3,11 @@
 //
 
 #include "LCode/LCodeProgram.hpp"
+#include "LCode/ParseErrorListener.hpp"
 #include "LCode/LCodeScopeTreeBuilder.hpp"
 #include "LCode/AbstractSyntaxTreeBuilder.hpp"
+#include "LCode/ParseErrorListener.hpp"
+
 #include <generated/LCodeParser.h>
 #include <generated/LCodeLexer.h>
 #include <antlr4-runtime.h>
@@ -21,6 +24,11 @@ ProgramContent parseLCode(std::string const& text)
     antlr4::CommonTokenStream tokenStream(&lexer);
     LCodeParser parser(&tokenStream);
     antlr4::tree::ParseTreeWalker treeWalker;
+
+    // Setup an error listener
+    ParseErrorListener errorListener(parseErrors);
+    parser.addErrorListener(&errorListener);
+
     // Passes
     LCodeScopeTreeBuilder scopeTreeBuilder(scopeTree);
     AbstractSyntaxTreeBuilder astBuilder(scopeTree, parseErrors);
