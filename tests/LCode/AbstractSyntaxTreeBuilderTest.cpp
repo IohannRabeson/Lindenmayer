@@ -7,8 +7,7 @@
 #include <LCode/AbstractSyntaxTreeNode.hpp>
 #include <LCode/AbstractSyntaxTreeAlgorithms.hpp>
 #include <LCode/AbstractSyntaxTreeBuilder.hpp>
-#include <LCode/ScopeTreeBuilder.hpp>
-#include <LCode/Context.hpp>
+#include <LCode/LCodeScopeTreeBuilder.hpp>
 #include <generated/LCodeLexer.h>
 #include <generated/LCodeParser.h>
 #include "ParserUtility.hpp"
@@ -16,13 +15,16 @@
 class AbstractSyntaxTreeBuilderTest : public ::testing::Test
 {
 public:
-    Context context;
-    ScopeTreeBuilder scopeTreeBuilder;
+    LCodeScopeTree scopeTree;
+    std::unique_ptr<ProgramNode> ast;
+    ParseErrors errors;
+
+    LCodeScopeTreeBuilder scopeTreeBuilder;
     AbstractSyntaxTreeBuilder astBuilder;
 
     AbstractSyntaxTreeBuilderTest()
-    : scopeTreeBuilder(context)
-    , astBuilder(context._scopeByParseTree)
+    : scopeTreeBuilder(scopeTree)
+    , astBuilder(scopeTree, errors)
     {
     }
 
@@ -43,7 +45,7 @@ public:
         // Then with a scope tree we can build the AST
         treeWalker.walk(&astBuilder, programNode);
         // And store it in a context
-        astBuilder.releaseAst(context._ast);
+        astBuilder.releaseAst(ast);
     }
 
     template <typename F>
@@ -62,11 +64,11 @@ public:
         // We have to build the scope tree before building the AST
         treeWalker.walk(&scopeTreeBuilder, programNode);
         // Define additional symbols
-        defineSymbols(context);
+        defineSymbols(scopeTree);
         // Then with a scope tree we can build the AST
         treeWalker.walk(&astBuilder, programNode);
         // And store it in a context
-        astBuilder.releaseAst(context._ast);
+        astBuilder.releaseAst(ast);
     }
 };
 
@@ -75,7 +77,7 @@ TEST_F(AbstractSyntaxTreeBuilderTest, constant_simple_number)
     parseLCode("number number_value = 123;");
     std::unique_ptr<AbstractSyntaxTreeNode> expectedTree = std::make_unique<ProgramNode>();
     expectedTree->makeChild<ConstantDeclarationNode>()->makeChild<LiteralNumberNode>(123);
-    EXPECT_TRUE( compareTrees(expectedTree.get(), context._ast.get()) );
+    EXPECT_TRUE( compareTrees(expectedTree.get(), ast.get()) );
 }
 
 TEST_F(AbstractSyntaxTreeBuilderTest, const_addition)
@@ -86,7 +88,7 @@ TEST_F(AbstractSyntaxTreeBuilderTest, const_addition)
     auto* const operatorNode = constantDeclarationNode->makeChild<AdditionNode>();
     operatorNode->makeChild<LiteralNumberNode>(123);
     operatorNode->makeChild<LiteralNumberNode>(2);
-    EXPECT_TRUE( compareTrees(expectedTree.get(), context._ast.get()) );
+    EXPECT_TRUE( compareTrees(expectedTree.get(), ast.get()) );
 }
 
 TEST_F(AbstractSyntaxTreeBuilderTest, const_substraction)
@@ -97,7 +99,7 @@ TEST_F(AbstractSyntaxTreeBuilderTest, const_substraction)
     auto* const operatorNode = constantDeclarationNode->makeChild<SubstractionNode>();
     operatorNode->makeChild<LiteralNumberNode>(123);
     operatorNode->makeChild<LiteralNumberNode>(2);
-    EXPECT_TRUE( compareTrees(expectedTree.get(), context._ast.get()) );
+    EXPECT_TRUE( compareTrees(expectedTree.get(), ast.get()) );
 }
 
 TEST_F(AbstractSyntaxTreeBuilderTest, const_multiplication)
@@ -108,7 +110,7 @@ TEST_F(AbstractSyntaxTreeBuilderTest, const_multiplication)
     auto* const operatorNode = constantDeclarationNode->makeChild<MultiplicationNode>();
     operatorNode->makeChild<LiteralNumberNode>(123);
     operatorNode->makeChild<LiteralNumberNode>(2);
-    EXPECT_TRUE( compareTrees(expectedTree.get(), context._ast.get()) );
+    EXPECT_TRUE( compareTrees(expectedTree.get(), ast.get()) );
 }
 
 TEST_F(AbstractSyntaxTreeBuilderTest, const_division)
@@ -119,7 +121,7 @@ TEST_F(AbstractSyntaxTreeBuilderTest, const_division)
     auto* const operatorNode = constantDeclarationNode->makeChild<DivisionNode>();
     operatorNode->makeChild<LiteralNumberNode>(123);
     operatorNode->makeChild<LiteralNumberNode>(2);
-    EXPECT_TRUE( compareTrees(expectedTree.get(), context._ast.get()) );
+    EXPECT_TRUE( compareTrees(expectedTree.get(), ast.get()) );
 }
 
 TEST_F(AbstractSyntaxTreeBuilderTest, const_negation)
@@ -129,7 +131,7 @@ TEST_F(AbstractSyntaxTreeBuilderTest, const_negation)
     auto* const constantDeclarationNode = expectedTree->makeChild<ConstantDeclarationNode>();
     auto* const operatorNode = constantDeclarationNode->makeChild<NegativeNode>();
     operatorNode->makeChild<LiteralNumberNode>(-2);
-    EXPECT_TRUE( compareTrees(expectedTree.get(), context._ast.get()) );
+    EXPECT_TRUE( compareTrees(expectedTree.get(), ast.get()) );
 }
 
 TEST_F(AbstractSyntaxTreeBuilderTest, const_negation_1)
@@ -139,7 +141,7 @@ TEST_F(AbstractSyntaxTreeBuilderTest, const_negation_1)
     auto* const constantDeclarationNode = expectedTree->makeChild<ConstantDeclarationNode>();
     auto* const operatorNode = constantDeclarationNode->makeChild<NegativeNode>();
     operatorNode->makeChild<LiteralNumberNode>(-2);
-    EXPECT_TRUE( compareTrees(expectedTree.get(), context._ast.get()) );
+    EXPECT_TRUE( compareTrees(expectedTree.get(), ast.get()) );
 }
 
 TEST_F(AbstractSyntaxTreeBuilderTest, expression_math_0)
@@ -156,7 +158,7 @@ TEST_F(AbstractSyntaxTreeBuilderTest, expression_math_0)
     multiplicationNode->makeChild<LiteralNumberNode>(3);
     divisionNode->makeChild<LiteralNumberNode>(4);
     divisionNode->makeChild<LiteralNumberNode>(5);
-    EXPECT_TRUE( compareTrees(expectedTree.get(), context._ast.get()) );
+    EXPECT_TRUE( compareTrees(expectedTree.get(), ast.get()) );
 }
 
 TEST_F(AbstractSyntaxTreeBuilderTest, expression_precedence)
@@ -173,22 +175,34 @@ TEST_F(AbstractSyntaxTreeBuilderTest, expression_precedence)
     additionNode->makeChild<LiteralNumberNode>(2);
     divisionNode->makeChild<LiteralNumberNode>(4);
     divisionNode->makeChild<LiteralNumberNode>(5);
-    EXPECT_TRUE( compareTrees(expectedTree.get(), context._ast.get()) );
+    EXPECT_TRUE( compareTrees(expectedTree.get(), ast.get()) );
 }
 
 TEST_F(AbstractSyntaxTreeBuilderTest, constant)
 {
-    parseLCodeAndDefineSymbols("number number_value = 123 / hello;", [](Context& context)
+    parseLCodeAndDefineSymbols("number number_value = 123 / hello;", [](LCodeScopeTree& scopeTree)
     {
-        SymbolTable& symbolTable = context._scope->value();
+        SymbolTable& symbolTable = scopeTree.root()->value();
         symbolTable.defineConstant("hello", 2.0);
     });
     auto expectedTree = std::make_unique<ProgramNode>();
     auto* const constantDeclarationNode = expectedTree->makeChild<ConstantDeclarationNode>();
     auto* const operatorNode = constantDeclarationNode->makeChild<DivisionNode>();
     operatorNode->makeChild<LiteralNumberNode>(123);
-    operatorNode->makeChild<ConstantNumberNode>("hello", context._scope->value());
-    EXPECT_TRUE( compareTrees(expectedTree.get(), context._ast.get()) );
-    EXPECT_TRUE( context._scope->value().isConstantDefined("number_value") );
-    EXPECT_EQ( context._scope->value().getConstant("number_value")._value, 123.0 / 2.0 );
+    operatorNode->makeChild<ConstantNumberNode>("hello", scopeTree.root()->value());
+    EXPECT_TRUE( compareTrees(expectedTree.get(), ast.get()) );
+    EXPECT_TRUE( scopeTree.root()->value().isConstantDefined("number_value") );
+    EXPECT_EQ( scopeTree.root()->value().getConstant("number_value")._value, 123.0 / 2.0 );
+}
+
+TEST_F(AbstractSyntaxTreeBuilderTest, constants)
+{
+    parseLCode("number a = 2; number b = 1; number c = 123;");
+    auto expectedTree = std::make_unique<ProgramNode>();
+    ASSERT_TRUE( scopeTree.root()->value().isConstantDefined("a") );
+    EXPECT_EQ( scopeTree.root()->value().getConstant("a")._value, 2.0 );
+    ASSERT_TRUE( scopeTree.root()->value().isConstantDefined("b") );
+    EXPECT_EQ( scopeTree.root()->value().getConstant("b")._value, 1.0 );
+    ASSERT_TRUE( scopeTree.root()->value().isConstantDefined("c") );
+    EXPECT_EQ( scopeTree.root()->value().getConstant("c")._value, 123.0 );
 }

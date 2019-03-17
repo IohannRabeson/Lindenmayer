@@ -3,23 +3,23 @@
 //
 
 #include "LCode/AbstractSyntaxTreeBuilder.hpp"
-#include "LCode/ScopeTreeBuilder.hpp"
+#include "LCode/LCodeScopeTreeBuilder.hpp"
 #include "LCode/AbstractSyntaxTreeAlgorithms.hpp"
 #include "LCode/AbstractSyntaxTreeNode.hpp"
 
 #include <cassert>
 
-AbstractSyntaxTreeBuilder::AbstractSyntaxTreeBuilder(std::map<antlr4::tree::ParseTree*, Context::ScopeNode*> const& scopeByParseTree)
-: _scopeByParseTree(scopeByParseTree)
+AbstractSyntaxTreeBuilder::AbstractSyntaxTreeBuilder(LCodeScopeTree const& scopeTree, ParseErrors& errors)
+: _scopeTree(scopeTree)
+, _errors(errors)
 {
 }
 
 void AbstractSyntaxTreeBuilder::enterProgram(LCodeParser::ProgramContext* context)
 {
     _astRoot = std::make_unique<ProgramNode>(context);
-    assert( _scopeByParseTree.size() > 0u );
-    assert( _scopeByParseTree.find(context) != _scopeByParseTree.end() );
-    _currentScopeNode = _scopeByParseTree.at(context);
+    _currentScopeNode = _scopeTree.findNode(context);
+    assert( _currentScopeNode != nullptr );
     pushAstNode(_astRoot.get());
 }
 
@@ -45,7 +45,7 @@ void AbstractSyntaxTreeBuilder::enterIdentifier(LCodeParser::IdentifierContext* 
     }
     else
     {
-        // TODO: signal invalid identifier
+        pushError(_errors, ParseError::Type::Error, context, "Undefined constant '{}'", identifier);
     }
 }
 
@@ -65,8 +65,7 @@ void AbstractSyntaxTreeBuilder::exitConstantDecl(LCodeParser::ConstantDeclContex
     auto const value = reduceAst(expressionNode);
     if (!currentScopeNode()->value().defineConstant(identifier, value))
     {
-        // TODO: error
-        std::cerr << "Constant already defined '" << identifier << "'\n";
+        pushError(_errors, ParseError::Type::Error, context, "Constant '{}' already defined", identifier);
     }
     popAstNode();
 }
@@ -166,8 +165,7 @@ void AbstractSyntaxTreeBuilder::enterFunctionCall(LCodeParser::FunctionCallConte
         auto const functionIdentifier = functionCall->IDENTIFIER()->getText();
         if (!symbolTable.isFunctionDefined(functionIdentifier))
         {
-            // TODO: signal error with an exception? or an error stack stored by the context?
-            std::cerr << "Undefined function '" << functionIdentifier << "' called\n";
+            pushError(_errors, ParseError::Type::Error, context, "Undefined function '{}'", functionIdentifier);
             return;
         }
         auto const& functionSymbol = symbolTable.getFunction(functionIdentifier);
@@ -198,25 +196,20 @@ AbstractSyntaxTreeNode* AbstractSyntaxTreeBuilder::currentAstNode() const
     return _stack.top();
 }
 
-Context::ScopeNode* AbstractSyntaxTreeBuilder::currentScopeNode() const
+LCodeScopeTree::NodeType* AbstractSyntaxTreeBuilder::currentScopeNode() const
 {
     return _currentScopeNode;
 }
 
 void AbstractSyntaxTreeBuilder::updateCurrentScope(antlr4::tree::ParseTree* parseTreeNode)
 {
-    if (auto it = _scopeByParseTree.find(parseTreeNode); it != _scopeByParseTree.end())
-    {
-        _currentScopeNode = it->second;
-    }
+    _currentScopeNode = _scopeTree.findNode(parseTreeNode);
+    // Must have complete scope tree: parseTreeNode must have
+    // his own scope tree.
+    assert( _currentScopeNode != nullptr );
 }
 
 void AbstractSyntaxTreeBuilder::releaseAst(std::unique_ptr<ProgramNode>& ast)
 {
     ast.reset(_astRoot.release());
-}
-
-void AbstractSyntaxTreeBuilder::releaseAst(Context& context)
-{
-    releaseAst(context._ast);
 }

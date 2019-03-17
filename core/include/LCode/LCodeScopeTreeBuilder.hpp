@@ -5,22 +5,25 @@
 #ifndef LINDENMAYER_SCOPETREEBUILDER_HPP
 #define LINDENMAYER_SCOPETREEBUILDER_HPP
 #include <generated/LCodeBaseListener.h>
-#include "LCode/Context.hpp"
+#include "LCode/LCodeScopeTree.hpp"
+#include "LCode/ParseError.hpp"
 
 /*!
  * \brief Build the scope tree.
  * This pass doesn't add symbols to scope tree nodes.
  */
-class ScopeTreeBuilder : public LCodeBaseListener
+class LCodeScopeTreeBuilder : public LCodeBaseListener
 {
-    Context& _context;
-    Context::ScopeNode* _currentScope;
+    LCodeScopeTree& _scopeTree;
+    LCodeScopeTree::NodeType* _currentScope;
 public:
-    explicit ScopeTreeBuilder(Context& context);
+    explicit LCodeScopeTreeBuilder(LCodeScopeTree& scopeTree);
     void enterProgram(LCodeParser::ProgramContext* context) override;
     void exitProgram(LCodeParser::ProgramContext* context) override;
     void enterRewriteRuleDecl(LCodeParser::RewriteRuleDeclContext* context) override;
+    void exitRewriteRuleDecl(LCodeParser::RewriteRuleDeclContext* context) override;
     void enterAliasDecl(LCodeParser::AliasDeclContext* context) override;
+    void exitAliasDecl(LCodeParser::AliasDeclContext* context) override;
 };
 
 #endif //LINDENMAYER_SCOPETREEBUILDER_HPP

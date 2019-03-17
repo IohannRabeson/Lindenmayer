@@ -43,9 +43,12 @@ endif()
 
 message(${BUILD_INFOS})
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
+macro(apply_cxx_target target)
+    message(STATUS "Enabled C++17 for ${target}")
+    set_property(TARGET ${target} PROPERTY CXX_STANDARD 17)
+    set_property(TARGET ${target} PROPERTY CXX_EXTENSIONS ON)
+    set_property(TARGET ${target} PROPERTY CXX_STANDARD_REQUIRED ON)
+endmacro(apply_cxx_target)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
