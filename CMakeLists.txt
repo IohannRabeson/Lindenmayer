@@ -2,8 +2,16 @@ cmake_minimum_required(VERSION 3.9 FATAL_ERROR)
 project(Lindenmayer)
 
 set(CMAKE_CXX_FLAGS_RETAIL "${CMAKE_CXX_FLAGS_RELEASE}")
-set(CMAKE_CXX_FLAGS_ASAN "${CMAKE_CXX_FLAGS_DEBUG} -fsanitize=address")
-set(CMAKE_CXX_FLAGS_MSAN "${CMAKE_CXX_FLAGS_DEBUG} -fsanitize=memory")
+set(CMAKE_LINKER_FLAGS_RETAIL "${CMAKE_CXX_FLAGS_RELEASE}")
+
+set(CMAKE_CXX_FLAGS_ASAN "${CMAKE_CXX_FLAGS_DEBUG} -g -O1 -fsanitize=address -fno-omit-frame-pointer")
+set(CMAKE_LINKER_FLAGS_ASAN "${CMAKE_LINKER_FLAGS_DEBUG} -fno-omit-frame-pointer -fsanitize=address")
+set(CMAKE_CXX_FLAGS_USAN "${CMAKE_CXX_FLAGS_DEBUG} -g -O1 -fsanitize=undefined")
+set(CMAKE_LINKER_FLAGS_USAN "${CMAKE_LINKER_FLAGS_DEBUG} -fsanitize=undefined")
+set(CMAKE_CXX_FLAGS_TSAN "${CMAKE_CXX_FLAGS_DEBUG} -g -O1 -fsanitize=thread")
+set(CMAKE_LINKER_FLAGS_TSAN "${CMAKE_CXX_FLAGS_DEBUG} -g -O1 -fsanitize=thread")
+set(CMAKE_CXX_FLAGS_MSAN "${CMAKE_CXX_FLAGS_DEBUG} -g -O1 -fsanitize=memory")
+set(CMAKE_LINKER_FLAGS_MSAN "${CMAKE_CXX_FLAGS_DEBUG} -g -O1 -fsanitize=memory")
 
 if (${CMAKE_BUILD_TYPE} MATCHES Retail)
     set(RETAIL_MODE ON)
