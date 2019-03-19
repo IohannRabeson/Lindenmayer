@@ -1,6 +1,5 @@
 sudo: required
 language: cpp
-osx_image: xcode10.1
 
 before_install:
   - export CI_TRAVIS_SCRIPT_BASE_PATH="./ci/travis/$TRAVIS_OS_NAME"
@@ -24,22 +23,32 @@ matrix:
             - libasound2-dev
             - build-essential
       env: TRAVIS_CONFIGURATION_NAME=Debug
+
     - os: linux
       addons:
         apt: *gcc7
       env: TRAVIS_CONFIGURATION_NAME=Release
 
     - os: osx
+      osx_image: xcode10.1
       env: TRAVIS_CONFIGURATION_NAME=Debug
 
     - os: osx
+      osx_image: xcode10.1
       env: TRAVIS_CONFIGURATION_NAME=Release
 
     - os: osx
+      osx_image: xcode10.1
       env: TRAVIS_CONFIGURATION_NAME=USan
 
     - os: osx
+      osx_image: xcode10.1
       env: TRAVIS_CONFIGURATION_NAME=ASan
 
     - os: osx
+      osx_image: xcode10.1
       env: TRAVIS_CONFIGURATION_NAME=TSan
+
+    - os: windows
+      osx_image: xcode10.1
+      env: TRAVIS_CONFIGURATION_NAME=Debug
