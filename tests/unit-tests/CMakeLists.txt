@@ -34,25 +34,11 @@ apply_cxx_target(unit-tests)
 target_compile_options(unit-tests PRIVATE ${ADDITIONAL_FLAGS})
 target_link_libraries(unit-tests PRIVATE LindenmayerHeart gtest gmock Qt5::Core Qt5::Widgets)
 target_include_directories(unit-tests PRIVATE
-        ".."
+        "${CMAKE_CURRENT_SOURCE_DIR}/.."
         "${GTEST_INCLUDE_DIR}"
-        "Mocks"
-        "../../app")
+        "${CMAKE_CURRENT_SOURCE_DIR}/Mocks"
+        "${CMAKE_CURRENT_SOURCE_DIR}/../../app")
 
 set_property(TARGET unit-tests PROPERTY CXX_STANDARD 17)
 set_property(TARGET unit-tests PROPERTY CXX_STANDARD_REQUIRED ON)
 set_property(TARGET unit-tests PROPERTY CXX_EXTENSIONS ON)
-
-#
-#add_executable(unit-tests ${SRC})
-#apply_cxx_target(unit-tests)
-#target_link_libraries(unit-tests PRIVATE LindenmayerHeart gtest gmock Qt5::Core Qt5::Widgets)
-#target_include_directories(unit-tests PRIVATE
-#                           ".."
-#                           "${GTEST_INCLUDE_DIR}"
-#                           "Mocks"
-#                           "../../app")
-#
-#set_property(TARGET unit-tests PROPERTY CXX_STANDARD 17)
-#set_property(TARGET unit-tests PROPERTY CXX_STANDARD_REQUIRED ON)
-#set_property(TARGET unit-tests PROPERTY CXX_EXTENSIONS ON)
