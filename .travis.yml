@@ -8,7 +8,6 @@ install:
   - "$CI_TRAVIS_SCRIPT_BASE_PATH/setup.sh"
 script:
   - "$CI_TRAVIS_SCRIPT_BASE_PATH/build.sh"
-after_script:
   - "$CI_TRAVIS_SCRIPT_BASE_PATH/run_unit_tests.sh"
 
 matrix:
@@ -37,7 +36,10 @@ matrix:
       env: TRAVIS_CONFIGURATION_NAME=Release
 
     - os: osx
-      env: TRAVIS_CONFIGURATION_NAME=MSan
+      env: TRAVIS_CONFIGURATION_NAME=USan
 
     - os: osx
       env: TRAVIS_CONFIGURATION_NAME=ASan
+
+    - os: osx
+      env: TRAVIS_CONFIGURATION_NAME=TSan
