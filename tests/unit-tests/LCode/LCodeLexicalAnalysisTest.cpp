@@ -45,7 +45,6 @@ TEST_F(LCodeLexicalAnalysisTest, whitespace_skip)
 {
     EXPECT_TRUE( parse("\nnumber\na\n=\n123.0\n;\n") );
     EXPECT_FALSE( parse("num\nber a = 123;") );
-    EXPECT_FALSE( parse("number a = 123") );
 }
 
 TEST_F(LCodeLexicalAnalysisTest, number_declarations)
