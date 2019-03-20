@@ -40,33 +40,37 @@ struct StdStringTraits<wchar_t>
     }
 };
 
-template <typename StringTraitsType, typename ... TS>
-using StringificationArray = std::array<typename StringTraitsType::StringType, sizeof...(TS)>;
-
-template <typename StringTraitsType, typename ... TS>
-void stringify(StringificationArray<StringTraitsType, TS...>& results, TS&&... args)
+namespace imp
 {
-    std::size_t index = 0u;
-    auto f = [&index, &results](auto&& arg)
+    template<typename StringTraitsType, typename ... TS> using StringificationArray = std::array<typename StringTraitsType::StringType, sizeof...(TS)>;
+
+    template<typename StringTraitsType, typename R, typename T>
+    inline void stringifyElement(R& results, std::size_t& index, T&& arg)
     {
         using ArgType = typename std::remove_all_extents<decltype(arg)>::type;
         using StringType = typename StringTraitsType::StringType;
         constexpr bool const IsString = std::is_convertible<ArgType, StringType>::value;
-
         if constexpr (IsString)
         {
             // Type of arg is convertible to a string
             results[index] = arg;
-        }
-        else
+        } else
         {
             // Type of arg is not convertible to string, try to use StringTraitsType::toString
             results[index] = StringTraitsType::toString(arg);
         }
         ++index;
-    };
-    // Fold expression: call f for each variadic arguments args
-    (..., f(args));
+    }
+
+    template<typename StringTraitsType, typename ... TS>
+    inline void stringify(StringificationArray<StringTraitsType, TS...>& results, TS&& ... args)
+    {
+        std::size_t index = 0u;
+        // Fold expression: call f for each variadic arguments args
+        (..., stringifyElement<StringTraitsType>(results, index, std::forward<TS>(args)));
+        // Prevent warning about 'index' unused in case of 0 args
+        static_cast<void>(index);
+    }
 }
 
 /*!
@@ -83,7 +87,7 @@ void stringify(StringificationArray<StringTraitsType, TS...>& results, TS&&... a
  * It can be possible I implement one day named placeholders ("{ foo }").
  */
 template <typename StringTraitsType, typename ... TS>
-typename StringTraitsType::StringType formatText(typename StringTraitsType::StringType const& format, TS&&...args)
+inline typename StringTraitsType::StringType formatText(typename StringTraitsType::StringType const& format, TS&&...args)
 {
     auto isPlaceholder = [](auto const begin, auto const end) -> bool
     {
@@ -97,9 +101,9 @@ typename StringTraitsType::StringType formatText(typename StringTraitsType::Stri
 
     std::string result;
     // This array contains strings. The number of elements is defined by the number of arguments in TS.
-    StringificationArray<StringTraitsType, TS...> placeholderValues;
+    imp::StringificationArray<StringTraitsType, TS...> placeholderValues;
     // Fill placeholderValues by arguments converted to strings
-    stringify<StringTraitsType>(placeholderValues, std::forward<TS>(args)...);
+    imp::stringify<StringTraitsType>(placeholderValues, std::forward<TS>(args)...);
     auto placeholderIt = placeholderValues.cbegin();
     auto it = format.cbegin();
 
@@ -126,13 +130,13 @@ typename StringTraitsType::StringType formatText(typename StringTraitsType::Stri
 }
 
 template <typename ... TS>
-std::string formatText(std::string const& format, TS&&... args)
+inline std::string formatText(std::string const& format, TS&&... args)
 {
     return formatText<StdStringTraits<char>>(format, std::forward<TS>(args)...);
 }
 
 template <typename ... TS>
-std::wstring formatText(std::wstring const& format, TS&&... args)
+inline std::wstring formatText(std::wstring const& format, TS&&... args)
 {
     return formatText<StdStringTraits<wchar_t >>(format, std::forward<TS>(args)...);
 }

@@ -1,5 +1,5 @@
 set(THE_APPLICATION_DISPLAY_NAME "Lindenmayer")
-set(THE_APPLICATION_NAME "MidiBoy")
+set(THE_APPLICATION_NAME "Lindenmayer")
 set(THE_APPLICATION_ORGANIZATION "Dead Devs Society")
 set(THE_APPLICATION_COPYRIGHT "Copyright 2018 - ${THE_APPLICATION_ORGANIZATION}")
 set(THE_APPLICATION_BRIEF "Lindenmayer System utility")
@@ -9,14 +9,6 @@ set(THE_APPLICATION_ICON ${CMAKE_SOURCE_DIR}/configurations/macos/Application.ic
 
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror -fno-omit-frame-pointer")
-endif()
-
-if (ENABLE_MSAN)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=memory")
-endif()
-
-if (ENABLE_ASAN)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address")
 endif()
 
 set(SOURCES  GraphicsSceneTurtle2D.cpp GraphicsSceneTurtle2D.hpp MainWindow.cpp MainWindow.hpp)
