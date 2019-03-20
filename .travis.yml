@@ -1,12 +1,13 @@
 sudo: required
 language: cpp
+osx_image: xcode10.1
 
 before_install:
   - export CI_TRAVIS_SCRIPT_BASE_PATH="./ci/travis/$TRAVIS_OS_NAME"
-  - eval "${SETUP_COMPILERS}"
+install:
+  - "$CI_TRAVIS_SCRIPT_BASE_PATH/setup.sh"
 script:
   - "$CI_TRAVIS_SCRIPT_BASE_PATH/build.sh"
-after_script:
   - "$CI_TRAVIS_SCRIPT_BASE_PATH/run_unit_tests.sh"
 
 matrix:
@@ -22,22 +23,23 @@ matrix:
             - g++-7
             - libasound2-dev
             - build-essential
-      env: SETUP_COMPILERS="CC=gcc-7 && CXX=g++-7" TRAVIS_CONFIGURATION_NAME=Debug
+      env: TRAVIS_CONFIGURATION_NAME=Debug
     - os: linux
       addons:
         apt: *gcc7
-      env: SETUP_COMPILERS="CC=gcc-7 && CXX=g++-7" TRAVIS_CONFIGURATION_NAME=Release
-
-    - os: linux
-      addons:
-        apt: *gcc7
-      env: SETUP_COMPILERS="CC=gcc-7 && CXX=g++-7" TRAVIS_CONFIGURATION_NAME=Retail
+      env: TRAVIS_CONFIGURATION_NAME=Release
 
     - os: osx
-      env: SETUP_COMPILERS="CC=clang CXX=clang++" TRAVIS_CONFIGURATION_NAME=Debug
+      env: TRAVIS_CONFIGURATION_NAME=Debug
 
     - os: osx
-      env: SETUP_COMPILERS="CC=clang CXX=clang++" TRAVIS_CONFIGURATION_NAME=Release
+      env: TRAVIS_CONFIGURATION_NAME=Release
 
     - os: osx
-      env: SETUP_COMPILERS="CC=clang CXX=clang++" TRAVIS_CONFIGURATION_NAME=Retail
+      env: TRAVIS_CONFIGURATION_NAME=USan
+
+    - os: osx
+      env: TRAVIS_CONFIGURATION_NAME=ASan
+
+    - os: osx
+      env: TRAVIS_CONFIGURATION_NAME=TSan

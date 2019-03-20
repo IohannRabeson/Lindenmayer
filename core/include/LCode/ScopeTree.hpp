@@ -71,6 +71,7 @@ public:
     void clear()
     {
         _root.reset();
+        _nodesByParseTree.clear();
     }
 
     NodeType* root() const
@@ -98,6 +99,7 @@ public:
             newNode = parent->makeChild(parseTreeNode);
         }
         _nodesByParseTree.emplace(parseTreeNode, newNode);
+
         return newNode;
     }
 private:

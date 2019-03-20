@@ -63,8 +63,9 @@ function(generate_grammars GRAMMAR_LIBRARY_NAME GRAMMAR_SOURCE_FILES)
     set_property(TARGET ${GRAMMAR_LIBRARY_NAME} PROPERTY CXX_STANDARD 17)
     set_property(TARGET ${GRAMMAR_LIBRARY_NAME} PROPERTY CXX_EXTENSIONS ON)
     set_property(TARGET ${GRAMMAR_LIBRARY_NAME} PROPERTY CXX_STANDARD_REQUIRED OFF)
-    target_include_directories(${GRAMMAR_LIBRARY_NAME} PUBLIC ${GENERATION_OUTPUT_DIR} ${ANTLR4CPP_INCLUDE_DIRS})
+    target_include_directories(${GRAMMAR_LIBRARY_NAME} PUBLIC ${CMAKE_CURRENT_BINARY_DIR} ${GENERATION_OUTPUT_DIR} ${ANTLR4CPP_INCLUDE_DIRS})
     target_link_libraries(${GRAMMAR_LIBRARY_NAME} PUBLIC ${ANTLR4CPP_LIBS})
+    target_compile_definitions(${GRAMMAR_LIBRARY_NAME} PUBLIC ANTLR4CPP_STATIC)
 endfunction()
 
 set(GRAMMAR_SOURCE_FILES
@@ -72,12 +73,4 @@ set(GRAMMAR_SOURCE_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/LSystem.g4
 )
 
-add_library(lindenmayer-langage ${GRAMMAR_GENERATED_SOURCES})
-generate_grammars(grammar-library "${GRAMMAR_SOURCE_FILES}")
-target_include_directories(lindenmayer-langage PUBLIC "${CMAKE_CURRENT_BINARY_DIR}" "${ANTLR4CPP_INCLUDE_DIRS}")
-target_link_libraries(lindenmayer-langage PUBLIC "${ANTLR4CPP_LIBS}" grammar-library)
-target_compile_definitions(lindenmayer-langage PUBLIC ANTLR4CPP_STATIC)
-
-
-
-
+generate_grammars(lindenmayer-langage "${GRAMMAR_SOURCE_FILES}")
