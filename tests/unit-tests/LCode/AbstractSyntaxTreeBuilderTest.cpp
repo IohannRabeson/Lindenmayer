@@ -10,7 +10,7 @@
 #include <LCode/LCodeScopeTreeBuilder.hpp>
 #include <generated/LCodeLexer.h>
 #include <generated/LCodeParser.h>
-#include "ParserUtility.hpp"
+#include <ParserUtility.hpp>
 
 class AbstractSyntaxTreeBuilderTest : public ::testing::Test
 {

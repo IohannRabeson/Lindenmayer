@@ -8,8 +8,12 @@ TSAN_OPTIONS=symbolize=1
 TSAN_SYMBOLIZER_PATH="$(brew --prefix llvm)/bin/llvm-symbolizer"
 USAN_OPTIONS=symbolize=1
 USAN_SYMBOLIZER_PATH="$(brew --prefix llvm)/bin/llvm-symbolizer"
+
 # Run unit tests
 ./builds/tests/unit-tests/unit-tests
 
 # Run simple functional tests
 ./builds/app/Lindenmayer.app/Contents/MacOS/Lindenmayer --auto-test ./tests/lcode-examples
+
+# Run stress tests
+./builds/tests/stress-tests/stress-tests

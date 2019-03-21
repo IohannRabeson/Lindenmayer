@@ -47,6 +47,13 @@ TEST_F(LCodeLexicalAnalysisTest, whitespace_skip)
     EXPECT_FALSE( parse("num\nber a = 123;") );
 }
 
+TEST_F(LCodeLexicalAnalysisTest, identifier)
+{
+    EXPECT_TRUE( parse("number start098 = 0;") );
+    EXPECT_TRUE( parse("number begin_by_letters_098 = 0;") );
+    EXPECT_FALSE( parse("number 765_start_by_numbers_is_incorrect = 0;") );
+}
+
 TEST_F(LCodeLexicalAnalysisTest, number_declarations)
 {
     EXPECT_FALSE( parse("number") );

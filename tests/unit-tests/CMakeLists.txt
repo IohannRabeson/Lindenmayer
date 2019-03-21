@@ -1,13 +1,3 @@
-set(GTEST_INCLUDE_DIR "../../externals/googletest/googletest/include")
-
-if (ENABLE_MSAN)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=memory -fno-omit-frame-pointer")
-endif()
-
-if (ENABLE_ASAN)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -fno-omit-frame-pointer")
-endif()
-
 set(SOURCES
     ${MOCK_SRC}
     unit-tests-main.cpp
@@ -21,8 +11,6 @@ set(SOURCES
     ExpressionTest.cpp
     LCode/AbstractSyntaxTreeTest.cpp
     LCode/AbstractSyntaxTreeBuilderTest.cpp
-    LCode/ParserUtility.hpp
-    LCode/ParserUtility.cpp
     LCode/AbstractSyntaxTreeAlgorithmTest.cpp
     LCode/StringFormatTest.cpp
     LCode/ParseErrorTest.cpp
@@ -31,8 +19,7 @@ set(SOURCES
 
 add_executable(unit-tests ${SOURCES})
 apply_cxx_target(unit-tests)
-target_compile_options(unit-tests PRIVATE ${ADDITIONAL_FLAGS})
-target_link_libraries(unit-tests PRIVATE LindenmayerHeart gtest gmock Qt5::Core Qt5::Widgets)
+target_link_libraries(unit-tests PRIVATE tests-common gtest gmock)
 target_include_directories(unit-tests PRIVATE
         "${CMAKE_CURRENT_SOURCE_DIR}/.."
         "${GTEST_INCLUDE_DIR}"
