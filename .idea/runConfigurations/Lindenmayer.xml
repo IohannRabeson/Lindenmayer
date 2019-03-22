@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Lindenmayer" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Lindenmayer" TARGET_NAME="Lindenmayer" CONFIG_NAME="Debug-Llvm 7.0.0" RUN_TARGET_PROJECT_NAME="Lindenmayer" RUN_TARGET_NAME="Lindenmayer">
+  <configuration default="false" name="Lindenmayer" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Lindenmayer" TARGET_NAME="Lindenmayer" CONFIG_NAME="Debug-Llvm 8.0.0" RUN_TARGET_PROJECT_NAME="Lindenmayer" RUN_TARGET_NAME="Lindenmayer">
     <method v="2">
       <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
     </method>
