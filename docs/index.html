@@ -3,7 +3,7 @@ layout: default
 overview: true
 ---
 
-<img src="{{ site.url }}/assets/images/Screen Shot 2019-02-15 at 23.06.02.png"/>
+<img src="{{ site.baseurl }}/assets/images/Screen Shot 2019-02-15 at 23.06.02.png"/>
 <ul>
 <li><h2>Features</h2></a>
 <table>
@@ -31,7 +31,7 @@ overview: true
             <tr><td colspan="2"><h2>{{ example.name }}</h2></td></tr>
             <tr>
                 <td>{% highlight text %}{{ lcode_snippet }}{% endhighlight %}</td>
-                <td><img src="{{ site.url }}/assets/images/{{ example.screenshot }}" alt="{{ example.screenshot }}"></td>
+                <td><img src="{{ site.baseurl }}/assets/images/{{ example.screenshot }}" alt="{{ example.screenshot }}"></td>
             </tr>
             {% endfor %}
         </table>
