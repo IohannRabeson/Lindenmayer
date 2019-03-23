@@ -8,7 +8,7 @@ install:
   - "$CI_TRAVIS_SCRIPT_BASE_PATH/setup.sh"
 script:
   - "$CI_TRAVIS_SCRIPT_BASE_PATH/build.sh"
-  - "$CI_TRAVIS_SCRIPT_BASE_PATH/run_unit_tests.sh"
+  - travis_wait 60 "$CI_TRAVIS_SCRIPT_BASE_PATH/run_unit_tests.sh"
 
 matrix:
   include:

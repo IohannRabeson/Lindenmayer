@@ -40,6 +40,7 @@ public:
     bool defineConstant(std::string const& identifier, NumberType value);
     bool isConstantDefined(std::string const& identifier) const;
     ConstantSymbol const& getConstant(std::string const& identifier) const;
+    std::size_t getConstantCount() const { return _constants.size(); }
 private:
     std::map<std::string, StorageType> _types;
     std::map<std::string, FunctionSymbol> _functions;
