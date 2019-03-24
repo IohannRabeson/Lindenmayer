@@ -26,21 +26,7 @@ endif()
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/")
 
-include("${CMAKE_SOURCE_DIR}/cmake/GitInfo.cmake")
-
-if (NOT APPLICATION_VERSION)
-    set(APPLICATION_VERSION "${GIT_BRANCH}-${GIT_SHORT_COMMIT}")
-    if (TRAVIS_BUILD_NUMBER)
-        set(APPLICATION_VERSION "${APPLICATION_VERSION}-${TRAVIS_BUILD_NUMBER}")
-    endif()
-endif()
-
-# Define build version
-set(BUILD_INFOS "-- Build version: ${APPLICATION_VERSION}")
-if (RETAIL_MODE)
-    set(BUILD_INFOS "${BUILD_INFOS} (retail)")
-endif()
-message(STATUS "${BUILD_INFOS}")
+include("${PROJECT_SOURCE_DIR}/externals/cmake-modules/TargetVersion.cmake")
 
 # Google Test is builded with the flag /MT
 if (MSVC)
