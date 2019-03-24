@@ -42,7 +42,7 @@ if (ENABLE_SANITIZERS)
 endif()
 
 add_library(LindenmayerHeart ${LINDENMAYER_CORE_SOURCES})
-
+toolkit_target_version(LindenmayerHeart "${TRAVIS_BUILD_NUMBER}")
 apply_cxx_target(LindenmayerHeart)
 target_link_libraries(LindenmayerHeart PUBLIC antlr4_static lindenmayer-langage)
 target_include_directories(LindenmayerHeart PUBLIC "${CMAKE_SOURCE_DIR}/externals/optional")
