@@ -1,7 +1,7 @@
-cmake_minimum_required(VERSION 3.9)
+cmake_minimum_required(VERSION 3.9 FATAL_ERROR)
 project(Lindenmayer)
 
-set(CMAKE_CXX_FLAGS_RETAIL "${CMAKE_CXX_FLAGS_RELEASE}")
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 if (${CMAKE_BUILD_TYPE} MATCHES Retail)
     set(RETAIL_MODE ON)
@@ -12,28 +12,12 @@ endif()
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/")
 
-include("${CMAKE_SOURCE_DIR}/cmake/GitInfo.cmake")
+include("${PROJECT_SOURCE_DIR}/externals/cmake-modules/TargetVersion.cmake")
+include("${PROJECT_SOURCE_DIR}/externals/cmake-modules/Cpp.cmake")
+include("${PROJECT_SOURCE_DIR}/externals/cmake-modules/Sanitizers.cmake")
+include("${PROJECT_SOURCE_DIR}/externals/cmake-modules/Qt.cmake")
 
-if (NOT APPLICATION_VERSION)
-    set(APPLICATION_VERSION "${GIT_BRANCH}-${GIT_SHORT_COMMIT}")
-    if (TRAVIS_BUILD_NUMBER)
-        set(APPLICATION_VERSION "${APPLICATION_VERSION}-${TRAVIS_BUILD_NUMBER}")
-    endif()
-endif()
-
-set(BUILD_INFOS "-- Build version: ${APPLICATION_VERSION}")
-
-if (RETAIL_MODE)
-    set(BUILD_INFOS "${BUILD_INFOS} (retail)")
-endif()
-
-if (ENABLE_MSAN)
-    message(STATUS "Enabled memory sanitizer")
-endif()
-
-if (ENABLE_ASAN)
-    message(STATUS "Enabled address sanitizer")
-endif()
+toolkit_sanitizers_build_types(ALL)
 
 # Google Test is builded with the flag /MT
 if (MSVC)
@@ -41,13 +25,9 @@ if (MSVC)
 	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
 endif()
 
-message(${BUILD_INFOS})
-
-set(CMAKE_CXX_STANDARD 17)
-
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
-set(CMAKE_AUTOUIC ON)
+#set(CMAKE_AUTOMOC ON)
+#set(CMAKE_AUTORCC ON)
+#set(CMAKE_AUTOUIC ON)
 
 find_package(Qt5Core)
 find_package(Qt5Widgets)

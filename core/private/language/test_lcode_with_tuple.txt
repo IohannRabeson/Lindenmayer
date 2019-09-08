@@ -1,0 +1,15 @@
+// Here `d` and `a` are placeholders
+const iteration = 4;
+const d = -(10.);
+const a = 90.;
+const red = {255, 0, 0, 255};
+const blue = {0, 0, 255, 255};
+// Here `d` and `a` are placeholders
+alias F(d) = __trace(d);
+alias R(a) = __rotate(a);
+alias P(width, color) = __set_pen_width(width) __set_pen_color(color);
+// Here `d` is the constant.
+axiom F(d);
+// Here `_d` is just a placeholder. But `a` is the constant.
+// Because `d` is passed as parameter of F in the axiom, `_d` will be replaced by `d`.
+rewrite F(_d) = P(1, red)F(_d)R(a)P(1, {0, 0, 255, 255})F(_d)R(-a)F(_d)R(-a)F(_d)R(a)F(_d);

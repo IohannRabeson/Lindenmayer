@@ -15,28 +15,29 @@ git clone --recursive git@github.com:IohannRabeson/Lindenmayer.git
  - Java (>= 8)
 
 Somes libraries are embedded:
- - [ANTLR](https://github.com/IohannRabeson/antlr4)
+ - [ANTLR4](https://github.com/IohannRabeson/antlr4)
  - [Google Test](https://github.com/google/googletest)
- - Qool  
+ - [Qool](https://github.com/IohannRabeson/Qool)
+
 Several libraries are embedded as submodules so don't forget to clone using the flag `--recursive`.
 If you didn't use it, shame on you and type `git submodule init && git submodule update`.
 
 ## Build
 
 Require Qt 5 installed on your system.  
-Also a C++ compiler with sparse support for C++17 is required.  
+Also a C++ compiler with sparse support for C++17 is required (g++-7 or clang++-7)
 Qt directory should be added to `CMAKE_PREFIX_PATH`.
 
 ```bash
 cmake <project_dir> -G <generator> -DCMAKE_PREFIX_PATH="$(brew --prefix qt)"
 ```
 
-Tested generators:
+Tested generators (in the past):
  - GNU Make
  - Ninja
  - Xcode
  - MSVC 2015
- 
+
 ### Windows with MSVC
 On Windows don't forget to select a x64 generator, default or x86 will not works.
 Also you will have some missing Qt DLL, so you have to update your `PATH` in Visual Studio:  

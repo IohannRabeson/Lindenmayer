@@ -1,8 +1,8 @@
 add_subdirectory(private)
 
 set(LINDENMAYER_CORE_SOURCES
-    src/Symbol.cpp
-    include/Symbol.hpp
+        src/Symbol.cpp
+        include/Symbol.hpp
     src/Module.cpp
     include/Module.hpp
     src/RewriteRules.cpp
@@ -20,26 +20,14 @@ set(LINDENMAYER_CORE_SOURCES
     private/ContextHelper.hpp
     include/ActionFactory.hpp
     src/ActionFactory.cpp
-    include/ModuleAction.hpp)
-
-if (ENABLE_MSAN)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=memory")
-endif()
-
-if (ENABLE_ASAN)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address")
-endif()
-
-if (CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror -fno-omit-frame-pointer")
-endif()
-
-if (ENABLE_SANITIZERS)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -fno-omit-frame-pointer")
-endif()
+    include/ModuleAction.hpp
+    private/LCodeAST.cpp
+    private/LCodeAST.hpp
+        src/LCode/AbstractSyntaxTreeNode.cpp include/LCode/AbstractSyntaxTreeNode.hpp include/LCode/StorageType.hpp src/LCode/AbstractSyntaxTreeAlgorithms.cpp include/LCode/AbstractSyntaxTreeAlgorithms.hpp src/LCode/AbstractSyntaxTreeBuilder.cpp include/LCode/AbstractSyntaxTreeBuilder.hpp include/Symbol.hpp src/Symbol.cpp src/LCode/SymbolTable.cpp include/LCode/SymbolTable.hpp include/LCode/ScopeTree.hpp src/LCode/LCodeScopeTreeBuilder.cpp include/LCode/LCodeScopeTreeBuilder.hpp include/LCode/ScopeTreeAlgorithms.hpp src/LCode/LCodeProgram.cpp include/LCode/LCodeProgram.hpp src/LCode/ParseError.cpp include/LCode/ParseError.hpp include/LCode/StringFormat.hpp src/StringFormat.cpp include/LCode/LCodeScopeTree.hpp include/LCode/ParseErrorListener.cpp include/LCode/ParseErrorListener.hpp)
 
 add_library(LindenmayerHeart ${LINDENMAYER_CORE_SOURCES})
-
+toolkit_target_version(LindenmayerHeart "${TRAVIS_BUILD_NUMBER}")
+toolkit_enable_cxx17(LindenmayerHeart)
 target_link_libraries(LindenmayerHeart PUBLIC antlr4_static lindenmayer-langage)
 target_include_directories(LindenmayerHeart PUBLIC "${CMAKE_SOURCE_DIR}/externals/optional")
 target_include_directories(LindenmayerHeart PUBLIC

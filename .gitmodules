@@ -10,3 +10,6 @@
 [submodule "externals/antlr4"]
 	path = externals/antlr4
 	url = https://github.com/IohannRabeson/antlr4.git
+[submodule "externals/cmake-modules"]
+	path = externals/cmake-modules
+	url = git@github.com:IohannRabeson/cmake-modules.git

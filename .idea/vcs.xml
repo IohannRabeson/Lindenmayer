@@ -4,6 +4,7 @@
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/externals/Qool" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/externals/antlr4" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/externals/cmake-modules" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/externals/googletest" vcs="Git" />
   </component>
 </project>
