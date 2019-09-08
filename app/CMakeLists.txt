@@ -12,7 +12,7 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL
 endif()
 
 set(SOURCES  GraphicsSceneTurtle2D.cpp GraphicsSceneTurtle2D.hpp MainWindow.cpp MainWindow.hpp)
-
+toolkit_enable_qt_tools()
 add_executable(Lindenmayer
     MACOSX_BUNDLE ${THE_APPLICATION_ICON}
     ${SOURCES}
@@ -20,7 +20,7 @@ add_executable(Lindenmayer
     Lindenmayer.qrc
     ${QM_FILES}
 )
-apply_cxx_target(Lindenmayer)
+toolkit_enable_cxx17(Lindenmayer)
 
 set_target_properties(Lindenmayer PROPERTIES OUTPUT_NAME ${THE_APPLICATION_DISPLAY_NAME})
 target_include_directories(Lindenmayer PRIVATE "${CMAKE_SOURCE_DIR}/app" "${CMAKE_SOURCE_DIR}/core" "${CMAKE_SOURCE_DIR}/externals/Qt-Frameless-Window-DarkStyle")
@@ -32,10 +32,6 @@ target_compile_definitions(Lindenmayer PRIVATE
     APPLICATION_NAME="${THE_APPLICATION_NAME}"
     APPLICATION_COPYRIGHT="${THE_APPLICATION_COPYRIGHT}"
 )
-
-if (RETAIL_MODE)
-    target_compile_definitions(Lindenmayer PRIVATE APPLICATION_RETAIL)
-endif()
 
 if (APPLE)
     set(MACOSX_BUNDLE_EXECUTABLE_NAME ${OUTPUT_NAME})
