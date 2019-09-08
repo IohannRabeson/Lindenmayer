@@ -4,7 +4,7 @@ set(SOURCES
 )
 
 add_executable(stress-tests ${SOURCES})
-apply_cxx_target(stress-tests)
+toolkit_enable_cxx17(stress-tests)
 target_compile_options(stress-tests PRIVATE ${ADDITIONAL_FLAGS})
 target_link_libraries(stress-tests PRIVATE tests-common gmock gtest)
 target_include_directories(stress-tests PRIVATE

@@ -19,7 +19,7 @@ set(SOURCES
 
 add_executable(unit-tests ${SOURCES})
 toolkit_target_version(unit-tests "${TRAVIS_BUILD_NUMBER}")
-apply_cxx_target(unit-tests)
+toolkit_enable_cxx17(unit-tests)
 target_link_libraries(unit-tests PRIVATE tests-common gtest gmock)
 target_include_directories(unit-tests PRIVATE
         "${CMAKE_CURRENT_SOURCE_DIR}/.."
